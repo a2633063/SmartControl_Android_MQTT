@@ -1,19 +1,13 @@
 package com.zyc.zcontrol;
 
 import android.content.BroadcastReceiver;
-import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
-import android.content.ServiceConnection;
 import android.os.Bundle;
-import android.os.IBinder;
-import android.support.design.widget.FloatingActionButton;
-import android.support.design.widget.Snackbar;
 import android.support.v4.content.LocalBroadcastManager;
 import android.util.Log;
 import android.view.View;
-import android.support.design.widget.NavigationView;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
@@ -22,10 +16,8 @@ import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.Button;
-import android.widget.Toast;
 
-public class MainActivity extends AppCompatActivity
-        implements NavigationView.OnNavigationItemSelectedListener {
+public class MainActivity extends AppCompatActivity {
 
     //region 使用本地广播与service通信
     LocalBroadcastManager localBroadcastManager;
@@ -48,23 +40,12 @@ public class MainActivity extends AppCompatActivity
         setSupportActionBar(toolbar);
 
         //region 侧边栏 悬浮按钮初始化
-        FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
-        fab.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
-                        .setAction("Action", null).show();
-            }
-        });
-
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
         ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(
                 this, drawer, toolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close);
         drawer.addDrawerListener(toggle);
         toggle.syncState();
 
-        NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
-        navigationView.setNavigationItemSelectedListener(this);
         //endregion
 
 
@@ -104,15 +85,8 @@ public class MainActivity extends AppCompatActivity
         findViewById(R.id.Button1).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-
+                mqttSend("/test/Androdi","test message",0);
                 //发送Action为com.zyc.zcontrol.MQTTRECEIVER的广播
-                Intent intent = new Intent("com.zyc.zcontrol.MQTTSEND");
-                intent.putExtra("string", "123");
-                localBroadcastManager.sendBroadcast(intent);
-//                if (mService != null)
-//                    Log.d("MainActivity", "int:" + mService.getConunt());
-//                else
-//                    Toast.makeText(MainActivity.this, "null!", Toast.LENGTH_SHORT).show();
             }
         });
         //endregion
@@ -142,7 +116,7 @@ public class MainActivity extends AppCompatActivity
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         // Inflate the menu; this adds items to the action bar if it is present.
-        getMenuInflater().inflate(R.menu.main, menu);
+        getMenuInflater().inflate(R.menu.toolbar_menu, menu);
         return true;
     }
 
@@ -161,32 +135,17 @@ public class MainActivity extends AppCompatActivity
         return super.onOptionsItemSelected(item);
     }
 
-    @SuppressWarnings("StatementWithEmptyBody")
-    @Override
-    public boolean onNavigationItemSelected(MenuItem item) {
-        // Handle navigation view item clicks here.
-        int id = item.getItemId();
-
-        if (id == R.id.nav_camera) {
-            // Handle the camera action
-        } else if (id == R.id.nav_gallery) {
-
-        } else if (id == R.id.nav_slideshow) {
-
-        } else if (id == R.id.nav_manage) {
-
-        } else if (id == R.id.nav_share) {
-
-        } else if (id == R.id.nav_send) {
-
-        }
-
-        DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
-        drawer.closeDrawer(GravityCompat.START);
-        return true;
+    //region 广播
+    // 广播发送,用于Service接收广播后发送数据
+    void mqttSend(String topic, String  string ,int qos)
+    {
+        Intent intent = new Intent("com.zyc.zcontrol.MQTTSEND");
+        intent.putExtra("topic", topic);
+        intent.putExtra("string", string);
+        intent.putExtra("qos", qos);
+        localBroadcastManager.sendBroadcast(intent);
     }
-
-    //region 广播接收,用于处理接收到的数据
+    //广播接收,用于处理接收到的数据
     public class MsgReceiver extends BroadcastReceiver {
         @Override
         public void onReceive(Context context, Intent intent) {

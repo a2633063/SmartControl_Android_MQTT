@@ -35,6 +35,10 @@ public class MQTTService extends Service {
     boolean flag = true;
 
 
+    private String mqtt_send_topic = null;
+    private String mqtt_send_string = null;
+    private int qos = 0;
+
     public MQTTService() {
     }
 
@@ -45,8 +49,9 @@ public class MQTTService extends Service {
             //拿到进度，更新UI
 //            int progress = intent.getIntExtra("progress", 0);
 //            Log.d("MainActivity", "MsgReceiver:" + progress);
-            String str = intent.getStringExtra("string");
-            Log.d("MQTTService", "MsgReceiver:" + str);
+            mqtt_send_topic = intent.getStringExtra("topic");
+            mqtt_send_string = intent.getStringExtra("string");
+            qos = intent.getIntExtra("qos", 0);
         }
 
     }
@@ -72,7 +77,11 @@ public class MQTTService extends Service {
                 //消息缓存方式，内存缓存
                 MemoryPersistence persistence = new MemoryPersistence();
                 try {
-//                    mqttClient.isConnected()
+                    if (mqttClient != null && mqttClient.isConnected()) {
+                        mqttClient.disconnect();
+                        mqttClient = null;
+                    }
+
                     //region 建立客户端
                     mqttClient = new MqttClient(mqtt_uri, mqtt_id, persistence);
                     //连接的配置参数
@@ -83,12 +92,17 @@ public class MQTTService extends Service {
                     connectOptions.setConnectionTimeout(30);  //超时时间
                     connectOptions.setKeepAliveInterval(60); //心跳时间,单位秒
                     connectOptions.setAutomaticReconnect(true);//自动重连
+                    //setWill方法，如果项目中需要知道客户端是否掉线可以调用该方法。设置最终端口的通知消息
+                    //            connectOptions.setWill(topic, "close".getBytes(), 2, true);
                     Log.d("MQTTThread", "connecting to broker");
                     //endregion
+
+
                     mqttClient.setCallback(new MqttCallback() {
                         @Override
                         public void connectionLost(Throwable cause) {
                             Log.d("MQTTThread", "connectionLost");
+
                         }
 
                         @Override
@@ -103,7 +117,7 @@ public class MQTTService extends Service {
                             localBroadcastManager.sendBroadcast(intent);
                             //endregion
 
-                    }
+                        }
 
                         @Override
                         public void deliveryComplete(IMqttDeliveryToken token) {
@@ -116,18 +130,20 @@ public class MQTTService extends Service {
                     //订阅消息
                     mqttClient.subscribe("/test/androidGet", 0);
 
+                    while (flag) {
+                        while (mqtt_send_topic != null &&
+                                mqtt_send_string != null && flag) {
+                            MqttMessage message = new MqttMessage(mqtt_send_string.getBytes());
+                            //设定消息发送等级
+                            message.setQos(qos);
+                            //发布消息
+                            mqttClient.publish(/*topic*/mqtt_send_topic, message);
+                            mqtt_send_topic = null;
+                            mqtt_send_string = null;
+                        }
+                    }
 
-                    //用Gson框架建立要发送的json字符串
 
-                    String json = "test";
-                    //创建消息
-                    MqttMessage message = new MqttMessage(json.getBytes());
-                    //设定消息发送等级
-                    message.setQos(0);
-                    //发布消息
-                    mqttClient.publish(/*topic*/"/test/android", message);
-
-                    while(flag);
                     // System.exit (0);//关闭UI进程
                 } catch (MqttException e) {
                     Log.e("MQTTThread", "reason " + e.getReasonCode());
@@ -135,6 +151,10 @@ public class MQTTService extends Service {
                     Log.e("MQTTThread", "loc " + e.getLocalizedMessage());
                     Log.e("MQTTThread", "cause " + e.getCause());
                     Log.e("MQTTThread", "excep " + e);
+                    try {
+                        Thread.sleep(3000);
+                    } catch (InterruptedException ee) {
+                    }
                     e.printStackTrace();
                 }
 
@@ -204,6 +224,12 @@ public class MQTTService extends Service {
 
         Log.d("MQTTService", "onStartCommand");
 
+        try {
+            Thread.sleep(6000);
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
+
         return super.onStartCommand(intent, flags, startId);
     }
 
@@ -214,4 +240,5 @@ public class MQTTService extends Service {
         super.onDestroy();
         Log.d("MQTTService", "onDestroy");
     }
+
 }
