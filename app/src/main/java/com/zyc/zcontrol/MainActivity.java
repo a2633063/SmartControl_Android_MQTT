@@ -1,10 +1,13 @@
 package com.zyc.zcontrol;
 
 import android.content.BroadcastReceiver;
+import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
+import android.content.ServiceConnection;
 import android.os.Bundle;
+import android.os.IBinder;
 import android.support.v4.content.LocalBroadcastManager;
 import android.util.Log;
 import android.view.View;
@@ -18,6 +21,9 @@ import android.view.MenuItem;
 import android.widget.Button;
 
 public class MainActivity extends AppCompatActivity {
+    public final static String Tag =
+            "MainActivity";
+
 
     //region 使用本地广播与service通信
     LocalBroadcastManager localBroadcastManager;
@@ -30,7 +36,7 @@ public class MainActivity extends AppCompatActivity {
     Button startBindServiceButton;// 启动绑定服务按钮
     Button startunBindServiceButton;// 启动绑定服务按钮
 
-    MQTTService mService;
+    MQTTService mMQTTService;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -49,26 +55,28 @@ public class MainActivity extends AppCompatActivity {
         //endregion
 
 
-        //region 动态注册广播接收器
+        //region 动态注册接收mqtt服务的广播接收器,
         localBroadcastManager = LocalBroadcastManager.getInstance(this);
         msgReceiver = new MsgReceiver();
         IntentFilter intentFilter = new IntentFilter();
-        intentFilter.addAction("com.zyc.zcontrol.MQTTRECEIVER");
+        intentFilter.addAction(MQTTService.ACTION_MQTT_CONNECTED);
+        intentFilter.addAction(MQTTService.ACTION_MQTT_DISCONNECTED);
+        intentFilter.addAction(MQTTService.ACTION_DATA_AVAILABLE);
         localBroadcastManager.registerReceiver(msgReceiver, intentFilter);
+        //endregion
+
+        //region 启动MQTT服务
+        Intent intent = new Intent(MainActivity.this, MQTTService.class);
+        startService(intent);
+
+        bindService(intent, mMQTTServiceConnection, BIND_AUTO_CREATE);
+
         //endregion
 
         startServiceButton = (Button) findViewById(R.id.startServerButton);
         startBindServiceButton = (Button) findViewById(R.id.startBindServerButton);
         shutDownServiceButton = (Button) findViewById(R.id.sutdownServerButton);
         startunBindServiceButton = (Button) findViewById(R.id.startunBindServerButton);
-
-        Intent intent = new Intent(MainActivity.this, MQTTService.class);
-        intent.putExtra("mqtt_uri", "tcp://47.112.16.98:1883");
-        intent.putExtra("mqtt_id", "asdf");
-        intent.putExtra("mqtt_user", "z");
-        intent.putExtra("mqtt_password", "2633063");
-        startService(intent);
-
         //region 单击按钮时启动服务
         startServiceButton.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -79,13 +87,11 @@ public class MainActivity extends AppCompatActivity {
         //endregion
 
 
-
-
         //region 测试按钮
         findViewById(R.id.Button1).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                mqttSend("/test/Androdi","test message",0);
+                mMQTTService.Send("/test/Androdi", "test message", 0);
                 //发送Action为com.zyc.zcontrol.MQTTRECEIVER的广播
             }
         });
@@ -135,24 +141,48 @@ public class MainActivity extends AppCompatActivity {
         return super.onOptionsItemSelected(item);
     }
 
-    //region 广播
-    // 广播发送,用于Service接收广播后发送数据
-    void mqttSend(String topic, String  string ,int qos)
-    {
-        Intent intent = new Intent("com.zyc.zcontrol.MQTTSEND");
-        intent.putExtra("topic", topic);
-        intent.putExtra("string", string);
-        intent.putExtra("qos", qos);
-        localBroadcastManager.sendBroadcast(intent);
-    }
+    //region MQTT服务有关
+
+    private final ServiceConnection mMQTTServiceConnection = new ServiceConnection() {
+
+        @Override
+        public void onServiceConnected(ComponentName componentName, IBinder service) {
+            mMQTTService = ((MQTTService.LocalBinder) service).getService();
+            // Automatically connects to the device upon successful start-up initialization.
+            mMQTTService.connect("tcp://47.112.16.98:1883", "mqtt_id_dasdf",
+                    "z", "2633063");
+        }
+
+        @Override
+        public void onServiceDisconnected(ComponentName componentName) {
+            mMQTTService = null;
+        }
+    };
+
     //广播接收,用于处理接收到的数据
     public class MsgReceiver extends BroadcastReceiver {
         @Override
         public void onReceive(Context context, Intent intent) {
-            //拿到进度，更新UI
-            String progress = intent.getStringExtra("string");
-            Log.d("MainActivity", "MsgReceiver:" + progress);
+            final String action = intent.getAction();
+
+            if (MQTTService.ACTION_MQTT_CONNECTED.equals(action)) {  //连接成功
+                Log.d(Tag, "ACTION_MQTT_CONNECTED");
+            } else if (MQTTService.ACTION_MQTT_DISCONNECTED.equals(action)) {  //连接失败/断开
+                Log.w(Tag, "ACTION_MQTT_DISCONNECTED");
+                if (mMQTTService != null) {
+                    if (mMQTTService.isConnected()) {
+                        mMQTTService.disconnect();
+                    }
+                    mMQTTService.connect("tcp://47.112.16.98:1883", "mqtt_id_dasdf",
+                            "z", "2633063");
+                }
+            } else if (MQTTService.ACTION_DATA_AVAILABLE.equals(action)) {  //接收到数据
+                String topic = intent.getStringExtra(MQTTService.EXTRA_DATA_TOPIC);
+                String str = intent.getStringExtra(MQTTService.EXTRA_DATA_CONTENT);
+                Log.d(Tag, "RECV DATA,topic:" + topic + ",content:" + str);
+            }
         }
     }
     //endregion
+
 }
