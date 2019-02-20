@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    app:layout_behavior="@string/appbar_scrolling_view_behavior"
+    tools:context=".MainActivity"
+    tools:showIn="@layout/app_bar_main">
+
+
+    <Button
+        android:id="@+id/startServerButton"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="startServerButton" />
+
+    <Button
+        android:id="@+id/startBindServerButton"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="startBindServerButton" />
+    <Button
+        android:id="@+id/startunBindServerButton"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="unBindServer" />
+    <Button
+        android:id="@+id/sutdownServerButton"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="sutdownServerButton" />
+
+    <Button
+        android:id="@+id/Button1"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Button1" />
+</LinearLayout>
