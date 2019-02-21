@@ -15,31 +15,15 @@
 
         android:theme="@style/AppTheme.AppBarOverlay"/>
 
-    <Button
-        android:id="@+id/startServerButton"
-        android:layout_width="wrap_content"
+    <android.support.design.widget.TabLayout
+        android:id="@+id/tablayout"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="startServerButton" />
+        app:tabGravity="fill"
+        app:tabMode="fixed"/>
+    <android.support.v4.view.ViewPager
+        android:id="@+id/viewpager"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent" />
 
-    <Button
-        android:id="@+id/startBindServerButton"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="startBindServerButton" />
-    <Button
-        android:id="@+id/startunBindServerButton"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="unBindServer" />
-    <Button
-        android:id="@+id/sutdownServerButton"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="sutdownServerButton" />
-
-    <Button
-        android:id="@+id/Button1"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="Button1" />
 </LinearLayout>

@@ -8,7 +8,12 @@ import android.content.IntentFilter;
 import android.content.ServiceConnection;
 import android.os.Bundle;
 import android.os.IBinder;
+import android.support.design.widget.TabLayout;
+import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentManager;
+import android.support.v4.app.FragmentPagerAdapter;
 import android.support.v4.content.LocalBroadcastManager;
+import android.support.v4.view.ViewPager;
 import android.util.Log;
 import android.view.View;
 import android.support.v4.view.GravityCompat;
@@ -19,18 +24,16 @@ import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.AdapterView;
-import android.widget.Button;
 import android.widget.ListView;
 
 import java.util.ArrayList;
-import java.util.List;
 
 public class MainActivity extends AppCompatActivity {
     public final static String Tag = "MainActivity";
 
     DrawerLayout drawerLayout;
     ListView lv_device;
-    List<DeviceItem> data = new ArrayList<DeviceItem>();
+    ArrayList<DeviceItem> data = new ArrayList<DeviceItem>();
     DeviceListAdapter adapter;
 
     //region 使用本地广播与service通信
@@ -38,11 +41,10 @@ public class MainActivity extends AppCompatActivity {
     private MsgReceiver msgReceiver;
     //endregion
 
+    private TabLayout tabLayout;
+    private ViewPager viewPager;
+    private FragmentAdapter fragmentAdapter;
 
-    Button startServiceButton;// 启动服务按钮
-    Button shutDownServiceButton;// 关闭服务按钮
-    Button startBindServiceButton;// 启动绑定服务按钮
-    Button startunBindServiceButton;// 启动绑定服务按钮
 
     MQTTService mMQTTService;
 
@@ -68,20 +70,10 @@ public class MainActivity extends AppCompatActivity {
         //endregion
 
         //region 控件初始化
-        DeviceItem item = new DeviceItem(MainActivity.this,"asdf");
-        data.add(item);
-        data.add(item);
-        data.add(item);
-        item = new DeviceItem(MainActivity.this,"asdf");
-
-        item.setIcon(R.drawable.ic_menu_gallery);
-        data.add(item);
-        data.add(item);
-        data.add(item);
-        data.add(item);
-        data.add(item);
-        data.add(item);
-        data.add(item);
+        data.add(new DeviceItem(MainActivity.this,DeviceItem.TYPE_BUTTON_MATE,"button1",R.drawable.ic_menu_manage));
+        data.add(new DeviceItem(MainActivity.this,DeviceItem.TYPE_BUTTON_MATE,"标题2",R.drawable.ic_menu_gallery));
+        data.add(new DeviceItem(MainActivity.this,DeviceItem.TYPE_BUTTON_MATE,"测试3",R.drawable.ic_menu_camera));
+        //region listview及adapter
 
         lv_device=findViewById(R.id.lv_device);
         adapter = new DeviceListAdapter(MainActivity.this, data);
@@ -91,9 +83,39 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
                 adapter.setChoice(position);
+                viewPager.setCurrentItem(position);
                 drawerLayout.closeDrawer(GravityCompat.START);//关闭侧边栏
             }
         });
+        //endregion
+
+        //region fragment显示相关
+        tabLayout = (TabLayout) findViewById(R.id.tablayout);
+
+        viewPager = (ViewPager) findViewById(R.id.viewpager);
+        fragmentAdapter = new FragmentAdapter(getSupportFragmentManager(), data);
+        viewPager.setAdapter(fragmentAdapter);
+        viewPager.setOffscreenPageLimit(data.size());
+        tabLayout.setupWithViewPager(viewPager);
+
+        viewPager.addOnPageChangeListener(new ViewPager.OnPageChangeListener() {
+            @Override
+            public void onPageScrolled(int position, float positionOffset, int positionOffsetPixels) {
+
+            }
+
+            @Override
+            public void onPageSelected(int position) {
+                adapter.setChoice(position);
+            }
+
+            @Override
+            public void onPageScrollStateChanged(int state) {
+
+            }
+        });
+        //endregion
+
         //endregion
 
         //region 动态注册接收mqtt服务的广播接收器,
@@ -107,38 +129,11 @@ public class MainActivity extends AppCompatActivity {
         //endregion
 
         //region 启动MQTT服务 不启动
-        Intent intent = new Intent(MainActivity.this, MQTTService.class);
-        startService(intent);
-        bindService(intent, mMQTTServiceConnection, BIND_AUTO_CREATE);
+//        Intent intent = new Intent(MainActivity.this, MQTTService.class);
+//        startService(intent);
+//        bindService(intent, mMQTTServiceConnection, BIND_AUTO_CREATE);
 
         //endregion
-
-        //region 按键初始化
-        startServiceButton = (Button) findViewById(R.id.startServerButton);
-        startBindServiceButton = (Button) findViewById(R.id.startBindServerButton);
-        shutDownServiceButton = (Button) findViewById(R.id.sutdownServerButton);
-        startunBindServiceButton = (Button) findViewById(R.id.startunBindServerButton);
-        //region 单击按钮时启动服务
-        startServiceButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Log.d("MainActivity", "start Service");
-            }
-        });
-        //endregion
-
-
-        //region 测试按钮
-        findViewById(R.id.Button1).setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                mMQTTService.Send("/test/Androdi", "test message", 0);
-                //发送Action为com.zyc.zcontrol.MQTTRECEIVER的广播
-            }
-        });
-        //endregion
-        //endregion
-
 
         //region json测试
 /*
@@ -206,6 +201,7 @@ public class MainActivity extends AppCompatActivity {
 
         //noinspection SimplifiableIfStatement
         if (id == R.id.action_settings) {
+            mMQTTService.Send("/test/Androdi", "test message", 0);
             return true;
         }
 
@@ -254,6 +250,45 @@ public class MainActivity extends AppCompatActivity {
                 Log.d(Tag, "RECV DATA,topic:" + topic + ",content:" + str);
             }
         }
+    }
+    //endregion
+
+
+    //region FragmentPagerAdapter
+    class FragmentAdapter extends FragmentPagerAdapter {
+
+        private ArrayList<DeviceItem> data;
+
+        public FragmentAdapter(FragmentManager fm, ArrayList<DeviceItem> fragmentArray) {
+            this(fm);
+            this.data = fragmentArray;
+
+        }
+
+        public FragmentAdapter(FragmentManager fm) {
+            super(fm);
+        }
+
+        //这个函数的作用是当切换到第arg0个页面的时候调用。
+        @Override
+        public Fragment getItem(int arg0) {
+            return this.data.get(arg0).fragment;
+        }
+
+        @Override
+        public int getCount() {
+            return this.data.size();
+        }
+
+        //重写这个方法，将设置每个Tab的标题
+        @Override
+        public CharSequence getPageTitle(int position) {
+            if (data != null)
+                return data.get(position).name;
+            else return "";
+        }
+
+
     }
     //endregion
 
