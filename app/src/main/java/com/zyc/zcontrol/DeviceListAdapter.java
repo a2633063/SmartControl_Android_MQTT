@@ -1,6 +1,7 @@
 package com.zyc.zcontrol;
 
 import android.content.Context;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -54,8 +55,8 @@ class DeviceListAdapter extends BaseAdapter {
             holder = (ViewHolder) view.getTag();
         }
         if(choice==position)
-        convertView.setBackgroundColor(0x10000000);
-        else convertView.setBackgroundColor(0xffffffff);
+        convertView.setBackgroundColor(0x20ffffff);
+        else convertView.setBackgroundColor(0x00000000);
         holder.tv.setText(mdata.get(position).name);
         if (mdata.get(position).Icon != null) {
             holder.im.setImageDrawable(mdata.get(position).Icon);

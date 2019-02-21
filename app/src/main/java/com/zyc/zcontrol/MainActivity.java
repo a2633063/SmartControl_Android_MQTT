@@ -6,9 +6,11 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.ServiceConnection;
+import android.net.Uri;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.IBinder;
+import android.support.design.widget.NavigationView;
 import android.support.design.widget.TabLayout;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
@@ -26,6 +28,7 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.AdapterView;
 import android.widget.ListView;
+import android.widget.TextView;
 
 import java.util.ArrayList;
 
@@ -64,10 +67,8 @@ public class MainActivity extends AppCompatActivity {
         toggle.syncState();
 
 
-//        NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);        navigationView.getMenu().add(1,1,1,"dd");//需要获取id的话，id就等于1；
-//        navigationView.getMenu().add(2,2,2,"ee");
-//        navigationView.getMenu().add(3,3,3,"ff");
-//        navigationView.setNavigationItemSelectedListener(this);
+        NavigationView navigationView =  findViewById(R.id.nav_view);        navigationView.getMenu().add(1,1,1,"dd");//需要获取id的话，id就等于1；
+
         //endregion
 
         //region 控件初始化
@@ -83,9 +84,9 @@ public class MainActivity extends AppCompatActivity {
         lv_device.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                drawerLayout.closeDrawer(GravityCompat.START);//关闭侧边栏
                 adapter.setChoice(position);
                 viewPager.setCurrentItem(position);
-                drawerLayout.closeDrawer(GravityCompat.START);//关闭侧边栏
             }
         });
         //endregion
@@ -117,6 +118,15 @@ public class MainActivity extends AppCompatActivity {
         });
         //endregion
 
+        final TextView nav_header_subtitle=navigationView.getHeaderView(0).findViewById(R.id.tv_nav_header_subtitle);
+        nav_header_subtitle.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Uri uri = Uri.parse(nav_header_subtitle.getText().toString());
+                Intent intent = new Intent(Intent.ACTION_VIEW, uri);
+                startActivity(intent);
+            }
+        });
         //endregion
 
         //region MQTT服务有关

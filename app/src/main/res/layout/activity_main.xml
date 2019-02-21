@@ -43,7 +43,6 @@
                 android:lines="1"
                 android:padding="5dp"
                 android:text="+"
-                android:textColor="#80000000"
                 android:textSize="30dp" />
         </LinearLayout>
     </android.support.design.widget.NavigationView>
