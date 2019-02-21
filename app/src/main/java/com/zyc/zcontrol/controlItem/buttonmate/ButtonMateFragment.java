@@ -27,6 +27,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.zyc.zcontrol.MQTTService;
+import com.zyc.zcontrol.MyFunction;
 import com.zyc.zcontrol.R;
 
 import java.text.DateFormat;
@@ -193,8 +194,7 @@ public class ButtonMateFragment extends Fragment {
         //endregion
 
         //endregion
-
-
+        
         return view;
     }
 
@@ -233,6 +233,17 @@ public class ButtonMateFragment extends Fragment {
     };
 //endregion
 
+
+    //发送
+    void send(String topic, String message, boolean choice) {
+        if (choice) {
+            MyFunction.UDPsend(message);
+        } else mMQTTService.Send(topic, message);
+    }
+
+    void send(String topic, String message) {
+        send(topic, message, false);
+    }
 
     //数据接收处理函数
     void Receive(String topic, String message) {

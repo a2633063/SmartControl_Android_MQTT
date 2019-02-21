@@ -67,13 +67,13 @@ public class MainActivity extends AppCompatActivity {
         toggle.syncState();
 
 
-        NavigationView navigationView =  findViewById(R.id.nav_view);        navigationView.getMenu().add(1,1,1,"dd");//需要获取id的话，id就等于1；
+        NavigationView navigationView =  findViewById(R.id.nav_view);
 
         //endregion
 
         //region 控件初始化
-        data.add(new DeviceItem(MainActivity.this,DeviceItem.TYPE_BUTTON_MATE,"button1",R.drawable.ic_menu_manage));
         data.add(new DeviceItem(MainActivity.this,DeviceItem.TYPE_BUTTON_MATE,"标题2",R.drawable.ic_menu_gallery));
+        data.add(new DeviceItem(MainActivity.this,DeviceItem.TYPE_BUTTON_MATE,"button1",R.drawable.ic_menu_manage));
         data.add(new DeviceItem(MainActivity.this,DeviceItem.TYPE_BUTTON_MATE,"测试3",R.drawable.ic_menu_camera));
         //region listview及adapter
 
