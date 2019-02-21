@@ -275,8 +275,10 @@ public class ButtonMateFragment extends Fragment {
 
             if (MQTTService.ACTION_MQTT_CONNECTED.equals(action)) {  //连接成功
                 Log.d(Tag, "ACTION_MQTT_CONNECTED");
+                Log("服务器已连接");
             } else if (MQTTService.ACTION_MQTT_DISCONNECTED.equals(action)) {  //连接失败/断开
                 Log.w(Tag, "ACTION_MQTT_DISCONNECTED");
+                Log("服务器已断开");
             } else if (MQTTService.ACTION_DATA_AVAILABLE.equals(action)) {  //接收到数据
                 String topic = intent.getStringExtra(MQTTService.EXTRA_DATA_TOPIC);
                 String message = intent.getStringExtra(MQTTService.EXTRA_DATA_CONTENT);
@@ -287,4 +289,8 @@ public class ButtonMateFragment extends Fragment {
     //endregion
 
 
+    void Log(String str)
+    {
+        log.setText(log.getText()+"\n" +str);
+    }
 }
