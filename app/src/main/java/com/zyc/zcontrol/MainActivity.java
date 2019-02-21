@@ -118,6 +118,7 @@ public class MainActivity extends AppCompatActivity {
 
         //endregion
 
+        //region MQTT服务有关
         //region 动态注册接收mqtt服务的广播接收器,
         localBroadcastManager = LocalBroadcastManager.getInstance(this);
         msgReceiver = new MsgReceiver();
@@ -129,10 +130,11 @@ public class MainActivity extends AppCompatActivity {
         //endregion
 
         //region 启动MQTT服务 不启动
-//        Intent intent = new Intent(MainActivity.this, MQTTService.class);
-//        startService(intent);
-//        bindService(intent, mMQTTServiceConnection, BIND_AUTO_CREATE);
+        Intent intent = new Intent(MainActivity.this, MQTTService.class);
+        startService(intent);
+        bindService(intent, mMQTTServiceConnection, BIND_AUTO_CREATE);
 
+        //endregion
         //endregion
 
         //region json测试
@@ -180,7 +182,7 @@ public class MainActivity extends AppCompatActivity {
         //停止服务
         Intent intent = new Intent(MainActivity.this, MQTTService.class);
         stopService(intent);
-
+//        unbindService(mMQTTServiceConnection);
         super.onDestroy();
     }
 

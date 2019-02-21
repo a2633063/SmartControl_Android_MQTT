@@ -157,7 +157,7 @@ public class MQTTService extends Service
     private final IBinder mBinder = new LocalBinder();
 
     public class LocalBinder extends Binder {
-        MQTTService getService() {
+        public MQTTService getService() {
             return MQTTService.this;
         }
     }
