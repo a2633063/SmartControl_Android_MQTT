@@ -18,12 +18,20 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.widget.AdapterView;
 import android.widget.Button;
+import android.widget.ListView;
+
+import java.util.ArrayList;
+import java.util.List;
 
 public class MainActivity extends AppCompatActivity {
-    public final static String Tag =
-            "MainActivity";
+    public final static String Tag = "MainActivity";
 
+    DrawerLayout drawerLayout;
+    ListView lv_device;
+    List<DeviceItem> data = new ArrayList<DeviceItem>();
+    DeviceListAdapter adapter;
 
     //region 使用本地广播与service通信
     LocalBroadcastManager localBroadcastManager;
@@ -45,15 +53,48 @@ public class MainActivity extends AppCompatActivity {
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
-        //region 侧边栏 悬浮按钮初始化
-        DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
+        //region 侧边栏 初始化
+        drawerLayout = (DrawerLayout) findViewById(R.id.drawer_layout);
         ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(
-                this, drawer, toolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close);
-        drawer.addDrawerListener(toggle);
+                this, drawerLayout, toolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close);
+        drawerLayout.addDrawerListener(toggle);
         toggle.syncState();
 
+
+//        NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);        navigationView.getMenu().add(1,1,1,"dd");//需要获取id的话，id就等于1；
+//        navigationView.getMenu().add(2,2,2,"ee");
+//        navigationView.getMenu().add(3,3,3,"ff");
+//        navigationView.setNavigationItemSelectedListener(this);
         //endregion
 
+        //region 控件初始化
+        DeviceItem item = new DeviceItem(MainActivity.this,"asdf");
+        data.add(item);
+        data.add(item);
+        data.add(item);
+        item = new DeviceItem(MainActivity.this,"asdf");
+
+        item.setIcon(R.drawable.ic_menu_gallery);
+        data.add(item);
+        data.add(item);
+        data.add(item);
+        data.add(item);
+        data.add(item);
+        data.add(item);
+        data.add(item);
+
+        lv_device=findViewById(R.id.lv_device);
+        adapter = new DeviceListAdapter(MainActivity.this, data);
+        if(adapter.getCount()>0) adapter.setChoice(0);
+        lv_device.setAdapter(adapter);
+        lv_device.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                adapter.setChoice(position);
+                drawerLayout.closeDrawer(GravityCompat.START);//关闭侧边栏
+            }
+        });
+        //endregion
 
         //region 动态注册接收mqtt服务的广播接收器,
         localBroadcastManager = LocalBroadcastManager.getInstance(this);
@@ -65,14 +106,14 @@ public class MainActivity extends AppCompatActivity {
         localBroadcastManager.registerReceiver(msgReceiver, intentFilter);
         //endregion
 
-        //region 启动MQTT服务
+        //region 启动MQTT服务 不启动
         Intent intent = new Intent(MainActivity.this, MQTTService.class);
         startService(intent);
-
         bindService(intent, mMQTTServiceConnection, BIND_AUTO_CREATE);
 
         //endregion
 
+        //region 按键初始化
         startServiceButton = (Button) findViewById(R.id.startServerButton);
         startBindServiceButton = (Button) findViewById(R.id.startBindServerButton);
         shutDownServiceButton = (Button) findViewById(R.id.sutdownServerButton);
@@ -96,6 +137,35 @@ public class MainActivity extends AppCompatActivity {
             }
         });
         //endregion
+        //endregion
+
+
+        //region json测试
+/*
+        String Data = "{\n" +
+                "   \"Battery\" : 255,\n" +
+                "   \"RSSI\" : 12,\n" +
+                "   \"description\" : \"\",\n" +
+                "   \"dtype\" : \"Light/Switch\",\n" +
+                "   \"id\" : \"00014052\",\n" +
+
+
+                "   \"nvalue\" : 0,\n" +
+                "   \"stype\" : \"Switch\",\n" +
+                "   \"svalue1\" : \"0\",\n" +
+                "   \"switchType\" : \"On/Off\",\n" +
+                "   \"unit\" : 1\n" +
+                "}\n";
+
+
+        try {
+            JSONObject jsonArray=new JSONObject(Data);
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }*/
+        //endregion
+
+
     }
 
     @Override
@@ -119,6 +189,7 @@ public class MainActivity extends AppCompatActivity {
         super.onDestroy();
     }
 
+    //region toolbar 菜单栏
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         // Inflate the menu; this adds items to the action bar if it is present.
@@ -140,6 +211,7 @@ public class MainActivity extends AppCompatActivity {
 
         return super.onOptionsItemSelected(item);
     }
+    //endregion
 
     //region MQTT服务有关
 
