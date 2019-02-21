@@ -59,11 +59,9 @@ public class ButtonMateFragment extends Fragment {
         localBroadcastManager.registerReceiver(msgReceiver, intentFilter);
         //endregion
 
-        //region 启动MQTT服务 不启动
+        //region 启动MQTT 服务以及启动,无需再启动
         Intent intent = new Intent(getContext(), MQTTService.class);
-
         getActivity().bindService(intent, mMQTTServiceConnection, BIND_AUTO_CREATE);
-
         //endregion
         //endregion
 
@@ -75,9 +73,7 @@ public class ButtonMateFragment extends Fragment {
         //注销广播
         localBroadcastManager.unregisterReceiver(msgReceiver);
         //停止服务
-        Intent intent = new Intent(getContext(), MQTTService.class);
         getActivity().unbindService( mMQTTServiceConnection);
-
         super.onDestroy();
     }
 
@@ -88,9 +84,6 @@ public class ButtonMateFragment extends Fragment {
         @Override
         public void onServiceConnected(ComponentName componentName, IBinder service) {
             mMQTTService = ((MQTTService.LocalBinder) service).getService();
-            // Automatically connects to the device upon successful start-up initialization.
-            mMQTTService.connect("tcp://47.112.16.98:1883", "mqtt_id_dasdf",
-                    "z", "2633063");
         }
 
         @Override
@@ -109,13 +102,6 @@ public class ButtonMateFragment extends Fragment {
                 Log.d(Tag, "ACTION_MQTT_CONNECTED");
             } else if (MQTTService.ACTION_MQTT_DISCONNECTED.equals(action)) {  //连接失败/断开
                 Log.w(Tag, "ACTION_MQTT_DISCONNECTED");
-                if (mMQTTService != null) {
-                    if (mMQTTService.isConnected()) {
-                        mMQTTService.disconnect();
-                    }
-                    mMQTTService.connect("tcp://47.112.16.98:1883", "mqtt_id_dasdf",
-                            "z", "2633063");
-                }
             } else if (MQTTService.ACTION_DATA_AVAILABLE.equals(action)) {  //接收到数据
                 String topic = intent.getStringExtra(MQTTService.EXTRA_DATA_TOPIC);
                 String str = intent.getStringExtra(MQTTService.EXTRA_DATA_CONTENT);

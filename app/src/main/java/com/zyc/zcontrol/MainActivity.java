@@ -7,6 +7,7 @@ import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.ServiceConnection;
 import android.os.Bundle;
+import android.os.Handler;
 import android.os.IBinder;
 import android.support.design.widget.TabLayout;
 import android.support.v4.app.Fragment;
@@ -182,7 +183,7 @@ public class MainActivity extends AppCompatActivity {
         //停止服务
         Intent intent = new Intent(MainActivity.this, MQTTService.class);
         stopService(intent);
-//        unbindService(mMQTTServiceConnection);
+        unbindService(mMQTTServiceConnection);
         super.onDestroy();
     }
 
@@ -243,8 +244,16 @@ public class MainActivity extends AppCompatActivity {
                     if (mMQTTService.isConnected()) {
                         mMQTTService.disconnect();
                     }
-                    mMQTTService.connect("tcp://47.112.16.98:1883", "mqtt_id_dasdf",
-                            "z", "2633063");
+
+                    //1秒后重连
+                    new Handler().postDelayed(new Runnable(){
+                        public void run() {
+                            mMQTTService.connect("tcp://47.112.16.98:1883", "mqtt_id_dasdf",
+                                    "z", "2633063");
+
+                        }
+                    }, 1000);
+
                 }
             } else if (MQTTService.ACTION_DATA_AVAILABLE.equals(action)) {  //接收到数据
                 String topic = intent.getStringExtra(MQTTService.EXTRA_DATA_TOPIC);

@@ -7,7 +7,10 @@ import android.os.IBinder;
 import android.support.v4.content.LocalBroadcastManager;
 import android.util.Log;
 
+import org.eclipse.paho.client.mqttv3.IMqttActionListener;
 import org.eclipse.paho.client.mqttv3.IMqttDeliveryToken;
+import org.eclipse.paho.client.mqttv3.IMqttToken;
+import org.eclipse.paho.client.mqttv3.MqttAsyncClient;
 import org.eclipse.paho.client.mqttv3.MqttCallback;
 import org.eclipse.paho.client.mqttv3.MqttClient;
 import org.eclipse.paho.client.mqttv3.MqttConnectOptions;
@@ -15,8 +18,7 @@ import org.eclipse.paho.client.mqttv3.MqttException;
 import org.eclipse.paho.client.mqttv3.MqttMessage;
 import org.eclipse.paho.client.mqttv3.persist.MemoryPersistence;
 
-public class MQTTService extends Service
-        implements MqttCallback {
+public class MQTTService extends Service {
 
     public final static String ACTION_MQTT_CONNECTED =
             "com.zyc.zcontrol.mqtt.ACTION_MQTT_CONNECTED";
@@ -34,124 +36,10 @@ public class MQTTService extends Service
     private LocalBroadcastManager localBroadcastManager = LocalBroadcastManager.getInstance(this);
     //endregion
 
-    MqttClient mqttClient = null;
-
+    MqttAsyncClient mqttClient = null;
 
     public MQTTService() {
     }
-
-/*
-    //region 线程函数,mqtt相关功能在此实现
-    Thread thread = new Thread(new Runnable() {
-        @Override
-        public void run() {
-            MqttClient mqttClient = null;
-            Log.d("MQTTThread", "start");
-            while (flag) {
-
-
-                Log.d("MQTTThread", "url:" + mqtt_uri + ",id:" + mqtt_id
-                        + "user,pwd:" + mqtt_user + "," + mqtt_password);
-
-
-                //消息缓存方式，内存缓存
-                MemoryPersistence persistence = new MemoryPersistence();
-                try {
-                    if (mqttClient != null && mqttClient.isConnected()) {
-                        mqttClient.disconnect();
-                        mqttClient = null;
-                    }
-
-                    //region 建立客户端
-                    mqttClient = new MqttClient(mqtt_uri, mqtt_id, persistence);
-                    //连接的配置参数
-                    MqttConnectOptions connectOptions = new MqttConnectOptions();
-                    connectOptions.setCleanSession(true);  //不记忆上次会话
-                    connectOptions.setUserName(mqtt_user); //用户名
-                    connectOptions.setPassword(mqtt_password.toCharArray()); //密码
-                    connectOptions.setConnectionTimeout(30);  //超时时间
-                    connectOptions.setKeepAliveInterval(60); //心跳时间,单位秒
-                    connectOptions.setAutomaticReconnect(true);//自动重连
-                    //setWill方法，如果项目中需要知道客户端是否掉线可以调用该方法。设置最终端口的通知消息
-                    //            connectOptions.setWill(topic, "close".getBytes(), 2, true);
-                    Log.d("MQTTThread", "connecting to broker");
-                    //endregion
-
-
-                    mqttClient.setCallback(new MqttCallback() {
-                        @Override
-                        public void connectionLost(Throwable cause) {
-                            Log.d("MQTTThread", "connectionLost");
-
-                        }
-
-                        @Override
-                        public void messageArrived(String topic, MqttMessage message) throws Exception {
-                            Log.d("MQTTThread", "topic:" + topic);
-                            Log.d("MQTTThread", "Qos:" + message.getQos());
-                            Log.d("MQTTThread", "message content:" + new String(message.getPayload()));
-
-                            //region 广播测试
-                            Intent intent = new Intent("com.zyc.zcontrol.MQTTRECEIVER");
-                            intent.putExtra("string", new String(message.getPayload()));
-                            localBroadcastManager.sendBroadcast(intent);
-                            //endregion
-
-                        }
-
-                        @Override
-                        public void deliveryComplete(IMqttDeliveryToken token) {
-                            Log.d("MQTTThread", "deliveryComplete");
-                        }
-                    });
-                    //连接服务器
-                    mqttClient.connect(connectOptions);
-
-                    //订阅消息
-                    mqttClient.subscribe("/test/androidGet", 0);
-
-                    while (flag) {
-                        while (mqtt_send_topic != null &&
-                                mqtt_send_string != null && flag) {
-                            MqttMessage message = new MqttMessage(mqtt_send_string.getBytes());
-                            //设定消息发送等级
-                            message.setQos(qos);
-                            //发布消息
-                            mqttClient.publish(mqtt_send_topic, message);
-                            mqtt_send_topic = null;
-                            mqtt_send_string = null;
-                        }
-                    }
-
-
-                    // System.exit (0);//关闭UI进程
-                } catch (MqttException e) {
-                    Log.e("MQTTThread", "reason " + e.getReasonCode());
-                    Log.e("MQTTThread", "msg " + e.getMessage());
-                    Log.e("MQTTThread", "loc " + e.getLocalizedMessage());
-                    Log.e("MQTTThread", "cause " + e.getCause());
-                    Log.e("MQTTThread", "excep " + e);
-                    try {
-                        Thread.sleep(3000);
-                    } catch (InterruptedException ee) {
-                    }
-                    e.printStackTrace();
-                }
-
-            }
-            //断开连接
-            if (mqttClient != null) {
-                try {
-                    mqttClient.disconnect();
-                } catch (MqttException e) {
-                    e.printStackTrace();
-                }
-            }
-            Log.d("MQTTThread", "end");
-
-        }
-    });*/
-    //endregion
 
     //region Service相关配置
     private final IBinder mBinder = new LocalBinder();
@@ -199,28 +87,6 @@ public class MQTTService extends Service
         localBroadcastManager.sendBroadcast(intent);
     }
 
-    //region MQTT回调
-    @Override
-    public void connectionLost(Throwable cause) {
-        Log.d("MQTTThread", "connectionLost");
-        broadcastUpdate(ACTION_MQTT_DISCONNECTED);
-    }
-
-    @Override
-    public void deliveryComplete(IMqttDeliveryToken token) {
-        Log.d("MQTTThread", "deliveryComplete");
-    }
-
-    @Override
-    public void messageArrived(String topic, MqttMessage message) throws Exception {
-//        Log.d("MQTTThread", "topic:" + topic);
-//        Log.d("MQTTThread", "Qos:" + message.getQos());
-//        Log.d("MQTTThread", "message content:" + new String(message.getPayload()));
-        broadcastUpdate(ACTION_DATA_AVAILABLE, topic, message);
-    }
-
-    //endregion
-
 
     public void connect(String mqtt_uri, String mqtt_id,
                         String mqtt_user, String mqtt_password) {
@@ -228,10 +94,8 @@ public class MQTTService extends Service
         //消息缓存方式，内存缓存
         MemoryPersistence persistence = new MemoryPersistence();
         try {
-            //region 建立客户端
-            if (mqttClient == null)
-                mqttClient = new MqttClient(mqtt_uri, mqtt_id, persistence);
-            //连接的配置参数
+
+            //region 建立客户端连接的配置参数
             MqttConnectOptions connectOptions = new MqttConnectOptions();
             connectOptions.setCleanSession(true);  //不记忆上次会话
             if (mqtt_user != null)
@@ -242,19 +106,61 @@ public class MQTTService extends Service
             connectOptions.setKeepAliveInterval(60); //心跳时间,单位秒
             connectOptions.setAutomaticReconnect(true);//自动重连
             //setWill方法，如果项目中需要知道客户端是否掉线可以调用该方法。设置最终端口的通知消息
-            //            connectOptions.setWill(topic, "close".getBytes(), 2, true);
-            Log.d("MQTTThread", "connecting to broker");
+            //connectOptions.setWill(topic, "close".getBytes(), 2, true);
+            Log.d("MQTTService", "read to connecting to MQTT server");
             //endregion
+            if (mqttClient == null)
+                mqttClient = new MqttAsyncClient(mqtt_uri, mqtt_id, persistence);
 
-            mqttClient.setCallback(this);
+            mqttClient.setCallback(new MqttCallback() {
+                @Override
+                public void connectionLost(Throwable cause) {
+                    Log.d("MQTTThread", "connectionLost");
+                    broadcastUpdate(ACTION_MQTT_DISCONNECTED);
+                }
 
+                @Override
+                public void messageArrived(String topic, MqttMessage message) throws Exception {
+//        Log.d("MQTTThread", "topic:" + topic);
+//        Log.d("MQTTThread", "Qos:" + message.getQos());
+//        Log.d("MQTTThread", "message content:" + new String(message.getPayload()));
+                    broadcastUpdate(ACTION_DATA_AVAILABLE, topic, message);
+                }
+
+                @Override
+                public void deliveryComplete(IMqttDeliveryToken token) {
+//                    Log.d("MQTTThread", "deliveryComplete");
+                }
+            });
             //连接服务器
-            mqttClient.connect(connectOptions);
+
+            mqttClient.connect(connectOptions, null, new IMqttActionListener() {
+                @Override
+                public void onSuccess(IMqttToken asyncActionToken) {
+                    Log.d("MQTTService", "connect onSuccess");
+                    try {
+                        mqttClient.subscribe("/test/android", 0);
+                        broadcastUpdate(ACTION_MQTT_CONNECTED); //连接成功
+                    } catch (MqttException e) {
+                        e.printStackTrace();
+                        Log.d("MQTTService", "connect fail");
+                        broadcastUpdate(ACTION_MQTT_DISCONNECTED); //连接失败
+                    }
+                }
+
+                @Override
+                public void onFailure(IMqttToken asyncActionToken, Throwable exception) {
+                    Log.e("MQTTService", "onFailure:" + exception.getMessage());
+                    broadcastUpdate(ACTION_MQTT_DISCONNECTED); //连接失败
+                }
+            });
+
+
+            //mqttClient.connect(connectOptions);
 
             //订阅消息
-            mqttClient.subscribe("/test/android", 0);
+//            mqttClient.subscribe("/test/android", 0);
 
-            broadcastUpdate(ACTION_MQTT_CONNECTED); //连接成功
         } catch (MqttException e) {
             Log.e("MQTTService", "reason " + e.getReasonCode());
             Log.e("MQTTService", "msg " + e.getMessage());
@@ -273,14 +179,6 @@ public class MQTTService extends Service
     public void disconnect() {
         try {
             mqttClient.disconnect();
-        } catch (MqttException e) {
-            e.printStackTrace();
-        }
-    }
-
-    public void reconnect() {
-        try {
-            mqttClient.reconnect();
         } catch (MqttException e) {
             e.printStackTrace();
         }
