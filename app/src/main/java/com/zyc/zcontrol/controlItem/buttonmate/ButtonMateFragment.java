@@ -194,7 +194,7 @@ public class ButtonMateFragment extends Fragment {
         //endregion
 
         //endregion
-        
+
         return view;
     }
 

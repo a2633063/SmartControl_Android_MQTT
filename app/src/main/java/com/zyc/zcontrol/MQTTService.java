@@ -70,6 +70,7 @@ public class MQTTService extends Service {
     @Override
     public void onDestroy() {
 
+        disconnect();
         super.onDestroy();
         Log.d("MQTTService", "onDestroy");
     }

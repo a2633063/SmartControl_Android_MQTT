@@ -118,6 +118,7 @@ public class MainActivity extends AppCompatActivity {
         });
         //endregion
 
+        //region 打开网页
         final TextView nav_header_subtitle=navigationView.getHeaderView(0).findViewById(R.id.tv_nav_header_subtitle);
         nav_header_subtitle.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -127,6 +128,7 @@ public class MainActivity extends AppCompatActivity {
                 startActivity(intent);
             }
         });
+        //endregion
         //endregion
 
         //region MQTT服务有关
