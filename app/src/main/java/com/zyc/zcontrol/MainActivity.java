@@ -27,8 +27,11 @@ import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.AdapterView;
+import android.widget.Button;
 import android.widget.ListView;
 import android.widget.TextView;
+
+import com.zyc.StaticVariable;
 
 import java.util.ArrayList;
 
@@ -49,6 +52,7 @@ public class MainActivity extends AppCompatActivity {
     private ViewPager viewPager;
     private FragmentAdapter fragmentAdapter;
 
+    Button btn_device_add;
 
     ConnectService mConnectService;
 
@@ -74,9 +78,9 @@ public class MainActivity extends AppCompatActivity {
         //endregion
 
         //region 控件初始化
-        data.add(new DeviceItem(MainActivity.this, DeviceItem.TYPE_BUTTON_MATE, "标题2", R.drawable.ic_menu_gallery));
-        data.add(new DeviceItem(MainActivity.this, DeviceItem.TYPE_BUTTON_MATE, "button1", R.drawable.ic_menu_manage));
-        data.add(new DeviceItem(MainActivity.this, DeviceItem.TYPE_BUTTON_MATE, "测试3", R.drawable.ic_menu_camera));
+        data.add(new DeviceItem(MainActivity.this, StaticVariable.TYPE_BUTTON_MATE, "标题2" ));
+        data.add(new DeviceItem(MainActivity.this, StaticVariable.TYPE_BUTTON_MATE, "button1" ));
+        data.add(new DeviceItem(MainActivity.this, StaticVariable.TYPE_BUTTON_MATE, "测试3"));
         //region listview及adapter
 
         lv_device = findViewById(R.id.lv_device);
@@ -127,6 +131,14 @@ public class MainActivity extends AppCompatActivity {
             }
         });
         //endregion
+
+        btn_device_add=findViewById(R.id.btn_device_add);
+        btn_device_add.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                startActivityForResult(new Intent(MainActivity.this, DeviceAddChoiceActivity.class), 1);
+            }
+        });
 
         //region 打开网页
         final TextView nav_header_subtitle = navigationView.getHeaderView(0).findViewById(R.id.tv_nav_header_subtitle);
@@ -188,7 +200,18 @@ public class MainActivity extends AppCompatActivity {
 
 
     }
+    @Override
 
+    protected void onActivityResult(int requestCode, int resultCode, Intent intent) {
+
+        if(resultCode!=RESULT_OK) return;
+        if(requestCode==1) {
+            int type = intent.getIntExtra("type", StaticVariable.TYPE_UNKNOWN);
+            String ip = intent.getExtras().getString("ip");
+            String mac = intent.getExtras().getString("mac");
+            Log.e(Tag, "get device result:" + ip + "," + mac + "," + type);
+        }
+    }
     @Override
     public void onBackPressed() {
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);

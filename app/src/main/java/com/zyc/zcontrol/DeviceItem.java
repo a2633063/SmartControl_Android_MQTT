@@ -5,17 +5,11 @@ import android.graphics.drawable.Drawable;
 import android.support.annotation.DrawableRes;
 import android.support.v4.app.Fragment;
 
+import com.zyc.StaticVariable;
 import com.zyc.zcontrol.controlItem.buttonmate.ButtonMateFragment;
 
 
 public class DeviceItem {
-    final static int TYPE_NULL=-1;
-    final static int TYPE_BUTTON_MATE=1;
-    final static int TYPE_BUTTON=2;
-    final static int TYPE_RGB=3;
-    final static int TYPE_CLOCK=4;
-
-
 
     public DeviceItem(Context context,int type,String name)
     {
@@ -45,12 +39,17 @@ public class DeviceItem {
     {
         switch(type)
         {
-            case TYPE_NULL:
+            case StaticVariable.TYPE_UNKNOWN:
 //                throw
                 break;
-            case TYPE_BUTTON_MATE:
+            case StaticVariable.TYPE_BUTTON_MATE:
                 fragment=new ButtonMateFragment();
                 break;
+        }
+
+        if(Icon==null)
+        {
+            setIcon(StaticVariable.TYPE_ICON[type]);
         }
     }
 
