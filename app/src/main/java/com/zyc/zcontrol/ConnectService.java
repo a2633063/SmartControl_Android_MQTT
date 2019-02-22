@@ -12,13 +12,19 @@ import org.eclipse.paho.client.mqttv3.IMqttDeliveryToken;
 import org.eclipse.paho.client.mqttv3.IMqttToken;
 import org.eclipse.paho.client.mqttv3.MqttAsyncClient;
 import org.eclipse.paho.client.mqttv3.MqttCallback;
-import org.eclipse.paho.client.mqttv3.MqttClient;
 import org.eclipse.paho.client.mqttv3.MqttConnectOptions;
 import org.eclipse.paho.client.mqttv3.MqttException;
 import org.eclipse.paho.client.mqttv3.MqttMessage;
 import org.eclipse.paho.client.mqttv3.persist.MemoryPersistence;
 
-public class MQTTService extends Service {
+import java.io.IOException;
+import java.net.DatagramPacket;
+import java.net.DatagramSocket;
+import java.net.InetAddress;
+import java.net.SocketException;
+import java.net.UnknownHostException;
+
+public class ConnectService extends Service {
 
     public final static String ACTION_MQTT_CONNECTED =
             "com.zyc.zcontrol.mqtt.ACTION_MQTT_CONNECTED";
@@ -28,25 +34,79 @@ public class MQTTService extends Service {
             "com.zyc.zcontrol.mqtt.ACTION_DATA_AVAILABLE";
     public final static String EXTRA_DATA_TOPIC =
             "com.zyc.zcontrol.mqtt.EXTRA_DATA_TOPIC";
-    public final static String EXTRA_DATA_CONTENT =
-            "com.zyc.zcontrol.mqtt.EXTRA_DATA_CONTENT";
+    public final static String EXTRA_DATA_MESSAGE =
+            "com.zyc.zcontrol.mqtt.EXTRA_DATA_MESSAGE";
 
+
+    public final static String ACTION_UDP_DATA_AVAILABLE =
+            "com.zyc.zcontrol.mqtt.ACTION_UDP_DATA_AVAILABLE";
+    public final static String EXTRA_UDP_DATA_IP =
+            "com.zyc.zcontrol.mqtt.EXTRA_UDP_DATA_IP";
+    public final static String EXTRA_UDP_DATA_PORT =
+            "com.zyc.zcontrol.mqtt.EXTRA_UDP_DATA_PORT";
+    public final static String EXTRA_UDP_DATA_MESSAGE =
+            "com.zyc.zcontrol.mqtt.EXTRA_UDP_DATA_MESSAGE";
 
     //region 广播相关定义
     private LocalBroadcastManager localBroadcastManager = LocalBroadcastManager.getInstance(this);
     //endregion
 
     MqttAsyncClient mqttClient = null;
+    DatagramSocket datagramSocket = null;
 
-    public MQTTService() {
+    public ConnectService() {
     }
+
+
+    //region 线程函数,udp监听
+    boolean flag = true;
+    Thread thread = new Thread(new Runnable() {
+        @Override
+        public void run() {
+            Log.d("UDPThread", "start");
+            try {
+                //1、创建udp socket ，建立端点，并指定固定端口
+                if (datagramSocket == null)
+                    datagramSocket = new DatagramSocket(10180);
+                //2、定义数据包，用于存储数据
+                byte[] buf = new byte[1024];
+                DatagramPacket dp = new DatagramPacket(buf, buf.length);
+                while (flag) {
+
+                    //3、通过服务的receive方法，接收数据并存入数据包中
+                    try {
+                        datagramSocket.receive(dp);
+                        //4、通过数据包中的方法，获取其中的数据。
+                        String ip = dp.getAddress().getHostAddress();
+                        int port = dp.getPort();
+                        String data = new String(dp.getData(), 0, dp.getLength());
+                        broadcastUpdate(ACTION_UDP_DATA_AVAILABLE, ip, port, data);
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                    }
+                }
+            } catch (SocketException e) {
+                e.printStackTrace();
+            }
+
+            //断开连接
+
+            //关闭资源
+            if (datagramSocket != null)
+                datagramSocket.close();
+            Log.d("UDPThread", "end");
+
+        }
+    });
+    //endregion
+
 
     //region Service相关配置
     private final IBinder mBinder = new LocalBinder();
 
     public class LocalBinder extends Binder {
-        public MQTTService getService() {
-            return MQTTService.this;
+        public ConnectService getService() {
+            return ConnectService.this;
         }
     }
 
@@ -58,12 +118,21 @@ public class MQTTService extends Service {
     //endregion
     @Override
     public void onCreate() {
-        Log.d("MQTTService", "OnCreate");
+        Log.d("ConnectService", "OnCreate");
+        if (datagramSocket == null)
+            try {
+                datagramSocket = new DatagramSocket(10180);
+            } catch (SocketException e) {
+                e.printStackTrace();
+                datagramSocket = null;
+            }
+
+        thread.start(); //启动UDP监听进程
     }
 
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
-        Log.d("MQTTService", "onStartCommand");
+        Log.d("ConnectService", "onStartCommand");
         return super.onStartCommand(intent, flags, startId);
     }
 
@@ -71,8 +140,9 @@ public class MQTTService extends Service {
     public void onDestroy() {
 
         disconnect();
+        flag = false;
         super.onDestroy();
-        Log.d("MQTTService", "onDestroy");
+        Log.d("ConnectService", "onDestroy");
     }
 
 
@@ -81,13 +151,21 @@ public class MQTTService extends Service {
         localBroadcastManager.sendBroadcast(intent);
     }
 
-    void broadcastUpdate(String action, String topic, MqttMessage message) {
+    void broadcastUpdate(String action, String ip, int port, String message) {
         final Intent intent = new Intent(action);
-        intent.putExtra(EXTRA_DATA_TOPIC, topic);
-        intent.putExtra(EXTRA_DATA_CONTENT, new String(message.getPayload()));
+
+        intent.putExtra(EXTRA_UDP_DATA_IP, ip);
+        intent.putExtra(EXTRA_UDP_DATA_PORT, port);
+        intent.putExtra(EXTRA_UDP_DATA_MESSAGE, message);
         localBroadcastManager.sendBroadcast(intent);
     }
 
+    void broadcastUpdate(String action, String topic, MqttMessage message) {
+        final Intent intent = new Intent(action);
+        intent.putExtra(EXTRA_DATA_TOPIC, topic);
+        intent.putExtra(EXTRA_DATA_MESSAGE, new String(message.getPayload()));
+        localBroadcastManager.sendBroadcast(intent);
+    }
 
     public void connect(String mqtt_uri, String mqtt_id,
                         String mqtt_user, String mqtt_password) {
@@ -108,7 +186,7 @@ public class MQTTService extends Service {
             connectOptions.setAutomaticReconnect(true);//自动重连
             //setWill方法，如果项目中需要知道客户端是否掉线可以调用该方法。设置最终端口的通知消息
             //connectOptions.setWill(topic, "close".getBytes(), 2, true);
-            Log.d("MQTTService", "read to connecting to MQTT server");
+            Log.d("ConnectService", "read to connecting to MQTT server");
             //endregion
             if (mqttClient == null)
                 mqttClient = new MqttAsyncClient(mqtt_uri, mqtt_id, persistence);
@@ -138,20 +216,20 @@ public class MQTTService extends Service {
             mqttClient.connect(connectOptions, null, new IMqttActionListener() {
                 @Override
                 public void onSuccess(IMqttToken asyncActionToken) {
-                    Log.d("MQTTService", "connect onSuccess");
+                    Log.d("ConnectService", "connect onSuccess");
                     try {
                         mqttClient.subscribe("/test/android", 0);
                         broadcastUpdate(ACTION_MQTT_CONNECTED); //连接成功
                     } catch (MqttException e) {
                         e.printStackTrace();
-                        Log.d("MQTTService", "connect fail");
+                        Log.d("ConnectService", "connect fail");
                         broadcastUpdate(ACTION_MQTT_DISCONNECTED); //连接失败
                     }
                 }
 
                 @Override
                 public void onFailure(IMqttToken asyncActionToken, Throwable exception) {
-                    Log.e("MQTTService", "onFailure:" + exception.getMessage());
+                    Log.e("ConnectService", "onFailure:" + exception.getMessage());
                     broadcastUpdate(ACTION_MQTT_DISCONNECTED); //连接失败
                 }
             });
@@ -163,11 +241,11 @@ public class MQTTService extends Service {
 //            mqttClient.subscribe("/test/android", 0);
 
         } catch (MqttException e) {
-            Log.e("MQTTService", "reason " + e.getReasonCode());
-            Log.e("MQTTService", "msg " + e.getMessage());
-            Log.e("MQTTService", "loc " + e.getLocalizedMessage());
-            Log.e("MQTTService", "cause " + e.getCause());
-            Log.e("MQTTService", "excep " + e);
+            Log.e("ConnectService", "reason " + e.getReasonCode());
+            Log.e("ConnectService", "msg " + e.getMessage());
+            Log.e("ConnectService", "loc " + e.getLocalizedMessage());
+            Log.e("ConnectService", "cause " + e.getCause());
+            Log.e("ConnectService", "excep " + e);
             e.printStackTrace();
             broadcastUpdate(ACTION_MQTT_DISCONNECTED); //连接失败
         }
@@ -185,12 +263,67 @@ public class MQTTService extends Service {
         }
     }
 
-    //region MQTT发送函数
+
+    //region 发送
+
+    //topic为null时始终使用udp发送,否则根据mqtt连接状态现在udp或mqtt发送
     public void Send(String topic, String str) {
-        Send(topic, str, 0);
+
+        if (!isConnected() ||topic==null) {
+            UDPsend(str);
+        } else {
+            MQTTSend(topic, str);
+        }
     }
 
-    public void Send(String topic, String str, int qos) {
+    //region UDP发送
+    public void UDPsend(String message) {
+        UDPsend("255.255.255.255", 10180, message);
+    }
+
+    public void UDPsend(String ip, String message) {
+        UDPsend(ip, 10180, message);
+    }
+
+    public void UDPsend(String ip, int port, String message) {
+
+        if (message == null || message.length() < 1) return;
+
+        try {
+            if (datagramSocket == null)
+                datagramSocket = new DatagramSocket(10180);
+        } catch (SocketException e) {
+            e.printStackTrace();
+        }
+        InetAddress local = null;
+        try {
+            // 换成服务器端IP
+            local = InetAddress.getByName(ip);
+        } catch (UnknownHostException e) {
+            e.printStackTrace();
+        }
+        final DatagramPacket p = new DatagramPacket(message.getBytes(), message.length(),
+                local, port);
+
+        new Thread(new Runnable() {
+            @Override
+            public void run() {
+                try {
+                    datagramSocket.send(p);
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+            }
+        }).start();
+    }
+    //endregion
+
+    //region MQTT发送函数
+    public void MQTTSend(String topic, String str) {
+        MQTTSend(topic, str, 0);
+    }
+
+    public void MQTTSend(String topic, String str, int qos) {
         //region 发送
 
         try {
@@ -203,5 +336,6 @@ public class MQTTService extends Service {
         //endregion
 
     }
+    //endregion
     //endregion
 }

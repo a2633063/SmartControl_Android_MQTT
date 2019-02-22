@@ -24,9 +24,8 @@ import android.widget.LinearLayout;
 import android.widget.ScrollView;
 import android.widget.SeekBar;
 import android.widget.TextView;
-import android.widget.Toast;
 
-import com.zyc.zcontrol.MQTTService;
+import com.zyc.zcontrol.ConnectService;
 import com.zyc.zcontrol.MyFunction;
 import com.zyc.zcontrol.R;
 
@@ -46,7 +45,7 @@ public class ButtonMateFragment extends Fragment {
     //region 使用本地广播与service通信
     LocalBroadcastManager localBroadcastManager;
     private MsgReceiver msgReceiver;
-    MQTTService mMQTTService;
+    ConnectService mConnectService;
     //endregion
 
     //region 控件
@@ -80,14 +79,14 @@ public class ButtonMateFragment extends Fragment {
         localBroadcastManager = LocalBroadcastManager.getInstance(getContext());
         msgReceiver = new MsgReceiver();
         IntentFilter intentFilter = new IntentFilter();
-        intentFilter.addAction(MQTTService.ACTION_MQTT_CONNECTED);
-        intentFilter.addAction(MQTTService.ACTION_MQTT_DISCONNECTED);
-        intentFilter.addAction(MQTTService.ACTION_DATA_AVAILABLE);
+        intentFilter.addAction(ConnectService.ACTION_MQTT_CONNECTED);
+        intentFilter.addAction(ConnectService.ACTION_MQTT_DISCONNECTED);
+        intentFilter.addAction(ConnectService.ACTION_DATA_AVAILABLE);
         localBroadcastManager.registerReceiver(msgReceiver, intentFilter);
         //endregion
 
         //region 启动MQTT 服务以及启动,无需再启动
-        Intent intent = new Intent(getContext(), MQTTService.class);
+        Intent intent = new Intent(getContext(), ConnectService.class);
         getActivity().bindService(intent, mMQTTServiceConnection, BIND_AUTO_CREATE);
         //endregion
         //endregion
@@ -104,7 +103,7 @@ public class ButtonMateFragment extends Fragment {
                 if (ll.getVisibility() != View.VISIBLE) {
                     ll.setVisibility(View.VISIBLE);
 
-//                        TcpSocketClient.Send(setting_get_all);
+//                        TcpSocketClient.MQTTSend(setting_get_all);
 
                 } else ll.setVisibility(View.GONE);
                 swipeLayout.setRefreshing(false);
@@ -238,7 +237,7 @@ public class ButtonMateFragment extends Fragment {
     void send(String topic, String message, boolean choice) {
         if (choice) {
             MyFunction.UDPsend(message);
-        } else mMQTTService.Send(topic, message);
+        } else mConnectService.MQTTSend(topic, message);
     }
 
     void send(String topic, String message) {
@@ -258,12 +257,12 @@ public class ButtonMateFragment extends Fragment {
 
         @Override
         public void onServiceConnected(ComponentName componentName, IBinder service) {
-            mMQTTService = ((MQTTService.LocalBinder) service).getService();
+            mConnectService = ((ConnectService.LocalBinder) service).getService();
         }
 
         @Override
         public void onServiceDisconnected(ComponentName componentName) {
-            mMQTTService = null;
+            mConnectService = null;
         }
     };
 
@@ -273,15 +272,15 @@ public class ButtonMateFragment extends Fragment {
         public void onReceive(Context context, Intent intent) {
             final String action = intent.getAction();
 
-            if (MQTTService.ACTION_MQTT_CONNECTED.equals(action)) {  //连接成功
+            if (ConnectService.ACTION_MQTT_CONNECTED.equals(action)) {  //连接成功
                 Log.d(Tag, "ACTION_MQTT_CONNECTED");
                 Log("服务器已连接");
-            } else if (MQTTService.ACTION_MQTT_DISCONNECTED.equals(action)) {  //连接失败/断开
+            } else if (ConnectService.ACTION_MQTT_DISCONNECTED.equals(action)) {  //连接失败/断开
                 Log.w(Tag, "ACTION_MQTT_DISCONNECTED");
                 Log("服务器已断开");
-            } else if (MQTTService.ACTION_DATA_AVAILABLE.equals(action)) {  //接收到数据
-                String topic = intent.getStringExtra(MQTTService.EXTRA_DATA_TOPIC);
-                String message = intent.getStringExtra(MQTTService.EXTRA_DATA_CONTENT);
+            } else if (ConnectService.ACTION_DATA_AVAILABLE.equals(action)) {  //接收到数据
+                String topic = intent.getStringExtra(ConnectService.EXTRA_DATA_TOPIC);
+                String message = intent.getStringExtra(ConnectService.EXTRA_DATA_MESSAGE);
                 Receive(topic, message);
             }
         }

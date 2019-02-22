@@ -50,7 +50,9 @@ public class MainActivity extends AppCompatActivity {
     private FragmentAdapter fragmentAdapter;
 
 
-    MQTTService mMQTTService;
+    ConnectService mConnectService;
+
+    int onPageScrolled = 0;   //viewpage滑动标志位,用于当viewpage滑到最左侧屏,依然继续向左侧滑动时打开侧边栏
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -67,19 +69,19 @@ public class MainActivity extends AppCompatActivity {
         toggle.syncState();
 
 
-        NavigationView navigationView =  findViewById(R.id.nav_view);
+        NavigationView navigationView = findViewById(R.id.nav_view);
 
         //endregion
 
         //region 控件初始化
-        data.add(new DeviceItem(MainActivity.this,DeviceItem.TYPE_BUTTON_MATE,"标题2",R.drawable.ic_menu_gallery));
-        data.add(new DeviceItem(MainActivity.this,DeviceItem.TYPE_BUTTON_MATE,"button1",R.drawable.ic_menu_manage));
-        data.add(new DeviceItem(MainActivity.this,DeviceItem.TYPE_BUTTON_MATE,"测试3",R.drawable.ic_menu_camera));
+        data.add(new DeviceItem(MainActivity.this, DeviceItem.TYPE_BUTTON_MATE, "标题2", R.drawable.ic_menu_gallery));
+        data.add(new DeviceItem(MainActivity.this, DeviceItem.TYPE_BUTTON_MATE, "button1", R.drawable.ic_menu_manage));
+        data.add(new DeviceItem(MainActivity.this, DeviceItem.TYPE_BUTTON_MATE, "测试3", R.drawable.ic_menu_camera));
         //region listview及adapter
 
-        lv_device=findViewById(R.id.lv_device);
+        lv_device = findViewById(R.id.lv_device);
         adapter = new DeviceListAdapter(MainActivity.this, data);
-        if(adapter.getCount()>0) adapter.setChoice(0);
+        if (adapter.getCount() > 0) adapter.setChoice(0);
         lv_device.setAdapter(adapter);
         lv_device.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
@@ -99,11 +101,17 @@ public class MainActivity extends AppCompatActivity {
         viewPager.setAdapter(fragmentAdapter);
         viewPager.setOffscreenPageLimit(data.size());
         tabLayout.setupWithViewPager(viewPager);
-
         viewPager.addOnPageChangeListener(new ViewPager.OnPageChangeListener() {
+
             @Override
             public void onPageScrolled(int position, float positionOffset, int positionOffsetPixels) {
-
+                if (position == 0 && positionOffset == 0 && positionOffsetPixels == 0) {
+                    onPageScrolled++;
+                    if (onPageScrolled > 3) {
+                        drawerLayout.openDrawer(GravityCompat.START);
+                    }
+                } else
+                    onPageScrolled = 0;
             }
 
             @Override
@@ -113,13 +121,15 @@ public class MainActivity extends AppCompatActivity {
 
             @Override
             public void onPageScrollStateChanged(int state) {
+                if (state == 0 || state == 2)
+                    onPageScrolled = 0;
 
             }
         });
         //endregion
 
         //region 打开网页
-        final TextView nav_header_subtitle=navigationView.getHeaderView(0).findViewById(R.id.tv_nav_header_subtitle);
+        final TextView nav_header_subtitle = navigationView.getHeaderView(0).findViewById(R.id.tv_nav_header_subtitle);
         nav_header_subtitle.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -136,14 +146,15 @@ public class MainActivity extends AppCompatActivity {
         localBroadcastManager = LocalBroadcastManager.getInstance(this);
         msgReceiver = new MsgReceiver();
         IntentFilter intentFilter = new IntentFilter();
-        intentFilter.addAction(MQTTService.ACTION_MQTT_CONNECTED);
-        intentFilter.addAction(MQTTService.ACTION_MQTT_DISCONNECTED);
-        intentFilter.addAction(MQTTService.ACTION_DATA_AVAILABLE);
+        intentFilter.addAction(ConnectService.ACTION_MQTT_CONNECTED);
+        intentFilter.addAction(ConnectService.ACTION_MQTT_DISCONNECTED);
+        intentFilter.addAction(ConnectService.ACTION_DATA_AVAILABLE);
+        intentFilter.addAction(ConnectService.ACTION_UDP_DATA_AVAILABLE);//UDP监听
         localBroadcastManager.registerReceiver(msgReceiver, intentFilter);
         //endregion
 
         //region 启动MQTT服务 不启动
-        Intent intent = new Intent(MainActivity.this, MQTTService.class);
+        Intent intent = new Intent(MainActivity.this, ConnectService.class);
         startService(intent);
         bindService(intent, mMQTTServiceConnection, BIND_AUTO_CREATE);
 
@@ -193,7 +204,7 @@ public class MainActivity extends AppCompatActivity {
         //注销广播
         localBroadcastManager.unregisterReceiver(msgReceiver);
         //停止服务
-        Intent intent = new Intent(MainActivity.this, MQTTService.class);
+        Intent intent = new Intent(MainActivity.this, ConnectService.class);
         stopService(intent);
         unbindService(mMQTTServiceConnection);
         super.onDestroy();
@@ -216,7 +227,10 @@ public class MainActivity extends AppCompatActivity {
 
         //noinspection SimplifiableIfStatement
         if (id == R.id.action_settings) {
-            mMQTTService.Send("/test/Androdi", "test message", 0);
+            mConnectService.Send("/test/Androdi", "test message");
+
+            mConnectService.Send(null,"UDP TEST");
+
             return true;
         }
 
@@ -224,21 +238,34 @@ public class MainActivity extends AppCompatActivity {
     }
     //endregion
 
+
+    //数据接收处理函数
+    void Receive(String ip, int port, String message) {
+        //TODO 数据接收处理
+        Log.d(Tag, "UDP RECV DATA from " + ip + ":" + port + ":" + message);
+        Receive(null, message);
+    }
+
+    void Receive(String topic, String message) {
+        //TODO 数据接收处理
+        Log.d(Tag, "RECV DATA,topic:" + topic + ",content:" + message);
+    }
+
     //region MQTT服务有关
 
     private final ServiceConnection mMQTTServiceConnection = new ServiceConnection() {
 
         @Override
         public void onServiceConnected(ComponentName componentName, IBinder service) {
-            mMQTTService = ((MQTTService.LocalBinder) service).getService();
+            mConnectService = ((ConnectService.LocalBinder) service).getService();
             // Automatically connects to the device upon successful start-up initialization.
-            mMQTTService.connect("tcp://47.112.16.98:1883", "mqtt_id_dasdf",
+            mConnectService.connect("tcp://47.112.16.98:1883", "mqtt_id_dasdf",
                     "z", "2633063");
         }
 
         @Override
         public void onServiceDisconnected(ComponentName componentName) {
-            mMQTTService = null;
+            mConnectService = null;
         }
     };
 
@@ -248,29 +275,35 @@ public class MainActivity extends AppCompatActivity {
         public void onReceive(Context context, Intent intent) {
             final String action = intent.getAction();
 
-            if (MQTTService.ACTION_MQTT_CONNECTED.equals(action)) {  //连接成功
+            if (ConnectService.ACTION_UDP_DATA_AVAILABLE.equals(action)) {
+                String ip = intent.getStringExtra(ConnectService.EXTRA_UDP_DATA_IP);
+                String message = intent.getStringExtra(ConnectService.EXTRA_UDP_DATA_MESSAGE);
+                int port = intent.getIntExtra(ConnectService.EXTRA_UDP_DATA_PORT, -1);
+                Receive(ip, port, message);
+            } else if (ConnectService.ACTION_MQTT_CONNECTED.equals(action)) {  //连接成功
                 Log.d(Tag, "ACTION_MQTT_CONNECTED");
-            } else if (MQTTService.ACTION_MQTT_DISCONNECTED.equals(action)) {  //连接失败/断开
+            } else if (ConnectService.ACTION_MQTT_DISCONNECTED.equals(action)) {  //连接失败/断开
                 Log.w(Tag, "ACTION_MQTT_DISCONNECTED");
-                if (mMQTTService != null) {
-                    if (mMQTTService.isConnected()) {
-                        mMQTTService.disconnect();
+                if (mConnectService != null) {
+                    if (mConnectService.isConnected()) {
+                        mConnectService.disconnect();
                     }
 
                     //1秒后重连
-                    new Handler().postDelayed(new Runnable(){
+                    new Handler().postDelayed(new Runnable() {
                         public void run() {
-                            mMQTTService.connect("tcp://47.112.16.98:1883", "mqtt_id_dasdf",
+                            mConnectService.connect("tcp://47.112.16.98:1883", "mqtt_id_dasdf",
                                     "z", "2633063");
 
                         }
                     }, 1000);
 
                 }
-            } else if (MQTTService.ACTION_DATA_AVAILABLE.equals(action)) {  //接收到数据
-                String topic = intent.getStringExtra(MQTTService.EXTRA_DATA_TOPIC);
-                String str = intent.getStringExtra(MQTTService.EXTRA_DATA_CONTENT);
-                Log.d(Tag, "RECV DATA,topic:" + topic + ",content:" + str);
+            } else if (ConnectService.ACTION_DATA_AVAILABLE.equals(action)) {  //接收到数据
+                String topic = intent.getStringExtra(ConnectService.EXTRA_DATA_TOPIC);
+                String message = intent.getStringExtra(ConnectService.EXTRA_DATA_MESSAGE);
+                Receive(topic, message);
+
             }
         }
     }
