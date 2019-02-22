@@ -29,7 +29,8 @@
             android:enabled="true"
             android:exported="true" />
 
-        <activity android:name=".DeviceAddChoiceActivity"></activity>
+        <activity android:name=".DeviceAddChoiceActivity" />
+        <activity android:name="com.espressif.ESPtouchActivity"></activity>
     </application>
 
 </manifest>

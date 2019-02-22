@@ -28,4 +28,6 @@ dependencies {
     implementation 'org.eclipse.paho:org.eclipse.paho.client.mqttv3:1.1.1'
 //    implementation 'com.google.code.gson:gson:+'
     implementation 'com.android.support:support-v4:28.0.0-alpha1'
+
+    implementation project(':esptouch')
 }

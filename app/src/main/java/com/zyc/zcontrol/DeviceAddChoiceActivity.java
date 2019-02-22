@@ -6,6 +6,7 @@ import android.support.v4.view.GravityCompat;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.MenuItem;
 import android.view.View;
@@ -16,14 +17,18 @@ import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.TextView;
 
+import com.espressif.ESPtouchActivity;
 import com.zyc.StaticVariable;
 
 import java.util.List;
 
 public class DeviceAddChoiceActivity extends AppCompatActivity {
+    public final static String Tag = "DeviceAddChoiceActivity";
 
     ListView lv_device;
     DeviceChoiceListAdapter adapter;
+
+    int device_type = -1;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -46,17 +51,14 @@ public class DeviceAddChoiceActivity extends AppCompatActivity {
         lv_device.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                //返回数据
-                Intent intent = new Intent();
-                intent.putExtra("type", 1);
-                intent.putExtra("ip", "255.255.255.255");
-                intent.putExtra("mac", "12:34:56:78:90");
-                setResult(RESULT_OK, intent);
-                finish();
+                device_type = position;
+                Intent intent = new Intent(DeviceAddChoiceActivity.this, ESPtouchActivity.class);
+                startActivityForResult(intent, 1);
             }
         });
         //endregion
     }
+
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
@@ -66,10 +68,25 @@ public class DeviceAddChoiceActivity extends AppCompatActivity {
         }
         return super.onOptionsItemSelected(item);
     }
-    @Override
-    protected void onDestroy() {
 
-        super.onDestroy();
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+
+        if (resultCode != RESULT_OK) return;
+        if (requestCode == 1) {
+            String ip = data.getExtras().getString("ip");
+            String mac = data.getExtras().getString("mac");
+
+            //返回数据
+            Intent intent = new Intent();
+            intent.putExtra("type", device_type);
+            intent.putExtra("ip", ip);
+            intent.putExtra("mac", mac);
+            setResult(RESULT_OK, intent);
+
+            finish();
+            Log.e(Tag, "get device result:" + ip + "," + mac + "," + device_type);
+        }
     }
 
 
