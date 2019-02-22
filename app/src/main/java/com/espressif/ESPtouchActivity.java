@@ -451,6 +451,7 @@ public class ESPtouchActivity extends AppCompatActivity implements View.OnClickL
                             }
                         }
                     });
+                    mResultDialog.setButton(DialogInterface.BUTTON_NEGATIVE,"取消",(DialogInterface.OnClickListener) null);
 
                 } else {
                     mResultDialog.setMessage("配对失败");
