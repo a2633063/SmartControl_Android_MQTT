@@ -134,7 +134,7 @@ public class ESPtouchActivity extends AppCompatActivity implements View.OnClickL
         if (actionBar != null) {
             actionBar.setHomeButtonEnabled(true);
             actionBar.setDisplayHomeAsUpEnabled(true);
-//            actionBar.setTitle(StaticVariable.Item_PC_Text);
+            actionBar.setTitle("添加设备");
         }
         //endregion
         mApSsidTV = findViewById(R.id.ap_ssid_text);

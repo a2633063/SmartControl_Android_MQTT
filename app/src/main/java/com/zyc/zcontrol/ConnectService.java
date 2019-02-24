@@ -48,7 +48,7 @@ public class ConnectService extends Service {
             "com.zyc.zcontrol.mqtt.EXTRA_UDP_DATA_MESSAGE";
 
     //region 广播相关定义
-    private LocalBroadcastManager localBroadcastManager = LocalBroadcastManager.getInstance(this);
+    private LocalBroadcastManager localBroadcastManager;
     //endregion
 
     MqttAsyncClient mqttClient = null;
@@ -119,6 +119,13 @@ public class ConnectService extends Service {
     @Override
     public void onCreate() {
         Log.d("ConnectService", "OnCreate");
+
+        try {
+            localBroadcastManager = LocalBroadcastManager.getInstance(this);
+        } catch (Exception e) {
+            e.printStackTrace();
+            this.stopSelf();
+        }
         if (datagramSocket == null)
             try {
                 datagramSocket = new DatagramSocket(10180);

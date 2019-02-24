@@ -39,7 +39,7 @@ public class DeviceAddChoiceActivity extends AppCompatActivity {
         if (actionBar != null) {
             actionBar.setHomeButtonEnabled(true);
             actionBar.setDisplayHomeAsUpEnabled(true);
-//            actionBar.setTitle(StaticVariable.Item_PC_Text);
+            actionBar.setTitle("添加设备");
         }
 
         //region listview及adapter
@@ -57,6 +57,22 @@ public class DeviceAddChoiceActivity extends AppCompatActivity {
             }
         });
         //endregion
+
+        findViewById(R.id.button).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+
+                //返回数据
+                Intent intent = new Intent();
+                intent.putExtra("type", 0);
+                intent.putExtra("ip", "192.168.2.105");
+                intent.putExtra("mac", "18fe34e582e2");
+                setResult(RESULT_OK, intent);
+                finish();
+
+            }
+        });
+
     }
 
     @Override

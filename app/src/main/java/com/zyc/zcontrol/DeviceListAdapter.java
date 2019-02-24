@@ -71,6 +71,11 @@ class DeviceListAdapter extends BaseAdapter {
         return convertView;
     }
 
+    public void add(DeviceItem d)
+    {
+        mdata.add(d);
+        this.notifyDataSetChanged();
+    }
     public void setChoice(int c)
     {
         if(c>=getCount() || c<0) c=-1;
@@ -81,6 +86,26 @@ class DeviceListAdapter extends BaseAdapter {
     {
         if(choice>=getCount() || choice<0) return -1;
         return choice;
+    }
+
+    public int contains(DeviceItem d)
+    {
+        for(int i=0;i<mdata.size();i++)
+        {
+            if(mdata.get(i).mac.equalsIgnoreCase(d.mac))
+                return i;
+        }
+        return -1;
+    }
+
+    public int contains(String mac)
+    {
+        for(int i=0;i<mdata.size();i++)
+        {
+            if(mdata.get(i).mac.equalsIgnoreCase(mac))
+                return i;
+        }
+        return -1;
     }
 
     class ViewHolder {

@@ -11,25 +11,29 @@ import com.zyc.zcontrol.controlItem.buttonmate.ButtonMateFragment;
 
 public class DeviceItem {
 
-    public DeviceItem(Context context,int type,String name)
+    public DeviceItem(Context context,int type,String name,String mac)
     {
         this.context=context;
         this.name=name;
         this.type=type;
+        this.mac=mac;
         init();
     }
 
-    public DeviceItem(Context context,int type, String name, @DrawableRes int resId)
+    public DeviceItem(Context context,int type, String name,String mac, @DrawableRes int resId)
     {
         this.context=context;
         this.name=name;
         this.type=type;
         this.Icon=context.getResources().getDrawable(resId);
+        this.mac=mac;
         init();
     }
 
     private Context context;
+
     public String name;
+    String mac;
     public Drawable Icon=null;
     public int Group;
     public Fragment fragment=null;
@@ -46,7 +50,10 @@ public class DeviceItem {
                 fragment=new ButtonMateFragment();
                 break;
         }
-
+        if(fragment==null)
+        {
+            fragment=new ButtonMateFragment();
+        }
         if(Icon==null)
         {
             setIcon(StaticVariable.TYPE_ICON[type]);

@@ -3,6 +3,7 @@ package com.zyc.zcontrol;
 import android.content.BroadcastReceiver;
 import android.content.ComponentName;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.ServiceConnection;
@@ -17,6 +18,7 @@ import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentPagerAdapter;
 import android.support.v4.content.LocalBroadcastManager;
 import android.support.v4.view.ViewPager;
+import android.support.v7.app.AlertDialog;
 import android.util.Log;
 import android.view.View;
 import android.support.v4.view.GravityCompat;
@@ -26,6 +28,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.Button;
 import android.widget.ListView;
@@ -33,7 +36,11 @@ import android.widget.TextView;
 
 import com.zyc.StaticVariable;
 
+import org.json.JSONException;
+import org.json.JSONObject;
+
 import java.util.ArrayList;
+import java.util.List;
 
 public class MainActivity extends AppCompatActivity {
     public final static String Tag = "MainActivity";
@@ -51,12 +58,14 @@ public class MainActivity extends AppCompatActivity {
     private TabLayout tabLayout;
     private ViewPager viewPager;
     private FragmentAdapter fragmentAdapter;
-
-    Button btn_device_add;
+    private Button btn_device_add;
 
     ConnectService mConnectService;
+    boolean newDeviceFlag = false;
+
 
     int onPageScrolled = 0;   //viewpage滑动标志位,用于当viewpage滑到最左侧屏,依然继续向左侧滑动时打开侧边栏
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -78,9 +87,9 @@ public class MainActivity extends AppCompatActivity {
         //endregion
 
         //region 控件初始化
-        data.add(new DeviceItem(MainActivity.this, StaticVariable.TYPE_BUTTON_MATE, "标题2" ));
-        data.add(new DeviceItem(MainActivity.this, StaticVariable.TYPE_BUTTON_MATE, "button1" ));
-        data.add(new DeviceItem(MainActivity.this, StaticVariable.TYPE_BUTTON_MATE, "测试3"));
+        data.add(new DeviceItem(MainActivity.this, StaticVariable.TYPE_BUTTON_MATE, "标题2", "123456789abcde"));
+        data.add(new DeviceItem(MainActivity.this, StaticVariable.TYPE_BUTTON_MATE, "button1", "123456789abcde"));
+        data.add(new DeviceItem(MainActivity.this, StaticVariable.TYPE_BUTTON_MATE, "测试3", "123456789abcde"));
         //region listview及adapter
 
         lv_device = findViewById(R.id.lv_device);
@@ -132,11 +141,14 @@ public class MainActivity extends AppCompatActivity {
         });
         //endregion
 
-        btn_device_add=findViewById(R.id.btn_device_add);
+        btn_device_add = findViewById(R.id.btn_device_add);
         btn_device_add.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 startActivityForResult(new Intent(MainActivity.this, DeviceAddChoiceActivity.class), 1);
+
+                drawerLayout.closeDrawer(GravityCompat.START);//关闭侧边栏
+
             }
         });
 
@@ -198,20 +210,37 @@ public class MainActivity extends AppCompatActivity {
         }*/
         //endregion
 
-
     }
 
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent intent) {
 
-        if(resultCode!=RESULT_OK) return;
-        if(requestCode==1) {
+        if (resultCode != RESULT_OK) return;
+        if (requestCode == 1) {
             int type = intent.getIntExtra("type", StaticVariable.TYPE_UNKNOWN);
             String ip = intent.getExtras().getString("ip");
             String mac = intent.getExtras().getString("mac");
             Log.e(Tag, "get device result:" + ip + "," + mac + "," + type);
+
+            JSONObject jsonObject = new JSONObject();
+            try {
+                jsonObject.put("cmd", "device report");
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }
+
+            String message = jsonObject.toString();
+            newDeviceFlag = true;
+            mConnectService.UDPsend(ip, message);
+
+//            int x=adapter.contains(mac);
+//            if(x==-1)
+//            {
+//
+//            }
         }
     }
+
     @Override
     public void onBackPressed() {
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
@@ -252,7 +281,7 @@ public class MainActivity extends AppCompatActivity {
         if (id == R.id.action_settings) {
             mConnectService.Send("/test/Androdi", "test message");
 
-            mConnectService.Send(null,"UDP TEST");
+            mConnectService.Send(null, "UDP TEST");
 
             return true;
         }
@@ -265,13 +294,50 @@ public class MainActivity extends AppCompatActivity {
     //数据接收处理函数
     void Receive(String ip, int port, String message) {
         //TODO 数据接收处理
-        Log.d(Tag, "UDP RECV DATA from " + ip + ":" + port + ":" + message);
         Receive(null, message);
     }
 
     void Receive(String topic, String message) {
         //TODO 数据接收处理
         Log.d(Tag, "RECV DATA,topic:" + topic + ",content:" + message);
+        if (newDeviceFlag) {
+            try {
+                JSONObject jsonObject = new JSONObject(message);
+                if (jsonObject.has("name") && jsonObject.has("mac")
+                        && jsonObject.has("type") && jsonObject.has("type_name")) {
+                    newDeviceFlag = false;
+                    final int type = jsonObject.getInt("type");
+                    final String name = jsonObject.getString("name");
+                    final String mac = jsonObject.getString("mac");
+
+                    final int id = adapter.contains(mac);
+                    if (id >= 0) {
+                        AlertDialog alertDialog = new AlertDialog.Builder(MainActivity.this)
+                                .setTitle("设备重复添加")
+                                .setMessage("设备已在列表中")
+                                .create();
+                        alertDialog.setButton(DialogInterface.BUTTON_POSITIVE, "确定", new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialog, int which) {
+                                viewPager.setCurrentItem(id);
+
+                            }
+                        });
+                        alertDialog.show();
+                    } else {
+                        DeviceItem d = new DeviceItem(MainActivity.this, type, name, mac);
+                        data.add(d);
+                        fragmentAdapter.notifyDataSetChanged();
+                        adapter.notifyDataSetChanged();
+
+                        viewPager.setCurrentItem(adapter.getCount() - 1);
+                    }
+                }
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }
+
+        }
     }
 
     //region MQTT服务有关
@@ -341,7 +407,6 @@ public class MainActivity extends AppCompatActivity {
         public FragmentAdapter(FragmentManager fm, ArrayList<DeviceItem> fragmentArray) {
             this(fm);
             this.data = fragmentArray;
-
         }
 
         public FragmentAdapter(FragmentManager fm) {
@@ -352,6 +417,20 @@ public class MainActivity extends AppCompatActivity {
         @Override
         public Fragment getItem(int arg0) {
             return this.data.get(arg0).fragment;
+        }
+
+        @Override
+        public long getItemId(int position) {
+
+            return data.get(position).fragment.hashCode();
+
+        }
+
+        @Override
+        public Object instantiateItem(ViewGroup container, int position) {
+            //int viewPagerId=container.getId();
+            //makeFragmentName(viewPagerId,getItemId(position));
+            return super.instantiateItem(container, position);
         }
 
         @Override
