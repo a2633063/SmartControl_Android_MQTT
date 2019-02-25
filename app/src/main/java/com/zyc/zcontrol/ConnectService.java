@@ -47,6 +47,9 @@ public class ConnectService extends Service {
     public final static String EXTRA_UDP_DATA_MESSAGE =
             "com.zyc.zcontrol.mqtt.EXTRA_UDP_DATA_MESSAGE";
 
+    public final static int PHONE_UDP_PORT=10181;
+    public final static int DEVICE_UDP_PORT=10182;
+
     //region 广播相关定义
     private LocalBroadcastManager localBroadcastManager;
     //endregion
@@ -67,7 +70,7 @@ public class ConnectService extends Service {
             try {
                 //1、创建udp socket ，建立端点，并指定固定端口
                 if (datagramSocket == null)
-                    datagramSocket = new DatagramSocket(10180);
+                    datagramSocket = new DatagramSocket(PHONE_UDP_PORT);
                 //2、定义数据包，用于存储数据
                 byte[] buf = new byte[1024];
                 DatagramPacket dp = new DatagramPacket(buf, buf.length);
@@ -75,6 +78,7 @@ public class ConnectService extends Service {
 
                     //3、通过服务的receive方法，接收数据并存入数据包中
                     try {
+                        datagramSocket.setSoTimeout(500);
                         datagramSocket.receive(dp);
                         //4、通过数据包中的方法，获取其中的数据。
                         String ip = dp.getAddress().getHostAddress();
@@ -86,7 +90,7 @@ public class ConnectService extends Service {
                     }
                 }
             } catch (SocketException e) {
-                e.printStackTrace();
+//                e.printStackTrace();
             }
 
             //断开连接
@@ -128,7 +132,7 @@ public class ConnectService extends Service {
         }
         if (datagramSocket == null)
             try {
-                datagramSocket = new DatagramSocket(10180);
+                datagramSocket = new DatagramSocket(PHONE_UDP_PORT);
             } catch (SocketException e) {
                 e.printStackTrace();
                 datagramSocket = null;
@@ -285,11 +289,11 @@ public class ConnectService extends Service {
 
     //region UDP发送
     public void UDPsend(String message) {
-        UDPsend("255.255.255.255", 10180, message);
+        UDPsend("255.255.255.255", DEVICE_UDP_PORT, message);
     }
 
     public void UDPsend(String ip, String message) {
-        UDPsend(ip, 10180, message);
+        UDPsend(ip, DEVICE_UDP_PORT, message);
     }
 
     public void UDPsend(String ip, int port, String message) {
@@ -298,7 +302,7 @@ public class ConnectService extends Service {
 
         try {
             if (datagramSocket == null)
-                datagramSocket = new DatagramSocket(10180);
+                datagramSocket = new DatagramSocket(PHONE_UDP_PORT);
         } catch (SocketException e) {
             e.printStackTrace();
         }

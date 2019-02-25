@@ -2,11 +2,13 @@ package com.zyc.zcontrol;
 
 import android.content.BroadcastReceiver;
 import android.content.ComponentName;
+import android.content.ContentValues;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.ServiceConnection;
+import android.database.Cursor;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Handler;
@@ -17,17 +19,18 @@ import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentPagerAdapter;
 import android.support.v4.content.LocalBroadcastManager;
-import android.support.v4.view.ViewPager;
-import android.support.v7.app.AlertDialog;
-import android.util.Log;
-import android.view.View;
 import android.support.v4.view.GravityCompat;
+import android.support.v4.view.PagerAdapter;
+import android.support.v4.view.ViewPager;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.Button;
@@ -40,7 +43,6 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.util.ArrayList;
-import java.util.List;
 
 public class MainActivity extends AppCompatActivity {
     public final static String Tag = "MainActivity";
@@ -73,6 +75,26 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
+        //region 数据库初始化
+        SQLiteClass sqLite = new SQLiteClass(this, "device_list");
+        //参数1：表名    参数2：要想显示的列    参数3：where子句   参数4：where子句对应的条件值
+        // 参数5：分组方式  参数6：having条件  参数7：排序方式
+        Cursor cursor = sqLite.Query("device_list", new String[]{"id", "name", "type", "mac"}, null, null, null, null, null);
+        while (cursor.moveToNext()) {
+            String id = cursor.getString(cursor.getColumnIndex("id"));
+            String name = cursor.getString(cursor.getColumnIndex("name"));
+            int type = cursor.getInt(cursor.getColumnIndex("type"));
+            String mac = cursor.getString(cursor.getColumnIndex("mac"));
+            Log.d(Tag, "query------->" + "id：" + id + " " + "name：" + name + " " + "type：" + type + " " + "mac：" + mac);
+
+            data.add(new DeviceItem(MainActivity.this, type, name, mac));
+        }
+
+        if (data.size() < 1) {
+            data.add(new DeviceItem(MainActivity.this, StaticVariable.TYPE_BUTTON_MATE, "button1", "123456789abcde"));
+            data.add(new DeviceItem(MainActivity.this, StaticVariable.TYPE_BUTTON_MATE, "测试3", "123456789abcde"));
+        }
+        //endregion
 
         //region 侧边栏 初始化
         drawerLayout = (DrawerLayout) findViewById(R.id.drawer_layout);
@@ -87,9 +109,6 @@ public class MainActivity extends AppCompatActivity {
         //endregion
 
         //region 控件初始化
-        data.add(new DeviceItem(MainActivity.this, StaticVariable.TYPE_BUTTON_MATE, "标题2", "123456789abcde"));
-        data.add(new DeviceItem(MainActivity.this, StaticVariable.TYPE_BUTTON_MATE, "button1", "123456789abcde"));
-        data.add(new DeviceItem(MainActivity.this, StaticVariable.TYPE_BUTTON_MATE, "测试3", "123456789abcde"));
         //region listview及adapter
 
         lv_device = findViewById(R.id.lv_device);
@@ -102,6 +121,31 @@ public class MainActivity extends AppCompatActivity {
                 drawerLayout.closeDrawer(GravityCompat.START);//关闭侧边栏
                 adapter.setChoice(position);
                 viewPager.setCurrentItem(position);
+            }
+        });
+        lv_device.setOnItemLongClickListener(new AdapterView.OnItemLongClickListener() {
+            @Override
+            public boolean onItemLongClick(AdapterView<?> parent, View view, final int position, long id) {
+                AlertDialog alertDialog = new AlertDialog.Builder(MainActivity.this)
+                        .setTitle("")
+                        .setMessage("删除设备 " + data.get(position).name + " ?")
+                        .create();
+                alertDialog.setButton(DialogInterface.BUTTON_POSITIVE, "删除", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        SQLiteClass sqLite = new SQLiteClass(MainActivity.this);
+                        String whereClauses = "mac=?";
+                        String[] whereArgs = {data.get(position).mac};
+                        sqLite.Delete("device_list", whereClauses, whereArgs);
+
+                        data.remove(position);
+                        adapter.notifyDataSetChanged();
+                        fragmentAdapter.notifyDataSetChanged();
+                    }
+                });
+                alertDialog.setButton(DialogInterface.BUTTON_NEGATIVE, "取消", (DialogInterface.OnClickListener) null);
+                alertDialog.show();
+                return true;
             }
         });
         //endregion
@@ -163,6 +207,16 @@ public class MainActivity extends AppCompatActivity {
             }
         });
         //endregion
+       navigationView.getHeaderView(0).findViewById(R.id.imageButton).setOnClickListener(new View.OnClickListener() {
+           @Override
+           public void onClick(View v) {
+
+           }
+       });
+
+
+
+
         //endregion
 
         //region MQTT服务有关
@@ -233,11 +287,6 @@ public class MainActivity extends AppCompatActivity {
             newDeviceFlag = true;
             mConnectService.UDPsend(ip, message);
 
-//            int x=adapter.contains(mac);
-//            if(x==-1)
-//            {
-//
-//            }
         }
     }
 
@@ -278,7 +327,7 @@ public class MainActivity extends AppCompatActivity {
         int id = item.getItemId();
 
         //noinspection SimplifiableIfStatement
-        if (id == R.id.action_settings) {
+        if (id == R.id.action_device_settings) {
             mConnectService.Send("/test/Androdi", "test message");
 
             mConnectService.Send(null, "UDP TEST");
@@ -326,6 +375,12 @@ public class MainActivity extends AppCompatActivity {
                         alertDialog.show();
                     } else {
                         DeviceItem d = new DeviceItem(MainActivity.this, type, name, mac);
+                        SQLiteClass sqLite = new SQLiteClass(this, "device_list");
+                        ContentValues cv = new ContentValues();
+                        cv.put("name", name);
+                        cv.put("type", type);
+                        cv.put("mac", mac);
+                        sqLite.Insert("device_list", cv);
                         data.add(d);
                         fragmentAdapter.notifyDataSetChanged();
                         adapter.notifyDataSetChanged();
@@ -424,6 +479,12 @@ public class MainActivity extends AppCompatActivity {
 
             return data.get(position).fragment.hashCode();
 
+        }
+
+        @Override
+        public int getItemPosition(Object object) {
+            // TODO Auto-generated method stub
+            return PagerAdapter.POSITION_NONE;
         }
 
         @Override
