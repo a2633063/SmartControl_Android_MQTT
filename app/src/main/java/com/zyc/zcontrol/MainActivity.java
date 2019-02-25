@@ -28,6 +28,7 @@ import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
+import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -60,7 +61,6 @@ public class MainActivity extends AppCompatActivity {
     private TabLayout tabLayout;
     private ViewPager viewPager;
     private FragmentAdapter fragmentAdapter;
-    private Button btn_device_add;
 
     ConnectService mConnectService;
     boolean newDeviceFlag = false;
@@ -73,7 +73,7 @@ public class MainActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
+        final Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
         //region 数据库初始化
         SQLiteClass sqLite = new SQLiteClass(this, "device_list");
@@ -114,6 +114,20 @@ public class MainActivity extends AppCompatActivity {
         lv_device = findViewById(R.id.lv_device);
         adapter = new DeviceListAdapter(MainActivity.this, data);
         if (adapter.getCount() > 0) adapter.setChoice(0);
+
+        Button b=new Button(this);
+        b.setBackgroundResource(R.drawable.background_gray_borders);
+        b.setText("增加设备");
+        b.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                startActivityForResult(new Intent(MainActivity.this, DeviceAddChoiceActivity.class), 1);
+                drawerLayout.closeDrawer(GravityCompat.START);//关闭侧边栏
+
+            }
+        });
+        View footView = (View) LayoutInflater.from(this).inflate(R.layout.nav_header_main, null);
+        lv_device.addFooterView(b);
         lv_device.setAdapter(adapter);
         lv_device.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
@@ -174,6 +188,7 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onPageSelected(int position) {
                 adapter.setChoice(position);
+                toolbar.setTitle(adapter.getItem( adapter.getChoice()).name);
             }
 
             @Override
@@ -185,16 +200,14 @@ public class MainActivity extends AppCompatActivity {
         });
         //endregion
 
-        btn_device_add = findViewById(R.id.btn_device_add);
-        btn_device_add.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                startActivityForResult(new Intent(MainActivity.this, DeviceAddChoiceActivity.class), 1);
-
-                drawerLayout.closeDrawer(GravityCompat.START);//关闭侧边栏
-
-            }
-        });
+//        Button btn_device_add = findViewById(R.id.btn_device_add);
+//        btn_device_add.setOnClickListener(new View.OnClickListener() {
+//            @Override
+//            public void onClick(View v) {
+//                startActivityForResult(new Intent(MainActivity.this, DeviceAddChoiceActivity.class), 1);
+//                drawerLayout.closeDrawer(GravityCompat.START);//关闭侧边栏
+//            }
+//        });
 
         //region 打开网页
         final TextView nav_header_subtitle = navigationView.getHeaderView(0).findViewById(R.id.tv_nav_header_subtitle);
@@ -207,15 +220,6 @@ public class MainActivity extends AppCompatActivity {
             }
         });
         //endregion
-       navigationView.getHeaderView(0).findViewById(R.id.imageButton).setOnClickListener(new View.OnClickListener() {
-           @Override
-           public void onClick(View v) {
-
-           }
-       });
-
-
-
 
         //endregion
 
