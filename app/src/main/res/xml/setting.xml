@@ -1,45 +1,38 @@
 <PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android">
 
 
-    <PreferenceCategory android:title="设备">
-
-
-        <EditTextPreference
-            android:dialogTitle="局域网IP地址"
-            android:inputType="textUri"
-            android:key="LAN_IP"
-            android:negativeButtonText="取消"
-            android:positiveButtonText="保存"
-            android:title="局域网IP地址" />
+    <PreferenceCategory android:title="网络连接">
 
         <EditTextPreference
-            android:dialogTitle="广域网IP地址"
+            android:dialogTitle="MQTT地址"
+            android:hint="如xxx.xxx.xxx.xxx:1883"
             android:inputType="textUri"
-            android:key="WAN_IP"
+            android:key="mqtt_uri"
             android:negativeButtonText="取消"
             android:positiveButtonText="保存"
-            android:title="广域网IP地址" />
+            android:title="MQTT地址" />
+        <EditTextPreference
+            android:dialogTitle="MQTT登录用户名"
+            android:inputType="textUri"
+            android:key="mqtt_user"
+            android:negativeButtonText="取消"
+            android:positiveButtonText="保存"
+            android:title="MQTT登录用户名" />
+        <EditTextPreference
+            android:dialogTitle="MQTT登录密码"
+            android:inputType="textPassword"
+            android:key="mqtt_password"
+            android:negativeButtonText="取消"
+            android:positiveButtonText="保存"
+            android:title="MQTT登录密码" />
         <CheckBoxPreference
             android:defaultValue="false"
             android:disableDependentsState="true"
-            android:key="always_WAN"
-            android:summary="即使连接局域网,也使用广域网连接设备"
-            android:title="总是通过广域网连接" />
-        <CheckBoxPreference
-            android:defaultValue="true"
-            android:dependency="always_WAN"
-            android:key="auto_ip"
-            android:summary="通过UDP广播自动获取设备IP地址\n若未固定设备IP,请启用此项"
-            android:title="自动获取局域网IP" />
+            android:key="always_UDP"
+            android:summary="即使连接MQTTT服务器,也使用局域网UDP连接设备"
+            android:title="总是通过UDP连接" />
+
     </PreferenceCategory>
 
-    <PreferenceCategory
-        android:title="显示"
-        android:visibility="gone">
-        <CheckBoxPreference
-            android:key="theme"
-            android:summary="勾选启用夜间模式"
-            android:title="夜间模式(此设置无效)" />
-    </PreferenceCategory>
 
 </PreferenceScreen>

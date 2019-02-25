@@ -84,10 +84,19 @@ class DeviceListAdapter extends BaseAdapter {
     }
     public int getChoice()
     {
-        if(choice>=getCount() || choice<0) return -1;
+        if(mdata.size()<1) return -1;
+        else if(choice>=getCount() || choice<0)
+            return -1;
         return choice;
     }
-
+    public DeviceItem getChoiceDevice()
+    {
+        if(choice>=getCount() || choice<0) {
+            if (mdata.size() > 0) return mdata.get(0);
+            else return null;
+        }
+        return mdata.get(choice);
+    }
     public int contains(DeviceItem d)
     {
         for(int i=0;i<mdata.size();i++)

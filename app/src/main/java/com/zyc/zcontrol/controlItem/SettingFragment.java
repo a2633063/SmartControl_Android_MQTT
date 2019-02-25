@@ -7,13 +7,14 @@ import android.preference.EditTextPreference;
 import android.preference.Preference;
 import android.preference.PreferenceFragment;
 import android.util.Log;
+
 import com.zyc.zcontrol.R;
+
 @SuppressLint("ValidFragment")
 public class SettingFragment extends PreferenceFragment {
-    final static String Tag = "RGBSettingFragment_Tag";
+    final static String Tag = "SettingFragment_Tag";
     SharedPreferences mSharedPreferences;
     SharedPreferences.Editor editor;
-
 
 
     public SettingFragment() {
@@ -24,17 +25,21 @@ public class SettingFragment extends PreferenceFragment {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         getPreferenceManager().setSharedPreferencesName("Setting");
-        Log.d(Tag,"设置文件:"+"Setting" );
+        Log.d(Tag, "设置文件:" + "Setting");
         addPreferencesFromResource(R.xml.setting);
 
-        EditTextPreference WAN_IP = (EditTextPreference) findPreference("WAN_IP");
-        EditTextPreference LAN_IP = (EditTextPreference) findPreference("LAN_IP");
+        EditTextPreference mqtt_uri = (EditTextPreference) findPreference("mqtt_uri");
+        EditTextPreference mqtt_user = (EditTextPreference) findPreference("mqtt_user");
+        EditTextPreference mqtt_password = (EditTextPreference) findPreference("mqtt_password");
 
-        WAN_IP.setOnPreferenceChangeListener(PreferenceChangeListener);
-        LAN_IP.setOnPreferenceChangeListener(PreferenceChangeListener);
+        mqtt_uri.setOnPreferenceChangeListener(PreferenceChangeListener);
+        mqtt_user.setOnPreferenceChangeListener(PreferenceChangeListener);
+        mqtt_password.setOnPreferenceChangeListener(PreferenceChangeListener);
 
-        WAN_IP.setSummary(WAN_IP.getText());
-        LAN_IP.setSummary(LAN_IP.getText());
+
+        mqtt_uri.setSummary(mqtt_uri.getText());
+        mqtt_user.setSummary(mqtt_user.getText());
+        mqtt_password.setSummary(mqtt_password.getText());
 
     }
 
@@ -45,7 +50,6 @@ public class SettingFragment extends PreferenceFragment {
             return true;
         }
     };
-
 
 
 }

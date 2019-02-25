@@ -116,7 +116,7 @@ public class MainActivity extends AppCompatActivity {
         adapter = new DeviceListAdapter(MainActivity.this, data);
         if (adapter.getCount() > 0) adapter.setChoice(0);
 
-        Button b=new Button(this);
+        Button b = new Button(this);
         b.setBackgroundResource(R.drawable.background_gray_borders);
         b.setText("增加设备");
         b.setOnClickListener(new View.OnClickListener() {
@@ -189,7 +189,7 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onPageSelected(int position) {
                 adapter.setChoice(position);
-                toolbar.setTitle(adapter.getItem( adapter.getChoice()).name);
+                toolbar.setTitle(adapter.getChoiceDevice().name);
             }
 
             @Override
@@ -239,7 +239,7 @@ public class MainActivity extends AppCompatActivity {
         findViewById(R.id.tv_info).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                finish();
+
             }
         });
         //endregion
@@ -258,7 +258,7 @@ public class MainActivity extends AppCompatActivity {
         localBroadcastManager.registerReceiver(msgReceiver, intentFilter);
         //endregion
 
-        //region 启动MQTT服务 不启动
+        //region 启动MQTT服务
         Intent intent = new Intent(MainActivity.this, ConnectService.class);
         startService(intent);
         bindService(intent, mMQTTServiceConnection, BIND_AUTO_CREATE);
@@ -290,7 +290,7 @@ public class MainActivity extends AppCompatActivity {
             e.printStackTrace();
         }*/
         //endregion
-
+        toolbar.setTitle(adapter.getChoiceDevice().name);
     }
 
     @Override
@@ -359,13 +359,15 @@ public class MainActivity extends AppCompatActivity {
 
             mConnectService.Send(null, "UDP TEST");
 
-            DeviceItem d=adapter.getItem(adapter.getChoice());
-            Intent intent=new Intent(MainActivity.this, SettingActivity.class);
-            intent.putExtra("name",d.name);
-            intent.putExtra("mac",d.mac);
-            intent.putExtra("type",d.type);
-            startActivity(intent);
 
+            if (data.size() > 0) {
+                DeviceItem d = adapter.getChoiceDevice();
+                Intent intent = new Intent(MainActivity.this, SettingActivity.class);
+                intent.putExtra("name", d.name);
+                intent.putExtra("mac", d.mac);
+                intent.putExtra("type", d.type);
+                startActivity(intent);
+            }
             return true;
         }
 
