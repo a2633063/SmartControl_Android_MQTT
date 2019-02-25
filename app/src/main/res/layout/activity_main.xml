@@ -45,7 +45,7 @@
                 android:layout_height="wrap_content">
 
                 <TextView
-                    android:id="@+id/btn_device_add"
+                    android:id="@+id/tv_setting"
                     android:layout_width="0dp"
                     android:layout_height="match_parent"
                     android:layout_weight="1"
@@ -57,7 +57,7 @@
                     android:padding="5dp"
                     android:text="设置" />
                 <TextView
-                    android:id="@+id/btn_device_add1"
+                    android:id="@+id/tv_info"
                     android:layout_width="0dp"
                     android:layout_height="match_parent"
                     android:layout_weight="1"
@@ -69,7 +69,7 @@
                     android:padding="5dp"
                     android:text="关于" />
                 <TextView
-                    android:id="@+id/btn_device_add2"
+                    android:id="@+id/tv_exit"
                     android:layout_width="0dp"
                     android:layout_height="match_parent"
                     android:layout_weight="1"

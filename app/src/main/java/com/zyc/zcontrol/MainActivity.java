@@ -39,6 +39,7 @@ import android.widget.ListView;
 import android.widget.TextView;
 
 import com.zyc.StaticVariable;
+import com.zyc.zcontrol.controlItem.SettingActivity;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -221,6 +222,28 @@ public class MainActivity extends AppCompatActivity {
         });
         //endregion
 
+
+        //region 设置/关于/退出按钮
+        findViewById(R.id.tv_setting).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                startActivity(new Intent(MainActivity.this, SettingActivity.class));
+            }
+        });
+        findViewById(R.id.tv_exit).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                finish();
+            }
+        });
+        findViewById(R.id.tv_info).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                finish();
+            }
+        });
+        //endregion
+
         //endregion
 
         //region MQTT服务有关
@@ -335,6 +358,13 @@ public class MainActivity extends AppCompatActivity {
             mConnectService.Send("/test/Androdi", "test message");
 
             mConnectService.Send(null, "UDP TEST");
+
+            DeviceItem d=adapter.getItem(adapter.getChoice());
+            Intent intent=new Intent(MainActivity.this, SettingActivity.class);
+            intent.putExtra("name",d.name);
+            intent.putExtra("mac",d.mac);
+            intent.putExtra("type",d.type);
+            startActivity(intent);
 
             return true;
         }

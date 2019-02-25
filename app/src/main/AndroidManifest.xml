@@ -31,6 +31,8 @@
 
         <activity android:name=".DeviceAddChoiceActivity" />
         <activity android:name="com.espressif.ESPtouchActivity"></activity>
+        <activity android:name=".controlItem.SettingActivity"/>
+
     </application>
 
 </manifest>
