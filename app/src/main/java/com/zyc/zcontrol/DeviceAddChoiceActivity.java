@@ -39,7 +39,6 @@ public class DeviceAddChoiceActivity extends AppCompatActivity {
         if (actionBar != null) {
             actionBar.setHomeButtonEnabled(true);
             actionBar.setDisplayHomeAsUpEnabled(true);
-            actionBar.setTitle("添加设备");
         }
 
         //region listview及adapter

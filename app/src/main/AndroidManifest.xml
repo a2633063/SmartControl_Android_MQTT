@@ -29,9 +29,15 @@
             android:enabled="true"
             android:exported="true" />
 
-        <activity android:name=".DeviceAddChoiceActivity" />
-        <activity android:name="com.espressif.ESPtouchActivity"></activity>
-        <activity android:name=".controlItem.SettingActivity"/>
+        <activity
+            android:name=".DeviceAddChoiceActivity"
+            android:label="添加设备" />
+        <activity
+            android:name="com.espressif.ESPtouchActivity"
+            android:label="添加设备"></activity>
+        <activity
+            android:name=".controlItem.SettingActivity"
+            android:label="设置" />
 
     </application>
 
