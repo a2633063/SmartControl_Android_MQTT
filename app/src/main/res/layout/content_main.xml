@@ -5,14 +5,14 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
-    tools:context=".MainActivity"
-    tools:showIn="@layout/activity_main">
+    tools:context=".MainActivity">
 
     <android.support.v7.widget.Toolbar
         android:id="@+id/toolbar"
         android:layout_width="match_parent"
         android:layout_height="?attr/actionBarSize"
-        android:background="?attr/colorPrimary" />
+        android:background="?attr/colorPrimary"
+        app:title="@string/app_name"/>
 
     <android.support.design.widget.TabLayout
         android:id="@+id/tablayout"

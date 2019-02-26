@@ -97,6 +97,9 @@ public class MainActivity extends AppCompatActivity {
         }
         //endregion
 
+
+        //region 控件初始化
+
         //region 侧边栏 初始化
         drawerLayout = (DrawerLayout) findViewById(R.id.drawer_layout);
         ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(
@@ -109,7 +112,6 @@ public class MainActivity extends AppCompatActivity {
 
         //endregion
 
-        //region 控件初始化
         //region listview及adapter
 
         lv_device = findViewById(R.id.lv_device);
@@ -117,7 +119,9 @@ public class MainActivity extends AppCompatActivity {
         if (adapter.getCount() > 0) adapter.setChoice(0);
 
         Button b = new Button(this);
-        b.setBackgroundResource(R.drawable.background_gray_borders);
+        b.setBackground(null);
+        b.setTextColor(0xa0ffffff);
+//        b.setBackgroundResource(R.drawable.background_gray_borders);
         b.setText("增加设备");
         b.setOnClickListener(new View.OnClickListener() {
             @Override

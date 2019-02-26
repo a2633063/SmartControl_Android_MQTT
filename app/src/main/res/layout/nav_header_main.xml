@@ -7,7 +7,7 @@
     android:gravity="bottom"
     android:orientation="vertical"
     android:paddingLeft="@dimen/activity_horizontal_margin"
-    android:paddingTop="@dimen/activity_vertical_margin"
+    android:paddingTop="@dimen/activity_vertical_margin_2"
     android:paddingRight="@dimen/activity_horizontal_margin"
     android:paddingBottom="@dimen/activity_vertical_margin"
     android:theme="@style/ThemeOverlay.AppCompat.Dark">
@@ -15,10 +15,12 @@
     <ImageView
         android:id="@+id/imageView"
         android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
+        android:layout_height="0dp"
+        android:layout_weight="1"
         android:contentDescription="@string/nav_header_desc"
         android:paddingTop="@dimen/nav_header_vertical_spacing"
-        app:srcCompat="@mipmap/ic_launcher_round" />
+        android:scaleType="fitStart"
+        app:srcCompat="@drawable/zyc_icon" />
 
     <TextView
         android:layout_width="match_parent"
