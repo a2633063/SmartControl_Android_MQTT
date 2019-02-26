@@ -63,9 +63,9 @@ public class DeviceAddChoiceActivity extends AppCompatActivity {
 
                 //返回数据
                 Intent intent = new Intent();
-                intent.putExtra("type", 0);
-                intent.putExtra("ip", "192.168.2.105");
-                intent.putExtra("mac", "18fe34e582e2");
+                intent.putExtra("type", -1);
+                intent.putExtra("ip", "255.255.255.255");
+                intent.putExtra("mac", "");
                 setResult(RESULT_OK, intent);
                 finish();
 

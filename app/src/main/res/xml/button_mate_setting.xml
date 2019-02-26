@@ -22,5 +22,5 @@
             android:title="总是通过UDP发送数据" />
 
     </PreferenceCategory>
-    
+
 </PreferenceScreen>
