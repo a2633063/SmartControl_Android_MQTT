@@ -31,14 +31,11 @@ public class ButtonMateSettingFragment extends PreferenceFragment {
         addPreferencesFromResource(R.xml.button_mate_setting);
 //
 //        CheckBoxPreference mEtPreference = (CheckBoxPreference) findPreference("theme");
-        EditTextPreference WAN_IP = (EditTextPreference) findPreference("WAN_IP");
-        EditTextPreference LAN_IP = (EditTextPreference) findPreference("LAN_IP");
+        EditTextPreference domoticz_idx = (EditTextPreference) findPreference("domoticz_idx");
 //
-        WAN_IP.setOnPreferenceChangeListener(PreferenceChangeListener);
-        LAN_IP.setOnPreferenceChangeListener(PreferenceChangeListener);
+        domoticz_idx.setOnPreferenceChangeListener(PreferenceChangeListener);
 
-        WAN_IP.setSummary(WAN_IP.getText());
-        LAN_IP.setSummary(LAN_IP.getText());
+        domoticz_idx.setSummary(domoticz_idx.getText());
 
     }
 

@@ -31,14 +31,14 @@
                     android:layout_width="150dp"
                     android:layout_height="150dp"
                     android:layout_weight="1"
-                    app:srcCompat="@drawable/ic_buttonmate_touch" />
+                    app:srcCompat="@drawable/state_button_mate_main_btn" />
 
                 <ImageView
                     android:id="@+id/iv_main_button2"
                     android:layout_width="150dp"
                     android:layout_height="150dp"
                     android:layout_weight="1"
-                    app:srcCompat="@drawable/ic_buttonmate_touch" />
+                    app:srcCompat="@drawable/state_button_mate_main_btn" />
 
 
             </LinearLayout>

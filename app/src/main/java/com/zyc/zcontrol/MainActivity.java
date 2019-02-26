@@ -252,7 +252,6 @@ public class MainActivity extends AppCompatActivity {
         });
         //endregion
 
-
         //region 设置/关于/退出按钮
         findViewById(R.id.tv_setting).setOnClickListener(new View.OnClickListener() {
             @Override
@@ -368,7 +367,7 @@ public class MainActivity extends AppCompatActivity {
                     !mConnectService.mqtt_uri.equals(mqtt_uri)
                             || !mConnectService.mqtt_user.equals(mqtt_user)
                             || !mConnectService.mqtt_password.equals(mqtt_password)
-            )){
+            )) {
                 Log.d(Tag, "onResume disconnect");
                 mConnectService.disconnect();
                 handler.sendEmptyMessageDelayed(1, 100);
