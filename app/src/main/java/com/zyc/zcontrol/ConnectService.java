@@ -47,15 +47,22 @@ public class ConnectService extends Service {
     public final static String EXTRA_UDP_DATA_MESSAGE =
             "com.zyc.zcontrol.mqtt.EXTRA_UDP_DATA_MESSAGE";
 
-    public final static int PHONE_UDP_PORT=10181;
-    public final static int DEVICE_UDP_PORT=10182;
+    public final static int PHONE_UDP_PORT = 10181;
+    public final static int DEVICE_UDP_PORT = 10182;
 
     //region 广播相关定义
     private LocalBroadcastManager localBroadcastManager;
     //endregion
 
+    public String mqtt_uri = "";
+    public String mqtt_id = null;
+    public String mqtt_user = "";
+    public String mqtt_password = "";
+
+
     MqttAsyncClient mqttClient = null;
     DatagramSocket datagramSocket = null;
+
 
     public ConnectService() {
     }
@@ -86,7 +93,7 @@ public class ConnectService extends Service {
                         String data = new String(dp.getData(), 0, dp.getLength());
                         broadcastUpdate(ACTION_UDP_DATA_AVAILABLE, ip, port, data);
                     } catch (IOException e) {
-                        e.printStackTrace();
+//                        e.printStackTrace();
                     }
                 }
             } catch (SocketException e) {
@@ -180,6 +187,16 @@ public class ConnectService extends Service {
 
     public void connect(String mqtt_uri, String mqtt_id,
                         String mqtt_user, String mqtt_password) {
+        if (mqtt_uri == null) return;
+        if (mqtt_user == null) mqtt_user ="";
+        if (mqtt_password == null) mqtt_password="";
+
+
+        this.mqtt_uri = mqtt_uri;
+        this.mqtt_id = mqtt_id;
+        this.mqtt_user = mqtt_user;
+        this.mqtt_password = mqtt_password;
+
 
         //消息缓存方式，内存缓存
         MemoryPersistence persistence = new MemoryPersistence();
@@ -188,9 +205,9 @@ public class ConnectService extends Service {
             //region 建立客户端连接的配置参数
             MqttConnectOptions connectOptions = new MqttConnectOptions();
             connectOptions.setCleanSession(true);  //不记忆上次会话
-            if (mqtt_user != null)
+            if (mqtt_user != null && mqtt_user.length() > 0)
                 connectOptions.setUserName(mqtt_user); //用户名
-            if (mqtt_password != null)
+            if (mqtt_password != null && mqtt_password.length() > 0)
                 connectOptions.setPassword(mqtt_password.toCharArray()); //密码
             connectOptions.setConnectionTimeout(30);  //超时时间
             connectOptions.setKeepAliveInterval(60); //心跳时间,单位秒
@@ -200,7 +217,7 @@ public class ConnectService extends Service {
             Log.d("ConnectService", "read to connecting to MQTT server");
             //endregion
             if (mqttClient == null)
-                mqttClient = new MqttAsyncClient(mqtt_uri, mqtt_id, persistence);
+                mqttClient = new MqttAsyncClient("tcp://" + mqtt_uri, mqtt_id, persistence);
 
             mqttClient.setCallback(new MqttCallback() {
                 @Override
@@ -229,7 +246,7 @@ public class ConnectService extends Service {
                 public void onSuccess(IMqttToken asyncActionToken) {
                     Log.d("ConnectService", "connect onSuccess");
                     try {
-                        mqttClient.subscribe("/test/android", 0);
+                        mqttClient.subscribe("domoticz/in", 0);
                         broadcastUpdate(ACTION_MQTT_CONNECTED); //连接成功
                     } catch (MqttException e) {
                         e.printStackTrace();
@@ -280,7 +297,7 @@ public class ConnectService extends Service {
     //topic为null时始终使用udp发送,否则根据mqtt连接状态现在udp或mqtt发送
     public void Send(String topic, String str) {
 
-        if (!isConnected() ||topic==null) {
+        if (!isConnected() || topic == null) {
             UDPsend(str);
         } else {
             MQTTSend(topic, str);

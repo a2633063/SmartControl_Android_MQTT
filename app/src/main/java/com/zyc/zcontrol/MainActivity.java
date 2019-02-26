@@ -1,5 +1,6 @@
 package com.zyc.zcontrol;
 
+import android.annotation.SuppressLint;
 import android.content.BroadcastReceiver;
 import android.content.ComponentName;
 import android.content.ContentValues;
@@ -8,11 +9,13 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.ServiceConnection;
+import android.content.SharedPreferences;
 import android.database.Cursor;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.IBinder;
+import android.os.Message;
 import android.support.design.widget.NavigationView;
 import android.support.design.widget.TabLayout;
 import android.support.v4.app.Fragment;
@@ -41,13 +44,19 @@ import android.widget.TextView;
 import com.zyc.StaticVariable;
 import com.zyc.zcontrol.controlItem.SettingActivity;
 
+import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.util.ArrayList;
+import java.util.Random;
 
 public class MainActivity extends AppCompatActivity {
     public final static String Tag = "MainActivity";
+
+    private SharedPreferences mSharedPreferences;
+    private SharedPreferences.Editor mEditor;
+
 
     DrawerLayout drawerLayout;
     ListView lv_device;
@@ -69,6 +78,30 @@ public class MainActivity extends AppCompatActivity {
 
     int onPageScrolled = 0;   //viewpage滑动标志位,用于当viewpage滑到最左侧屏,依然继续向左侧滑动时打开侧边栏
 
+    //region Handler
+    @SuppressLint("HandlerLeak")
+    private Handler handler = new Handler() {
+        @Override
+        public void handleMessage(Message msg) {
+            switch (msg.what) {
+                case 1:
+                    if (mConnectService != null) {
+                        handler.removeMessages(1);
+                        String mqtt_uri = mSharedPreferences.getString("mqtt_uri", null);
+                        String mqtt_id = mConnectService.mqtt_id;
+                        String mqtt_user = mSharedPreferences.getString("mqtt_user", null);
+                        String mqtt_password = mSharedPreferences.getString("mqtt_password", null);
+
+                        Log.d(Tag, "mqtt connect: " + mqtt_uri + ",user:" + mqtt_user + "," + mqtt_password);
+                        if (mqtt_id == null) mqtt_id = "Android_" + new Random().nextInt(1000);
+                        mConnectService.connect(mqtt_uri, mqtt_id,
+                                mqtt_user, mqtt_password);
+                    }
+                    break;
+            }
+        }
+    };
+    //endregion
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -76,6 +109,8 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
         final Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
+
+        mSharedPreferences = getSharedPreferences("Setting", 0);
         //region 数据库初始化
         SQLiteClass sqLite = new SQLiteClass(this, "device_list");
         //参数1：表名    参数2：要想显示的列    参数3：where子句   参数4：where子句对应的条件值
@@ -205,15 +240,6 @@ public class MainActivity extends AppCompatActivity {
         });
         //endregion
 
-//        Button btn_device_add = findViewById(R.id.btn_device_add);
-//        btn_device_add.setOnClickListener(new View.OnClickListener() {
-//            @Override
-//            public void onClick(View v) {
-//                startActivityForResult(new Intent(MainActivity.this, DeviceAddChoiceActivity.class), 1);
-//                drawerLayout.closeDrawer(GravityCompat.START);//关闭侧边栏
-//            }
-//        });
-
         //region 打开网页
         final TextView nav_header_subtitle = navigationView.getHeaderView(0).findViewById(R.id.tv_nav_header_subtitle);
         nav_header_subtitle.setOnClickListener(new View.OnClickListener() {
@@ -232,6 +258,8 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 startActivity(new Intent(MainActivity.this, SettingActivity.class));
+                drawerLayout.closeDrawer(GravityCompat.START);//关闭侧边栏
+
             }
         });
         findViewById(R.id.tv_exit).setOnClickListener(new View.OnClickListener() {
@@ -243,6 +271,7 @@ public class MainActivity extends AppCompatActivity {
         findViewById(R.id.tv_info).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                drawerLayout.closeDrawer(GravityCompat.START);//关闭侧边栏
 
             }
         });
@@ -301,6 +330,7 @@ public class MainActivity extends AppCompatActivity {
     protected void onActivityResult(int requestCode, int resultCode, Intent intent) {
 
         if (resultCode != RESULT_OK) return;
+        //region 新增设备返回
         if (requestCode == 1) {
             int type = intent.getIntExtra("type", StaticVariable.TYPE_UNKNOWN);
             String ip = intent.getExtras().getString("ip");
@@ -319,6 +349,33 @@ public class MainActivity extends AppCompatActivity {
             mConnectService.UDPsend(ip, message);
 
         }
+        //endregion
+    }
+
+    @Override
+    public void onResume() {
+        Log.d(Tag, "onResume");
+        super.onResume();
+        if (mConnectService != null) {
+
+            String mqtt_uri = mSharedPreferences.getString("mqtt_uri", null);
+            String mqtt_id = mConnectService.mqtt_id;
+            String mqtt_user = mSharedPreferences.getString("mqtt_user", null);
+            String mqtt_password = mSharedPreferences.getString("mqtt_password", null);
+
+            if ((mqtt_uri != null)
+                    && (
+                    !mConnectService.mqtt_uri.equals(mqtt_uri)
+                            || !mConnectService.mqtt_user.equals(mqtt_user)
+                            || !mConnectService.mqtt_password.equals(mqtt_password)
+            )){
+                Log.d(Tag, "onResume disconnect");
+                mConnectService.disconnect();
+                handler.sendEmptyMessageDelayed(1, 100);
+            }
+        }
+
+
     }
 
     @Override
@@ -372,6 +429,60 @@ public class MainActivity extends AppCompatActivity {
                 intent.putExtra("type", d.type);
                 startActivity(intent);
             }
+            return true;
+        } else if (id == R.id.action_mqtt_send) {
+
+
+            if (data.size() < 1) {
+                AlertDialog alertDialog = new AlertDialog.Builder(MainActivity.this)
+                        .setTitle("设备列表为空")
+                        .setMessage("请先添加设备")
+                        .create();
+                alertDialog.show();
+                return true;
+            }
+
+            String mqtt_uri = mSharedPreferences.getString("mqtt_uri", null);
+            String mqtt_user = mSharedPreferences.getString("mqtt_user", "");
+            String mqtt_password = mSharedPreferences.getString("mqtt_password", "");
+
+            if (mqtt_uri == null || mqtt_uri.length() < 1) {
+                AlertDialog alertDialog = new AlertDialog.Builder(MainActivity.this)
+                        .setTitle("未设置MQTT服务器")
+                        .setMessage("请先设置MQTT服务器")
+                        .create();
+                alertDialog.show();
+                return true;
+            }
+            DeviceItem d = adapter.getChoiceDevice();
+            JSONArray jsonArray = new JSONArray();
+            JSONObject jsonObject = new JSONObject();
+            JSONObject jsonObject1 = new JSONObject();
+
+            try {
+                jsonObject.put("name", d.name);
+                jsonObject.put("mac", d.mac);
+
+                String[] strArry = mqtt_uri.split(":");
+                int port = Integer.parseInt(strArry[1]);
+
+                jsonObject1.put("mqtt_uri", strArry[0]);
+                jsonObject1.put("mqtt_port", port);
+                jsonObject1.put("mqtt_user", mqtt_user);
+                jsonObject1.put("mqtt_password", mqtt_password);
+                jsonObject.put("setting", jsonObject1);
+
+            } catch (JSONException e) {
+                e.printStackTrace();
+            } catch (NumberFormatException e) {
+                e.printStackTrace();
+            }
+
+            String message = jsonObject.toString();
+            Log.d("Test", "message:" + message);
+            mConnectService.UDPsend(message);
+
+
             return true;
         }
 
@@ -443,8 +554,7 @@ public class MainActivity extends AppCompatActivity {
         public void onServiceConnected(ComponentName componentName, IBinder service) {
             mConnectService = ((ConnectService.LocalBinder) service).getService();
             // Automatically connects to the device upon successful start-up initialization.
-            mConnectService.connect("tcp://47.112.16.98:1883", "mqtt_id_dasdf",
-                    "z", "2633063");
+            handler.sendEmptyMessage(1);
         }
 
         @Override
@@ -474,13 +584,7 @@ public class MainActivity extends AppCompatActivity {
                     }
 
                     //1秒后重连
-                    new Handler().postDelayed(new Runnable() {
-                        public void run() {
-                            mConnectService.connect("tcp://47.112.16.98:1883", "mqtt_id_dasdf",
-                                    "z", "2633063");
-
-                        }
-                    }, 1000);
+                    handler.sendEmptyMessageDelayed(1, 1000);
 
                 }
             } else if (ConnectService.ACTION_DATA_AVAILABLE.equals(action)) {  //接收到数据

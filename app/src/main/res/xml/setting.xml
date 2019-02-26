@@ -4,7 +4,7 @@
     <PreferenceCategory android:title="网络连接">
 
         <EditTextPreference
-            android:dialogTitle="MQTT地址"
+            android:dialogTitle="MQTT地址(uri:port)"
             android:hint="如xxx.xxx.xxx.xxx:1883"
             android:inputType="textUri"
             android:key="mqtt_uri"
