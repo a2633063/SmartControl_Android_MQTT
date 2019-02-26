@@ -280,6 +280,7 @@ public class ConnectService extends Service {
     }
 
     public boolean isConnected() {
+        if(mqttClient==null) return false;
         return mqttClient.isConnected();
     }
 
