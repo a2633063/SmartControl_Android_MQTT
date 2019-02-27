@@ -480,8 +480,7 @@ public class MainActivity extends AppCompatActivity {
             String message = null;
             try {
                 message = jsonObject.toString(0);
-                message=message.replace("\r\n","\n");
-                message=message.replace("\n","");
+                message=message.replace("\r\n","");
 
             Log.d("Test", "message:" + message);
             mConnectService.UDPsend(message);
