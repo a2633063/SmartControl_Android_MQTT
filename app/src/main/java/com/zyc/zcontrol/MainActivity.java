@@ -477,9 +477,17 @@ public class MainActivity extends AppCompatActivity {
                 e.printStackTrace();
             }
 
-            String message = jsonObject.toString();
+            String message = null;
+            try {
+                message = jsonObject.toString(0);
+                message=message.replace("\r\n","\n");
+                message=message.replace("\n","");
+
             Log.d("Test", "message:" + message);
             mConnectService.UDPsend(message);
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
 
 
             return true;
