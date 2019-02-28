@@ -31,11 +31,14 @@ public class ButtonMateSettingFragment extends PreferenceFragment {
         addPreferencesFromResource(R.xml.button_mate_setting);
 //
 //        CheckBoxPreference mEtPreference = (CheckBoxPreference) findPreference("theme");
+        EditTextPreference namePreference = (EditTextPreference) findPreference("name");
         EditTextPreference domoticz_idx = (EditTextPreference) findPreference("domoticz_idx");
 //
         domoticz_idx.setOnPreferenceChangeListener(PreferenceChangeListener);
-
         domoticz_idx.setSummary(domoticz_idx.getText());
+
+
+
 
     }
 

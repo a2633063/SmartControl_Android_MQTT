@@ -74,6 +74,7 @@ public class MainActivity extends AppCompatActivity {
 
     ConnectService mConnectService;
     boolean newDeviceFlag = false;
+    boolean getDeviceFlag = false;
 
 
     int onPageScrolled = 0;   //viewpage滑动标志位,用于当viewpage滑到最左侧屏,依然继续向左侧滑动时打开侧边栏
@@ -84,6 +85,7 @@ public class MainActivity extends AppCompatActivity {
         @Override
         public void handleMessage(Message msg) {
             switch (msg.what) {
+                //region 连接MQTT服务器
                 case 1:
                     if (mConnectService != null) {
                         handler.removeMessages(1);
@@ -97,6 +99,13 @@ public class MainActivity extends AppCompatActivity {
                         mConnectService.connect(mqtt_uri, mqtt_id,
                                 mqtt_user, mqtt_password);
                     }
+                    break;
+                //endregion
+                case 2:
+                    newDeviceFlag = false;
+                    break;
+                case 3:
+                    getDeviceFlag = false;
                     break;
             }
         }
@@ -343,8 +352,15 @@ public class MainActivity extends AppCompatActivity {
                 e.printStackTrace();
             }
 
+            if (ip.equals("255.255.255.255")) {
+                getDeviceFlag = true;
+                handler.sendEmptyMessageDelayed(3, 2000);
+            } else {
+                handler.sendEmptyMessageDelayed(2, 1000);
+                newDeviceFlag = true;
+            }
             String message = jsonObject.toString();
-            newDeviceFlag = true;
+
             mConnectService.UDPsend(ip, message);
 
         }
@@ -415,7 +431,7 @@ public class MainActivity extends AppCompatActivity {
 
         //noinspection SimplifiableIfStatement
         if (id == R.id.action_device_settings) {
-            mConnectService.Send("/test/Androdi", "test message");
+            mConnectService.Send("/test/Androd", "test message");
 
             mConnectService.Send(null, "UDP TEST");
 
@@ -480,13 +496,13 @@ public class MainActivity extends AppCompatActivity {
             String message = null;
             try {
                 message = jsonObject.toString(0);
-                message=message.replace("\r\n","");
+                message = message.replace("\r\n", "");
 
-            Log.d("Test", "message:" + message);
-            mConnectService.UDPsend(message);
-        } catch (JSONException e) {
-            e.printStackTrace();
-        }
+                Log.d("Test", "message:" + message);
+                mConnectService.UDPsend(message);
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }
 
 
             return true;
@@ -506,50 +522,77 @@ public class MainActivity extends AppCompatActivity {
     void Receive(String topic, String message) {
         //TODO 数据接收处理
         Log.d(Tag, "RECV DATA,topic:" + topic + ",content:" + message);
-        if (newDeviceFlag) {
-            try {
-                JSONObject jsonObject = new JSONObject(message);
-                if (jsonObject.has("name") && jsonObject.has("mac")
-                        && jsonObject.has("type") && jsonObject.has("type_name")) {
+
+        try {
+            JSONObject jsonObject = new JSONObject(message);
+            String name = null;
+            String mac = null;
+            int type = -2;
+            String type_name = null;
+            JSONObject jsonSetting = null;
+            if (jsonObject.has("name")) name = jsonObject.getString("name");
+            if (jsonObject.has("mac")) mac = jsonObject.getString("mac");
+            if (jsonObject.has("type_name")) type_name = jsonObject.getString("type_name");
+            if (jsonObject.has("type")) type = jsonObject.getInt("type");
+            if (jsonObject.has("setting")) jsonSetting = jsonObject.getJSONObject("setting");
+            if (mac == null) return;
+            final int position = adapter.contains(mac);
+            //region 根据收到的消息更改显示列表
+            if (position >= 0) {//设备已存在
+                //修改名称
+                SQLiteClass sqLite = new SQLiteClass(this, "device_list");
+                ContentValues cv = new ContentValues();
+                cv.put("name", name);
+                if (type >= 0) cv.put("type", type);
+                sqLite.Modify("device_list", cv, "mac=?", new String[]{mac});
+
+                data.get(position).name = name;
+                fragmentAdapter.notifyDataSetChanged();
+                adapter.notifyDataSetChanged();
+                if (newDeviceFlag) {
+                    if (name == null || type_name == null || type == -1 || jsonSetting != null)
+                        return;
+                    handler.removeMessages(2);
                     newDeviceFlag = false;
-                    final int type = jsonObject.getInt("type");
-                    final String name = jsonObject.getString("name");
-                    final String mac = jsonObject.getString("mac");
+                    AlertDialog alertDialog = new AlertDialog.Builder(MainActivity.this)
+                            .setTitle("设备重复添加")
+                            .setMessage("设备已在列表中")
+                            .create();
+                    alertDialog.setButton(DialogInterface.BUTTON_POSITIVE, "确定", new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialog, int which) {
+                            viewPager.setCurrentItem(position);
 
-                    final int id = adapter.contains(mac);
-                    if (id >= 0) {
-                        AlertDialog alertDialog = new AlertDialog.Builder(MainActivity.this)
-                                .setTitle("设备重复添加")
-                                .setMessage("设备已在列表中")
-                                .create();
-                        alertDialog.setButton(DialogInterface.BUTTON_POSITIVE, "确定", new DialogInterface.OnClickListener() {
-                            @Override
-                            public void onClick(DialogInterface dialog, int which) {
-                                viewPager.setCurrentItem(id);
-
-                            }
-                        });
-                        alertDialog.show();
-                    } else {
-                        DeviceItem d = new DeviceItem(MainActivity.this, type, name, mac);
-                        SQLiteClass sqLite = new SQLiteClass(this, "device_list");
-                        ContentValues cv = new ContentValues();
-                        cv.put("name", name);
-                        cv.put("type", type);
-                        cv.put("mac", mac);
-                        sqLite.Insert("device_list", cv);
-                        data.add(d);
-                        fragmentAdapter.notifyDataSetChanged();
-                        adapter.notifyDataSetChanged();
-
-                        viewPager.setCurrentItem(adapter.getCount() - 1);
-                    }
+                        }
+                    });
+                    alertDialog.show();
                 }
-            } catch (JSONException e) {
-                e.printStackTrace();
+            } else {//设备不存在
+                if (newDeviceFlag || getDeviceFlag) {
+                    if (name == null || type_name == null || type == -1 || jsonSetting != null)
+                        return;
+                    handler.removeMessages(2);
+                    newDeviceFlag = false;
+                    DeviceItem d = new DeviceItem(MainActivity.this, type, name, mac);
+                    SQLiteClass sqLite = new SQLiteClass(this, "device_list");
+                    ContentValues cv = new ContentValues();
+                    cv.put("name", name);
+                    cv.put("type", type);
+                    cv.put("mac", mac);
+                    sqLite.Insert("device_list", cv);
+                    data.add(d);
+                    fragmentAdapter.notifyDataSetChanged();
+                    adapter.notifyDataSetChanged();
+                    viewPager.setCurrentItem(adapter.getCount() - 1);
+                }
             }
+            //endregion
 
+
+        } catch (JSONException e) {
+            e.printStackTrace();
         }
+
     }
 
     //region MQTT服务有关

@@ -15,10 +15,12 @@ public class SQLiteClass {
         dbHelper = new SQLDBHelper(context, "databases.db", null, 1);
         SQLiteDatabase db = dbHelper.getReadableDatabase();
     }
+
     public SQLiteClass(Context context) {
         dbHelper = new SQLDBHelper(context, "databases.db", null, 1);
         SQLiteDatabase db = dbHelper.getReadableDatabase();
     }
+
     //插入 增
     public void Insert(String table, ContentValues cv) {
         SQLiteDatabase db = dbHelper.getReadableDatabase();
@@ -40,8 +42,7 @@ public class SQLiteClass {
                         String orderBy) {
         SQLiteDatabase db = dbHelper.getReadableDatabase();
         Cursor cursor = db.query(table, columns, selection, selectionArgs, groupBy, having, orderBy);
-       // db.close();
-
+        // db.close();
 
         return cursor;
     }
@@ -53,6 +54,18 @@ public class SQLiteClass {
         db.close();
     }
 
+
+    //获取某一项的一个内容
+    public String get(String table, String mac, String parameter) {
+        String str = null;
+        SQLiteDatabase db = dbHelper.getReadableDatabase();
+        Cursor cursor = db.query(table, new String[]{parameter}, "mac=?", new String[]{mac}, null, null, null);
+        if (cursor.moveToLast())
+            str = cursor.getString(cursor.getColumnIndex(parameter));
+        db.close();
+        return str;
+
+    }
 
     class SQLDBHelper extends SQLiteOpenHelper {
 

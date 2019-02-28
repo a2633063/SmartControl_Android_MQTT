@@ -3,6 +3,12 @@
 
     <PreferenceCategory android:title="设备">
 
+        <EditTextPreference
+            android:dialogTitle="设备名称"
+            android:key="name"
+            android:negativeButtonText="取消"
+            android:positiveButtonText="保存"
+            android:title="名称" />
 
         <EditTextPreference
             android:dialogTitle="设置(配合domoticz)"

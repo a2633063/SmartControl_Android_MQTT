@@ -188,8 +188,8 @@ public class ConnectService extends Service {
     public void connect(String mqtt_uri, String mqtt_id,
                         String mqtt_user, String mqtt_password) {
         if (mqtt_uri == null) return;
-        if (mqtt_user == null) mqtt_user ="";
-        if (mqtt_password == null) mqtt_password="";
+        if (mqtt_user == null) mqtt_user = "";
+        if (mqtt_password == null) mqtt_password = "";
 
 
         this.mqtt_uri = mqtt_uri;
@@ -280,13 +280,14 @@ public class ConnectService extends Service {
     }
 
     public boolean isConnected() {
-        if(mqttClient==null) return false;
+        if (mqttClient == null) return false;
         return mqttClient.isConnected();
     }
 
     public void disconnect() {
         try {
-            mqttClient.disconnect();
+            if (mqttClient != null)
+                mqttClient.disconnect();
         } catch (MqttException e) {
             e.printStackTrace();
         }

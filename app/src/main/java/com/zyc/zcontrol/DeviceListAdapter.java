@@ -1,7 +1,6 @@
 package com.zyc.zcontrol;
 
 import android.content.Context;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -10,7 +9,6 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import java.util.List;
-import java.util.Map;
 
 class DeviceListAdapter extends BaseAdapter {
 
@@ -109,6 +107,7 @@ class DeviceListAdapter extends BaseAdapter {
 
     public int contains(String mac)
     {
+        if(mac==null ||mac.length()==0) return -1;
         for(int i=0;i<mdata.size();i++)
         {
             if(mdata.get(i).mac.equalsIgnoreCase(mac))
