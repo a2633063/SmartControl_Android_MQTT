@@ -26,7 +26,6 @@ import android.widget.SeekBar;
 import android.widget.TextView;
 
 import com.zyc.zcontrol.ConnectService;
-import com.zyc.zcontrol.MyFunction;
 import com.zyc.zcontrol.R;
 
 import java.text.DateFormat;
@@ -232,17 +231,6 @@ public class ButtonMateFragment extends Fragment {
     };
 //endregion
 
-
-    //发送
-    void send(String topic, String message, boolean choice) {
-        if (choice) {
-            MyFunction.UDPsend(message);
-        } else mConnectService.MQTTSend(topic, message);
-    }
-
-    void send(String topic, String message) {
-        send(topic, message, false);
-    }
 
     //数据接收处理函数
     void Receive(String topic, String message) {

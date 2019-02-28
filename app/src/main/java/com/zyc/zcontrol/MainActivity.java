@@ -68,6 +68,7 @@ public class MainActivity extends AppCompatActivity {
     private MsgReceiver msgReceiver;
     //endregion
 
+    private Toolbar toolbar;
     private TabLayout tabLayout;
     private ViewPager viewPager;
     private FragmentAdapter fragmentAdapter;
@@ -116,7 +117,7 @@ public class MainActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-        final Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
+        toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
         mSharedPreferences = getSharedPreferences("Setting", 0);
@@ -540,15 +541,19 @@ public class MainActivity extends AppCompatActivity {
             //region 根据收到的消息更改显示列表
             if (position >= 0) {//设备已存在
                 //修改名称
-                SQLiteClass sqLite = new SQLiteClass(this, "device_list");
-                ContentValues cv = new ContentValues();
-                cv.put("name", name);
-                if (type >= 0) cv.put("type", type);
-                sqLite.Modify("device_list", cv, "mac=?", new String[]{mac});
+                if (!name.equals(data.get(position).name)) {
+                    SQLiteClass sqLite = new SQLiteClass(this, "device_list");
+                    ContentValues cv = new ContentValues();
+                    cv.put("name", name);
+                    if (type >= 0) cv.put("type", type);
+                    sqLite.Modify("device_list", cv, "mac=?", new String[]{mac});
 
-                data.get(position).name = name;
-                fragmentAdapter.notifyDataSetChanged();
-                adapter.notifyDataSetChanged();
+                    data.get(position).name = name;
+                    fragmentAdapter.notifyDataSetChanged();
+                    adapter.notifyDataSetChanged();
+                    if (position == adapter.getChoice())
+                        toolbar.setTitle(name);
+                }
                 if (newDeviceFlag) {
                     if (name == null || type_name == null || type == -1 || jsonSetting != null)
                         return;

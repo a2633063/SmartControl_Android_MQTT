@@ -4,17 +4,14 @@ import android.app.FragmentManager;
 import android.app.FragmentTransaction;
 import android.content.Intent;
 import android.os.Bundle;
-
 import android.preference.PreferenceFragment;
-import android.support.v4.app.Fragment;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.view.MenuItem;
 
 import com.zyc.StaticVariable;
-
-import com.zyc.zcontrol.controlItem.buttonmate.ButtonMateSettingFragment;
 import com.zyc.zcontrol.R;
+import com.zyc.zcontrol.controlItem.buttonmate.ButtonMateSettingFragment;
 
 public class SettingActivity extends AppCompatActivity {
 
@@ -41,7 +38,7 @@ public class SettingActivity extends AppCompatActivity {
             type = intent.getIntExtra("type", StaticVariable.TYPE_UNKNOWN);
             name = intent.getStringExtra("name");
             mac = intent.getStringExtra("mac");
-            this.setTitle(name);
+//            this.setTitle(name);
             switch (type) {
                 //TODO 补充其他type
                 case StaticVariable.TYPE_UNKNOWN:

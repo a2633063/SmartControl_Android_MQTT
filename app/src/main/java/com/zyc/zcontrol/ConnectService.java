@@ -25,27 +25,26 @@ import java.net.SocketException;
 import java.net.UnknownHostException;
 
 public class ConnectService extends Service {
+    public final static String Tag = "ConnectService";
 
-    public final static String ACTION_MQTT_CONNECTED =
-            "com.zyc.zcontrol.mqtt.ACTION_MQTT_CONNECTED";
-    public final static String ACTION_MQTT_DISCONNECTED =
-            "com.zyc.zcontrol.mqtt.ACTION_MQTT_DISCONNECTED";
-    public final static String ACTION_DATA_AVAILABLE =
-            "com.zyc.zcontrol.mqtt.ACTION_DATA_AVAILABLE";
-    public final static String EXTRA_DATA_TOPIC =
-            "com.zyc.zcontrol.mqtt.EXTRA_DATA_TOPIC";
-    public final static String EXTRA_DATA_MESSAGE =
-            "com.zyc.zcontrol.mqtt.EXTRA_DATA_MESSAGE";
+    //region 广播静态变量
 
+    //region MQTT相关
+    public final static String ACTION_MQTT_CONNECTED = "com.zyc.zcontrol.mqtt.ACTION_MQTT_CONNECTED";
+    public final static String ACTION_MQTT_DISCONNECTED = "com.zyc.zcontrol.mqtt.ACTION_MQTT_DISCONNECTED";
+    public final static String ACTION_DATA_AVAILABLE = "com.zyc.zcontrol.mqtt.ACTION_DATA_AVAILABLE";
+    public final static String EXTRA_DATA_TOPIC = "com.zyc.zcontrol.mqtt.EXTRA_DATA_TOPIC";
+    public final static String EXTRA_DATA_MESSAGE = "com.zyc.zcontrol.mqtt.EXTRA_DATA_MESSAGE";
+    //endregion
 
-    public final static String ACTION_UDP_DATA_AVAILABLE =
-            "com.zyc.zcontrol.mqtt.ACTION_UDP_DATA_AVAILABLE";
-    public final static String EXTRA_UDP_DATA_IP =
-            "com.zyc.zcontrol.mqtt.EXTRA_UDP_DATA_IP";
-    public final static String EXTRA_UDP_DATA_PORT =
-            "com.zyc.zcontrol.mqtt.EXTRA_UDP_DATA_PORT";
-    public final static String EXTRA_UDP_DATA_MESSAGE =
-            "com.zyc.zcontrol.mqtt.EXTRA_UDP_DATA_MESSAGE";
+    //region UDP相关
+    public final static String ACTION_UDP_DATA_AVAILABLE = "com.zyc.zcontrol.mqtt.ACTION_UDP_DATA_AVAILABLE";
+    public final static String EXTRA_UDP_DATA_IP = "com.zyc.zcontrol.mqtt.EXTRA_UDP_DATA_IP";
+    public final static String EXTRA_UDP_DATA_PORT = "com.zyc.zcontrol.mqtt.EXTRA_UDP_DATA_PORT";
+    public final static String EXTRA_UDP_DATA_MESSAGE = "com.zyc.zcontrol.mqtt.EXTRA_UDP_DATA_MESSAGE";
+    //endregion
+
+    //endregion
 
     public final static int PHONE_UDP_PORT = 10181;
     public final static int DEVICE_UDP_PORT = 10182;
@@ -111,7 +110,6 @@ public class ConnectService extends Service {
     });
     //endregion
 
-
     //region Service相关配置
     private final IBinder mBinder = new LocalBinder();
 
@@ -129,41 +127,38 @@ public class ConnectService extends Service {
     //endregion
     @Override
     public void onCreate() {
-        Log.d("ConnectService", "OnCreate");
+        Log.d(Tag, "OnCreate");
 
+        //region 广播相关初始化
         try {
             localBroadcastManager = LocalBroadcastManager.getInstance(this);
         } catch (Exception e) {
             e.printStackTrace();
             this.stopSelf();
         }
-        if (datagramSocket == null)
-            try {
-                datagramSocket = new DatagramSocket(PHONE_UDP_PORT);
-            } catch (SocketException e) {
-                e.printStackTrace();
-                datagramSocket = null;
-            }
+        //endregion
+
+        //region UDP监听初始化
+        try {
+            datagramSocket = new DatagramSocket(PHONE_UDP_PORT);
+        } catch (SocketException e) {
+            e.printStackTrace();
+            datagramSocket = null;
+        }
+        //endregion
 
         thread.start(); //启动UDP监听进程
     }
 
     @Override
-    public int onStartCommand(Intent intent, int flags, int startId) {
-        Log.d("ConnectService", "onStartCommand");
-        return super.onStartCommand(intent, flags, startId);
-    }
-
-    @Override
     public void onDestroy() {
-
         disconnect();
         flag = false;
         super.onDestroy();
-        Log.d("ConnectService", "onDestroy");
+        Log.d(Tag, "onDestroy");
     }
 
-
+    //region 广播子函数
     void broadcastUpdate(String action) {
         final Intent intent = new Intent(action);
         localBroadcastManager.sendBroadcast(intent);
@@ -184,9 +179,10 @@ public class ConnectService extends Service {
         intent.putExtra(EXTRA_DATA_MESSAGE, new String(message.getPayload()));
         localBroadcastManager.sendBroadcast(intent);
     }
+    //endregion
 
-    public void connect(String mqtt_uri, String mqtt_id,
-                        String mqtt_user, String mqtt_password) {
+    //region MQTT连接状态字函数
+    public void connect(String mqtt_uri, String mqtt_id, String mqtt_user, String mqtt_password) {
         if (mqtt_uri == null) return;
         if (mqtt_user == null) mqtt_user = "";
         if (mqtt_password == null) mqtt_password = "";
@@ -292,7 +288,7 @@ public class ConnectService extends Service {
             e.printStackTrace();
         }
     }
-
+    //endregion
 
     //region 发送
 
@@ -318,7 +314,8 @@ public class ConnectService extends Service {
     public void UDPsend(String ip, int port, String message) {
 
         if (message == null || message.length() < 1) return;
-
+        if (port < 1) port = DEVICE_UDP_PORT;
+        if (ip == null) ip = "255.255.255.255";
         try {
             if (datagramSocket == null)
                 datagramSocket = new DatagramSocket(PHONE_UDP_PORT);
