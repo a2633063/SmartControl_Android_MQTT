@@ -1,6 +1,7 @@
 package com.zyc.zcontrol.controlItem.buttonmate;
 
 
+import android.annotation.SuppressLint;
 import android.content.BroadcastReceiver;
 import android.content.ComponentName;
 import android.content.Context;
@@ -27,6 +28,9 @@ import android.widget.TextView;
 
 import com.zyc.zcontrol.ConnectService;
 import com.zyc.zcontrol.R;
+
+import org.json.JSONException;
+import org.json.JSONObject;
 
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
@@ -62,8 +66,18 @@ public class ButtonMateFragment extends Fragment {
 
     TextView log;
 
+    String device_mac = null;
+    String device_name = null;
 
     public ButtonMateFragment() {
+
+        // Required empty public constructor
+    }
+
+    @SuppressLint("ValidFragment")
+    public ButtonMateFragment(String name, String mac) {
+        this.device_mac = mac;
+        this.device_name = name;
         // Required empty public constructor
     }
 
@@ -103,6 +117,7 @@ public class ButtonMateFragment extends Fragment {
                     ll.setVisibility(View.VISIBLE);
 
 //                        TcpSocketClient.MQTTSend(setting_get_all);
+                    Send("{\"mac\":\"" + device_mac + "\",\"setting\":{\"min\":null,\"max\":null,\"middle\":null,\"middle_delay\":null}}");
 
                 } else ll.setVisibility(View.GONE);
                 swipeLayout.setRefreshing(false);
@@ -215,8 +230,10 @@ public class ButtonMateFragment extends Fragment {
 
             switch (arg0.getId()) {
                 case R.id.iv_main_button1:
+                    Send("{\"name\":\"" + device_name + "\",\"mac\":\"" + device_mac + "\",\"nvalue\" : 0}");
                     break;
                 case R.id.iv_main_button2:
+                    Send("{\"name\":\"" + device_name + "\",\"mac\":\"" + device_mac + "\",\"nvalue\" : 1}");
                     break;
                 case R.id.btn_1:
                     break;
@@ -232,11 +249,55 @@ public class ButtonMateFragment extends Fragment {
 //endregion
 
 
+    void Send(String message) {
+        boolean b = getActivity().getSharedPreferences("Setting_" + device_mac, 0).getBoolean("always_UDP", false);
+        mConnectService.Send(b ? null : "domoticz/out", message);
+    }
+
     //数据接收处理函数
+    void Receive(String ip, int port, String message) {
+        //TODO 数据接收处理
+        Receive(null, message);
+    }
+
     void Receive(String topic, String message) {
         //TODO 数据接收处理
         Log.d(Tag, "RECV DATA,topic:" + topic + ",content:" + message);
 
+        try {
+            JSONObject jsonObject = new JSONObject(message);
+            String name = null;
+            String mac = null;
+            JSONObject jsonSetting = null;
+            if (jsonObject.has("name")) name = jsonObject.getString("name");
+            if (jsonObject.has("mac")) mac = jsonObject.getString("mac");
+            if (jsonObject.has("setting")) jsonSetting = jsonObject.getJSONObject("setting");
+            if (mac == null) return;
+            else if (mac.equals(device_mac)) {
+                if (jsonSetting != null) {
+                    if (jsonSetting.has("min")) {
+                        int min = jsonSetting.getInt("min");
+                        bt_left.setText("设为左侧按键(" + min + ")");
+                    }
+                    if (jsonSetting.has("max")) {
+                        int max = jsonSetting.getInt("max");
+                        bt_right.setText("设为右侧按键(" + max + ")");
+                    }
+                    if (jsonSetting.has("middle")) {
+                        int middle = jsonSetting.getInt("middle");
+                        bt_middle.setText("设为平均值(" + middle + ")");
+                    }
+                    if (jsonSetting.has("middle_delay")) {
+                        int middle_delay = jsonSetting.getInt("middle_delay");
+                        tv_seekbarDelayVal.setText("按下延时时间:" + String.format("%03d", middle_delay) + "ms");
+                        seekBar_delay.setProgress(middle_delay - 20);
+                    }
+
+                }
+            }
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
     }
 
     //region MQTT服务有关
@@ -259,8 +320,12 @@ public class ButtonMateFragment extends Fragment {
         @Override
         public void onReceive(Context context, Intent intent) {
             final String action = intent.getAction();
-
-            if (ConnectService.ACTION_MQTT_CONNECTED.equals(action)) {  //连接成功
+            if (ConnectService.ACTION_UDP_DATA_AVAILABLE.equals(action)) {
+                String ip = intent.getStringExtra(ConnectService.EXTRA_UDP_DATA_IP);
+                String message = intent.getStringExtra(ConnectService.EXTRA_UDP_DATA_MESSAGE);
+                int port = intent.getIntExtra(ConnectService.EXTRA_UDP_DATA_PORT, -1);
+                Receive(ip, port, message);
+            } else if (ConnectService.ACTION_MQTT_CONNECTED.equals(action)) {  //连接成功
                 Log.d(Tag, "ACTION_MQTT_CONNECTED");
                 Log("服务器已连接");
             } else if (ConnectService.ACTION_MQTT_DISCONNECTED.equals(action)) {  //连接失败/断开
@@ -276,8 +341,7 @@ public class ButtonMateFragment extends Fragment {
     //endregion
 
 
-    void Log(String str)
-    {
-        log.setText(log.getText()+"\n" +str);
+    void Log(String str) {
+        log.setText(log.getText() + "\n" + str);
     }
 }

@@ -78,7 +78,6 @@ public class ButtonMateSettingFragment extends PreferenceFragment {
         name_preference = (EditTextPreference) findPreference("name");
         domoticz_idx = (EditTextPreference) findPreference("domoticz_idx");
 //
-        SharedPreferences sp= getPreferenceManager().getSharedPreferences();
 
         try {
             int idx_temp = Integer.parseInt(domoticz_idx.getText());
@@ -93,7 +92,7 @@ public class ButtonMateSettingFragment extends PreferenceFragment {
             public boolean onPreferenceChange(Preference preference, Object newValue) {
 
                 mConnectService.Send("domoticz/out",
-                        "{\"mac\":\"" + device_mac + "\",\"setting\":{\"idx\":"+(String)newValue+"}}");
+                        "{\"mac\":\"" + device_mac + "\",\"setting\":{\"idx\":" + (String) newValue + "}}");
                 return false;
             }
         });
@@ -105,7 +104,7 @@ public class ButtonMateSettingFragment extends PreferenceFragment {
             public boolean onPreferenceChange(Preference preference, Object newValue) {
 
                 mConnectService.Send("domoticz/out",
-                        "{\"mac\":\"" + device_mac + "\",\"setting\":{\"name\":\""+(String)newValue+"\"}}");
+                        "{\"mac\":\"" + device_mac + "\",\"setting\":{\"name\":\"" + (String) newValue + "\"}}");
                 return false;
             }
         });
@@ -143,16 +142,17 @@ public class ButtonMateSettingFragment extends PreferenceFragment {
             if (jsonObject.has("mac")) mac = jsonObject.getString("mac");
             if (jsonObject.has("setting")) jsonSetting = jsonObject.getJSONObject("setting");
             if (mac == null) return;
-
-            if (name!=null){
-                name_preference.setSummary(name);
-                name_preference.setText(name);
-            }
-            if (jsonSetting != null) {
-                if (jsonSetting.has("idx")) {
-                    String idx = jsonSetting.getString("idx");
-                    domoticz_idx.setSummary(idx);
-                    domoticz_idx.setText(idx);
+            else if (mac.equals(device_mac)) {
+                if (name != null) {
+                    name_preference.setSummary(name);
+                    name_preference.setText(name);
+                }
+                if (jsonSetting != null) {
+                    if (jsonSetting.has("idx")) {
+                        String idx = jsonSetting.getString("idx");
+                        domoticz_idx.setSummary(idx);
+                        domoticz_idx.setText(idx);
+                    }
                 }
             }
 

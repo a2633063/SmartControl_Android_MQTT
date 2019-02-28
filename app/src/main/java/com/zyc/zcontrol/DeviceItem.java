@@ -47,12 +47,12 @@ public class DeviceItem {
 //                throw
                 break;
             case StaticVariable.TYPE_BUTTON_MATE:
-                fragment=new ButtonMateFragment();
+                fragment=new ButtonMateFragment(name,mac);
                 break;
         }
         if(fragment==null)
         {
-            fragment=new ButtonMateFragment();
+            fragment=new ButtonMateFragment(name,mac);
         }
         if(Icon==null)
         {
