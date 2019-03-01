@@ -87,7 +87,7 @@
                     android:text="角度值:90"
                     android:textSize="25sp" />
                 <Button
-                    android:id="@+id/btn_2"
+                    android:id="@+id/btn_middle"
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
@@ -98,7 +98,7 @@
                 android:layout_height="wrap_content">
 
                 <Button
-                    android:id="@+id/btn_1"
+                    android:id="@+id/btn_left"
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
@@ -107,7 +107,7 @@
 
 
                 <Button
-                    android:id="@+id/btn_3"
+                    android:id="@+id/btn_right"
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:layout_weight="1"

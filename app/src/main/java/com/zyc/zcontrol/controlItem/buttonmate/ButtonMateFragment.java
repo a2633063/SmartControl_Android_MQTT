@@ -144,6 +144,8 @@ public class ButtonMateFragment extends Fragment {
             @Override
             public void onStopTrackingTouch(SeekBar seekBar) {
                 //TODO 发送设置测试角度
+                Send("{\"mac\":\"" + device_mac + "\",\"setting\":{\"test\":"+String.format("%d", seekBar.getProgress() + 20)+"}}");
+
             }
         });
         seekBar_delay.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
@@ -159,16 +161,17 @@ public class ButtonMateFragment extends Fragment {
 
             @Override
             public void onStopTrackingTouch(SeekBar seekBar) {
-                //TODO 发送delay时间
+                //发送delay时间
+                Send("{\"mac\":\"" + device_mac + "\",\"setting\":{\"middle_delay\":"+String.format("%d", seekBar.getProgress() + 20)+"}}");
 
             }
         });
         //endregion
 
         //region 按键
-        bt_left = (Button) view.findViewById(R.id.btn_1);
-        bt_middle = (Button) view.findViewById(R.id.btn_2);
-        bt_right = (Button) view.findViewById(R.id.btn_3);
+        bt_left = (Button) view.findViewById(R.id.btn_left);
+        bt_middle = (Button) view.findViewById(R.id.btn_middle);
+        bt_right = (Button) view.findViewById(R.id.btn_right);
         bt_right.setOnClickListener(buttonListener);
         bt_left.setOnClickListener(buttonListener);
         bt_middle.setOnClickListener(buttonListener);
@@ -235,11 +238,15 @@ public class ButtonMateFragment extends Fragment {
                 case R.id.iv_main_button2:
                     Send("{\"name\":\"" + device_name + "\",\"mac\":\"" + device_mac + "\",\"nvalue\" : 1}");
                     break;
-                case R.id.btn_1:
+                case R.id.btn_left:
+                    Send("{\"mac\":\"" + device_mac + "\",\"setting\":{\"min\":" + seekBar_angle.getProgress() + "}}");
                     break;
-                case R.id.btn_2:
+                case R.id.btn_middle:
+                    Send("{\"mac\":\"" + device_mac + "\",\"setting\":{\"middle\":" + seekBar_angle.getProgress() + "}}");
                     break;
-                case R.id.btn_3:
+                case R.id.btn_right:
+                    Send("{\"mac\":\"" + device_mac + "\",\"setting\":{\"max\":" + seekBar_angle.getProgress() + "}}");
+
                     break;
             }
 
