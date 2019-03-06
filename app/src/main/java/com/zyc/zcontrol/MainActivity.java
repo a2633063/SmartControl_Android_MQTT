@@ -137,8 +137,7 @@ public class MainActivity extends AppCompatActivity {
         }
 
         if (data.size() < 1) {
-            data.add(new DeviceItem(MainActivity.this, StaticVariable.TYPE_BUTTON_MATE, "button1", "123456789abcde"));
-            data.add(new DeviceItem(MainActivity.this, StaticVariable.TYPE_BUTTON_MATE, "测试3", "123456789abcde"));
+            data.add(new DeviceItem(MainActivity.this, StaticVariable.TYPE_BUTTON_MATE, "按键伴侣(演示设备)", "123456789abcde"));
         }
         //endregion
 
@@ -332,7 +331,12 @@ public class MainActivity extends AppCompatActivity {
             e.printStackTrace();
         }*/
         //endregion
-        toolbar.setTitle(adapter.getChoiceDevice().name);
+
+        try {
+            toolbar.setTitle(adapter.getChoiceDevice().name);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
     }
 
     @Override
