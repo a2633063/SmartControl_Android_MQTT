@@ -92,6 +92,7 @@ public class ButtonMateFragment extends Fragment {
         localBroadcastManager = LocalBroadcastManager.getInstance(getContext());
         msgReceiver = new MsgReceiver();
         IntentFilter intentFilter = new IntentFilter();
+        intentFilter.addAction(ConnectService.ACTION_UDP_DATA_AVAILABLE);
         intentFilter.addAction(ConnectService.ACTION_MQTT_CONNECTED);
         intentFilter.addAction(ConnectService.ACTION_MQTT_DISCONNECTED);
         intentFilter.addAction(ConnectService.ACTION_DATA_AVAILABLE);
