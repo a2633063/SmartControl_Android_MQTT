@@ -16,6 +16,7 @@
         <activity
             android:name=".MainActivity"
             android:label="@string/app_name"
+            android:screenOrientation="portrait"
             android:theme="@style/AppTheme.NoActionBar">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
@@ -31,13 +32,16 @@
 
         <activity
             android:name=".DeviceAddChoiceActivity"
-            android:label="添加设备" />
+            android:label="添加设备"
+            android:screenOrientation="portrait" />
         <activity
             android:name="com.espressif.ESPtouchActivity"
-            android:label="添加设备"></activity>
+            android:label="添加设备"
+            android:screenOrientation="portrait"/>
         <activity
             android:name=".controlItem.SettingActivity"
-            android:label="设置" />
+            android:label="设置"
+            android:screenOrientation="portrait" />
 
     </application>
 
