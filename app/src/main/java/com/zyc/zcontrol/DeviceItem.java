@@ -7,6 +7,7 @@ import android.support.v4.app.Fragment;
 
 import com.zyc.StaticVariable;
 import com.zyc.zcontrol.controlItem.buttonmate.ButtonMateFragment;
+import com.zyc.zcontrol.controlItem.tc1.TC1Fragment;
 
 
 public class DeviceItem {
@@ -48,6 +49,9 @@ public class DeviceItem {
                 break;
             case StaticVariable.TYPE_BUTTON_MATE:
                 fragment=new ButtonMateFragment(name,mac);
+                break;
+            case StaticVariable.TYPE_TC1:
+                fragment=new TC1Fragment(name,mac);
                 break;
         }
         if(fragment==null)

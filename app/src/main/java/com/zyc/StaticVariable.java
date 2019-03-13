@@ -13,16 +13,18 @@ public class StaticVariable {
     //静态变量
     public final static int TYPE_UNKNOWN =-1;
     public final static int TYPE_BUTTON_MATE=0;
-    public final static int TYPE_BUTTON=1;
+    public final static int TYPE_TC1=1;
+//    public final static int TYPE_BUTTON=5;
     public final static int TYPE_RGB=2;
     public final static int TYPE_CLOCK=3;
     public final static int TYPE_COUNT=4;
 
     public final static String TYPE_NAME[]={
             "按键伴侣",//0
-            "智能按键",//1
+            "智能排插zTC1",//1
             "RGB灯",   //2
-            "时钟"    //3
+            "时钟",    //3
+            // "智能按键",//1
     };
 
     public final static @DrawableRes

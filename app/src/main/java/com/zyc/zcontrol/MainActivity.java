@@ -436,9 +436,8 @@ public class MainActivity extends AppCompatActivity {
 
         //noinspection SimplifiableIfStatement
         if (id == R.id.action_device_settings) {
-            mConnectService.Send("/test/Androd", "test message");
-
-            mConnectService.Send(null, "UDP TEST");
+//            mConnectService.Send("/test/Androd", "test message");
+//            mConnectService.Send(null, "UDP TEST");
 
 
             if (data.size() > 0) {
