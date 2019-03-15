@@ -12,19 +12,15 @@ import android.os.Bundle;
 import android.os.IBinder;
 import android.support.v4.app.Fragment;
 import android.support.v4.content.LocalBroadcastManager;
-import android.support.v4.widget.SwipeRefreshLayout;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Button;
-import android.widget.ImageView;
-import android.widget.LinearLayout;
 import android.widget.ScrollView;
-import android.widget.SeekBar;
 import android.widget.TextView;
+import android.widget.ToggleButton;
 
 import com.zyc.zcontrol.ConnectService;
 import com.zyc.zcontrol.R;
@@ -42,7 +38,7 @@ import static android.content.Context.BIND_AUTO_CREATE;
  * A simple {@link Fragment} subclass.
  */
 public class TC1Fragment extends Fragment {
-    public final static String Tag = "ButtonMateFragment";
+    public final static String Tag = "TC1Fragment";
 
 
     //region 使用本地广播与service通信
@@ -52,16 +48,9 @@ public class TC1Fragment extends Fragment {
     //endregion
 
     //region 控件
-    private SwipeRefreshLayout swipeLayout;
-    private LinearLayout ll;
-    private SeekBar seekBar_angle;
-    private TextView tv_seekbarAngleVal;
-    private SeekBar seekBar_delay;
-    private TextView tv_seekbarDelayVal;
-
-    private Button bt_left;
-    private Button bt_right;
-    private Button bt_middle;
+    ToggleButton tbtn_all;
+    ToggleButton tbtn_main_button[] = new ToggleButton[6];
+    TextView tv_main_button[] = new TextView[6];
     //endregion
 
     TextView log;
@@ -85,7 +74,7 @@ public class TC1Fragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
-        View view = inflater.inflate(R.layout.fragment_button_mate, container, false);
+        View view = inflater.inflate(R.layout.fragment_tc1, container, false);
 
         //region MQTT服务有关
         //region 动态注册接收mqtt服务的广播接收器,
@@ -107,82 +96,27 @@ public class TC1Fragment extends Fragment {
 
         //region 控件初始化
 
-        //region SwipeRefreshLayout 控件
-        ll = (LinearLayout) view.findViewById(R.id.ll);
-        swipeLayout = (SwipeRefreshLayout) view.findViewById(R.id.swipeRefreshLayout);
-        swipeLayout.setColorSchemeResources(R.color.colorAccent, R.color.colorPrimaryDark, R.color.colorAccent, R.color.colorPrimary);
-        swipeLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
-            @Override
-            public void onRefresh() {
-                if (ll.getVisibility() != View.VISIBLE) {
-                    ll.setVisibility(View.VISIBLE);
+        tbtn_all = view.findViewById(R.id.tbtn_all);
+        tbtn_main_button[0] = view.findViewById(R.id.tbtn_main_button1);
+        tbtn_main_button[1] = view.findViewById(R.id.tbtn_main_button2);
+        tbtn_main_button[2] = view.findViewById(R.id.tbtn_main_button3);
+        tbtn_main_button[3] = view.findViewById(R.id.tbtn_main_button4);
+        tbtn_main_button[4] = view.findViewById(R.id.tbtn_main_button5);
+        tbtn_main_button[5] = view.findViewById(R.id.tbtn_main_button6);
+        tv_main_button[0] = view.findViewById(R.id.tv_main_button1);
+        tv_main_button[1] = view.findViewById(R.id.tv_main_button2);
+        tv_main_button[2] = view.findViewById(R.id.tv_main_button3);
+        tv_main_button[3] = view.findViewById(R.id.tv_main_button4);
+        tv_main_button[4] = view.findViewById(R.id.tv_main_button5);
+        tv_main_button[5] = view.findViewById(R.id.tv_main_button6);
 
-//                        TcpSocketClient.MQTTSend(setting_get_all);
-                    Send("{\"mac\":\"" + device_mac + "\",\"setting\":{\"min\":null,\"max\":null,\"middle\":null,\"middle_delay\":null}}");
 
-                } else ll.setVisibility(View.GONE);
-                swipeLayout.setRefreshing(false);
-            }
-        });
-        //endregion
-
-        //region seekBar及对应TextView
-        seekBar_angle = (SeekBar) view.findViewById(R.id.seekBar_angle);
-        tv_seekbarAngleVal = (TextView) view.findViewById(R.id.tv_seekbarAngleVal);
-        seekBar_delay = (SeekBar) view.findViewById(R.id.seekBar_delay);
-        tv_seekbarDelayVal = (TextView) view.findViewById(R.id.tv_seekbarDelayVal);
-
-        seekBar_angle.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
-            @Override
-            public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
-                tv_seekbarAngleVal.setText("角度值:" + String.format("%03d", progress));
-            }
-
-            @Override
-            public void onStartTrackingTouch(SeekBar seekBar) {
-            }
-
-            @Override
-            public void onStopTrackingTouch(SeekBar seekBar) {
-                //TODO 发送设置测试角度
-                Send("{\"mac\":\"" + device_mac + "\",\"setting\":{\"test\":"+String.format("%d", seekBar.getProgress() + 20)+"}}");
-
-            }
-        });
-        seekBar_delay.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
-            @Override
-            public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
-                tv_seekbarDelayVal.setText("按下延时时间:" + String.format("%03d", progress + 20) + "ms");
-            }
-
-            @Override
-            public void onStartTrackingTouch(SeekBar seekBar) {
-
-            }
-
-            @Override
-            public void onStopTrackingTouch(SeekBar seekBar) {
-                //发送delay时间
-                Send("{\"mac\":\"" + device_mac + "\",\"setting\":{\"middle_delay\":"+String.format("%d", seekBar.getProgress() + 20)+"}}");
-
-            }
-        });
-        //endregion
-
-        //region 按键
-        bt_left = (Button) view.findViewById(R.id.btn_left);
-        bt_middle = (Button) view.findViewById(R.id.btn_middle);
-        bt_right = (Button) view.findViewById(R.id.btn_right);
-        bt_right.setOnClickListener(buttonListener);
-        bt_left.setOnClickListener(buttonListener);
-        bt_middle.setOnClickListener(buttonListener);
-
-        ImageView imageView = (ImageView) view.findViewById(R.id.iv_main_button1);
-        imageView.setOnClickListener(buttonListener);
-        imageView = (ImageView) view.findViewById(R.id.iv_main_button2);
-        imageView.setOnClickListener(buttonListener);
-        //endregion
-
+        tbtn_all.setOnClickListener(MainButtonListener);
+        for (int i = 0; i < 6; i++) {
+            tbtn_main_button[i].setId(i);
+            tv_main_button[i].setId(i);
+            tbtn_main_button[i].setOnClickListener(MainButtonListener);
+        }
         //region log 相关
         final ScrollView scrollView = (ScrollView) view.findViewById(R.id.scrollView);
         log = (TextView) view.findViewById(R.id.tv_log);
@@ -225,30 +159,15 @@ public class TC1Fragment extends Fragment {
     }
 
     //region 按钮事件
-    private View.OnClickListener buttonListener = new View.OnClickListener() {
+    private View.OnClickListener MainButtonListener = new View.OnClickListener() {
 
         @Override
         public void onClick(View arg0) {
-            //TODO 测试是否连接
-            //TODO 对应按键发送对应数据
-
-            switch (arg0.getId()) {
-                case R.id.iv_main_button1:
-                    Send("{\"name\":\"" + device_name + "\",\"mac\":\"" + device_mac + "\",\"nvalue\" : 0}");
-                    break;
-                case R.id.iv_main_button2:
-                    Send("{\"name\":\"" + device_name + "\",\"mac\":\"" + device_mac + "\",\"nvalue\" : 1}");
-                    break;
-                case R.id.btn_left:
-                    Send("{\"mac\":\"" + device_mac + "\",\"setting\":{\"min\":" + seekBar_angle.getProgress() + "}}");
-                    break;
-                case R.id.btn_middle:
-                    Send("{\"mac\":\"" + device_mac + "\",\"setting\":{\"middle\":" + seekBar_angle.getProgress() + "}}");
-                    break;
-                case R.id.btn_right:
-                    Send("{\"mac\":\"" + device_mac + "\",\"setting\":{\"max\":" + seekBar_angle.getProgress() + "}}");
-
-                    break;
+            int id = arg0.getId();
+            if (id >= 0 && id <= 5)
+                Send("{\"name\":\"" + device_name + "\",\"mac\":\"" + device_mac + "\",\"plug_" + id + "\":{\"on\":" + String.valueOf(((ToggleButton) arg0).isChecked() ? 1 : 0) + "}" + "}");
+            else if (id == tbtn_all.getId()) {
+                Send("{\"name\":\"" + device_name + "\",\"mac\":\"" + device_mac + "\",\"nvalue\":" + String.valueOf(((ToggleButton) arg0).isChecked() ? 1 : 0) + "}");
             }
 
         }
@@ -280,29 +199,9 @@ public class TC1Fragment extends Fragment {
             if (jsonObject.has("name")) name = jsonObject.getString("name");
             if (jsonObject.has("mac")) mac = jsonObject.getString("mac");
             if (jsonObject.has("setting")) jsonSetting = jsonObject.getJSONObject("setting");
-            if (mac == null) return;
-            else if (mac.equals(device_mac)) {
-                if (jsonSetting != null) {
-                    if (jsonSetting.has("min")) {
-                        int min = jsonSetting.getInt("min");
-                        bt_left.setText("设为左侧按键(" + min + ")");
-                    }
-                    if (jsonSetting.has("max")) {
-                        int max = jsonSetting.getInt("max");
-                        bt_right.setText("设为右侧按键(" + max + ")");
-                    }
-                    if (jsonSetting.has("middle")) {
-                        int middle = jsonSetting.getInt("middle");
-                        bt_middle.setText("设为平均值(" + middle + ")");
-                    }
-                    if (jsonSetting.has("middle_delay")) {
-                        int middle_delay = jsonSetting.getInt("middle_delay");
-                        tv_seekbarDelayVal.setText("按下延时时间:" + String.format("%03d", middle_delay) + "ms");
-                        seekBar_delay.setProgress(middle_delay - 20);
-                    }
+            if (mac == null || !mac.equals(device_mac)) return;
 
-                }
-            }
+
         } catch (JSONException e) {
             e.printStackTrace();
         }

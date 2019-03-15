@@ -177,9 +177,9 @@ public class ButtonMateFragment extends Fragment {
         bt_left.setOnClickListener(buttonListener);
         bt_middle.setOnClickListener(buttonListener);
 
-        ImageView imageView = (ImageView) view.findViewById(R.id.iv_main_button1);
+        ImageView imageView = (ImageView) view.findViewById(R.id.tbtn_main_button1);
         imageView.setOnClickListener(buttonListener);
-        imageView = (ImageView) view.findViewById(R.id.iv_main_button2);
+        imageView = (ImageView) view.findViewById(R.id.tbtn_main_button2);
         imageView.setOnClickListener(buttonListener);
         //endregion
 
@@ -233,10 +233,10 @@ public class ButtonMateFragment extends Fragment {
             //TODO 对应按键发送对应数据
 
             switch (arg0.getId()) {
-                case R.id.iv_main_button1:
+                case R.id.tbtn_main_button1:
                     Send("{\"name\":\"" + device_name + "\",\"mac\":\"" + device_mac + "\",\"nvalue\" : 0}");
                     break;
-                case R.id.iv_main_button2:
+                case R.id.tbtn_main_button2:
                     Send("{\"name\":\"" + device_name + "\",\"mac\":\"" + device_mac + "\",\"nvalue\" : 1}");
                     break;
                 case R.id.btn_left:

@@ -544,7 +544,7 @@ public class MainActivity extends AppCompatActivity {
             //region 根据收到的消息更改显示列表
             if (position >= 0) {//设备已存在
                 //修改名称
-                if (!name.equals(data.get(position).name)) {
+                if (name!=null && !name.equals(data.get(position).name)) {
                     SQLiteClass sqLite = new SQLiteClass(this, "device_list");
                     ContentValues cv = new ContentValues();
                     cv.put("name", name);

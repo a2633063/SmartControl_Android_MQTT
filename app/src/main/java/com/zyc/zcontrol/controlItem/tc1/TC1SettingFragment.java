@@ -39,6 +39,7 @@ public class TC1SettingFragment extends PreferenceFragment {
 
     EditTextPreference name_preference;
     EditTextPreference domoticz_idx;
+    EditTextPreference[] domoticz_idx_plug = new EditTextPreference[6];
 
     String device_name = null;
     String device_mac = null;
@@ -54,7 +55,7 @@ public class TC1SettingFragment extends PreferenceFragment {
         getPreferenceManager().setSharedPreferencesName("Setting_" + device_mac);
 
         Log.d(Tag, "设置文件:" + "Setting" + device_mac);
-        addPreferencesFromResource(R.xml.button_mate_setting);
+        addPreferencesFromResource(R.xml.tc1_setting);
 
 
         //region MQTT服务有关
@@ -77,8 +78,15 @@ public class TC1SettingFragment extends PreferenceFragment {
 //        CheckBoxPreference mEtPreference = (CheckBoxPreference) findPreference("theme");
         name_preference = (EditTextPreference) findPreference("name");
         domoticz_idx = (EditTextPreference) findPreference("domoticz_idx");
+        domoticz_idx_plug[0] = (EditTextPreference) findPreference("domoticz_idx_0");
+        domoticz_idx_plug[1] = (EditTextPreference) findPreference("domoticz_idx_1");
+        domoticz_idx_plug[2] = (EditTextPreference) findPreference("domoticz_idx_2");
+        domoticz_idx_plug[3] = (EditTextPreference) findPreference("domoticz_idx_3");
+        domoticz_idx_plug[4] = (EditTextPreference) findPreference("domoticz_idx_4");
+        domoticz_idx_plug[5] = (EditTextPreference) findPreference("domoticz_idx_5");
 //
 
+        //region domoticz_idx 初始化
         try {
             int idx_temp = Integer.parseInt(domoticz_idx.getText());
             if (idx_temp >= 0)
@@ -87,6 +95,17 @@ public class TC1SettingFragment extends PreferenceFragment {
             e.printStackTrace();
         }
 
+        for (int i = 0; i < domoticz_idx_plug.length; i++) {
+            domoticz_idx_plug[i].setOnPreferenceChangeListener(mPreferenceChangeListener);
+            try {
+                int idx_temp = Integer.parseInt(domoticz_idx_plug[i].getText());
+                if (idx_temp >= 0)
+                    domoticz_idx_plug[i].setSummary(domoticz_idx_plug[i].getText());
+            } catch (NumberFormatException e) {
+                e.printStackTrace();
+            }
+        }
+        //endregion
         domoticz_idx.setOnPreferenceChangeListener(new Preference.OnPreferenceChangeListener() {
             @Override
             public boolean onPreferenceChange(Preference preference, Object newValue) {
@@ -102,9 +121,34 @@ public class TC1SettingFragment extends PreferenceFragment {
         name_preference.setOnPreferenceChangeListener(new Preference.OnPreferenceChangeListener() {
             @Override
             public boolean onPreferenceChange(Preference preference, Object newValue) {
+                int id = -1;
+                //region preference判断
+                switch (preference.getKey()) {
+                    case "domoticz_idx_1":
+                        id = 1;
+                        break;
+                    case "domoticz_idx_2":
+                        id = 2;
+                        break;
+                    case "domoticz_idx_3":
+                        id = 3;
+                        break;
+                    case "domoticz_idx_4":
+                        id = 4;
+                        break;
+                    case "domoticz_idx_5":
+                        id = 5;
+                        break;
+                    case "domoticz_idx_0":
+                        id = 0;
+                        break;
+                    default:
+                        return false;
+                }
+                //endregion
 
                 mConnectService.Send("domoticz/out",
-                        "{\"mac\":\"" + device_mac + "\",\"setting\":{\"name\":\"" + (String) newValue + "\"}}");
+                        "{\"mac\":\"" + device_mac + "\"," + "\"plug_" + id + "\":{\"setting\":{\"idx\":" + (String) newValue + "}}}");
                 return false;
             }
         });
@@ -122,6 +166,42 @@ public class TC1SettingFragment extends PreferenceFragment {
         super.onDestroy();
     }
 
+    //region 插座idx配置OnPreferenceChangeListener监听
+    Preference.OnPreferenceChangeListener mPreferenceChangeListener = new Preference.OnPreferenceChangeListener() {
+        @Override
+        public boolean onPreferenceChange(Preference preference, Object newValue) {
+            int id = -1;
+            //region preference判断
+            switch (preference.getKey()) {
+                case "domoticz_idx_1":
+                    id = 1;
+                    break;
+                case "domoticz_idx_2":
+                    id = 2;
+                    break;
+                case "domoticz_idx_3":
+                    id = 3;
+                    break;
+                case "domoticz_idx_4":
+                    id = 4;
+                    break;
+                case "domoticz_idx_5":
+                    id = 5;
+                    break;
+                case "domoticz_idx_0":
+                    id = 0;
+                    break;
+                default:
+                    return false;
+            }
+            //endregion
+
+            mConnectService.Send("domoticz/out",
+                    "{\"mac\":\"" + device_mac + "\"," + "\"plug_" + id + "\":{\"setting\":{\"idx\":" + (String) newValue + "}}}");
+            return false;
+        }
+    };
+    //endregion
 
     //数据接收处理函数
     void Receive(String ip, int port, String message) {
@@ -140,9 +220,37 @@ public class TC1SettingFragment extends PreferenceFragment {
             JSONObject jsonSetting = null;
             if (jsonObject.has("name")) name = jsonObject.getString("name");
             if (jsonObject.has("mac")) mac = jsonObject.getString("mac");
+            if (mac == null || !mac.equals(device_mac)) return;
+            //region 接收主机idx及name
             if (jsonObject.has("setting")) jsonSetting = jsonObject.getJSONObject("setting");
-            if (mac == null) return;
-            else if (mac.equals(device_mac)) {
+            if (name != null) {
+                name_preference.setSummary(name);
+                name_preference.setText(name);
+            }
+            if (jsonSetting != null) {
+                if (jsonSetting.has("idx")) {
+                    int idx = jsonSetting.getInt("idx");
+                    domoticz_idx.setSummary(String.valueOf(idx));
+                    domoticz_idx.setText(String.valueOf(idx));
+                }
+            }
+            //endregion
+
+            //region 接收插口idx及name
+            for (int i = 0; i < 6; i++) {
+                if (jsonObject.has("plug_" + i)
+                        && jsonObject.getJSONObject("plug_" + i).has("setting")
+                        && jsonObject.getJSONObject("plug_" + i).getJSONObject("setting").has("idx")
+                ) {
+                    int id=jsonObject.getJSONObject("plug_" + i).getJSONObject("setting").getInt("idx");
+                    domoticz_idx_plug[i].setSummary(String.valueOf(id));
+                    domoticz_idx_plug[i].setText(String.valueOf(id));
+
+                }
+            }
+
+            if (jsonObject.has("setting")) jsonSetting = jsonObject.getJSONObject("setting");
+            if (mac.equals(device_mac)) {
                 if (name != null) {
                     name_preference.setSummary(name);
                     name_preference.setText(name);
@@ -155,6 +263,7 @@ public class TC1SettingFragment extends PreferenceFragment {
                     }
                 }
             }
+            //endregion
 
         } catch (JSONException e) {
             e.printStackTrace();
@@ -169,7 +278,7 @@ public class TC1SettingFragment extends PreferenceFragment {
         public void onServiceConnected(ComponentName componentName, IBinder service) {
             mConnectService = ((ConnectService.LocalBinder) service).getService();
             //{"mac":"mac","setting":{"idx":null}}
-            mConnectService.Send("domoticz/out", "{\"mac\":\"" + device_mac + "\",\"setting\":{\"idx\":null}}");
+            mConnectService.Send("domoticz/out", "{\"mac\":\"" + device_mac + "\"," + "\"setting\":{\"idx\":null},\"plug_0\":{\"setting\":{\"idx\":null}},\"plug_1\":{\"setting\":{\"idx\":null}},\"plug_2\":{\"setting\":{\"idx\":null}},\"plug_3\":{\"setting\":{\"idx\":null}},\"plug_4\":{\"setting\":{\"idx\":null}},\"plug_5\":{\"setting\":{\"idx\":null}}}");
         }
 
         @Override
