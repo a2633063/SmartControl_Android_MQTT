@@ -235,26 +235,6 @@ public class TC1Fragment extends Fragment {
             if (jsonObject.has("mac")) mac = jsonObject.getString("mac");
             if (jsonObject.has("setting")) jsonSetting = jsonObject.getJSONObject("setting");
             if (mac == null || !mac.equals(device_mac)) return;
-            if (jsonObject.has("nvalue")) {
-                mSharedPreferences = getActivity().getSharedPreferences("Setting_" + device_mac, 0);
-                int idx =-1;
-
-                try {
-                    idx=Integer.parseInt(  mSharedPreferences.getString("domoticz_idx", "-1"));
-                } catch (NumberFormatException e) {
-                    e.printStackTrace();
-                    idx =-1;
-                }
-
-                if (!jsonObject.has("idx") ||
-                        (jsonObject.has("idx") && idx >= 0 && idx == jsonObject.getInt("idx"))
-                ) {
-                    boolean nvalue = (jsonObject.getInt("nvalue")!=0);
-                    for (int i = 0; i < tbtn_main_button.length; i++)
-                        tbtn_main_button[i].setChecked(nvalue);
-
-                }
-            }
 
             //region 解析plug
             for (int plug_id = 0; plug_id < 6; plug_id++) {

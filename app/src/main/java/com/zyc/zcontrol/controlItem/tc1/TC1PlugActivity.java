@@ -170,25 +170,6 @@ public class TC1PlugActivity extends AppCompatActivity {
             if (jsonObject.has("mac")) mac = jsonObject.getString("mac");
             if (mac == null || !mac.equals(device_mac)) return;
 
-            //region 解析idx为9
-            if (jsonObject.has("nvalue")) {
-                mSharedPreferences = getSharedPreferences("Setting_" + device_mac, 0);
-                int idx = -1;
-                try {
-                    idx = Integer.parseInt(mSharedPreferences.getString("domoticz_idx", "-1"));
-                } catch (NumberFormatException e) {
-                    e.printStackTrace();
-                    idx = -1;
-                }
-                if (!jsonObject.has("idx") ||
-                        (jsonObject.has("idx") && idx >= 0 && idx == jsonObject.getInt("idx"))
-                ) {
-                    boolean nvalue = (jsonObject.getInt("nvalue")!=0);
-                    tbt_button.setChecked(nvalue);
-                }
-            }
-            //endregion
-
             //region 解析当个plug
             if (!jsonObject.has("plug_" + plug_id)) return;
             JSONObject jsonPlug = jsonObject.getJSONObject("plug_" + plug_id);
