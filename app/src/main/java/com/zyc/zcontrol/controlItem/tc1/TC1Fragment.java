@@ -116,6 +116,7 @@ public class TC1Fragment extends Fragment {
             tbtn_main_button[i].setId(i);
             tv_main_button[i].setId(i);
             tbtn_main_button[i].setOnClickListener(MainButtonListener);
+            tv_main_button[i].setOnClickListener(MainTextListener);
         }
         //region log 相关
         final ScrollView scrollView = (ScrollView) view.findViewById(R.id.scrollView);
@@ -159,6 +160,7 @@ public class TC1Fragment extends Fragment {
     }
 
     //region 按钮事件
+    // region 开关
     private View.OnClickListener MainButtonListener = new View.OnClickListener() {
 
         @Override
@@ -172,6 +174,15 @@ public class TC1Fragment extends Fragment {
 
         }
 
+    };
+    //endregion
+// region 文本
+//endregion
+    private View.OnClickListener MainTextListener = new View.OnClickListener() {
+        @Override
+        public void onClick(View v) {
+
+        }
     };
 //endregion
 
@@ -246,7 +257,6 @@ public class TC1Fragment extends Fragment {
         }
     }
     //endregion
-
 
     void Log(String str) {
         log.setText(log.getText() + "\n" + str);
