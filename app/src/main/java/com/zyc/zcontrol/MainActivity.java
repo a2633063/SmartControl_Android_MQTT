@@ -306,32 +306,6 @@ public class MainActivity extends AppCompatActivity {
 
         //endregion
         //endregion
-
-        //region json测试
-/*
-        String Data = "{\n" +
-                "   \"Battery\" : 255,\n" +
-                "   \"RSSI\" : 12,\n" +
-                "   \"description\" : \"\",\n" +
-                "   \"dtype\" : \"Light/Switch\",\n" +
-                "   \"id\" : \"00014052\",\n" +
-
-
-                "   \"nvalue\" : 0,\n" +
-                "   \"stype\" : \"Switch\",\n" +
-                "   \"svalue1\" : \"0\",\n" +
-                "   \"switchType\" : \"On/Off\",\n" +
-                "   \"unit\" : 1\n" +
-                "}\n";
-
-
-        try {
-            JSONObject jsonArray=new JSONObject(Data);
-        } catch (JSONException e) {
-            e.printStackTrace();
-        }*/
-        //endregion
-
         try {
             toolbar.setTitle(adapter.getChoiceDevice().name);
         } catch (Exception e) {

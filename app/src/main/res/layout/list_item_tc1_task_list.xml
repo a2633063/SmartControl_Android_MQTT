@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="utf-8"?>
+<android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/ll"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:background="@drawable/background_gray_borders"
+    android:orientation="horizontal"
+    android:layout_gravity="center"
+    android:padding="13dp">
+
+
+    <TextView
+        android:id="@+id/tv_time"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:ems="3"
+        android:text="00:00"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        android:textSize="25dp" />
+
+    <TextView
+        android:id="@+id/tv_action"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="打开"
+        android:gravity="center_vertical"
+        app:layout_constraintBottom_toBottomOf="@+id/tv_time"
+        app:layout_constraintStart_toEndOf="@+id/tv_time"
+        android:textSize="20dp" />
+    <TextView
+        android:id="@+id/tv_repeat"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="每天"
+        android:gravity="center_vertical"
+        app:layout_constraintTop_toBottomOf="@+id/tv_time"
+        app:layout_constraintStart_toStartOf="@+id/tv_time"
+        android:textSize="12dp" />
+
+    <Switch
+        android:id="@+id/sw_on"
+        android:layout_width="wrap_content"
+        android:layout_height="match_parent"
+        android:text=""
+        android:layout_margin="8dp"
+        android:gravity="center"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+
+</android.support.constraint.ConstraintLayout>

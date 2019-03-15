@@ -8,6 +8,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.ServiceConnection;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.os.IBinder;
 import android.support.v4.app.Fragment;
@@ -18,6 +19,7 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.CompoundButton;
 import android.widget.ScrollView;
 import android.widget.TextView;
 import android.widget.ToggleButton;
@@ -40,6 +42,8 @@ import static android.content.Context.BIND_AUTO_CREATE;
 public class TC1Fragment extends Fragment {
     public final static String Tag = "TC1Fragment";
 
+    private SharedPreferences mSharedPreferences;
+    private SharedPreferences.Editor mEditor;
 
     //region 使用本地广播与service通信
     LocalBroadcastManager localBroadcastManager;
@@ -116,6 +120,7 @@ public class TC1Fragment extends Fragment {
             tbtn_main_button[i].setId(i);
             tv_main_button[i].setId(i);
             tbtn_main_button[i].setOnClickListener(MainButtonListener);
+            tbtn_main_button[i].setOnCheckedChangeListener(MainButtonChangeListener);
             tv_main_button[i].setOnClickListener(MainTextListener);
         }
         //region log 相关
@@ -175,16 +180,35 @@ public class TC1Fragment extends Fragment {
         }
 
     };
+
+    private ToggleButton.OnCheckedChangeListener MainButtonChangeListener = new CompoundButton.OnCheckedChangeListener() {
+        @Override
+        public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+            for (int i = 0; i < tbtn_main_button.length; i++) {
+                if (tbtn_main_button[i].isChecked()) {
+                    tbtn_all.setChecked(true);
+                    return;
+                }
+            }
+            tbtn_all.setChecked(false);
+        }
+    };
     //endregion
-// region 文本
-//endregion
+    // region 文本
+
     private View.OnClickListener MainTextListener = new View.OnClickListener() {
         @Override
         public void onClick(View v) {
-
+            Intent intent = new Intent(getContext(), TC1PlugActivity.class);
+            intent.putExtra("name", device_name);
+            intent.putExtra("plug_name", ((TextView) v).getText());
+            intent.putExtra("mac", device_mac);
+            intent.putExtra("plug_id", v.getId());
+            startActivity(intent);
         }
     };
-//endregion
+    //endregion
+    //endregion
 
 
     void Send(String message) {
@@ -211,6 +235,42 @@ public class TC1Fragment extends Fragment {
             if (jsonObject.has("mac")) mac = jsonObject.getString("mac");
             if (jsonObject.has("setting")) jsonSetting = jsonObject.getJSONObject("setting");
             if (mac == null || !mac.equals(device_mac)) return;
+            if (jsonObject.has("nvalue")) {
+                mSharedPreferences = getActivity().getSharedPreferences("Setting_" + device_mac, 0);
+                int idx =-1;
+
+                try {
+                    idx=Integer.parseInt(  mSharedPreferences.getString("domoticz_idx", "-1"));
+                } catch (NumberFormatException e) {
+                    e.printStackTrace();
+                    idx =-1;
+                }
+
+                if (!jsonObject.has("idx") ||
+                        (jsonObject.has("idx") && idx >= 0 && idx == jsonObject.getInt("idx"))
+                ) {
+                    boolean nvalue = (jsonObject.getInt("nvalue")!=0);
+                    for (int i = 0; i < tbtn_main_button.length; i++)
+                        tbtn_main_button[i].setChecked(nvalue);
+
+                }
+            }
+
+            //region 解析plug
+            for (int plug_id = 0; plug_id < 6; plug_id++) {
+                if (!jsonObject.has("plug_" + plug_id)) continue;
+                JSONObject jsonPlug = jsonObject.getJSONObject("plug_" + plug_id);
+                if (jsonPlug.has("on")) {
+                    int on = jsonPlug.getInt("on");
+                    tbtn_main_button[plug_id].setChecked(on != 0);
+                }
+                if (!jsonPlug.has("setting")) continue;
+                JSONObject jsonPlugSetting = jsonPlug.getJSONObject("setting");
+                if (jsonPlugSetting.has("name")) {
+                    tv_main_button[plug_id].setText(jsonPlugSetting.getString("name"));
+                }
+            }
+            //endregion
 
 
         } catch (JSONException e) {
@@ -225,6 +285,14 @@ public class TC1Fragment extends Fragment {
         @Override
         public void onServiceConnected(ComponentName componentName, IBinder service) {
             mConnectService = ((ConnectService.LocalBinder) service).getService();
+            Send("{\"mac\": \"" + device_mac + "\","
+                    + "\"plug_0\" : {\"on\" : null,\"setting\":{\"name\":null}},"
+                    + "\"plug_1\" : {\"on\" : null,\"setting\":{\"name\":null}},"
+                    + "\"plug_2\" : {\"on\" : null,\"setting\":{\"name\":null}},"
+                    + "\"plug_3\" : {\"on\" : null,\"setting\":{\"name\":null}},"
+                    + "\"plug_4\" : {\"on\" : null,\"setting\":{\"name\":null}},"
+                    + "\"plug_5\" : {\"on\" : null,\"setting\":{\"name\":null}}}");
+
         }
 
         @Override
