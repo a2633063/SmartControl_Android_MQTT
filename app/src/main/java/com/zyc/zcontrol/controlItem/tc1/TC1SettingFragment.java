@@ -121,34 +121,8 @@ public class TC1SettingFragment extends PreferenceFragment {
         name_preference.setOnPreferenceChangeListener(new Preference.OnPreferenceChangeListener() {
             @Override
             public boolean onPreferenceChange(Preference preference, Object newValue) {
-                int id = -1;
-                //region preference判断
-                switch (preference.getKey()) {
-                    case "domoticz_idx_1":
-                        id = 1;
-                        break;
-                    case "domoticz_idx_2":
-                        id = 2;
-                        break;
-                    case "domoticz_idx_3":
-                        id = 3;
-                        break;
-                    case "domoticz_idx_4":
-                        id = 4;
-                        break;
-                    case "domoticz_idx_5":
-                        id = 5;
-                        break;
-                    case "domoticz_idx_0":
-                        id = 0;
-                        break;
-                    default:
-                        return false;
-                }
-                //endregion
-
                 mConnectService.Send("domoticz/out",
-                        "{\"mac\":\"" + device_mac + "\"," + "\"plug_" + id + "\":{\"setting\":{\"idx\":" + (String) newValue + "}}}");
+                        "{\"mac\":\"" + device_mac + "\",\"setting\":{\"name\":\"" + (String) newValue + "\"}}");
                 return false;
             }
         });
@@ -242,7 +216,7 @@ public class TC1SettingFragment extends PreferenceFragment {
                         && jsonObject.getJSONObject("plug_" + i).has("setting")
                         && jsonObject.getJSONObject("plug_" + i).getJSONObject("setting").has("idx")
                 ) {
-                    int id=jsonObject.getJSONObject("plug_" + i).getJSONObject("setting").getInt("idx");
+                    int id = jsonObject.getJSONObject("plug_" + i).getJSONObject("setting").getInt("idx");
                     domoticz_idx_plug[i].setSummary(String.valueOf(id));
                     domoticz_idx_plug[i].setText(String.valueOf(id));
 

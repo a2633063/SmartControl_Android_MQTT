@@ -10,7 +10,9 @@ import android.content.IntentFilter;
 import android.content.ServiceConnection;
 import android.content.SharedPreferences;
 import android.os.Bundle;
+import android.os.Handler;
 import android.os.IBinder;
+import android.os.Message;
 import android.support.v4.app.Fragment;
 import android.support.v4.content.LocalBroadcastManager;
 import android.text.Editable;
@@ -75,6 +77,23 @@ public class TC1Fragment extends Fragment {
         // Required empty public constructor
     }
 
+    @SuppressLint("HandlerLeak")
+    Handler handler = new Handler() {
+        @Override
+        public void handleMessage(Message msg) {// handler接收到消息后就会执行此方法
+            switch(msg.what){
+                case 1:
+                    Send("{\"mac\": \"" + device_mac + "\","
+                            + "\"plug_0\" : {\"on\" : null,\"setting\":{\"name\":null}},"
+                            + "\"plug_1\" : {\"on\" : null,\"setting\":{\"name\":null}},"
+                            + "\"plug_2\" : {\"on\" : null,\"setting\":{\"name\":null}},"
+                            + "\"plug_3\" : {\"on\" : null,\"setting\":{\"name\":null}},"
+                            + "\"plug_4\" : {\"on\" : null,\"setting\":{\"name\":null}},"
+                            + "\"plug_5\" : {\"on\" : null,\"setting\":{\"name\":null}}}");
+                    break;
+            }
+        }
+    };
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
@@ -266,14 +285,9 @@ public class TC1Fragment extends Fragment {
         @Override
         public void onServiceConnected(ComponentName componentName, IBinder service) {
             mConnectService = ((ConnectService.LocalBinder) service).getService();
-            Send("{\"mac\": \"" + device_mac + "\","
-                    + "\"plug_0\" : {\"on\" : null,\"setting\":{\"name\":null}},"
-                    + "\"plug_1\" : {\"on\" : null,\"setting\":{\"name\":null}},"
-                    + "\"plug_2\" : {\"on\" : null,\"setting\":{\"name\":null}},"
-                    + "\"plug_3\" : {\"on\" : null,\"setting\":{\"name\":null}},"
-                    + "\"plug_4\" : {\"on\" : null,\"setting\":{\"name\":null}},"
-                    + "\"plug_5\" : {\"on\" : null,\"setting\":{\"name\":null}}}");
 
+
+            handler.sendEmptyMessageDelayed(1,200);
         }
 
         @Override
