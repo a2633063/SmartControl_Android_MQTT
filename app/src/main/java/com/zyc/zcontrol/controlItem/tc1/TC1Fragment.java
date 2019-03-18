@@ -52,9 +52,10 @@ public class TC1Fragment extends Fragment {
     //endregion
 
     //region 控件
+    final private int PLUG_COUNT=6;
     ToggleButton tbtn_all;
-    ToggleButton tbtn_main_button[] = new ToggleButton[6];
-    TextView tv_main_button[] = new TextView[6];
+    ToggleButton tbtn_main_button[] = new ToggleButton[PLUG_COUNT];
+    TextView tv_main_button[] = new TextView[PLUG_COUNT];
     //endregion
 
     TextView log;
@@ -118,7 +119,7 @@ public class TC1Fragment extends Fragment {
         tbtn_all.setOnClickListener(MainButtonListener);
         for (int i = 0; i < 6; i++) {
             tbtn_main_button[i].setId(i);
-            tv_main_button[i].setId(i);
+            tv_main_button[i].setId(i+PLUG_COUNT);
             tbtn_main_button[i].setOnClickListener(MainButtonListener);
             tbtn_main_button[i].setOnCheckedChangeListener(MainButtonChangeListener);
             tv_main_button[i].setOnClickListener(MainTextListener);
@@ -203,7 +204,7 @@ public class TC1Fragment extends Fragment {
             intent.putExtra("name", device_name);
             intent.putExtra("plug_name", ((TextView) v).getText());
             intent.putExtra("mac", device_mac);
-            intent.putExtra("plug_id", v.getId());
+            intent.putExtra("plug_id", v.getId()%PLUG_COUNT);
             startActivity(intent);
         }
     };
