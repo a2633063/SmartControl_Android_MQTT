@@ -77,6 +77,7 @@ public class TC1Fragment extends Fragment {
         // Required empty public constructor
     }
 
+    //region Handler
     @SuppressLint("HandlerLeak")
     Handler handler = new Handler() {
         @Override
@@ -94,6 +95,7 @@ public class TC1Fragment extends Fragment {
             }
         }
     };
+    //endregion
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
@@ -287,7 +289,7 @@ public class TC1Fragment extends Fragment {
             mConnectService = ((ConnectService.LocalBinder) service).getService();
 
 
-            handler.sendEmptyMessageDelayed(1,200);
+            handler.sendEmptyMessageDelayed(1,300);
         }
 
         @Override

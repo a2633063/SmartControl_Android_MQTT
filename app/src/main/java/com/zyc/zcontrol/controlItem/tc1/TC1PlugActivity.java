@@ -1,19 +1,26 @@
 package com.zyc.zcontrol.controlItem.tc1;
 
+import android.annotation.SuppressLint;
 import android.content.BroadcastReceiver;
 import android.content.ComponentName;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.ServiceConnection;
 import android.content.SharedPreferences;
 import android.os.Bundle;
+import android.os.Handler;
 import android.os.IBinder;
+import android.os.Message;
 import android.support.v4.content.LocalBroadcastManager;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.Button;
+import android.widget.EditText;
 import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -44,11 +51,22 @@ public class TC1PlugActivity extends AppCompatActivity {
 
     TextView tv_name;
     ToggleButton tbt_button;
+    Button btn_count_down;
 
     String device_mac = null;
     String plug_name = null;
     String device_name = null;
     int plug_id = -1;
+
+    @SuppressLint("HandlerLeak")
+    Handler handler = new Handler() {
+        @Override
+        public void handleMessage(Message msg) {// handler接收到消息后就会执行此方法
+            switch (msg.what) {
+                case 100:
+            }
+        }
+    };
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -96,12 +114,47 @@ public class TC1PlugActivity extends AppCompatActivity {
         //region 开关按键/名称
         tv_name = findViewById(R.id.tv_name);
         tbt_button = findViewById(R.id.tbtn_button);
+        btn_count_down=findViewById(R.id.btn_count_down);
         tv_name.setText(plug_name);
 
+        //region 控制开关
         tbt_button.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 Send("{\"name\":\"" + device_name + "\",\"mac\":\"" + device_mac + "\",\"plug_" + plug_id + "\":{\"on\":" + String.valueOf(((ToggleButton) v).isChecked() ? 1 : 0) + "}" + "}");
+
+            }
+        });
+        //endregion
+
+        //region 设置名称
+        tv_name.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                final EditText mEditText = new EditText(TC1PlugActivity.this);
+                mEditText.setText(tv_name.getText());
+                mEditText.setHint("建议长度在8个字以内");
+                AlertDialog.Builder builder = new AlertDialog.Builder(TC1PlugActivity.this);
+                builder.setTitle("设置插口" + String.valueOf(plug_id + 1) + "名称")
+                        .setView(mEditText)
+                        .setMessage("自定义插口名称,建议长度在8个字以内")
+                        .setNegativeButton("Cancel", null)
+                        .setPositiveButton("Ok", new DialogInterface.OnClickListener() {
+                            public void onClick(DialogInterface dialog, int which) {
+                                String str = mEditText.getText().toString();
+                                if (str.length() < 1 || str.length() > 16)
+                                    str = str.substring(0, 16);
+                                Send("{\"name\":\"" + device_name + "\",\"mac\":\"" + device_mac + "\",\"plug_" + plug_id + "\":{\"setting\":{\"name\":\"" + str + "\"}}" + "}");
+                            }
+                        });
+                builder.show();
+            }
+        });
+        //endregion
+
+        btn_count_down.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
 
             }
         });
