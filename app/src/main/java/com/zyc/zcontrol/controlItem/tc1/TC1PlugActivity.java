@@ -9,6 +9,7 @@ import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.ServiceConnection;
 import android.content.SharedPreferences;
+import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.IBinder;
@@ -17,15 +18,22 @@ import android.support.v4.content.LocalBroadcastManager;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
+import android.view.Gravity;
 import android.view.MenuItem;
+import android.view.MotionEvent;
 import android.view.View;
+import android.widget.AdapterView;
 import android.widget.Button;
+import android.widget.CompoundButton;
 import android.widget.EditText;
 import android.widget.ListView;
+import android.widget.NumberPicker;
+import android.widget.PopupWindow;
 import android.widget.TextView;
 import android.widget.Toast;
 import android.widget.ToggleButton;
 
+import com.zyc.Function;
 import com.zyc.zcontrol.ConnectService;
 import com.zyc.zcontrol.R;
 
@@ -33,6 +41,8 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.util.ArrayList;
+
+import static android.view.ViewGroup.LayoutParams.MATCH_PARENT;
 
 public class TC1PlugActivity extends AppCompatActivity {
     public final static String Tag = "TC1PlugActivity";
@@ -106,15 +116,22 @@ public class TC1PlugActivity extends AppCompatActivity {
         //region 控件初始化
         //region listview及adapter
         lv_task = findViewById(R.id.lv);
+        lv_task.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                popupwindowTask(position);
+            }
+        });
         adapter = new TC1TaskListAdapter(TC1PlugActivity.this, data);
         lv_task.setAdapter(adapter);
+
         //endregion
 
 
         //region 开关按键/名称
         tv_name = findViewById(R.id.tv_name);
         tbt_button = findViewById(R.id.tbtn_button);
-        btn_count_down=findViewById(R.id.btn_count_down);
+        btn_count_down = findViewById(R.id.btn_count_down);
         tv_name.setText(plug_name);
 
         //region 控制开关
@@ -155,7 +172,7 @@ public class TC1PlugActivity extends AppCompatActivity {
         btn_count_down.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-
+                popupwindowTask(0);
             }
         });
         //endregion
@@ -199,12 +216,125 @@ public class TC1PlugActivity extends AppCompatActivity {
         super.onDestroy();
     }
 
+    //region 弹窗
+    private void popupwindowTask(final int task_id) {
+
+        final View popupView = getLayoutInflater().inflate(R.layout.popupwindow_tc1_set_time, null);
+        final PopupWindow window = new PopupWindow(popupView, MATCH_PARENT, MATCH_PARENT, true);//wrap_content,wrap_content
+
+        final TaskItem task = adapter.getItem(task_id);
+
+        //region 控件初始化
+        //region 控件定义
+        final NumberPicker hour_picker = popupView.findViewById(R.id.hour_picker);
+        final NumberPicker minute_picker = popupView.findViewById(R.id.minute_picker);
+        final NumberPicker action_picker = popupView.findViewById(R.id.on_picker);
+        final TextView tv_repeat = popupView.findViewById(R.id.tv_repeat);
+        final Button btn_ok = popupView.findViewById(R.id.btn_ok);
+        final ToggleButton tbtn_week[] = {popupView.findViewById(R.id.tbtn_week_1),
+                popupView.findViewById(R.id.tbtn_week_2), popupView.findViewById(R.id.tbtn_week_3),
+                popupView.findViewById(R.id.tbtn_week_4), popupView.findViewById(R.id.tbtn_week_5),
+                popupView.findViewById(R.id.tbtn_week_6), popupView.findViewById(R.id.tbtn_week_7),
+        };
+        //endregion
+
+        //region ToggleButton week 初始化
+        ToggleButton.OnCheckedChangeListener checkedChangeListener = new CompoundButton.OnCheckedChangeListener() {
+            @Override
+            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+                int repeat = 0;
+                for (int i = tbtn_week.length; i > 0; i--) {
+                    repeat = repeat << 1;
+                    if (tbtn_week[i - 1].isChecked()) repeat |= 1;
+                }
+                tv_repeat.setText("重复:" + Function.getWeek(repeat));
+
+            }
+        };
+        int temp = task.repeat;
+        for (int i = 0; i < tbtn_week.length; i++) {
+            tbtn_week[i].setOnCheckedChangeListener(checkedChangeListener);
+            if ((temp & 0x01) != 0) tbtn_week[i].setChecked(true);
+            temp = temp >> 1;
+        }
+        //endregion
+        //region NumberPicker初始化
+        //region 小时
+        hour_picker.setMaxValue(23);
+        hour_picker.setMinValue(0);
+        hour_picker.setFormatter(new NumberPicker.Formatter() {
+            @Override
+            public String format(int value) {
+                return String.format("%02d", value);
+            }
+        });
+        hour_picker.setValue(task.hour);
+        //endregion
+        //region 分钟
+        minute_picker.setMaxValue(59);
+        minute_picker.setMinValue(0);
+        minute_picker.setFormatter(new NumberPicker.Formatter() {
+            @Override
+            public String format(int value) {
+                return String.format("%02d", value);
+            }
+        });
+        minute_picker.setValue(task.minute);
+        //endregion
+        //region 开关
+        String[] action = {"关闭", "开启"};
+        action_picker.setDisplayedValues(action);
+        action_picker.setMinValue(0);
+        action_picker.setMaxValue(action.length - 1);
+        action_picker.setValue(task.action);
+        //endregion
+        //endregion
+
+        //region 确认按钮初始化
+        btn_ok.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                int hour = hour_picker.getValue();
+                int minute = minute_picker.getValue();
+                int action = action_picker.getValue();
+                int on = 1;
+                int repeat = 0;
+                for (int i = tbtn_week.length; i > 0; i--) {
+                    repeat = repeat << 1;
+                    if (tbtn_week[i - 1].isChecked()) repeat |= 1;
+                }
+
+                Send("{\"mac\": \"" + device_mac + "\",\"plug_" + plug_id + "\" : {\"setting\":{\"task_" + task_id + "\":{\"hour\":" + hour + ",\"minute\":" + minute + ",\"repeat\":" + repeat + ",\"action\":" + action + ",\"on\":" + on + "}}}}");
+                window.dismiss();
+            }
+        });
+        //endregion
+        //region window初始化
+        window.setBackgroundDrawable(new ColorDrawable(android.graphics.Color.alpha(0xffff0000)));
+        window.setOutsideTouchable(true);
+        window.getContentView().setOnTouchListener(new View.OnTouchListener() {
+            @Override
+            public boolean onTouch(View v, MotionEvent event) {
+                window.dismiss();
+                return true;
+            }
+        });
+        //endregion
+        //endregion
+        window.update();
+        window.showAtLocation(popupView, Gravity.CENTER, 0, 0);
+
+    }
+
+//    private void popupwindowCountDown() ;
+    //endregion
+
+    //region 数据接收发送处理函数
     void Send(String message) {
         boolean b = getSharedPreferences("Setting_" + device_mac, 0).getBoolean("always_UDP", false);
         mConnectService.Send(b ? null : "domoticz/out", message);
     }
 
-    //数据接收处理函数
     void Receive(String ip, int port, String message) {
         //TODO 数据接收处理
         Receive(null, message);
@@ -259,7 +389,7 @@ public class TC1PlugActivity extends AppCompatActivity {
         }
 
     }
-
+    //endregion
     //region MQTT服务有关
 
     private final ServiceConnection mMQTTServiceConnection = new ServiceConnection() {
