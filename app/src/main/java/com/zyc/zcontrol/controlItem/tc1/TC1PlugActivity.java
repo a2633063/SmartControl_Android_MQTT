@@ -29,6 +29,7 @@ import android.widget.EditText;
 import android.widget.ListView;
 import android.widget.NumberPicker;
 import android.widget.PopupWindow;
+import android.widget.Switch;
 import android.widget.TextView;
 import android.widget.Toast;
 import android.widget.ToggleButton;
@@ -123,7 +124,19 @@ public class TC1PlugActivity extends AppCompatActivity {
                 popupwindowTask(position);
             }
         });
-        adapter = new TC1TaskListAdapter(TC1PlugActivity.this, data);
+        adapter = new TC1TaskListAdapter(TC1PlugActivity.this, data, new TC1TaskListAdapter.Callback() {
+            @Override
+            public void click(View v, int position) {
+                TaskItem task=adapter.getItem(position);
+                int hour = task.hour;
+                int minute =task.minute;
+                int action = task.action;
+                int on = ((Switch)v).isChecked()?1:0;
+                int repeat = task.repeat;
+
+                Send("{\"mac\": \"" + device_mac + "\",\"plug_" + plug_id + "\" : {\"setting\":{\"task_" + position + "\":{\"hour\":" + hour + ",\"minute\":" + minute + ",\"repeat\":" + repeat + ",\"action\":" + action + ",\"on\":" + on + "}}}}");
+            }
+        });
         lv_task.setAdapter(adapter);
 
         //endregion

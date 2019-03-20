@@ -18,12 +18,28 @@ class TC1TaskListAdapter extends BaseAdapter {
     private List<TaskItem> mdata;
     private LayoutInflater inflater;
     private int choice = -1;
+    private Callback mCallback = null;
 
     public TC1TaskListAdapter(Context context, List data) {
         this.context = context;
         this.mdata = data;
         inflater = LayoutInflater.from(context);
     }
+
+    public TC1TaskListAdapter(Context context, List data, Callback callback) {
+        this.context = context;
+        this.mdata = data;
+        inflater = LayoutInflater.from(context);
+        mCallback = callback;
+    }
+
+    /**
+     * 自定义接口，回调点击事件到Activity
+     */
+    public interface Callback {
+        public void click(View v, int position);
+    }
+
 
     public int getCount() {
         return mdata.size();
@@ -37,7 +53,7 @@ class TC1TaskListAdapter extends BaseAdapter {
         return 0;
     }
 
-    public View getView(int position1, View convertView, ViewGroup parent) {
+    public View getView(final int position1, View convertView, ViewGroup parent) {
         ViewHolder holder = null;
         View view = null;
         final int position = position1;
@@ -62,6 +78,14 @@ class TC1TaskListAdapter extends BaseAdapter {
         holder.tv_action.setText(mdata.get(position).getAction());
         holder.on.setChecked(mdata.get(position).getOn());
 
+        if (mCallback!=null){
+            holder.on.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    mCallback.click(v,position);
+                }
+            });
+        }
         return convertView;
     }
 
