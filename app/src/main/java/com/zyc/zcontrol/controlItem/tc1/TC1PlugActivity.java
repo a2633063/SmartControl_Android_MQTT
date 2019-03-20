@@ -41,6 +41,7 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.util.ArrayList;
+import java.util.Calendar;
 
 import static android.view.ViewGroup.LayoutParams.MATCH_PARENT;
 
@@ -172,7 +173,7 @@ public class TC1PlugActivity extends AppCompatActivity {
         btn_count_down.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                popupwindowTask(0);
+                popupwindowCountDown();
             }
         });
         //endregion
@@ -326,7 +327,92 @@ public class TC1PlugActivity extends AppCompatActivity {
 
     }
 
-//    private void popupwindowCountDown() ;
+
+    private void popupwindowCountDown() {
+
+        final View popupView = getLayoutInflater().inflate(R.layout.popupwindow_tc1_set_time_count_down, null);
+        final PopupWindow window = new PopupWindow(popupView, MATCH_PARENT, MATCH_PARENT, true);//wrap_content,wrap_content
+
+        final int task_id=4;
+        //region 控件初始化
+        //region 控件定义
+        final NumberPicker hour_picker = popupView.findViewById(R.id.hour_picker);
+        final NumberPicker minute_picker = popupView.findViewById(R.id.minute_picker);
+        final NumberPicker action_picker = popupView.findViewById(R.id.on_picker);
+        final Button btn_ok = popupView.findViewById(R.id.btn_ok);
+
+        //endregion
+
+        //region NumberPicker初始化
+        //region 小时
+        hour_picker.setMaxValue(23);
+        hour_picker.setMinValue(0);
+        hour_picker.setFormatter(new NumberPicker.Formatter() {
+            @Override
+            public String format(int value) {
+                return String.format("%02d", value);
+            }
+        });
+        hour_picker.setValue(1);
+        //endregion
+        //region 分钟
+        minute_picker.setMaxValue(59);
+        minute_picker.setMinValue(0);
+        minute_picker.setFormatter(new NumberPicker.Formatter() {
+            @Override
+            public String format(int value) {
+                return String.format("%02d", value);
+            }
+        });
+        minute_picker.setValue(0);
+        //endregion
+        //region 开关
+        String[] action = {"关闭", "开启"};
+        action_picker.setDisplayedValues(action);
+        action_picker.setMinValue(0);
+        action_picker.setMaxValue(action.length - 1);
+        action_picker.setValue(1);
+        //endregion
+        //endregion
+
+        //region 确认按钮初始化
+        btn_ok.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                int hour = hour_picker.getValue();
+                int minute = minute_picker.getValue();
+                int action = action_picker.getValue();
+                int on = 1;
+                int repeat = 0;
+
+                Calendar c = Calendar.getInstance();
+                c.add(Calendar.HOUR, hour);
+                c.add(Calendar.MINUTE, minute);
+                hour=c.get(Calendar.HOUR);
+                minute=c.get(Calendar.MINUTE);
+
+                Send("{\"mac\": \"" + device_mac + "\",\"plug_" + plug_id + "\" : {\"setting\":{\"task_" + task_id + "\":{\"hour\":" + hour + ",\"minute\":" + minute + ",\"repeat\":" + repeat + ",\"action\":" + action + ",\"on\":" + on + "}}}}");
+                window.dismiss();
+            }
+        });
+        //endregion
+        //region window初始化
+        window.setBackgroundDrawable(new ColorDrawable(android.graphics.Color.alpha(0xffff0000)));
+        window.setOutsideTouchable(true);
+        window.getContentView().setOnTouchListener(new View.OnTouchListener() {
+            @Override
+            public boolean onTouch(View v, MotionEvent event) {
+                window.dismiss();
+                return true;
+            }
+        });
+        //endregion
+        //endregion
+        window.update();
+        window.showAtLocation(popupView, Gravity.CENTER, 0, 0);
+
+    }
+
     //endregion
 
     //region 数据接收发送处理函数
