@@ -2,10 +2,9 @@ package com.zyc.zcontrol;
 
 import android.content.Context;
 import android.content.Intent;
-import android.support.v4.view.GravityCompat;
+import android.os.Bundle;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
-import android.os.Bundle;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.MenuItem;
@@ -17,10 +16,11 @@ import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.TextView;
 
+import com.easylink.EasylinkActivity;
 import com.espressif.ESPtouchActivity;
 import com.zyc.StaticVariable;
 
-import java.util.List;
+import static com.zyc.StaticVariable.TYPE_TC1;
 
 public class DeviceAddChoiceActivity extends AppCompatActivity {
     public final static String Tag = "DeviceAddChoiceActivity";
@@ -52,6 +52,9 @@ public class DeviceAddChoiceActivity extends AppCompatActivity {
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
                 device_type = position;
                 Intent intent = new Intent(DeviceAddChoiceActivity.this, ESPtouchActivity.class);
+                if(device_type==TYPE_TC1){
+                    intent = new Intent(DeviceAddChoiceActivity.this, EasylinkActivity.class);
+                }
                 startActivityForResult(intent, 1);
             }
         });

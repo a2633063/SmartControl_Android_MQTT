@@ -20,13 +20,16 @@ android {
 
 dependencies {
     implementation fileTree(dir: 'libs', include: ['*.jar'])
-    implementation 'com.android.support:appcompat-v7:28.0.0-alpha1'
-    implementation 'com.android.support:design:28.0.0-alpha1'
+    implementation 'com.android.support:appcompat-v7:28.+'
+    implementation 'com.android.support:design:28.+'
     implementation 'com.android.support.constraint:constraint-layout:1.1.0'
 
 //    implementation 'org.eclipse.paho:org.eclipse.paho.android.service:1.1.1'
     implementation 'org.eclipse.paho:org.eclipse.paho.client.mqttv3:1.1.1'
-    implementation 'com.android.support:support-v4:28.0.0-alpha1'
+    implementation 'com.android.support:support-v4:28.+'
 
     implementation project(':esptouch')
+
+    //EasyLink  广播组播同时发的版本
+    implementation 'io.fogcloud.sdk:easylinkv3:+'
 }
