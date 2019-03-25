@@ -105,13 +105,13 @@
             android:id="@+id/package_broadcast"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:checked="true"
             android:text="Broadcast" />
 
         <RadioButton
             android:id="@+id/package_multicast"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:checked="true"
             android:layout_marginLeft="20dp"
             android:text="Multicast" />
     </RadioGroup>

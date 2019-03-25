@@ -140,6 +140,9 @@ public class EasylinkActivity extends AppCompatActivity implements View.OnClickL
         mConfirmBtn.setEnabled(false);
         mConfirmBtn.setOnClickListener(this);
 
+        mPackageModeGroup.setVisibility(View.GONE);
+        mDeviceCountET.setVisibility(View.GONE);
+
         TextView versionTV = findViewById(R.id.version_tv);
         versionTV.setText("EspTouch Version:" + IEsptouchTask.ESPTOUCH_VERSION);
 

@@ -26,7 +26,9 @@
             android:key="always_UDP"
             android:summary="即使连接MQTT服务器,也使用UDP发送数据"
             android:title="总是通过UDP发送数据" />
-
+        <Preference
+            android:key="fw_version"
+            android:title="当前版本"/>
     </PreferenceCategory>
 
     <PreferenceCategory android:title="插座idx(配合domoticz)">
