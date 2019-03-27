@@ -40,6 +40,7 @@ import com.espressif.iot.esptouch.IEsptouchTask;
 import com.espressif.iot.esptouch.task.__IEsptouchTask;
 import com.espressif.iot.esptouch.util.ByteUtil;
 import com.espressif.iot.esptouch.util.EspNetUtil;
+import com.zyc.Function;
 import com.zyc.zcontrol.R;
 
 import java.lang.ref.WeakReference;
@@ -229,7 +230,7 @@ public class ESPtouchActivity extends AppCompatActivity implements View.OnClickL
                         .show();
             }
         } else {
-            String ssid = info.getSSID();
+            String ssid = Function.getSSID(ESPtouchActivity.this);
             if (ssid.startsWith("\"") && ssid.endsWith("\"")) {
                 ssid = ssid.substring(1, ssid.length() - 1);
             }
@@ -250,6 +251,9 @@ public class ESPtouchActivity extends AppCompatActivity implements View.OnClickL
                     mMessageTV.setText("不支持5G网络,请切换为2.4G网络或重试");
                 }
             }
+
+            if ((Build.VERSION.SDK_INT >= 28))
+                onLocationChanged();
         }
     }
 
@@ -265,7 +269,7 @@ public class ESPtouchActivity extends AppCompatActivity implements View.OnClickL
         }
 
         if (!enable) {
-            mMessageTV.setText("Location(GPS) is disable");
+            mMessageTV.setText("GPS关闭! 安卓9.0必须打开gps且授权才能获取到ssid!");
         }
     }
 
@@ -450,7 +454,7 @@ public class ESPtouchActivity extends AppCompatActivity implements View.OnClickL
                             }
                         }
                     });
-                    mResultDialog.setButton(DialogInterface.BUTTON_NEGATIVE,"取消",(DialogInterface.OnClickListener) null);
+                    mResultDialog.setButton(DialogInterface.BUTTON_NEGATIVE, "取消", (DialogInterface.OnClickListener) null);
 
                 } else {
                     mResultDialog.setMessage("配对失败");

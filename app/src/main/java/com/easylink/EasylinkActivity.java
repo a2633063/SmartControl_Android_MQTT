@@ -1,7 +1,6 @@
 package com.easylink;
 
 import android.Manifest;
-import android.annotation.SuppressLint;
 import android.app.ProgressDialog;
 import android.content.BroadcastReceiver;
 import android.content.Context;
@@ -14,8 +13,6 @@ import android.net.wifi.WifiInfo;
 import android.net.wifi.WifiManager;
 import android.os.Build;
 import android.os.Bundle;
-import android.os.Handler;
-import android.os.Message;
 import android.support.annotation.NonNull;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
@@ -29,13 +26,8 @@ import android.widget.EditText;
 import android.widget.RadioGroup;
 import android.widget.TextView;
 
-import com.espressif.iot.esptouch.IEsptouchResult;
-import com.espressif.iot.esptouch.IEsptouchTask;
-import com.espressif.iot.esptouch.util.ByteUtil;
+import com.zyc.Function;
 import com.zyc.zcontrol.R;
-
-import java.lang.reflect.InvocationTargetException;
-import java.lang.reflect.Method;
 
 import io.fogcloud.sdk.easylink.api.EasylinkP2P;
 import io.fogcloud.sdk.easylink.helper.EasyLinkCallBack;
@@ -57,25 +49,7 @@ public class EasylinkActivity extends AppCompatActivity implements View.OnClickL
     private ProgressDialog mProgressDialog;
 
     EasylinkP2P elp2p;
-    //region Handler
-    @SuppressLint("HandlerLeak")
-    Handler handler = new Handler() {
-        @Override
-        public void handleMessage(Message msg) {
-            Log.e(Tag, "handler:" + msg.what);
-            if (msg.what == 1) {
-                IEsptouchResult res = (IEsptouchResult) msg.obj;
-                //返回数据
-                Intent intent = new Intent();
-                intent.putExtra("ip", res.getInetAddress().getHostAddress());
-                intent.putExtra("mac", res.getBssid());
-                setResult(RESULT_OK, intent);
-                finish();
-            }
-        }
 
-    };
-    //endregion
 
 
     //region wifi广播状态监听
@@ -120,7 +94,7 @@ public class EasylinkActivity extends AppCompatActivity implements View.OnClickL
 
         elp2p = new EasylinkP2P(this);
 
-        Log.d("EasylinkActivity", "ssid:" + elp2p.getSSID());
+        Log.d("EasylinkActivity", "ssid:" + Function.getSSID(EasylinkActivity.this));
 
         //region 顶部返回按钮
         ActionBar actionBar = getSupportActionBar();
@@ -143,8 +117,8 @@ public class EasylinkActivity extends AppCompatActivity implements View.OnClickL
         mPackageModeGroup.setVisibility(View.GONE);
         mDeviceCountET.setVisibility(View.GONE);
 
-        TextView versionTV = findViewById(R.id.version_tv);
-        versionTV.setText("EspTouch Version:" + IEsptouchTask.ESPTOUCH_VERSION);
+//        TextView versionTV = findViewById(R.id.version_tv);
+//        versionTV.setText("EspTouch Version:" + IEsptouchTask.ESPTOUCH_VERSION);
 
         //region 权限判断
         if (Build.VERSION.SDK_INT >= 28) {
@@ -158,7 +132,7 @@ public class EasylinkActivity extends AppCompatActivity implements View.OnClickL
             } else {
                 registerBroadcastReceiver();
             }
-
+            onLocationChanged();
         } else {
             registerBroadcastReceiver();
         }
@@ -213,21 +187,17 @@ public class EasylinkActivity extends AppCompatActivity implements View.OnClickL
         boolean connected = info != null && info.getNetworkId() != -1;
         if (!connected) {
             mApSsidTV.setText("");
-            mApSsidTV.setTag(null);
             mApBssidTV.setText("");
             mMessageTV.setText("");
             mConfirmBtn.setEnabled(false);
 
 
         } else {
-            String ssid = info.getSSID();
+            String ssid = Function.getSSID(EasylinkActivity.this);
             if (ssid.startsWith("\"") && ssid.endsWith("\"")) {
                 ssid = ssid.substring(1, ssid.length() - 1);
             }
             mApSsidTV.setText(ssid);
-            mApSsidTV.setTag(ByteUtil.getBytesByString(ssid));
-            byte[] ssidOriginalData = getOriginalSsidBytes(info);
-            mApSsidTV.setTag(ssidOriginalData);
 
             String bssid = info.getBSSID();
             mApBssidTV.setText(bssid);
@@ -241,6 +211,8 @@ public class EasylinkActivity extends AppCompatActivity implements View.OnClickL
                     mMessageTV.setText("不支持5G网络,请切换为2.4G网络或重试");
                 }
             }
+            if ((Build.VERSION.SDK_INT >= 28))
+                onLocationChanged();
         }
     }
 
@@ -256,7 +228,7 @@ public class EasylinkActivity extends AppCompatActivity implements View.OnClickL
         }
 
         if (!enable) {
-            mMessageTV.setText("Location(GPS) is disable");
+            mMessageTV.setText("GPS关闭! 安卓9.0必须打开gps且授权才能获取到ssid!");
         }
     }
 
@@ -290,7 +262,7 @@ public class EasylinkActivity extends AppCompatActivity implements View.OnClickL
             elp.password = mApPasswordET.getText().toString();
             elp.sleeptime = 50;
             elp.runSecond = 60000;
-            Log.d(Tag, "ssid:"+ mApSsidTV.getText().toString()+",password:"+mApPasswordET.getText().toString());
+            Log.d(Tag, "ssid:" + mApSsidTV.getText().toString() + ",password:" + mApPasswordET.getText().toString());
             elp2p.startEasyLink(elp, new EasyLinkCallBack() {
                 @Override
                 public void onSuccess(int code, String message) {
@@ -305,26 +277,5 @@ public class EasylinkActivity extends AppCompatActivity implements View.OnClickL
                 }
             });
         }
-    }
-
-
-    public byte[] getOriginalSsidBytes(WifiInfo info) {
-        try {
-            Method method = info.getClass().getMethod("getWifiSsid");
-            method.setAccessible(true);
-            Object wifiSsid = method.invoke(info);
-            method = wifiSsid.getClass().getMethod("getOctets");
-            method.setAccessible(true);
-            return (byte[]) method.invoke(wifiSsid);
-        } catch (NoSuchMethodException e) {
-            e.printStackTrace();
-        } catch (IllegalAccessException e) {
-            e.printStackTrace();
-        } catch (InvocationTargetException e) {
-            e.printStackTrace();
-        } catch (NullPointerException e) {
-            e.printStackTrace();
-        }
-        return null;
     }
 }
