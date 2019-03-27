@@ -21,19 +21,24 @@ import android.preference.PreferenceFragment;
 import android.support.v4.content.LocalBroadcastManager;
 import android.support.v7.app.AlertDialog;
 import android.util.Log;
-import android.widget.EditText;
+import android.widget.Toast;
 
+import com.zyc.webservice.WebService;
 import com.zyc.zcontrol.ConnectService;
 import com.zyc.zcontrol.R;
 
+import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
+
+import java.io.UnsupportedEncodingException;
+import java.net.URLDecoder;
 
 import static android.content.Context.BIND_AUTO_CREATE;
 
 @SuppressLint("ValidFragment")
 public class TC1SettingFragment extends PreferenceFragment {
-    final static String Tag = "ButtonMateSetting";
+    final static String Tag = "TC1SettingFragment";
     SharedPreferences mSharedPreferences;
     SharedPreferences.Editor editor;
 
@@ -59,8 +64,70 @@ public class TC1SettingFragment extends PreferenceFragment {
     Handler handler = new Handler() {
         @Override
         public void handleMessage(Message msg) {// handler接收到消息后就会执行此方法
+            JSONObject obj = null;
             switch (msg.what) {
                 case 0:
+                    String body = null;
+                    String name = null;
+                    String tag_name = null;
+                    String ota_uri = null;
+                    String created_at = null;
+                    if (pd != null && pd.isShowing()) pd.dismiss();
+                    String JsonStr = (String) msg.obj;
+                    Log.d(Tag, "result:" + JsonStr);
+                    try {
+                        obj = new JSONObject(JsonStr);
+                        if (obj.has("id") && obj.has("tag_name") && obj.has("target_commitish")
+                                && obj.has("name") && obj.has("body") && obj.has("created_at")
+                                && obj.has("assets")) {
+                            name = obj.getString("name");
+                            body = obj.getString("body");
+                            tag_name = obj.getString("tag_name");
+                            created_at = obj.getString("created_at");
+
+                            JSONArray assets = obj.getJSONArray("assets");
+
+                            for (int i = 0; i < assets.length(); i++) {
+                                JSONObject a = assets.getJSONObject(i);
+                                if (a.has("browser_download_url")
+                                        && a.getString("browser_download_url").endsWith("ota.bin")) {
+                                    ota_uri = a.getString("browser_download_url");
+                                    String str = new String(ota_uri.getBytes(), "UTF-8");
+                                    ota_uri = URLDecoder.decode(str, "UTF-8");
+                                    ota_uri = ota_uri.replaceFirst("http.*http", "http");
+                                    Log.d(Tag, "ota_uri:" + ota_uri);
+                                    break;
+                                }
+                            }
+
+                            final String ota_uri_final=ota_uri;
+                            String version= fw_version.getSummary().toString();
+                            if(!version.equals(tag_name)){
+                                AlertDialog alertDialog = new AlertDialog.Builder(getActivity())
+                                        .setTitle("获取到最新版本:"+tag_name)
+                                        .setMessage(name+"\n"+body)
+                                        .setPositiveButton("更新", new DialogInterface.OnClickListener() {
+                                            @Override
+                                            public void onClick(DialogInterface dialog, int which) {
+                                                mConnectService.Send("domoticz/out",
+                                                        "{\"mac\":\"" + device_mac + "\",\"setting\":{\"ota\":\"" + ota_uri_final + "\"}}");
+                                            }
+                                        })
+                                        .setNegativeButton("取消", null)
+                                        .create();
+                                alertDialog.show();
+                            }else
+                            {
+                                Toast.makeText(getActivity(), "已是最新版本", Toast.LENGTH_SHORT).show();
+                            }
+
+                        }
+                    } catch (JSONException e) {
+                        e.printStackTrace();
+                    } catch (UnsupportedEncodingException e) {
+                        e.printStackTrace();
+                    }
+
                     break;
             }
         }
@@ -128,7 +195,6 @@ public class TC1SettingFragment extends PreferenceFragment {
                 e.printStackTrace();
             }
         }
-        //endregion
         domoticz_idx.setOnPreferenceChangeListener(new Preference.OnPreferenceChangeListener() {
             @Override
             public boolean onPreferenceChange(Preference preference, Object newValue) {
@@ -138,9 +204,11 @@ public class TC1SettingFragment extends PreferenceFragment {
                 return false;
             }
         });
+        //endregion
 
         name_preference.setSummary(device_name);
 
+        //region 设置名称
         name_preference.setOnPreferenceChangeListener(new Preference.OnPreferenceChangeListener() {
             @Override
             public boolean onPreferenceChange(Preference preference, Object newValue) {
@@ -149,10 +217,15 @@ public class TC1SettingFragment extends PreferenceFragment {
                 return false;
             }
         });
+        //endregion
 
+
+        //region 版本
         fw_version.setOnPreferenceClickListener(new Preference.OnPreferenceClickListener() {
             @Override
             public boolean onPreferenceClick(Preference preference) {
+                //region 手动输入固件下载地址注释
+                /*
                 final EditText et = new EditText(getActivity());
                 new AlertDialog.Builder(getActivity()).setTitle("请输入固件下载地址")
                         .setView(et)
@@ -167,9 +240,47 @@ public class TC1SettingFragment extends PreferenceFragment {
                                 }
                             }
                         }).setNegativeButton("取消", null).show();
+                        */
+                //endregion
+
+                //region 未获取到当前版本信息
+                if(fw_version.getSummary()==null){
+                    AlertDialog alertDialog = new AlertDialog.Builder(getActivity())
+                            .setTitle("未获取到设备版本")
+                            .setMessage("请获取到设备版本后重试.")
+                            .setNegativeButton("确定", new DialogInterface.OnClickListener() {
+                                @Override
+                                public void onClick(DialogInterface dialog, int which) {
+//                                    getActivity().finish();
+                                }
+                            })
+                            .create();
+                    alertDialog.show();
+                    return false;
+                }
+                //endregion
+
+                String version= fw_version.getSummary().toString();
+                //region 获取最新版本
+                pd = new ProgressDialog(getActivity());
+                pd.setMessage("正在获取最新固件版本,请稍后....");
+                pd.show();
+                new Thread(new Runnable() {
+                    @Override
+                    public void run() {
+                        Message msg = new Message();
+                        msg.what = 0;
+                        msg.obj = WebService.WebConnect("https://gitee.com/api/v5/repos/zhangyichen/zTC1/releases/latest");
+                        handler.sendMessageDelayed(msg, 0);// 执行耗时的方法之后发送消给handler
+                    }
+                }).start();
+
+
+                //endregion
                 return false;
             }
         });
+        //endregion
 
     }
 
@@ -252,6 +363,7 @@ public class TC1SettingFragment extends PreferenceFragment {
                 fw_version.setSummary(version);
             }
             //endregion
+            //region ota结果/进度
             if (jsonObject.has("ota_progress")) {
                 int ota_progress = jsonObject.getInt("ota_progress");
 
@@ -263,7 +375,7 @@ public class TC1SettingFragment extends PreferenceFragment {
                         m = "固件更新失败!请重试";
                     }
                     if (ota_flag) {
-                        ota_flag=false;
+                        ota_flag = false;
                         new android.app.AlertDialog.Builder(getActivity())
                                 .setTitle("")
                                 .setMessage(m)
@@ -277,6 +389,7 @@ public class TC1SettingFragment extends PreferenceFragment {
                 }
 
             }
+            //endregion
             //region 接收主机setting
             if (jsonObject.has("setting")) jsonSetting = jsonObject.getJSONObject("setting");
             if (jsonSetting != null) {
@@ -290,7 +403,7 @@ public class TC1SettingFragment extends PreferenceFragment {
                 //region ota
                 if (jsonSetting.has("ota")) {
                     String ota_uri = jsonSetting.getString("ota");
-                    if (ota_uri.startsWith("http") && ota_uri.endsWith("/TC1_MK3031_moc.ota.bin")) {
+                    if (ota_uri.endsWith("ota.bin")) {
                         ota_flag = true;
                         pd = new ProgressDialog(getActivity());
                         pd.setButton(DialogInterface.BUTTON_POSITIVE, "取消", new DialogInterface.OnClickListener() {
@@ -300,7 +413,7 @@ public class TC1SettingFragment extends PreferenceFragment {
                                 ota_flag = false;
                             }
                         });
-                        pd.setMessage("正在更新固件,请勿断开设备电源!请稍后....");
+                        pd.setMessage("正在更新固件,请勿断开设备电源!\n大约1分钟左右,请稍后....");
                         pd.show();
 //                        handler.sendEmptyMessageDelayed(0,5000);
 
