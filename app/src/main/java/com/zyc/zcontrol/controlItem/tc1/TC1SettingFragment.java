@@ -264,6 +264,7 @@ public class TC1SettingFragment extends PreferenceFragment {
                 //region 获取最新版本
                 pd = new ProgressDialog(getActivity());
                 pd.setMessage("正在获取最新固件版本,请稍后....");
+                pd.setCanceledOnTouchOutside(false);
                 pd.show();
                 new Thread(new Runnable() {
                     @Override
@@ -413,6 +414,7 @@ public class TC1SettingFragment extends PreferenceFragment {
                                 ota_flag = false;
                             }
                         });
+                        pd.setCanceledOnTouchOutside(false);
                         pd.setMessage("正在更新固件,请勿断开设备电源!\n大约1分钟左右,请稍后....");
                         pd.show();
 //                        handler.sendEmptyMessageDelayed(0,5000);
