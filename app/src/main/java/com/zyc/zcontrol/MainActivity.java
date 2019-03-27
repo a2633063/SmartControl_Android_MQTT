@@ -11,6 +11,7 @@ import android.content.IntentFilter;
 import android.content.ServiceConnection;
 import android.content.SharedPreferences;
 import android.database.Cursor;
+import android.graphics.drawable.ColorDrawable;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Handler;
@@ -31,14 +32,17 @@ import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
+import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.Button;
 import android.widget.ListView;
+import android.widget.PopupWindow;
 import android.widget.TextView;
 
 import com.zyc.StaticVariable;
@@ -50,6 +54,8 @@ import org.json.JSONObject;
 
 import java.util.ArrayList;
 import java.util.Random;
+
+import static android.view.ViewGroup.LayoutParams.MATCH_PARENT;
 
 public class MainActivity extends AppCompatActivity {
     public final static String Tag = "MainActivity";
@@ -262,6 +268,7 @@ public class MainActivity extends AppCompatActivity {
         //endregion
 
         //region 设置/关于/退出按钮
+        //region 设置按钮
         findViewById(R.id.tv_setting).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -270,19 +277,24 @@ public class MainActivity extends AppCompatActivity {
 
             }
         });
+        //endregion
+        //region 退出按钮
         findViewById(R.id.tv_exit).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 finish();
             }
         });
+        //endregion
+        //region 关于按钮
         findViewById(R.id.tv_info).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 drawerLayout.closeDrawer(GravityCompat.START);//关闭侧边栏
-
+                popupwindowInfo();
             }
         });
+        //endregion
         //endregion
 
         //endregion
@@ -481,12 +493,38 @@ public class MainActivity extends AppCompatActivity {
             } catch (JSONException e) {
                 e.printStackTrace();
             }
-
-
             return true;
         }
 
         return super.onOptionsItemSelected(item);
+    }
+    //endregion
+
+    //region 弹窗
+    private void popupwindowInfo() {
+
+        final View popupView = getLayoutInflater().inflate(R.layout.popupwindow_main_info, null);
+        final PopupWindow window = new PopupWindow(popupView, MATCH_PARENT, MATCH_PARENT, true);//wrap_content,wrap_content
+
+
+        //region 控件初始化
+
+
+        //region window初始化
+        window.setBackgroundDrawable(new ColorDrawable(android.graphics.Color.alpha(0xffff0000)));
+        window.setOutsideTouchable(true);
+        window.getContentView().setOnTouchListener(new View.OnTouchListener() {
+            @Override
+            public boolean onTouch(View v, MotionEvent event) {
+                window.dismiss();
+                return true;
+            }
+        });
+        //endregion
+        //endregion
+        window.update();
+        window.showAtLocation(popupView, Gravity.CENTER, 0, 0);
+
     }
     //endregion
 
@@ -518,7 +556,7 @@ public class MainActivity extends AppCompatActivity {
             //region 根据收到的消息更改显示列表
             if (position >= 0) {//设备已存在
                 //修改名称
-                if (name!=null && !name.equals(data.get(position).name)) {
+                if (name != null && !name.equals(data.get(position).name)) {
                     SQLiteClass sqLite = new SQLiteClass(this, "device_list");
                     ContentValues cv = new ContentValues();
                     cv.put("name", name);
