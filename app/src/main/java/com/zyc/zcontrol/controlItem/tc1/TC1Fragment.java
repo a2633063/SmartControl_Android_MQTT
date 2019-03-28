@@ -235,7 +235,7 @@ public class TC1Fragment extends Fragment {
 
     void Send(String message) {
         boolean b = getActivity().getSharedPreferences("Setting_" + device_mac, 0).getBoolean("always_UDP", false);
-        mConnectService.Send(b ? null : "domoticz/out", message);
+        mConnectService.Send(b ? null : "device/ztc1/set", message);
     }
 
     //数据接收处理函数

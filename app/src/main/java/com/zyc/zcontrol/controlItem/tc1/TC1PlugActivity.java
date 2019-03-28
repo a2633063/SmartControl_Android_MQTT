@@ -399,9 +399,9 @@ public class TC1PlugActivity extends AppCompatActivity {
                 int repeat = 0;
 
                 Calendar c = Calendar.getInstance();
-                c.add(Calendar.HOUR, hour);
+                c.add(Calendar.HOUR_OF_DAY, hour);
                 c.add(Calendar.MINUTE, minute);
-                hour=c.get(Calendar.HOUR);
+                hour=c.get(Calendar.HOUR_OF_DAY);
                 minute=c.get(Calendar.MINUTE);
 
                 Send("{\"mac\": \"" + device_mac + "\",\"plug_" + plug_id + "\" : {\"setting\":{\"task_" + task_id + "\":{\"hour\":" + hour + ",\"minute\":" + minute + ",\"repeat\":" + repeat + ",\"action\":" + action + ",\"on\":" + on + "}}}}");
@@ -431,7 +431,7 @@ public class TC1PlugActivity extends AppCompatActivity {
     //region 数据接收发送处理函数
     void Send(String message) {
         boolean b = getSharedPreferences("Setting_" + device_mac, 0).getBoolean("always_UDP", false);
-        mConnectService.Send(b ? null : "domoticz/out", message);
+        mConnectService.Send(b ? null : "device/ztc1/set", message);
     }
 
     void Receive(String ip, int port, String message) {

@@ -50,8 +50,7 @@ public class TC1SettingFragment extends PreferenceFragment {
 
     Preference fw_version;
     EditTextPreference name_preference;
-    EditTextPreference domoticz_idx;
-    EditTextPreference[] domoticz_idx_plug = new EditTextPreference[6];
+
 
     String device_name = null;
     String device_mac = null;
@@ -109,7 +108,7 @@ public class TC1SettingFragment extends PreferenceFragment {
                                         .setPositiveButton("更新", new DialogInterface.OnClickListener() {
                                             @Override
                                             public void onClick(DialogInterface dialog, int which) {
-                                                mConnectService.Send("domoticz/out",
+                                                mConnectService.Send("device/ztc1/set",
                                                         "{\"mac\":\"" + device_mac + "\",\"setting\":{\"ota\":\"" + ota_uri_final + "\"}}");
                                             }
                                         })
@@ -167,44 +166,8 @@ public class TC1SettingFragment extends PreferenceFragment {
 //        CheckBoxPreference mEtPreference = (CheckBoxPreference) findPreference("theme");
         fw_version = findPreference("fw_version");
         name_preference = (EditTextPreference) findPreference("name");
-        domoticz_idx = (EditTextPreference) findPreference("domoticz_idx");
-        domoticz_idx_plug[0] = (EditTextPreference) findPreference("domoticz_idx_0");
-        domoticz_idx_plug[1] = (EditTextPreference) findPreference("domoticz_idx_1");
-        domoticz_idx_plug[2] = (EditTextPreference) findPreference("domoticz_idx_2");
-        domoticz_idx_plug[3] = (EditTextPreference) findPreference("domoticz_idx_3");
-        domoticz_idx_plug[4] = (EditTextPreference) findPreference("domoticz_idx_4");
-        domoticz_idx_plug[5] = (EditTextPreference) findPreference("domoticz_idx_5");
-//
 
-        //region domoticz_idx 初始化
-        try {
-            int idx_temp = Integer.parseInt(domoticz_idx.getText());
-            if (idx_temp >= 0)
-                domoticz_idx.setSummary(domoticz_idx.getText());
-        } catch (NumberFormatException e) {
-            e.printStackTrace();
-        }
 
-        for (int i = 0; i < domoticz_idx_plug.length; i++) {
-            domoticz_idx_plug[i].setOnPreferenceChangeListener(mPreferenceChangeListener);
-            try {
-                int idx_temp = Integer.parseInt(domoticz_idx_plug[i].getText());
-                if (idx_temp >= 0)
-                    domoticz_idx_plug[i].setSummary(domoticz_idx_plug[i].getText());
-            } catch (NumberFormatException e) {
-                e.printStackTrace();
-            }
-        }
-        domoticz_idx.setOnPreferenceChangeListener(new Preference.OnPreferenceChangeListener() {
-            @Override
-            public boolean onPreferenceChange(Preference preference, Object newValue) {
-
-                mConnectService.Send("domoticz/out",
-                        "{\"mac\":\"" + device_mac + "\",\"setting\":{\"idx\":" + (String) newValue + "}}");
-                return false;
-            }
-        });
-        //endregion
 
         name_preference.setSummary(device_name);
 
@@ -212,7 +175,7 @@ public class TC1SettingFragment extends PreferenceFragment {
         name_preference.setOnPreferenceChangeListener(new Preference.OnPreferenceChangeListener() {
             @Override
             public boolean onPreferenceChange(Preference preference, Object newValue) {
-                mConnectService.Send("domoticz/out",
+                mConnectService.Send("device/ztc1/set",
                         "{\"mac\":\"" + device_mac + "\",\"setting\":{\"name\":\"" + (String) newValue + "\"}}");
                 return false;
             }
@@ -295,42 +258,6 @@ public class TC1SettingFragment extends PreferenceFragment {
         super.onDestroy();
     }
 
-    //region 插座idx配置OnPreferenceChangeListener监听
-    Preference.OnPreferenceChangeListener mPreferenceChangeListener = new Preference.OnPreferenceChangeListener() {
-        @Override
-        public boolean onPreferenceChange(Preference preference, Object newValue) {
-            int id = -1;
-            //region preference判断
-            switch (preference.getKey()) {
-                case "domoticz_idx_1":
-                    id = 1;
-                    break;
-                case "domoticz_idx_2":
-                    id = 2;
-                    break;
-                case "domoticz_idx_3":
-                    id = 3;
-                    break;
-                case "domoticz_idx_4":
-                    id = 4;
-                    break;
-                case "domoticz_idx_5":
-                    id = 5;
-                    break;
-                case "domoticz_idx_0":
-                    id = 0;
-                    break;
-                default:
-                    return false;
-            }
-            //endregion
-
-            mConnectService.Send("domoticz/out",
-                    "{\"mac\":\"" + device_mac + "\"," + "\"plug_" + id + "\":{\"setting\":{\"idx\":" + (String) newValue + "}}}");
-            return false;
-        }
-    };
-    //endregion
 
     //数据接收处理函数
     void Receive(String ip, int port, String message) {
@@ -394,13 +321,7 @@ public class TC1SettingFragment extends PreferenceFragment {
             //region 接收主机setting
             if (jsonObject.has("setting")) jsonSetting = jsonObject.getJSONObject("setting");
             if (jsonSetting != null) {
-                //region 设置id
-                if (jsonSetting.has("idx")) {
-                    int idx = jsonSetting.getInt("idx");
-                    domoticz_idx.setSummary(String.valueOf(idx));
-                    domoticz_idx.setText(String.valueOf(idx));
-                }
-                //endregion
+
                 //region ota
                 if (jsonSetting.has("ota")) {
                     String ota_uri = jsonSetting.getString("ota");
@@ -425,34 +346,6 @@ public class TC1SettingFragment extends PreferenceFragment {
             }
             //endregion
 
-            //region 接收插口idx及name
-            for (int i = 0; i < 6; i++) {
-                if (jsonObject.has("plug_" + i)
-                        && jsonObject.getJSONObject("plug_" + i).has("setting")
-                        && jsonObject.getJSONObject("plug_" + i).getJSONObject("setting").has("idx")
-                ) {
-                    int id = jsonObject.getJSONObject("plug_" + i).getJSONObject("setting").getInt("idx");
-                    domoticz_idx_plug[i].setSummary(String.valueOf(id));
-                    domoticz_idx_plug[i].setText(String.valueOf(id));
-
-                }
-            }
-
-            if (jsonObject.has("setting")) jsonSetting = jsonObject.getJSONObject("setting");
-            if (mac.equals(device_mac)) {
-                if (name != null) {
-                    name_preference.setSummary(name);
-                    name_preference.setText(name);
-                }
-                if (jsonSetting != null) {
-                    if (jsonSetting.has("idx")) {
-                        String idx = jsonSetting.getString("idx");
-                        domoticz_idx.setSummary(idx);
-                        domoticz_idx.setText(idx);
-                    }
-                }
-            }
-            //endregion
 
         } catch (JSONException e) {
             e.printStackTrace();
@@ -466,8 +359,7 @@ public class TC1SettingFragment extends PreferenceFragment {
         @Override
         public void onServiceConnected(ComponentName componentName, IBinder service) {
             mConnectService = ((ConnectService.LocalBinder) service).getService();
-            //{"mac":"mac","setting":{"idx":null}}
-            mConnectService.Send("domoticz/out", "{\"mac\":\"" + device_mac + "\",\"version\":null," + "\"setting\":{\"idx\":null},\"plug_0\":{\"setting\":{\"idx\":null}},\"plug_1\":{\"setting\":{\"idx\":null}},\"plug_2\":{\"setting\":{\"idx\":null}},\"plug_3\":{\"setting\":{\"idx\":null}},\"plug_4\":{\"setting\":{\"idx\":null}},\"plug_5\":{\"setting\":{\"idx\":null}}}");
+            mConnectService.Send("device/ztc1/set", "{\"mac\":\"" + device_mac + "\",\"version\":null}");
         }
 
         @Override

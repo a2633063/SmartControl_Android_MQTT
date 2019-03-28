@@ -243,6 +243,8 @@ public class ConnectService extends Service {
                     Log.d("ConnectService", "connect onSuccess");
                     try {
                         mqttClient.subscribe("domoticz/in", 0);
+                        mqttClient.subscribe("device/+/+/state", 0);
+                        //mqttClient.subscribe("homeassistant/+/+/#", 0);
                         broadcastUpdate(ACTION_MQTT_CONNECTED); //连接成功
                     } catch (MqttException e) {
                         e.printStackTrace();

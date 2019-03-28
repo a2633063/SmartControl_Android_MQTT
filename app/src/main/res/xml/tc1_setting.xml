@@ -10,16 +10,6 @@
             android:positiveButtonText="保存"
             android:title="名称" />
 
-        <EditTextPreference
-            android:dialogTitle="设置(配合domoticz)"
-            android:dialogMessage="设置为domoticz中设备值,可通过domoticz服务器控制"
-            android:inputType="numberSigned"
-            android:key="domoticz_idx"
-            android:defaultValue="-1"
-            android:negativeButtonText="取消"
-            android:positiveButtonText="保存"
-            android:title="idx" />
-
         <CheckBoxPreference
             android:defaultValue="false"
             android:disableDependentsState="true"
@@ -31,64 +21,4 @@
             android:title="当前版本(点击检查新版本)"/>
     </PreferenceCategory>
 
-    <PreferenceCategory android:title="插座idx(配合domoticz)">
-
-        <EditTextPreference
-            android:dialogTitle="设置(配合domoticz)"
-            android:dialogMessage="设置为domoticz中设备值,可通过domoticz服务器控制"
-            android:inputType="numberSigned"
-            android:key="domoticz_idx_0"
-            android:defaultValue="-1"
-            android:negativeButtonText="取消"
-            android:positiveButtonText="保存"
-            android:title="插口1 idx" />
-
-        <EditTextPreference
-            android:dialogTitle="设置(配合domoticz)"
-            android:dialogMessage="设置为domoticz中设备值,可通过domoticz服务器控制"
-            android:inputType="numberSigned"
-            android:key="domoticz_idx_1"
-            android:defaultValue="-1"
-            android:negativeButtonText="取消"
-            android:positiveButtonText="保存"
-            android:title="插口2 idx" />
-
-        <EditTextPreference
-            android:dialogTitle="设置(配合domoticz)"
-            android:dialogMessage="设置为domoticz中设备值,可通过domoticz服务器控制"
-            android:inputType="numberSigned"
-            android:key="domoticz_idx_2"
-            android:defaultValue="-1"
-            android:negativeButtonText="取消"
-            android:positiveButtonText="保存"
-            android:title="插口3 idx" />
-
-        <EditTextPreference
-            android:dialogTitle="设置(配合domoticz)"
-            android:dialogMessage="设置为domoticz中设备值,可通过domoticz服务器控制"
-            android:inputType="numberSigned"
-            android:key="domoticz_idx_3"
-            android:defaultValue="-1"
-            android:negativeButtonText="取消"
-            android:positiveButtonText="保存"
-            android:title="插口4 idx" />
-        <EditTextPreference
-            android:dialogTitle="设置(配合domoticz)"
-            android:dialogMessage="设置为domoticz中设备值,可通过domoticz服务器控制"
-            android:inputType="numberSigned"
-            android:key="domoticz_idx_4"
-            android:defaultValue="-1"
-            android:negativeButtonText="取消"
-            android:positiveButtonText="保存"
-            android:title="插口5 idx" />
-        <EditTextPreference
-            android:dialogTitle="设置(配合domoticz)"
-            android:dialogMessage="设置为domoticz中设备值,可通过domoticz服务器控制"
-            android:inputType="numberSigned"
-            android:key="domoticz_idx_5"
-            android:defaultValue="-1"
-            android:negativeButtonText="取消"
-            android:positiveButtonText="保存"
-            android:title="插口6 idx" />
-    </PreferenceCategory>
 </PreferenceScreen>
