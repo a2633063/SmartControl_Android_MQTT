@@ -99,24 +99,22 @@ public class TC1SettingFragment extends PreferenceFragment {
                                 }
                             }
 
-                            final String ota_uri_final=ota_uri;
-                            String version= fw_version.getSummary().toString();
-                            if(!version.equals(tag_name)){
+                            final String ota_uri_final = ota_uri;
+                            String version = fw_version.getSummary().toString();
+                            if (!version.equals(tag_name)) {
                                 AlertDialog alertDialog = new AlertDialog.Builder(getActivity())
-                                        .setTitle("获取到最新版本:"+tag_name)
-                                        .setMessage(name+"\n"+body)
+                                        .setTitle("获取到最新版本:" + tag_name)
+                                        .setMessage(name + "\n" + body)
                                         .setPositiveButton("更新", new DialogInterface.OnClickListener() {
                                             @Override
                                             public void onClick(DialogInterface dialog, int which) {
-                                                mConnectService.Send("device/ztc1/set",
-                                                        "{\"mac\":\"" + device_mac + "\",\"setting\":{\"ota\":\"" + ota_uri_final + "\"}}");
+                                                Send("{\"mac\":\"" + device_mac + "\",\"setting\":{\"ota\":\"" + ota_uri_final + "\"}}");
                                             }
                                         })
                                         .setNegativeButton("取消", null)
                                         .create();
                                 alertDialog.show();
-                            }else
-                            {
+                            } else {
                                 Toast.makeText(getActivity(), "已是最新版本", Toast.LENGTH_SHORT).show();
                             }
 
@@ -168,15 +166,13 @@ public class TC1SettingFragment extends PreferenceFragment {
         name_preference = (EditTextPreference) findPreference("name");
 
 
-
         name_preference.setSummary(device_name);
 
         //region 设置名称
         name_preference.setOnPreferenceChangeListener(new Preference.OnPreferenceChangeListener() {
             @Override
             public boolean onPreferenceChange(Preference preference, Object newValue) {
-                mConnectService.Send("device/ztc1/set",
-                        "{\"mac\":\"" + device_mac + "\",\"setting\":{\"name\":\"" + (String) newValue + "\"}}");
+                Send("{\"mac\":\"" + device_mac + "\",\"setting\":{\"name\":\"" + (String) newValue + "\"}}");
                 return false;
             }
         });
@@ -198,8 +194,7 @@ public class TC1SettingFragment extends PreferenceFragment {
                                 String uri = et.getText().toString();
                                 if (uri.length() < 1) return;
                                 if (uri.startsWith("http") && uri.endsWith("/TC1_MK3031_moc.ota.bin")) {
-                                    mConnectService.Send("domoticz/out",
-                                            "{\"mac\":\"" + device_mac + "\",\"setting\":{\"ota\":\"" + uri + "\"}}");
+                                    Send("{\"mac\":\"" + device_mac + "\",\"setting\":{\"ota\":\"" + uri + "\"}}");
                                 }
                             }
                         }).setNegativeButton("取消", null).show();
@@ -207,7 +202,7 @@ public class TC1SettingFragment extends PreferenceFragment {
                 //endregion
 
                 //region 未获取到当前版本信息
-                if(fw_version.getSummary()==null){
+                if (fw_version.getSummary() == null) {
                     AlertDialog alertDialog = new AlertDialog.Builder(getActivity())
                             .setTitle("未获取到设备版本")
                             .setMessage("请获取到设备版本后重试.")
@@ -223,7 +218,7 @@ public class TC1SettingFragment extends PreferenceFragment {
                 }
                 //endregion
 
-                String version= fw_version.getSummary().toString();
+                String version = fw_version.getSummary().toString();
                 //region 获取最新版本
                 pd = new ProgressDialog(getActivity());
                 pd.setMessage("正在获取最新固件版本,请稍后....");
@@ -258,6 +253,10 @@ public class TC1SettingFragment extends PreferenceFragment {
         super.onDestroy();
     }
 
+    void Send(String message) {
+        boolean b = getActivity().getSharedPreferences("Setting_" + device_mac, 0).getBoolean("always_UDP", false);
+        mConnectService.Send(b ? null : "device/ztc1/set", message);
+    }
 
     //数据接收处理函数
     void Receive(String ip, int port, String message) {
@@ -359,7 +358,7 @@ public class TC1SettingFragment extends PreferenceFragment {
         @Override
         public void onServiceConnected(ComponentName componentName, IBinder service) {
             mConnectService = ((ConnectService.LocalBinder) service).getService();
-            mConnectService.Send("device/ztc1/set", "{\"mac\":\"" + device_mac + "\",\"version\":null}");
+            Send("{\"mac\":\"" + device_mac + "\",\"version\":null}");
         }
 
         @Override

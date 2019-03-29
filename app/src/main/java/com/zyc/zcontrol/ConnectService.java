@@ -96,7 +96,7 @@ public class ConnectService extends Service {
                     }
                 }
             } catch (SocketException e) {
-//                e.printStackTrace();
+                e.printStackTrace();
             }
 
             //断开连接

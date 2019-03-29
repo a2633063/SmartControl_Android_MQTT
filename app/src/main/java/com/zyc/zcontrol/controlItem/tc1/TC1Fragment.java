@@ -196,7 +196,15 @@ public class TC1Fragment extends Fragment {
             if (id >= 0 && id <= 5)
                 Send("{\"name\":\"" + device_name + "\",\"mac\":\"" + device_mac + "\",\"plug_" + id + "\":{\"on\":" + String.valueOf(((ToggleButton) arg0).isChecked() ? 1 : 0) + "}" + "}");
             else if (id == tbtn_all.getId()) {
-                Send("{\"name\":\"" + device_name + "\",\"mac\":\"" + device_mac + "\",\"nvalue\":" + String.valueOf(((ToggleButton) arg0).isChecked() ? 1 : 0) + "}");
+                int s=((ToggleButton) arg0).isChecked() ? 1 : 0;
+                Send("{\"name\":\"" + device_name + "\",\"mac\":\"" + device_mac + "\","
+                        +"\"plug_0\":{\"on\":"+s+"},"
+                        +"\"plug_1\":{\"on\":"+s+"},"
+                        +"\"plug_2\":{\"on\":"+s+"},"
+                        +"\"plug_3\":{\"on\":"+s+"},"
+                        +"\"plug_4\":{\"on\":"+s+"},"
+                        +"\"plug_5\":{\"on\":"+s+"}"
+                        +"}");
             }
 
         }
