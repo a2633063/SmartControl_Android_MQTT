@@ -56,10 +56,10 @@ public class TC1Fragment extends Fragment {
     //region 控件
     final private int PLUG_COUNT=6;
     ToggleButton tbtn_all;
+    TextView tv_power;
     ToggleButton tbtn_main_button[] = new ToggleButton[PLUG_COUNT];
     TextView tv_main_button[] = new TextView[PLUG_COUNT];
     //endregion
-
     TextView log;
 
     String device_mac = null;
@@ -123,6 +123,7 @@ public class TC1Fragment extends Fragment {
         //region 控件初始化
 
         tbtn_all = view.findViewById(R.id.tbtn_all);
+        tv_power = view.findViewById(R.id.tv_power);
         tbtn_main_button[0] = view.findViewById(R.id.tbtn_main_button1);
         tbtn_main_button[1] = view.findViewById(R.id.tbtn_main_button2);
         tbtn_main_button[2] = view.findViewById(R.id.tbtn_main_button3);
@@ -265,6 +266,12 @@ public class TC1Fragment extends Fragment {
             if (jsonObject.has("mac")) mac = jsonObject.getString("mac");
             if (jsonObject.has("setting")) jsonSetting = jsonObject.getJSONObject("setting");
             if (mac == null || !mac.equals(device_mac)) return;
+
+            if (jsonObject.has("power")) {
+                String power = jsonObject.getString("power");
+                Log.d(Tag,"power:"+power);
+                tv_power.setText(power+"W");
+            }
 
             //region 解析plug
             for (int plug_id = 0; plug_id < 6; plug_id++) {

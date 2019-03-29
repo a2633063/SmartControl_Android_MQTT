@@ -312,6 +312,10 @@ public class TC1SettingFragment extends PreferenceFragment {
                 } else {
                     if (ota_flag) {
                         //todo 显示更新进度
+
+                        if(pd!=null && pd.isShowing())
+                            pd.setMessage("正在获取最新固件版本,请稍后....\n"+"进度:"+ota_progress+"%");
+//                        Toast.makeText(getActivity(), "ota进度:"+ota_progress+"%", Toast.LENGTH_SHORT).show();
                     }
                 }
 

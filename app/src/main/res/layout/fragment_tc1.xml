@@ -25,11 +25,36 @@
                 android:id="@+id/tbtn_all"
                 style="@style/TC1SwitchStyle"
                 app:layout_constraintBottom_toTopOf="@+id/tbtn_main_button2"
-                app:layout_constraintEnd_toEndOf="@+id/tbtn_main_button3"
+                app:layout_constraintEnd_toStartOf="@+id/ll_power"
                 app:layout_constraintStart_toStartOf="@+id/tbtn_main_button1"
                 app:layout_constraintTop_toTopOf="parent"
                 app:layout_goneMarginBottom="8dp" />
 
+
+            <LinearLayout
+                android:id="@+id/ll_power"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                app:layout_constraintStart_toEndOf="@+id/tbtn_all"
+                app:layout_constraintTop_toTopOf="@+id/tbtn_all"
+                android:layout_gravity="center"
+                app:layout_constraintEnd_toEndOf="@+id/tbtn_main_button3"
+                app:layout_constraintBottom_toBottomOf="@+id/tv_switch_all"
+                android:orientation="vertical">
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:gravity="center"
+                    android:text="当前功率"/>
+
+                <TextView
+                    android:id="@+id/tv_power"
+                    android:gravity="center"
+                    android:layout_width="match_parent"
+                    android:textSize="35dp"
+                    android:layout_height="wrap_content"
+                    android:text="----"/>
+            </LinearLayout>
 
             <ToggleButton
                 android:id="@+id/tbtn_main_button1"
