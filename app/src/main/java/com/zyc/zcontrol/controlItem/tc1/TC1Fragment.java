@@ -169,7 +169,7 @@ public class TC1Fragment extends Fragment {
                 });
             }
         });
-        DateFormat df = new SimpleDateFormat("---- yyyy/hh/dd HH:mm:ss ----");
+        DateFormat df = new SimpleDateFormat("---- yyyy/MM/dd HH:mm:ss ----");
         log.setText(df.format(new Date()));
         //endregion
 

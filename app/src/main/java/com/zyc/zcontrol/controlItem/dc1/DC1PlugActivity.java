@@ -152,7 +152,7 @@ public class DC1PlugActivity extends AppCompatActivity {
         tbt_button.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Send("{\"name\":\"" + device_name + "\",\"mac\":\"" + device_mac + "\",\"plug_" + plug_id + "\":{\"on\":" + String.valueOf(((ToggleButton) v).isChecked() ? 1 : 0) + "}" + "}");
+                Send("{\"mac\":\"" + device_mac + "\",\"plug_" + plug_id + "\":{\"on\":" + String.valueOf(((ToggleButton) v).isChecked() ? 1 : 0) + "}" + "}");
 
             }
         });
@@ -175,7 +175,7 @@ public class DC1PlugActivity extends AppCompatActivity {
                                 String str = mEditText.getText().toString();
                                 if (str.length() < 1 || str.length() > 16)
                                     str = str.substring(0, 16);
-                                Send("{\"name\":\"" + device_name + "\",\"mac\":\"" + device_mac + "\",\"plug_" + plug_id + "\":{\"setting\":{\"name\":\"" + str + "\"}}" + "}");
+                                Send("{\"mac\":\"" + device_mac + "\",\"plug_" + plug_id + "\":{\"setting\":{\"name\":\"" + str + "\"}}" + "}");
                             }
                         });
                 builder.show();
