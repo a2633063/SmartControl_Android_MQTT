@@ -331,7 +331,7 @@ public class ConnectService extends Service {
         } catch (UnknownHostException e) {
             e.printStackTrace();
         }
-        final DatagramPacket p = new DatagramPacket(message.getBytes(), message.length(),
+        final DatagramPacket p = new DatagramPacket(message.getBytes(), message.getBytes().length,
                 local, port);
 
         new Thread(new Runnable() {
