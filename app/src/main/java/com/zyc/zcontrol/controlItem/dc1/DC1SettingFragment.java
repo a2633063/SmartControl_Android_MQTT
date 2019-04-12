@@ -74,6 +74,7 @@ public class DC1SettingFragment extends PreferenceFragment {
                     if (pd != null && pd.isShowing()) pd.dismiss();
                     String JsonStr = (String) msg.obj;
                     Log.d(Tag, "result:" + JsonStr);
+                    if(JsonStr==null || JsonStr.length()<3)break;
                     try {
                         obj = new JSONObject(JsonStr);
                         if (obj.has("id") && obj.has("tag_name") && obj.has("target_commitish")
