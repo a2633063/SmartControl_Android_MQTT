@@ -168,6 +168,8 @@ public class TC1SettingFragment extends PreferenceFragment {
 
         name_preference.setSummary(device_name);
 
+        findPreference("mac").setSummary(device_mac);
+
         //region 设置名称
         name_preference.setOnPreferenceChangeListener(new Preference.OnPreferenceChangeListener() {
             @Override

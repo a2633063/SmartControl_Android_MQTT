@@ -9,7 +9,9 @@
             android:negativeButtonText="取消"
             android:positiveButtonText="保存"
             android:title="名称" />
-
+        <Preference
+            android:key="mac"
+            android:title="MAC地址"/>
         <CheckBoxPreference
             android:defaultValue="false"
             android:disableDependentsState="true"
