@@ -228,6 +228,8 @@ public class MainActivity extends AppCompatActivity {
         viewPager.setAdapter(fragmentAdapter);
         viewPager.setOffscreenPageLimit(data.size());
         tabLayout.setupWithViewPager(viewPager);
+        int page = mSharedPreferences.getInt("page", 0);
+        if (page < fragmentAdapter.data.size()) viewPager.setCurrentItem(page);
         viewPager.addOnPageChangeListener(new ViewPager.OnPageChangeListener() {
 
             @Override
@@ -237,8 +239,12 @@ public class MainActivity extends AppCompatActivity {
                     if (onPageScrolled > 3) {
                         drawerLayout.openDrawer(GravityCompat.START);
                     }
-                } else
+                } else {
+                    mEditor = getSharedPreferences("Setting", 0).edit();
+                    mEditor.putInt("page", position);
+                    mEditor.commit();
                     onPageScrolled = 0;
+                }
             }
 
             @Override
@@ -510,8 +516,8 @@ public class MainActivity extends AppCompatActivity {
 
         //region 控件初始化
 
-        TextView tv_version =popupView.findViewById(R.id.tv_version);
-        tv_version.setText("APP当前版本:"+getLocalVersionName(this));
+        TextView tv_version = popupView.findViewById(R.id.tv_version);
+        tv_version.setText("APP当前版本:" + getLocalVersionName(this));
         //region window初始化
         window.setBackgroundDrawable(new ColorDrawable(android.graphics.Color.alpha(0xffff0000)));
         window.setOutsideTouchable(true);

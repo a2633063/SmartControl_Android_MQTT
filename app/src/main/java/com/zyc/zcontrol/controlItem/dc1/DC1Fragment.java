@@ -15,6 +15,7 @@ import android.os.IBinder;
 import android.os.Message;
 import android.support.v4.app.Fragment;
 import android.support.v4.content.LocalBroadcastManager;
+import android.support.v4.widget.SwipeRefreshLayout;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.util.Log;
@@ -23,8 +24,8 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.CompoundButton;
 import android.widget.ScrollView;
+import android.widget.Switch;
 import android.widget.TextView;
-import android.widget.ToggleButton;
 
 import com.zyc.zcontrol.ConnectService;
 import com.zyc.zcontrol.R;
@@ -54,10 +55,11 @@ public class DC1Fragment extends Fragment {
     //endregion
 
     //region 控件
-    final private int PLUG_COUNT=6;
-    ToggleButton tbtn_all;
+    final private int PLUG_COUNT=4;
+    private SwipeRefreshLayout mSwipeLayout;
+    Switch tbtn_all;
     TextView tv_power;
-    ToggleButton tbtn_main_button[] = new ToggleButton[PLUG_COUNT];
+    Switch tbtn_main_button[] = new Switch[PLUG_COUNT];
     TextView tv_main_button[] = new TextView[PLUG_COUNT];
     //endregion
     TextView log;
@@ -88,9 +90,7 @@ public class DC1Fragment extends Fragment {
                             + "\"plug_0\" : {\"on\" : null,\"setting\":{\"name\":null}},"
                             + "\"plug_1\" : {\"on\" : null,\"setting\":{\"name\":null}},"
                             + "\"plug_2\" : {\"on\" : null,\"setting\":{\"name\":null}},"
-                            + "\"plug_3\" : {\"on\" : null,\"setting\":{\"name\":null}},"
-                            + "\"plug_4\" : {\"on\" : null,\"setting\":{\"name\":null}},"
-                            + "\"plug_5\" : {\"on\" : null,\"setting\":{\"name\":null}}}");
+                            + "\"plug_3\" : {\"on\" : null,\"setting\":{\"name\":null}}}");
                     break;
             }
         }
@@ -122,30 +122,42 @@ public class DC1Fragment extends Fragment {
 
         //region 控件初始化
 
+        //region 开关按钮
         tbtn_all = view.findViewById(R.id.tbtn_all);
         tv_power = view.findViewById(R.id.tv_power);
         tbtn_main_button[0] = view.findViewById(R.id.tbtn_main_button1);
         tbtn_main_button[1] = view.findViewById(R.id.tbtn_main_button2);
         tbtn_main_button[2] = view.findViewById(R.id.tbtn_main_button3);
         tbtn_main_button[3] = view.findViewById(R.id.tbtn_main_button4);
-        tbtn_main_button[4] = view.findViewById(R.id.tbtn_main_button5);
-        tbtn_main_button[5] = view.findViewById(R.id.tbtn_main_button6);
         tv_main_button[0] = view.findViewById(R.id.tv_main_button1);
         tv_main_button[1] = view.findViewById(R.id.tv_main_button2);
         tv_main_button[2] = view.findViewById(R.id.tv_main_button3);
         tv_main_button[3] = view.findViewById(R.id.tv_main_button4);
-        tv_main_button[4] = view.findViewById(R.id.tv_main_button5);
-        tv_main_button[5] = view.findViewById(R.id.tv_main_button6);
 
 
         tbtn_all.setOnClickListener(MainButtonListener);
-        for (int i = 0; i < 6; i++) {
+        for (int i = 0; i < PLUG_COUNT; i++) {
             tbtn_main_button[i].setId(i);
             tv_main_button[i].setId(i+PLUG_COUNT);
             tbtn_main_button[i].setOnClickListener(MainButtonListener);
             tbtn_main_button[i].setOnCheckedChangeListener(MainButtonChangeListener);
             tv_main_button[i].setOnClickListener(MainTextListener);
         }
+        //endregion
+
+        //region 更新当前状态
+        mSwipeLayout = (SwipeRefreshLayout) view.findViewById(R.id.swipeRefreshLayout);
+        mSwipeLayout.setColorSchemeResources(R.color.colorAccent, R.color.colorPrimaryDark, R.color.colorAccent, R.color.colorPrimary);
+        mSwipeLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
+            @Override
+            public void onRefresh() {
+                handler.sendEmptyMessageDelayed(1,0);
+                mSwipeLayout.setRefreshing(false);
+            }
+        });
+        //endregion
+
+
         //region log 相关
         final ScrollView scrollView = (ScrollView) view.findViewById(R.id.scrollView);
         log = (TextView) view.findViewById(R.id.tv_log);
@@ -194,17 +206,15 @@ public class DC1Fragment extends Fragment {
         @Override
         public void onClick(View arg0) {
             int id = arg0.getId();
-            if (id >= 0 && id <= 5)
-                Send("{\"name\":\"" + device_name + "\",\"mac\":\"" + device_mac + "\",\"plug_" + id + "\":{\"on\":" + String.valueOf(((ToggleButton) arg0).isChecked() ? 1 : 0) + "}" + "}");
+            if (id >= 0 && id < PLUG_COUNT)
+                Send("{\"name\":\"" + device_name + "\",\"mac\":\"" + device_mac + "\",\"plug_" + id + "\":{\"on\":" + String.valueOf(((Switch) arg0).isChecked() ? 1 : 0) + "}" + "}");
             else if (id == tbtn_all.getId()) {
-                int s=((ToggleButton) arg0).isChecked() ? 1 : 0;
+                int s=((Switch) arg0).isChecked() ? 1 : 0;
                 Send("{\"name\":\"" + device_name + "\",\"mac\":\"" + device_mac + "\","
                         +"\"plug_0\":{\"on\":"+s+"},"
                         +"\"plug_1\":{\"on\":"+s+"},"
                         +"\"plug_2\":{\"on\":"+s+"},"
-                        +"\"plug_3\":{\"on\":"+s+"},"
-                        +"\"plug_4\":{\"on\":"+s+"},"
-                        +"\"plug_5\":{\"on\":"+s+"}"
+                        +"\"plug_3\":{\"on\":"+s+"}"
                         +"}");
             }
 
@@ -212,7 +222,7 @@ public class DC1Fragment extends Fragment {
 
     };
 
-    private ToggleButton.OnCheckedChangeListener MainButtonChangeListener = new CompoundButton.OnCheckedChangeListener() {
+    private Switch.OnCheckedChangeListener MainButtonChangeListener = new CompoundButton.OnCheckedChangeListener() {
         @Override
         public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
             for (int i = 0; i < tbtn_main_button.length; i++) {
@@ -274,7 +284,7 @@ public class DC1Fragment extends Fragment {
             }
 
             //region 解析plug
-            for (int plug_id = 0; plug_id < 6; plug_id++) {
+            for (int plug_id = 0; plug_id < PLUG_COUNT; plug_id++) {
                 if (!jsonObject.has("plug_" + plug_id)) continue;
                 JSONObject jsonPlug = jsonObject.getJSONObject("plug_" + plug_id);
                 if (jsonPlug.has("on")) {
