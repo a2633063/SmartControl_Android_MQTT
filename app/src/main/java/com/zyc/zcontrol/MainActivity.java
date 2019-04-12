@@ -56,6 +56,7 @@ import java.util.ArrayList;
 import java.util.Random;
 
 import static android.view.ViewGroup.LayoutParams.MATCH_PARENT;
+import static com.zyc.Function.getLocalVersionName;
 
 public class MainActivity extends AppCompatActivity {
     public final static String Tag = "MainActivity";
@@ -509,7 +510,8 @@ public class MainActivity extends AppCompatActivity {
 
         //region 控件初始化
 
-
+        TextView tv_version =popupView.findViewById(R.id.tv_version);
+        tv_version.setText("APP当前版本:"+getLocalVersionName(this));
         //region window初始化
         window.setBackgroundDrawable(new ColorDrawable(android.graphics.Color.alpha(0xffff0000)));
         window.setOutsideTouchable(true);

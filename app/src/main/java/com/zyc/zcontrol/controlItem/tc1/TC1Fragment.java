@@ -15,6 +15,7 @@ import android.os.IBinder;
 import android.os.Message;
 import android.support.v4.app.Fragment;
 import android.support.v4.content.LocalBroadcastManager;
+import android.support.v4.widget.SwipeRefreshLayout;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.util.Log;
@@ -55,6 +56,8 @@ public class TC1Fragment extends Fragment {
 
     //region 控件
     final private int PLUG_COUNT=6;
+
+    private SwipeRefreshLayout mSwipeLayout;
     ToggleButton tbtn_all;
     TextView tv_power;
     ToggleButton tbtn_main_button[] = new ToggleButton[PLUG_COUNT];
@@ -122,6 +125,7 @@ public class TC1Fragment extends Fragment {
 
         //region 控件初始化
 
+        //region 控制按钮/功率等
         tbtn_all = view.findViewById(R.id.tbtn_all);
         tv_power = view.findViewById(R.id.tv_power);
         tbtn_main_button[0] = view.findViewById(R.id.tbtn_main_button1);
@@ -146,6 +150,22 @@ public class TC1Fragment extends Fragment {
             tbtn_main_button[i].setOnCheckedChangeListener(MainButtonChangeListener);
             tv_main_button[i].setOnClickListener(MainTextListener);
         }
+        //endregion
+
+        //region 更新当前状态
+        mSwipeLayout = (SwipeRefreshLayout) view.findViewById(R.id.swipeRefreshLayout);
+        mSwipeLayout.setColorSchemeResources(R.color.colorAccent, R.color.colorPrimaryDark, R.color.colorAccent, R.color.colorPrimary);
+        mSwipeLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
+            @Override
+            public void onRefresh() {
+                handler.sendEmptyMessageDelayed(1,0);
+                mSwipeLayout.setRefreshing(false);
+            }
+        });
+        //endregion
+
+
+
         //region log 相关
         final ScrollView scrollView = (ScrollView) view.findViewById(R.id.scrollView);
         log = (TextView) view.findViewById(R.id.tv_log);

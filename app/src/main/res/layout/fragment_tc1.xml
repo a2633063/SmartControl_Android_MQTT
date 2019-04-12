@@ -6,7 +6,13 @@
     android:layout_height="match_parent"
     android:orientation="vertical"
     tools:context=".controlItem.buttonmate.ButtonMateFragment">
-
+    <android.support.v4.widget.SwipeRefreshLayout
+        android:id="@+id/swipeRefreshLayout"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_weight="1"
+        android:layout_centerInParent="true"
+        android:paddingTop="20dp">
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
@@ -166,6 +172,7 @@
         </android.support.constraint.ConstraintLayout>
     </LinearLayout>
 
+    </android.support.v4.widget.SwipeRefreshLayout>
     <ScrollView
         android:id="@+id/scrollView"
         android:layout_width="match_parent"
