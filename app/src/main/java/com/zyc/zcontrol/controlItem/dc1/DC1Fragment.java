@@ -55,10 +55,12 @@ public class DC1Fragment extends Fragment {
     //endregion
 
     //region 控件
-    final private int PLUG_COUNT=4;
+    final private int PLUG_COUNT = 4;
     private SwipeRefreshLayout mSwipeLayout;
     Switch tbtn_all;
     TextView tv_power;
+    TextView tv_voltage;
+    TextView tv_current;
     Switch tbtn_main_button[] = new Switch[PLUG_COUNT];
     TextView tv_main_button[] = new TextView[PLUG_COUNT];
     //endregion
@@ -84,7 +86,7 @@ public class DC1Fragment extends Fragment {
     Handler handler = new Handler() {
         @Override
         public void handleMessage(Message msg) {// handler接收到消息后就会执行此方法
-            switch(msg.what){
+            switch (msg.what) {
                 case 1:
                     Send("{\"mac\": \"" + device_mac + "\","
                             + "\"plug_0\" : {\"on\" : null,\"setting\":{\"name\":null}},"
@@ -95,6 +97,7 @@ public class DC1Fragment extends Fragment {
             }
         }
     };
+
     //endregion
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -125,6 +128,8 @@ public class DC1Fragment extends Fragment {
         //region 开关按钮
         tbtn_all = view.findViewById(R.id.tbtn_all);
         tv_power = view.findViewById(R.id.tv_power);
+        tv_voltage = view.findViewById(R.id.tv_voltage);
+        tv_current = view.findViewById(R.id.tv_current);
         tbtn_main_button[0] = view.findViewById(R.id.tbtn_main_button1);
         tbtn_main_button[1] = view.findViewById(R.id.tbtn_main_button2);
         tbtn_main_button[2] = view.findViewById(R.id.tbtn_main_button3);
@@ -138,7 +143,7 @@ public class DC1Fragment extends Fragment {
         tbtn_all.setOnClickListener(MainButtonListener);
         for (int i = 0; i < PLUG_COUNT; i++) {
             tbtn_main_button[i].setId(i);
-            tv_main_button[i].setId(i+PLUG_COUNT);
+            tv_main_button[i].setId(i + PLUG_COUNT);
             tbtn_main_button[i].setOnClickListener(MainButtonListener);
             tbtn_main_button[i].setOnCheckedChangeListener(MainButtonChangeListener);
             tv_main_button[i].setOnClickListener(MainTextListener);
@@ -151,7 +156,7 @@ public class DC1Fragment extends Fragment {
         mSwipeLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
             @Override
             public void onRefresh() {
-                handler.sendEmptyMessageDelayed(1,0);
+                handler.sendEmptyMessageDelayed(1, 0);
                 mSwipeLayout.setRefreshing(false);
             }
         });
@@ -209,13 +214,13 @@ public class DC1Fragment extends Fragment {
             if (id >= 0 && id < PLUG_COUNT)
                 Send("{\"name\":\"" + device_name + "\",\"mac\":\"" + device_mac + "\",\"plug_" + id + "\":{\"on\":" + String.valueOf(((Switch) arg0).isChecked() ? 1 : 0) + "}" + "}");
             else if (id == tbtn_all.getId()) {
-                int s=((Switch) arg0).isChecked() ? 1 : 0;
+                int s = ((Switch) arg0).isChecked() ? 1 : 0;
                 Send("{\"name\":\"" + device_name + "\",\"mac\":\"" + device_mac + "\","
-                        +"\"plug_0\":{\"on\":"+s+"},"
-                        +"\"plug_1\":{\"on\":"+s+"},"
-                        +"\"plug_2\":{\"on\":"+s+"},"
-                        +"\"plug_3\":{\"on\":"+s+"}"
-                        +"}");
+                        + "\"plug_0\":{\"on\":" + s + "},"
+                        + "\"plug_1\":{\"on\":" + s + "},"
+                        + "\"plug_2\":{\"on\":" + s + "},"
+                        + "\"plug_3\":{\"on\":" + s + "}"
+                        + "}");
             }
 
         }
@@ -244,7 +249,7 @@ public class DC1Fragment extends Fragment {
             intent.putExtra("name", device_name);
             intent.putExtra("plug_name", ((TextView) v).getText());
             intent.putExtra("mac", device_mac);
-            intent.putExtra("plug_id", v.getId()%PLUG_COUNT);
+            intent.putExtra("plug_id", v.getId() % PLUG_COUNT);
             startActivity(intent);
         }
     };
@@ -279,8 +284,18 @@ public class DC1Fragment extends Fragment {
 
             if (jsonObject.has("power")) {
                 String power = jsonObject.getString("power");
-                Log.d(Tag,"power:"+power);
-                tv_power.setText(power+"W");
+                Log.d(Tag, "power:" + power);
+                tv_power.setText(power + "W");
+            }
+            if (jsonObject.has("voltage")) {
+                String voltage = jsonObject.getString("voltage");
+                Log.d(Tag, "voltage:" + voltage);
+                tv_voltage.setText(voltage + "V");
+            }
+            if (jsonObject.has("current")) {
+                String current = jsonObject.getString("current");
+                Log.d(Tag, "current:" + current);
+                tv_current.setText(current + "A");
             }
 
             //region 解析plug
@@ -314,7 +329,7 @@ public class DC1Fragment extends Fragment {
             mConnectService = ((ConnectService.LocalBinder) service).getService();
 
 
-            handler.sendEmptyMessageDelayed(1,300);
+            handler.sendEmptyMessageDelayed(1, 300);
         }
 
         @Override

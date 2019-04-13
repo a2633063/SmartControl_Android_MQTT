@@ -147,10 +147,20 @@
                     android:id="@+id/tv_voltage"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="电压:---"
+                    android:text="---V"
                     android:textSize="15dp"
+                    android:ems="6"
                     android:layout_marginTop="10dp"
                     app:layout_constraintStart_toStartOf="@+id/tbtn_main_button1"
+                    app:layout_constraintTop_toBottomOf="@+id/tv_main_button1" />
+                <TextView
+                    android:id="@+id/tv_current"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="---A"
+                    android:textSize="15dp"
+                    android:layout_marginTop="10dp"
+                    app:layout_constraintStart_toEndOf="@+id/tv_voltage"
                     app:layout_constraintTop_toBottomOf="@+id/tv_main_button1" />
 
 
