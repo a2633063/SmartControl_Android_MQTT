@@ -21,9 +21,9 @@ import android.preference.PreferenceFragment;
 import android.support.v4.content.LocalBroadcastManager;
 import android.support.v7.app.AlertDialog;
 import android.util.Log;
+import android.widget.EditText;
 import android.widget.Toast;
 
-import com.zyc.webservice.WebService;
 import com.zyc.zcontrol.ConnectService;
 import com.zyc.zcontrol.R;
 
@@ -186,7 +186,7 @@ public class TC1SettingFragment extends PreferenceFragment {
             @Override
             public boolean onPreferenceClick(Preference preference) {
                 //region 手动输入固件下载地址注释
-                /*
+
                 final EditText et = new EditText(getActivity());
                 new AlertDialog.Builder(getActivity()).setTitle("请输入固件下载地址")
                         .setView(et)
@@ -200,9 +200,9 @@ public class TC1SettingFragment extends PreferenceFragment {
                                 }
                             }
                         }).setNegativeButton("取消", null).show();
-                        */
-                //endregion
 
+                //endregion
+/*
                 //region 未获取到当前版本信息
                 if (fw_version.getSummary() == null) {
                     AlertDialog alertDialog = new AlertDialog.Builder(getActivity())
@@ -236,7 +236,7 @@ public class TC1SettingFragment extends PreferenceFragment {
                     }
                 }).start();
 
-
+*/
                 //endregion
                 return false;
             }
