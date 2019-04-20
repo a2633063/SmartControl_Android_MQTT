@@ -22,13 +22,27 @@
         android:scaleType="fitStart"
         app:srcCompat="@drawable/zyc_icon" />
 
-    <TextView
+    <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:orientation="horizontal">
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="match_parent"
         android:paddingTop="@dimen/nav_header_vertical_spacing"
         android:text="@string/nav_header_title"
         android:textAppearance="@style/TextAppearance.AppCompat.Body1" />
 
+        <TextView
+            android:id="@+id/tv_reward"
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            android:gravity="end|center_horizontal"
+            android:paddingTop="@dimen/nav_header_vertical_spacing"
+            android:text="打赏"
+            android:textAppearance="@style/TextAppearance.AppCompat.Body1" />
+    </LinearLayout>
     <TextView
         android:id="@+id/tv_nav_header_subtitle"
         android:layout_width="wrap_content"

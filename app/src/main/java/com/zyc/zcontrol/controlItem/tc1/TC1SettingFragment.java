@@ -195,7 +195,7 @@ public class TC1SettingFragment extends PreferenceFragment {
                             public void onClick(DialogInterface dialogInterface, int i) {
                                 String uri = et.getText().toString();
                                 if (uri.length() < 1) return;
-                                if (uri.startsWith("http") && uri.endsWith("/TC1_MK3031_moc.ota.bin")) {
+                                if (uri.startsWith("http")) {
                                     Send("{\"mac\":\"" + device_mac + "\",\"setting\":{\"ota\":\"" + uri + "\"}}");
                                 }
                             }

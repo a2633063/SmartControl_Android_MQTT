@@ -41,9 +41,11 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.Button;
+import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.PopupWindow;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.zyc.StaticVariable;
 import com.zyc.zcontrol.controlItem.SettingActivity;
@@ -52,6 +54,7 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.net.URISyntaxException;
 import java.util.ArrayList;
 import java.util.Random;
 
@@ -261,7 +264,16 @@ public class MainActivity extends AppCompatActivity {
             }
         });
         //endregion
-
+        //region 打赏
+        navigationView.getHeaderView(0).findViewById(R.id.tv_reward)
+                .setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        drawerLayout.closeDrawer(GravityCompat.START);//关闭侧边栏
+                        popupwindowInfo();
+                    }
+                });
+        //endregion
         //region 打开网页
         final TextView nav_header_subtitle = navigationView.getHeaderView(0).findViewById(R.id.tv_nav_header_subtitle);
         nav_header_subtitle.setOnClickListener(new View.OnClickListener() {
@@ -518,6 +530,29 @@ public class MainActivity extends AppCompatActivity {
 
         TextView tv_version = popupView.findViewById(R.id.tv_version);
         tv_version.setText("APP当前版本:" + getLocalVersionName(this));
+
+        ImageView imageView = popupView.findViewById(R.id.alipay);
+        imageView.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                String intentFullUrl = "intent://platformapi/startapp?saId=10000007&" +
+                        "clientVersion=3.7.0.0718&qrcode=https%3A%2F%2Fqr.alipay.com%2Ffkx06093fjxuqmwbco9oka9%3F_s" +
+                        "%3Dweb-other&_t=1472443966571#Intent;" +
+                        "scheme=alipayqr;package=com.eg.android.AlipayGphone;end";
+                Intent intent = null;
+                try {
+                    intent = Intent.parseUri(intentFullUrl, Intent.URI_INTENT_SCHEME);
+                } catch (URISyntaxException e) {
+//                    e.printStackTrace();
+                    Toast.makeText(MainActivity.this, "失败,支付宝有安装?", Toast.LENGTH_SHORT).show();
+                }
+
+
+                startActivity(intent);
+            }
+        });
+
+
         //region window初始化
         window.setBackgroundDrawable(new ColorDrawable(android.graphics.Color.alpha(0xffff0000)));
         window.setOutsideTouchable(true);
