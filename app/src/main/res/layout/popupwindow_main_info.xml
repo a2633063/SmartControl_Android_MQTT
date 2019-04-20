@@ -2,71 +2,84 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
-    android:layout_height="wrap_content"
-android:layout_gravity="center"
+    android:layout_height="match_parent"
+    android:layout_gravity="center"
+    android:background="#ff333333"
     android:gravity="center"
-    android:background="#a0000000"
-    android:padding="16dp">
+    android:padding="0dp">
 
-    <LinearLayout
+    <ScrollView
+        android:id="@+id/scrollView"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:background="#ff333333"
-        android:gravity="center"
-        android:orientation="vertical"
-        android:padding="16dp">
+        android:layout_height="match_parent"
+        android:addStatesFromChildren="false"
+        android:scrollbars="none">
 
-        <TextView
-            android:id="@+id/tv_title"
-            android:layout_width="wrap_content"
+        <LinearLayout
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:background="#ff333333"
             android:gravity="center"
-            android:text="关于"
-            android:textSize="30dp" />
+            android:orientation="vertical"
+            android:padding="16dp">
 
-        <TextView
-            android:id="@+id/tv_version"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:gravity="start"
-            android:textSize="18dp"
-            android:text="APP当前版本:" />
-        <TextView
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:textSize="18dp"
-            android:text="当前APP支持的控制设备:\nzTC1|zDC1|按键伴侣\n\n本app开源地址:" />
-        <TextView
-            android:id="@+id/tv_github1"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:textSize="13dp"
-            android:text="https://github.com/a2633063/SmartControl_Android_MQTT" />
+            <TextView
+                android:id="@+id/tv_title"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:gravity="center"
+                android:text="关于"
+                android:textSize="30dp"
+                android:textStyle="bold" />
 
-        <TextView
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:gravity="start"
-            android:textSize="18dp"
-            android:text="\n支付宝打赏:(点击图片可直接跳转支付宝)\n\n" />
-        <ImageView
-            android:id="@+id/alipay"
-            android:scaleType="centerInside"
-            android:layout_width="200dp"
-            android:layout_height="200dp"
-            app:srcCompat="@drawable/alipay" />
-        <TextView
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:textSize="15dp"
-            android:text="\n打赏与否不影响任何功能,仅表达对开发者的支持.\n感谢您的打赏!" />
-        <TextView
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:textSize="15dp"
-            android:text="\n本APP仅为作者个人学习/使用,不为他人使用本APP造成的任何后果负责!" />
+            <TextView
+                android:id="@+id/tv_version"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:gravity="start"
+                android:text="APP当前版本:"
+                android:textSize="18dp" />
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="当前APP支持的控制设备:\nzTC1|zDC1|按键伴侣\n\n本app开源地址:"
+                android:textSize="18dp" />
+
+            <TextView
+                android:id="@+id/tv_github1"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="https://github.com/a2633063/SmartControl_Android_MQTT"
+                android:textSize="13dp" />
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:gravity="start"
+                android:text="\n支付宝打赏:(点击图片可直接跳转支付宝)\n"
+                android:textSize="18dp" />
+
+            <ImageView
+                android:id="@+id/alipay"
+                android:layout_width="200dp"
+                android:layout_height="200dp"
+                android:scaleType="centerInside"
+                app:srcCompat="@drawable/alipay" />
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="\n打赏与否不影响任何功能,仅表达对开发者的支持.感谢您的打赏!"
+                android:textSize="15dp" />
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="\n本APP仅为作者个人学习/使用,不为他人使用本APP造成的任何后果负责!"
+                android:textSize="15dp" />
 
 
-    </LinearLayout>
-
+        </LinearLayout>
+    </ScrollView>
 </LinearLayout>
