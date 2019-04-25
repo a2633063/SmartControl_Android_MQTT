@@ -191,7 +191,6 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginTop="10dp"
-                    android:ems="6"
                     android:textSize="15dp"
                     app:layout_constraintStart_toStartOf="@+id/tbtn_main_button1"
                     app:layout_constraintTop_toBottomOf="@+id/tv_main_button4" />
