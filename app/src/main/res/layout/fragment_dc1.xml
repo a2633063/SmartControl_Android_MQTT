@@ -29,7 +29,8 @@
                 android:background="#ff3f3f3f"
                 android:elevation="3dp"
                 android:outlineProvider="bounds"
-                android:padding="8dp"
+                android:paddingTop="20dp"
+                android:paddingBottom="20dp"
                 android:translationZ="3dp">
 
                 <Switch
@@ -114,7 +115,7 @@
                 <TextView
                     android:id="@+id/tv_main_button1"
                     style="@style/DC1SwitchTextViewStyle"
-                    android:text="USB"
+                    android:text="总开关"
                     app:layout_constraintEnd_toEndOf="@+id/tbtn_main_button1"
                     app:layout_constraintStart_toStartOf="@+id/tbtn_main_button1"
                     app:layout_constraintTop_toBottomOf="@+id/tbtn_main_button1" />
@@ -147,19 +148,20 @@
                     android:id="@+id/tv_voltage"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
+                    android:layout_marginTop="10dp"
+                    android:ems="6"
                     android:text="---V"
                     android:textSize="15dp"
-                    android:ems="6"
-                    android:layout_marginTop="10dp"
                     app:layout_constraintStart_toStartOf="@+id/tbtn_main_button1"
                     app:layout_constraintTop_toBottomOf="@+id/tv_main_button1" />
+
                 <TextView
                     android:id="@+id/tv_current"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
+                    android:layout_marginTop="10dp"
                     android:text="---A"
                     android:textSize="15dp"
-                    android:layout_marginTop="10dp"
                     app:layout_constraintStart_toEndOf="@+id/tv_voltage"
                     app:layout_constraintTop_toBottomOf="@+id/tv_main_button1" />
 

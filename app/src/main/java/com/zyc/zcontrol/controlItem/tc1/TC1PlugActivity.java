@@ -62,7 +62,7 @@ public class TC1PlugActivity extends AppCompatActivity {
     TC1TaskListAdapter adapter;
 
     TextView tv_name;
-    ToggleButton tbt_button;
+    Switch tbt_button;
     Button btn_count_down;
 
     String device_mac = null;
@@ -152,7 +152,7 @@ public class TC1PlugActivity extends AppCompatActivity {
         tbt_button.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Send("{\"name\":\"" + device_name + "\",\"mac\":\"" + device_mac + "\",\"plug_" + plug_id + "\":{\"on\":" + String.valueOf(((ToggleButton) v).isChecked() ? 1 : 0) + "}" + "}");
+                Send("{\"name\":\"" + device_name + "\",\"mac\":\"" + device_mac + "\",\"plug_" + plug_id + "\":{\"on\":" + String.valueOf(((Switch) v).isChecked() ? 1 : 0) + "}" + "}");
 
             }
         });
@@ -173,8 +173,12 @@ public class TC1PlugActivity extends AppCompatActivity {
                         .setPositiveButton("Ok", new DialogInterface.OnClickListener() {
                             public void onClick(DialogInterface dialog, int which) {
                                 String str = mEditText.getText().toString();
-                                if (str.length() < 1 || str.length() > 16)
+                                if (str.length() > 16)
                                     str = str.substring(0, 16);
+                                else if(str.length()<1) {
+                                    Toast.makeText(TC1PlugActivity.this, "名称不能为空!", Toast.LENGTH_SHORT).show();
+                                    return;
+                                }
                                 Send("{\"name\":\"" + device_name + "\",\"mac\":\"" + device_mac + "\",\"plug_" + plug_id + "\":{\"setting\":{\"name\":\"" + str + "\"}}" + "}");
                             }
                         });

@@ -29,7 +29,7 @@
                 android:gravity="center"
                 app:layout_scrollFlags="scroll|exitUntilCollapsed|snap">
 
-                <ToggleButton
+                <Switch
                     android:id="@+id/tbtn_button"
                     style="@style/TC1SwitchStyle"
                     app:layout_constraintBottom_toBottomOf="parent"

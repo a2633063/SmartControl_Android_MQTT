@@ -166,6 +166,7 @@ public class MainActivity extends AppCompatActivity {
 
         //endregion
 
+        int page = mSharedPreferences.getInt("page", 0);
         //region listview及adapter
 
         lv_device = findViewById(R.id.lv_device);
@@ -188,6 +189,7 @@ public class MainActivity extends AppCompatActivity {
         View footView = (View) LayoutInflater.from(this).inflate(R.layout.nav_header_main, null);
         lv_device.addFooterView(b);
         lv_device.setAdapter(adapter);
+        if (page < adapter.getCount()) adapter.setChoice(page);
         lv_device.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
@@ -196,6 +198,7 @@ public class MainActivity extends AppCompatActivity {
                 viewPager.setCurrentItem(position);
             }
         });
+        //region 长按删除设备
         lv_device.setOnItemLongClickListener(new AdapterView.OnItemLongClickListener() {
             @Override
             public boolean onItemLongClick(AdapterView<?> parent, View view, final int position, long id) {
@@ -222,6 +225,7 @@ public class MainActivity extends AppCompatActivity {
             }
         });
         //endregion
+        //endregion
 
         //region fragment显示相关
         tabLayout = (TabLayout) findViewById(R.id.tablayout);
@@ -231,7 +235,7 @@ public class MainActivity extends AppCompatActivity {
         viewPager.setAdapter(fragmentAdapter);
         viewPager.setOffscreenPageLimit(data.size());
         tabLayout.setupWithViewPager(viewPager);
-        int page = mSharedPreferences.getInt("page", 0);
+
         if (page < fragmentAdapter.data.size()) viewPager.setCurrentItem(page);
         viewPager.addOnPageChangeListener(new ViewPager.OnPageChangeListener() {
 

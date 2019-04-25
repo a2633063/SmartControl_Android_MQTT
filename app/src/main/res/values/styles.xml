@@ -19,7 +19,6 @@
     <style name="TC1SwitchStyle">
         <item name="android:layout_width">wrap_content</item>
         <item name="android:layout_height">wrap_content</item>
-        <item name="android:background">@drawable/state_switch_btn</item>
         <item name="android:minWidth">@null</item>
         <item name="android:minHeight">@null</item>
         <item name="android:paddingBottom">8dp</item>

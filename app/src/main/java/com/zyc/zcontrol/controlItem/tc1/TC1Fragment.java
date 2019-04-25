@@ -24,8 +24,8 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.CompoundButton;
 import android.widget.ScrollView;
+import android.widget.Switch;
 import android.widget.TextView;
-import android.widget.ToggleButton;
 
 import com.zyc.zcontrol.ConnectService;
 import com.zyc.zcontrol.R;
@@ -35,6 +35,7 @@ import org.json.JSONObject;
 
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
+import java.util.Calendar;
 import java.util.Date;
 
 import static android.content.Context.BIND_AUTO_CREATE;
@@ -58,10 +59,11 @@ public class TC1Fragment extends Fragment {
     final private int PLUG_COUNT=6;
 
     private SwipeRefreshLayout mSwipeLayout;
-    ToggleButton tbtn_all;
+    Switch tbtn_all;
     TextView tv_power;
-    ToggleButton tbtn_main_button[] = new ToggleButton[PLUG_COUNT];
+    Switch tbtn_main_button[] = new Switch[PLUG_COUNT];
     TextView tv_main_button[] = new TextView[PLUG_COUNT];
+    TextView tv_total_time;
     //endregion
     TextView log;
 
@@ -125,7 +127,8 @@ public class TC1Fragment extends Fragment {
 
         //region 控件初始化
 
-        //region 控制按钮/功率等
+        //region 控制按钮/功率/运行时间等
+        tv_total_time = view.findViewById(R.id.tv_total_time);
         tbtn_all = view.findViewById(R.id.tbtn_all);
         tv_power = view.findViewById(R.id.tv_power);
         tbtn_main_button[0] = view.findViewById(R.id.tbtn_main_button1);
@@ -215,9 +218,9 @@ public class TC1Fragment extends Fragment {
         public void onClick(View arg0) {
             int id = arg0.getId();
             if (id >= 0 && id <= 5)
-                Send("{\"name\":\"" + device_name + "\",\"mac\":\"" + device_mac + "\",\"plug_" + id + "\":{\"on\":" + String.valueOf(((ToggleButton) arg0).isChecked() ? 1 : 0) + "}" + "}");
+                Send("{\"name\":\"" + device_name + "\",\"mac\":\"" + device_mac + "\",\"plug_" + id + "\":{\"on\":" + String.valueOf(((Switch) arg0).isChecked() ? 1 : 0) + "}" + "}");
             else if (id == tbtn_all.getId()) {
-                int s=((ToggleButton) arg0).isChecked() ? 1 : 0;
+                int s=((Switch) arg0).isChecked() ? 1 : 0;
                 Send("{\"name\":\"" + device_name + "\",\"mac\":\"" + device_mac + "\","
                         +"\"plug_0\":{\"on\":"+s+"},"
                         +"\"plug_1\":{\"on\":"+s+"},"
@@ -232,7 +235,7 @@ public class TC1Fragment extends Fragment {
 
     };
 
-    private ToggleButton.OnCheckedChangeListener MainButtonChangeListener = new CompoundButton.OnCheckedChangeListener() {
+    private Switch.OnCheckedChangeListener MainButtonChangeListener = new CompoundButton.OnCheckedChangeListener() {
         @Override
         public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
             for (int i = 0; i < tbtn_main_button.length; i++) {
@@ -292,7 +295,19 @@ public class TC1Fragment extends Fragment {
                 Log.d(Tag,"power:"+power);
                 tv_power.setText(power+"W");
             }
+            if (jsonObject.has("total_time")) {
+                int total_time = jsonObject.getInt("total_time");
+                Log.d(Tag,"total_time:"+total_time);
 
+
+                Calendar calendar =Calendar.getInstance();
+//                now.setTime(d);
+                calendar.add(Calendar.SECOND,0-total_time);
+                SimpleDateFormat sdf=new SimpleDateFormat("yyyy/MM/dd HH:mm:ss");
+
+                tv_total_time.setText("运行时间:"+total_time+"秒\n上次开机时间:"+sdf.format(calendar.getTime()));
+
+            }
             //region 解析plug
             for (int plug_id = 0; plug_id < 6; plug_id++) {
                 if (!jsonObject.has("plug_" + plug_id)) continue;
