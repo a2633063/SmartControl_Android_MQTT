@@ -65,6 +65,9 @@ public class SettingFragment extends PreferenceFragment {
                     } catch (NumberFormatException e) {
                         e.printStackTrace();
                     }
+                }else if(str.length()==0){
+                    preference.setSummary(str);
+                    return true;
                 }
                 Toast.makeText(getActivity(), "保存失败!格式错误.\n格式:地址:端口\n如192.168.1.1:1883", Toast.LENGTH_SHORT).show();
 

@@ -50,7 +50,6 @@ import android.widget.Toast;
 import com.zyc.StaticVariable;
 import com.zyc.zcontrol.controlItem.SettingActivity;
 
-import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -477,13 +476,51 @@ public class MainActivity extends AppCompatActivity {
             if (mqtt_uri == null || mqtt_uri.length() < 1) {
                 AlertDialog alertDialog = new AlertDialog.Builder(MainActivity.this)
                         .setTitle("未设置MQTT服务器")
-                        .setMessage("请先设置MQTT服务器")
+                        .setMessage("继续会发送空数据,将删除固件的MQTT服务器设置!继续?")
+                        .setPositiveButton("继续", new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialog, int which) {
+
+                                DeviceItem d = adapter.getChoiceDevice();
+                                JSONObject jsonObject = new JSONObject();
+                                JSONObject jsonObject1 = new JSONObject();
+
+                                try {
+                                    jsonObject.put("name", d.name);
+                                    jsonObject.put("mac", d.mac);
+
+                                    jsonObject1.put("mqtt_uri", "");
+                                    jsonObject1.put("mqtt_port", 0);
+                                    jsonObject1.put("mqtt_user", "");
+                                    jsonObject1.put("mqtt_password", "");
+                                    jsonObject.put("setting", jsonObject1);
+
+                                } catch (JSONException e) {
+                                    e.printStackTrace();
+                                } catch (NumberFormatException e) {
+                                    e.printStackTrace();
+                                }
+
+                                String message = null;
+                                try {
+                                    message = jsonObject.toString(0);
+                                    message = message.replace("\r\n", "");
+
+                                    Log.d("Test", "message:" + message);
+                                    mConnectService.UDPsend(message);
+                                } catch (JSONException e) {
+                                    e.printStackTrace();
+                                }
+                            }
+                        })
+                        .setNegativeButton("取消",null)
                         .create();
                 alertDialog.show();
                 return true;
             }
+
+
             DeviceItem d = adapter.getChoiceDevice();
-            JSONArray jsonArray = new JSONArray();
             JSONObject jsonObject = new JSONObject();
             JSONObject jsonObject1 = new JSONObject();
 
