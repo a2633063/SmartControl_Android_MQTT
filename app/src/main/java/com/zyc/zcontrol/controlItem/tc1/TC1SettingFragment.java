@@ -49,6 +49,7 @@ public class TC1SettingFragment extends PreferenceFragment {
     //endregion
 
     Preference fw_version;
+    Preference restart;
     EditTextPreference name_preference;
 
 
@@ -163,6 +164,7 @@ public class TC1SettingFragment extends PreferenceFragment {
 //
 //        CheckBoxPreference mEtPreference = (CheckBoxPreference) findPreference("theme");
         fw_version = findPreference("fw_version");
+        restart = findPreference("restart");
         name_preference = (EditTextPreference) findPreference("name");
 
 
@@ -242,6 +244,27 @@ public class TC1SettingFragment extends PreferenceFragment {
             }
         });
         //endregion
+        //region 重启设备
+        restart.setOnPreferenceClickListener(new Preference.OnPreferenceClickListener() {
+            @Override
+            public boolean onPreferenceClick(Preference preference) {
+
+                new AlertDialog.Builder(getActivity()).setTitle("重启设备?")
+                        .setMessage("需要版本v0.10.1及以上版本.\n如果设备死机此处重启可能无效,依然需要手动拔插插头才能重启设备")
+                        .setPositiveButton("确定", new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialogInterface, int i) {
+                                Send("{\"mac\":\"" + device_mac + "\",\"cmd\":\"restart\"}");
+
+                            }
+                        }).setNegativeButton("取消", null).show();
+
+                //endregion
+
+                return false;
+            }
+        });
+        //endregion
 
     }
 
@@ -315,8 +338,8 @@ public class TC1SettingFragment extends PreferenceFragment {
                     if (ota_flag) {
                         //todo 显示更新进度
 
-                        if(pd!=null && pd.isShowing())
-                            pd.setMessage("正在获取最新固件版本,请稍后....\n"+"进度:"+ota_progress+"%");
+                        if (pd != null && pd.isShowing())
+                            pd.setMessage("正在获取最新固件版本,请稍后....\n" + "进度:" + ota_progress + "%");
 //                        Toast.makeText(getActivity(), "ota进度:"+ota_progress+"%", Toast.LENGTH_SHORT).show();
                     }
                 }

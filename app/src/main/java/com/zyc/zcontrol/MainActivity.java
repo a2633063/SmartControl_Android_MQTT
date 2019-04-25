@@ -391,7 +391,7 @@ public class MainActivity extends AppCompatActivity {
             String mqtt_user = mSharedPreferences.getString("mqtt_user", null);
             String mqtt_password = mSharedPreferences.getString("mqtt_password", null);
 
-            if ((mqtt_uri != null)
+            if ((mqtt_uri != null) && mqtt_uri.length() > 3
                     && (
                     !mConnectService.mqtt_uri.equals(mqtt_uri)
                             || !mConnectService.mqtt_user.equals(mqtt_user)
@@ -513,7 +513,7 @@ public class MainActivity extends AppCompatActivity {
                                 }
                             }
                         })
-                        .setNegativeButton("取消",null)
+                        .setNegativeButton("取消", null)
                         .create();
                 alertDialog.show();
                 return true;

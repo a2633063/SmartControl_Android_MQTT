@@ -183,7 +183,7 @@ public class ConnectService extends Service {
 
     //region MQTT连接状态字函数
     public void connect(String mqtt_uri, String mqtt_id, String mqtt_user, String mqtt_password) {
-        if (mqtt_uri == null) return;
+        if (mqtt_uri == null || mqtt_uri.length() < 3) return;
         if (mqtt_user == null) mqtt_user = "";
         if (mqtt_password == null) mqtt_password = "";
 
