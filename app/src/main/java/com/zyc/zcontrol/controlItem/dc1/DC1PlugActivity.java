@@ -14,7 +14,9 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.os.IBinder;
 import android.os.Message;
+import android.support.design.widget.AppBarLayout;
 import android.support.v4.content.LocalBroadcastManager;
+import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
@@ -57,6 +59,7 @@ public class DC1PlugActivity extends AppCompatActivity {
     //endregion
     ConnectService mConnectService;
 
+    private SwipeRefreshLayout mSwipeLayout;
     ListView lv_task;
     ArrayList<TaskItem> data = new ArrayList<>();
     DC1TaskListAdapter adapter;
@@ -75,7 +78,9 @@ public class DC1PlugActivity extends AppCompatActivity {
         @Override
         public void handleMessage(Message msg) {// handler接收到消息后就会执行此方法
             switch (msg.what) {
-                case 100:
+                case 1:
+                    Send("{\"mac\": \"" + device_mac + "\",\"plug_" + plug_id + "\" : {\"on\" : null,\"setting\":{\"name\":null,\"task_0\":{},\"task_1\":{},\"task_2\":{},\"task_3\":{},\"task_4\":{}}}}");
+                    break;
             }
         }
     };
@@ -127,11 +132,11 @@ public class DC1PlugActivity extends AppCompatActivity {
         adapter = new DC1TaskListAdapter(DC1PlugActivity.this, data, new DC1TaskListAdapter.Callback() {
             @Override
             public void click(View v, int position) {
-                TaskItem task=adapter.getItem(position);
+                TaskItem task = adapter.getItem(position);
                 int hour = task.hour;
-                int minute =task.minute;
+                int minute = task.minute;
                 int action = task.action;
-                int on = ((Switch)v).isChecked()?1:0;
+                int on = ((Switch) v).isChecked() ? 1 : 0;
                 int repeat = task.repeat;
 
                 Send("{\"mac\": \"" + device_mac + "\",\"plug_" + plug_id + "\" : {\"setting\":{\"task_" + position + "\":{\"hour\":" + hour + ",\"minute\":" + minute + ",\"repeat\":" + repeat + ",\"action\":" + action + ",\"on\":" + on + "}}}}");
@@ -175,7 +180,7 @@ public class DC1PlugActivity extends AppCompatActivity {
                                 String str = mEditText.getText().toString();
                                 if (str.length() > 16)
                                     str = str.substring(0, 16);
-                                else if(str.length()<1) {
+                                else if (str.length() < 1) {
                                     Toast.makeText(DC1PlugActivity.this, "名称不能为空!", Toast.LENGTH_SHORT).show();
                                     return;
                                 }
@@ -194,7 +199,31 @@ public class DC1PlugActivity extends AppCompatActivity {
             }
         });
         //endregion
+        //region 初始化下滑刷新功能
+        AppBarLayout appBarLayout = findViewById(R.id.app_bar);
+        appBarLayout.addOnOffsetChangedListener(new AppBarLayout.OnOffsetChangedListener() {
+            @Override
+            public void onOffsetChanged(AppBarLayout appBarLayout, int verticalOffset) {
 
+                if (verticalOffset >= 0) {
+                    mSwipeLayout.setEnabled(true);
+                } else {
+                    mSwipeLayout.setEnabled(false);
+                }
+            }
+        });
+        //region 更新当前状态
+        mSwipeLayout = (SwipeRefreshLayout) findViewById(R.id.swipeRefreshLayout);
+        mSwipeLayout.setColorSchemeResources(R.color.colorAccent, R.color.colorPrimaryDark, R.color.colorAccent, R.color.colorPrimary);
+        mSwipeLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
+            @Override
+            public void onRefresh() {
+                handler.sendEmptyMessageDelayed(1, 0);
+                mSwipeLayout.setRefreshing(false);
+            }
+        });
+        //endregion
+        //endregion
         //endregion
 
         //region MQTT服务有关
@@ -350,7 +379,7 @@ public class DC1PlugActivity extends AppCompatActivity {
         final View popupView = getLayoutInflater().inflate(R.layout.popupwindow_dc1_set_time_count_down, null);
         final PopupWindow window = new PopupWindow(popupView, MATCH_PARENT, MATCH_PARENT, true);//wrap_content,wrap_content
 
-        final int task_id=4;
+        final int task_id = 4;
         //region 控件初始化
         //region 控件定义
         final NumberPicker hour_picker = popupView.findViewById(R.id.hour_picker);
@@ -405,8 +434,8 @@ public class DC1PlugActivity extends AppCompatActivity {
                 Calendar c = Calendar.getInstance();
                 c.add(Calendar.HOUR_OF_DAY, hour);
                 c.add(Calendar.MINUTE, minute);
-                hour=c.get(Calendar.HOUR_OF_DAY);
-                minute=c.get(Calendar.MINUTE);
+                hour = c.get(Calendar.HOUR_OF_DAY);
+                minute = c.get(Calendar.MINUTE);
 
                 Send("{\"mac\": \"" + device_mac + "\",\"plug_" + plug_id + "\" : {\"setting\":{\"task_" + task_id + "\":{\"hour\":" + hour + ",\"minute\":" + minute + ",\"repeat\":" + repeat + ",\"action\":" + action + ",\"on\":" + on + "}}}}");
                 window.dismiss();
@@ -500,7 +529,7 @@ public class DC1PlugActivity extends AppCompatActivity {
         @Override
         public void onServiceConnected(ComponentName componentName, IBinder service) {
             mConnectService = ((ConnectService.LocalBinder) service).getService();
-            Send("{\"mac\": \"" + device_mac + "\",\"plug_" + plug_id + "\" : {\"on\" : null,\"setting\":{\"name\":null,\"task_0\":{},\"task_1\":{},\"task_2\":{},\"task_3\":{},\"task_4\":{}}}}");
+            handler.sendEmptyMessageDelayed(1, 0);
         }
 
         @Override
