@@ -4,6 +4,8 @@ package com.zyc.zcontrol.controlItem.dc1;
 import android.annotation.SuppressLint;
 import android.app.ProgressDialog;
 import android.content.BroadcastReceiver;
+import android.content.ClipData;
+import android.content.ClipboardManager;
 import android.content.ComponentName;
 import android.content.Context;
 import android.content.DialogInterface;
@@ -168,7 +170,23 @@ public class DC1SettingFragment extends PreferenceFragment {
 
 
         name_preference.setSummary(device_name);
+        //region mac地址
         findPreference("mac").setSummary(device_mac);
+        findPreference("mac").setOnPreferenceClickListener(new Preference.OnPreferenceClickListener() {
+            @Override
+            public boolean onPreferenceClick(Preference preference) {
+                try {
+                    ClipboardManager clipboardManager = (ClipboardManager) getActivity().getSystemService(Context.CLIPBOARD_SERVICE);
+                    clipboardManager.setPrimaryClip(ClipData.newPlainText("text", device_mac));
+                    Toast.makeText(getActivity(), "已复制mac地址", Toast.LENGTH_SHORT).show();
+                } catch (Exception e) {
+                    Toast.makeText(getActivity(), "复制mac地址失败", Toast.LENGTH_SHORT).show();
+                    e.printStackTrace();
+                }
+                return false;
+            }
+        });
+        //endregion
         //region 设置名称
         name_preference.setOnPreferenceChangeListener(new Preference.OnPreferenceChangeListener() {
             @Override

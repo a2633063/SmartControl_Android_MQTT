@@ -4,6 +4,8 @@ package com.zyc.zcontrol.controlItem.tc1;
 import android.annotation.SuppressLint;
 import android.app.ProgressDialog;
 import android.content.BroadcastReceiver;
+import android.content.ClipData;
+import android.content.ClipboardManager;
 import android.content.ComponentName;
 import android.content.Context;
 import android.content.DialogInterface;
@@ -60,6 +62,7 @@ public class TC1SettingFragment extends PreferenceFragment {
     private ProgressDialog pd;
 
 
+    //region Handler
     @SuppressLint("HandlerLeak")
     Handler handler = new Handler() {
         @Override
@@ -130,6 +133,7 @@ public class TC1SettingFragment extends PreferenceFragment {
             }
         }
     };
+    //endregion
 
     public TC1SettingFragment(String name, String mac) {
         this.device_name = name;
@@ -170,7 +174,23 @@ public class TC1SettingFragment extends PreferenceFragment {
 
         name_preference.setSummary(device_name);
 
+        //region mac地址
         findPreference("mac").setSummary(device_mac);
+        findPreference("mac").setOnPreferenceClickListener(new Preference.OnPreferenceClickListener() {
+            @Override
+            public boolean onPreferenceClick(Preference preference) {
+                try {
+                    ClipboardManager clipboardManager = (ClipboardManager) getActivity().getSystemService(Context.CLIPBOARD_SERVICE);
+                    clipboardManager.setPrimaryClip(ClipData.newPlainText("text", device_mac));
+                    Toast.makeText(getActivity(), "已复制mac地址", Toast.LENGTH_SHORT).show();
+                } catch (Exception e) {
+                    Toast.makeText(getActivity(), "复制mac地址失败", Toast.LENGTH_SHORT).show();
+                    e.printStackTrace();
+                }
+                return false;
+            }
+        });
+        //endregion
 
         //region 设置名称
         name_preference.setOnPreferenceChangeListener(new Preference.OnPreferenceChangeListener() {
@@ -250,7 +270,7 @@ public class TC1SettingFragment extends PreferenceFragment {
             public boolean onPreferenceClick(Preference preference) {
 
                 new AlertDialog.Builder(getActivity()).setTitle("重启设备?")
-                        .setMessage("需要版本v0.10.1及以上版本.\n如果设备死机此处重启可能无效,依然需要手动拔插插头才能重启设备")
+                        .setMessage("需要固件版本v0.10.1及以上版本.\n如果设备死机此处重启可能无效,依然需要手动拔插插头才能重启设备")
                         .setPositiveButton("确定", new DialogInterface.OnClickListener() {
                             @Override
                             public void onClick(DialogInterface dialogInterface, int i) {
