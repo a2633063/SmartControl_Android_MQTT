@@ -5,6 +5,7 @@ import android.annotation.SuppressLint;
 import android.content.BroadcastReceiver;
 import android.content.ComponentName;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.ServiceConnection;
@@ -16,6 +17,7 @@ import android.os.Message;
 import android.support.v4.app.Fragment;
 import android.support.v4.content.LocalBroadcastManager;
 import android.support.v4.widget.SwipeRefreshLayout;
+import android.support.v7.app.AlertDialog;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.util.Log;
@@ -23,6 +25,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.CompoundButton;
+import android.widget.EditText;
 import android.widget.ScrollView;
 import android.widget.Switch;
 import android.widget.TextView;
@@ -89,10 +92,17 @@ public class DC1Fragment extends Fragment {
             switch (msg.what) {
                 case 1:
                     Send("{\"mac\": \"" + device_mac + "\","
+                            + "\"lock\":null,"
                             + "\"plug_0\" : {\"on\" : null,\"setting\":{\"name\":null}},"
                             + "\"plug_1\" : {\"on\" : null,\"setting\":{\"name\":null}},"
                             + "\"plug_2\" : {\"on\" : null,\"setting\":{\"name\":null}},"
                             + "\"plug_3\" : {\"on\" : null,\"setting\":{\"name\":null}}}");
+                    break;
+
+                case 101:
+                    new AlertDialog.Builder(getActivity()).setTitle("命令超时")
+                            .setMessage("接收反馈数据超时,请重试")
+                            .setPositiveButton("确定", null).show();
                     break;
             }
         }
@@ -256,7 +266,25 @@ public class DC1Fragment extends Fragment {
     //endregion
     //endregion
 
+    //region 弹窗激活
+    void unlock() {
 
+        final EditText et = new EditText(getActivity());
+        new AlertDialog.Builder(getActivity()).setTitle("请输入激活码")
+                .setView(et)
+                .setMessage("激活码免费提供,如果您为此花钱购买,那您被骗了~\n索要激活码请至项目主页中查看作者联系方式.(关于页面中有项目地址)")
+                .setPositiveButton("确定", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialogInterface, int i) {
+                        String lockStr = et.getText().toString();
+                        Send("{\"mac\":\"" + device_mac + "\",\"lock\":\"" + lockStr + "\"}");
+                        handler.sendEmptyMessageDelayed(101,1000);
+                    }
+                }).setNegativeButton("取消", null).show();
+
+    }
+
+    //endregion
     void Send(String message) {
         boolean b = getActivity().getSharedPreferences("Setting_" + device_mac, 0).getBoolean("always_UDP", false);
         mConnectService.Send(b ? null : "device/zdc1/set", message);
@@ -282,6 +310,15 @@ public class DC1Fragment extends Fragment {
             if (jsonObject.has("setting")) jsonSetting = jsonObject.getJSONObject("setting");
             if (mac == null || !mac.equals(device_mac)) return;
 
+            if (jsonObject.has("lock")) {
+                handler.removeMessages(101);
+                boolean lock = jsonObject.getBoolean("lock");
+                Log.d(Tag, "lock:" + lock);
+                if (!lock) {
+//                    Toast.makeText(getContext(), "设备未激活", Toast.LENGTH_SHORT).show();
+//                    unlock();
+                }
+            }
             if (jsonObject.has("power")) {
                 String power = jsonObject.getString("power");
                 Log.d(Tag, "power:" + power);

@@ -23,6 +23,7 @@ import android.preference.PreferenceFragment;
 import android.support.v4.content.LocalBroadcastManager;
 import android.support.v7.app.AlertDialog;
 import android.util.Log;
+import android.widget.EditText;
 import android.widget.Toast;
 
 import com.zyc.webservice.WebService;
@@ -51,6 +52,7 @@ public class DC1SettingFragment extends PreferenceFragment {
     //endregion
 
     Preference fw_version;
+    Preference lock;
     EditTextPreference name_preference;
 
 
@@ -76,7 +78,7 @@ public class DC1SettingFragment extends PreferenceFragment {
                     if (pd != null && pd.isShowing()) pd.dismiss();
                     String JsonStr = (String) msg.obj;
                     Log.d(Tag, "result:" + JsonStr);
-                    if(JsonStr==null || JsonStr.length()<3)break;
+                    if (JsonStr == null || JsonStr.length() < 3) break;
                     try {
                         obj = new JSONObject(JsonStr);
                         if (obj.has("id") && obj.has("tag_name") && obj.has("target_commitish")
@@ -166,6 +168,7 @@ public class DC1SettingFragment extends PreferenceFragment {
 //
 //        CheckBoxPreference mEtPreference = (CheckBoxPreference) findPreference("theme");
         fw_version = findPreference("fw_version");
+        lock = findPreference("lock");
         name_preference = (EditTextPreference) findPreference("name");
 
 
@@ -197,6 +200,13 @@ public class DC1SettingFragment extends PreferenceFragment {
         });
         //endregion
 
+        lock.setOnPreferenceClickListener(new Preference.OnPreferenceClickListener() {
+            @Override
+            public boolean onPreferenceClick(Preference preference) {
+                unlock();
+                return false;
+            }
+        });
 
         //region 版本
         fw_version.setOnPreferenceClickListener(new Preference.OnPreferenceClickListener() {
@@ -272,6 +282,26 @@ public class DC1SettingFragment extends PreferenceFragment {
         super.onDestroy();
     }
 
+    //region 弹窗激活
+    void unlock() {
+
+        final EditText et = new EditText(getActivity());
+        new AlertDialog.Builder(getActivity()).setTitle("请输入激活码")
+                .setView(et)
+                .setMessage("激活码免费提供,如果您为此花钱购买,那您被骗了~\n索要激活码请至项目主页中查看作者联系方式.(关于页面中有项目地址)")
+                .setPositiveButton("确定", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialogInterface, int i) {
+                        String lockStr = et.getText().toString();
+                        Send("{\"mac\":\"" + device_mac + "\",\"lock\":\"" + lockStr + "\"}");
+                    }
+                }).setNegativeButton("取消", null).show();
+
+    }
+
+    //endregion
+
+
     void Send(String message) {
         boolean b = getActivity().getSharedPreferences("Setting_" + device_mac, 0).getBoolean("always_UDP", false);
         mConnectService.Send(b ? null : "device/zdc1/set", message);
@@ -309,6 +339,15 @@ public class DC1SettingFragment extends PreferenceFragment {
                 fw_version.setSummary(version);
             }
             //endregion
+            //region 激活
+            if (jsonObject.has("lock")) {
+                if (jsonObject.getBoolean("lock")) {
+                    lock.setSummary("已激活");
+                }else{
+                    lock.setSummary("未激活");
+                }
+            }
+            //endregion
             //region ota结果/进度
             if (jsonObject.has("ota_progress")) {
                 int ota_progress = jsonObject.getInt("ota_progress");
@@ -332,8 +371,8 @@ public class DC1SettingFragment extends PreferenceFragment {
                     if (ota_flag) {
                         //todo 显示更新进度
 
-                        if(pd!=null && pd.isShowing())
-                            pd.setMessage("正在获取最新固件版本,请稍后....\n"+"进度:"+ota_progress+"%");
+                        if (pd != null && pd.isShowing())
+                            pd.setMessage("正在获取最新固件版本,请稍后....\n" + "进度:" + ota_progress + "%");
 //                        Toast.makeText(getActivity(), "ota进度:"+ota_progress+"%", Toast.LENGTH_SHORT).show();
                     }
                 }
@@ -381,7 +420,7 @@ public class DC1SettingFragment extends PreferenceFragment {
         @Override
         public void onServiceConnected(ComponentName componentName, IBinder service) {
             mConnectService = ((ConnectService.LocalBinder) service).getService();
-            Send("{\"mac\":\"" + device_mac + "\",\"version\":null}");
+            Send("{\"mac\":\"" + device_mac + "\",\"version\":null,\"lock\":null}");
         }
 
         @Override
