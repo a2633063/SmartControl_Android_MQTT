@@ -30,12 +30,8 @@ import com.zyc.webservice.WebService;
 import com.zyc.zcontrol.ConnectService;
 import com.zyc.zcontrol.R;
 
-import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
-
-import java.io.UnsupportedEncodingException;
-import java.net.URLDecoder;
 
 import static android.content.Context.BIND_AUTO_CREATE;
 
@@ -62,75 +58,104 @@ public class DC1SettingFragment extends PreferenceFragment {
     boolean ota_flag = false;
     private ProgressDialog pd;
 
+    private DC1OTAInfo otaInfo = new DC1OTAInfo();
+
 
     @SuppressLint("HandlerLeak")
     Handler handler = new Handler() {
         @Override
         public void handleMessage(Message msg) {// handler接收到消息后就会执行此方法
             JSONObject obj = null;
+            String JsonStr = null;
             switch (msg.what) {
+                //region 获取最新版本信息
                 case 0:
-                    String body = null;
-                    String name = null;
-                    String tag_name = null;
-                    String ota_uri = null;
-                    String created_at = null;
                     if (pd != null && pd.isShowing()) pd.dismiss();
-                    String JsonStr = (String) msg.obj;
+                    JsonStr = (String) msg.obj;
                     Log.d(Tag, "result:" + JsonStr);
-                    if (JsonStr == null || JsonStr.length() < 3) break;
                     try {
+                        if (JsonStr == null || JsonStr.length() < 3)
+                            throw new JSONException("获取最新版本信息失败");
                         obj = new JSONObject(JsonStr);
                         if (obj.has("id") && obj.has("tag_name") && obj.has("target_commitish")
                                 && obj.has("name") && obj.has("body") && obj.has("created_at")
                                 && obj.has("assets")) {
-                            name = obj.getString("name");
-                            body = obj.getString("body");
-                            tag_name = obj.getString("tag_name");
-                            created_at = obj.getString("created_at");
+                            otaInfo.title = obj.getString("name");   //
+                            otaInfo.message = obj.getString("body");
+                            otaInfo.tag_name = obj.getString("tag_name");
+                            otaInfo.created_at = obj.getString("created_at");
 
-                            JSONArray assets = obj.getJSONArray("assets");
-
-                            for (int i = 0; i < assets.length(); i++) {
-                                JSONObject a = assets.getJSONObject(i);
-                                if (a.has("browser_download_url")
-                                        && a.getString("browser_download_url").endsWith("ota.bin")) {
-                                    ota_uri = a.getString("browser_download_url");
-                                    String str = new String(ota_uri.getBytes(), "UTF-8");
-                                    ota_uri = URLDecoder.decode(str, "UTF-8");
-                                    ota_uri = ota_uri.replaceFirst("http.*http", "http");
-                                    Log.d(Tag, "ota_uri:" + ota_uri);
-                                    break;
-                                }
-                            }
-
-                            final String ota_uri_final = ota_uri;
                             String version = fw_version.getSummary().toString();
-                            if (!version.equals(tag_name)) {
-                                AlertDialog alertDialog = new AlertDialog.Builder(getActivity())
-                                        .setTitle("获取到最新版本:" + tag_name)
-                                        .setMessage(name + "\n" + body)
-                                        .setPositiveButton("更新", new DialogInterface.OnClickListener() {
-                                            @Override
-                                            public void onClick(DialogInterface dialog, int which) {
-                                                Send("{\"mac\":\"" + device_mac + "\",\"setting\":{\"ota\":\"" + ota_uri_final + "\"}}");
-                                            }
-                                        })
-                                        .setNegativeButton("取消", null)
-                                        .create();
-                                alertDialog.show();
+                            if (!version.equals(otaInfo.tag_name)) {
+                                handler.sendEmptyMessage(1);
                             } else {
                                 Toast.makeText(getActivity(), "已是最新版本", Toast.LENGTH_SHORT).show();
                             }
-
+                        } else {
+                            throw new JSONException("获取最新版本信息失败");
                         }
                     } catch (JSONException e) {
                         e.printStackTrace();
-                    } catch (UnsupportedEncodingException e) {
-                        e.printStackTrace();
+                        Toast.makeText(getActivity(), "获取最新版本信息失败", Toast.LENGTH_SHORT).show();
                     }
 
                     break;
+                //endregion
+                //region 开始获取固件下载地址
+                case 1:
+                    pd.setMessage("正在获取固件地址,请稍后....");
+                    pd.setCanceledOnTouchOutside(false);
+                    pd.show();
+
+                    new Thread(new Runnable() {
+                        @Override
+                        public void run() {
+                            Message msg = new Message();
+                            msg.what = 2;
+                            msg.obj = WebService.WebConnect("https://gitee.com/api/v5/repos/zhangyichen/Release/releases/tags/zDC1");
+                            handler.sendMessageDelayed(msg, 0);// 执行耗时的方法之后发送消给handler
+                        }
+                    }).start();
+                    break;
+                //endregion
+                //region 已获取固件下载地址
+                case 2:
+                    if (pd != null && pd.isShowing()) pd.dismiss();
+                    JsonStr = (String) msg.obj;
+                    Log.d(Tag, "result:" + JsonStr);
+                    try {
+                        if (JsonStr == null || JsonStr.length() < 3)
+                            throw new JSONException("获取固件下载地址失败");
+
+                        obj = new JSONObject(JsonStr);
+
+                        if (obj.getString("name").equals("zDC1发布地址_" + otaInfo.tag_name)) {
+                            String otauriAll = obj.getString("body");
+                            otaInfo.ota = otauriAll.split("\r\n");
+
+                            AlertDialog alertDialog = new AlertDialog.Builder(getActivity())
+                                    .setTitle("获取到最新版本:" + otaInfo.tag_name)
+                                    .setMessage(otaInfo.title + "\n" + otaInfo.message)
+                                    .setPositiveButton("更新", new DialogInterface.OnClickListener() {
+                                        @Override
+                                        public void onClick(DialogInterface dialog, int which) {
+                                            Send("{\"mac\":\"" + device_mac + "\",\"setting\":{\"ota1\":\"" + otaInfo.ota[0] + "\",\"ota2\":\"" + otaInfo.ota[1] + "\"}}");
+                                        }
+                                    })
+                                    .setNegativeButton("取消", null)
+                                    .create();
+                            alertDialog.show();
+                        } else
+                            throw new JSONException("获取固件下载地址失败");
+
+                    } catch (JSONException e) {
+                        e.printStackTrace();
+                        Toast.makeText(getActivity(), "固件下载地址获取失败", Toast.LENGTH_SHORT).show();
+
+                    }
+
+                    break;
+                //endregion
             }
         }
     };
@@ -256,9 +281,10 @@ public class DC1SettingFragment extends PreferenceFragment {
                 new Thread(new Runnable() {
                     @Override
                     public void run() {
+                        otaInfo = new DC1OTAInfo();
                         Message msg = new Message();
                         msg.what = 0;
-                        msg.obj = WebService.WebConnect("https://gitee.com/api/v5/repos/zhangyichen/zDC1/releases/latest");
+                        msg.obj = WebService.WebConnect("https://gitee.com/api/v5/repos/zhangyichen/zDC1_public/releases/latest");
                         handler.sendMessageDelayed(msg, 0);// 执行耗时的方法之后发送消给handler
                     }
                 }).start();
@@ -343,7 +369,7 @@ public class DC1SettingFragment extends PreferenceFragment {
             if (jsonObject.has("lock")) {
                 if (jsonObject.getBoolean("lock")) {
                     lock.setSummary("已激活");
-                }else{
+                } else {
                     lock.setSummary("未激活");
                 }
             }
@@ -370,9 +396,8 @@ public class DC1SettingFragment extends PreferenceFragment {
                 } else {
                     if (ota_flag) {
                         //todo 显示更新进度
-
                         if (pd != null && pd.isShowing())
-                            pd.setMessage("正在获取最新固件版本,请稍后....\n" + "进度:" + ota_progress + "%");
+                            pd.setMessage("正在更新最新固件版本,请稍后....\n" + "进度:" + ota_progress + "%");
 //                        Toast.makeText(getActivity(), "ota进度:"+ota_progress+"%", Toast.LENGTH_SHORT).show();
                     }
                 }
@@ -384,9 +409,10 @@ public class DC1SettingFragment extends PreferenceFragment {
             if (jsonSetting != null) {
 
                 //region ota
-                if (jsonSetting.has("ota")) {
-                    String ota_uri = jsonSetting.getString("ota");
-                    if (ota_uri.endsWith("ota.bin")) {
+                if (jsonSetting.has("ota1") && jsonSetting.has("ota2")) {
+                    String ota_uri1 = jsonSetting.getString("ota1");
+                    String ota_uri2 = jsonSetting.getString("ota2");
+                    if (ota_uri1.endsWith(".bin") && ota_uri2.endsWith(".bin")) {
                         ota_flag = true;
                         pd = new ProgressDialog(getActivity());
                         pd.setButton(DialogInterface.BUTTON_POSITIVE, "取消", new DialogInterface.OnClickListener() {
