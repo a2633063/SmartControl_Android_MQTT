@@ -51,6 +51,7 @@ public class TC1SettingFragment extends PreferenceFragment {
     //endregion
 
     Preference fw_version;
+    Preference lock;
     Preference restart;
     EditTextPreference name_preference;
 
@@ -168,6 +169,7 @@ public class TC1SettingFragment extends PreferenceFragment {
 //
 //        CheckBoxPreference mEtPreference = (CheckBoxPreference) findPreference("theme");
         fw_version = findPreference("fw_version");
+        lock = findPreference("lock");
         restart = findPreference("restart");
         name_preference = (EditTextPreference) findPreference("name");
 
@@ -201,7 +203,13 @@ public class TC1SettingFragment extends PreferenceFragment {
             }
         });
         //endregion
-
+        lock.setOnPreferenceClickListener(new Preference.OnPreferenceClickListener() {
+            @Override
+            public boolean onPreferenceClick(Preference preference) {
+                unlock();
+                return false;
+            }
+        });
 
         //region 版本
         fw_version.setOnPreferenceClickListener(new Preference.OnPreferenceClickListener() {
@@ -298,6 +306,28 @@ public class TC1SettingFragment extends PreferenceFragment {
         super.onDestroy();
     }
 
+    //region 弹窗激活
+    void unlock() {
+
+        final EditText et = new EditText(getActivity());
+        new AlertDialog.Builder(getActivity()).setTitle("请输入激活码")
+                .setView(et)
+                .setMessage("激活码免费提供,如果您为此花钱购买,那您被骗了~\n索要激活码请至项目主页中查看作者联系方式.(关于页面中有项目地址)")
+                .setPositiveButton("确定", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialogInterface, int i) {
+                        String lockStr = et.getText().toString();
+                        Send("{\"mac\":\"" + device_mac + "\",\"lock\":\"" + lockStr + "\"}");
+                    }
+                }).setNegativeButton("取消", null).show();
+
+    }
+
+    //endregion
+
+
+
+
     void Send(String message) {
         boolean b = getActivity().getSharedPreferences("Setting_" + device_mac, 0).getBoolean("always_UDP", false);
         mConnectService.Send(b ? null : "device/ztc1/set", message);
@@ -333,6 +363,15 @@ public class TC1SettingFragment extends PreferenceFragment {
             if (jsonObject.has("version")) {
                 String version = jsonObject.getString("version");
                 fw_version.setSummary(version);
+            }
+            //endregion
+            //region 激活
+            if (jsonObject.has("lock")) {
+                if (jsonObject.getBoolean("lock")) {
+                    lock.setSummary("已激活");
+                } else {
+                    lock.setSummary("未激活");
+                }
             }
             //endregion
             //region ota结果/进度
