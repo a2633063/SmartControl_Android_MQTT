@@ -446,7 +446,7 @@ public class TC1SettingFragment extends PreferenceFragment {
         @Override
         public void onServiceConnected(ComponentName componentName, IBinder service) {
             mConnectService = ((ConnectService.LocalBinder) service).getService();
-            Send("{\"mac\":\"" + device_mac + "\",\"version\":null}");
+            Send("{\"mac\":\"" + device_mac + "\",\"version\":null,\"lock\":null}");
         }
 
         @Override
