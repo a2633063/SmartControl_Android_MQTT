@@ -96,11 +96,12 @@ public class A1Fragment extends Fragment {
     };
 
     //endregion
+    @SuppressLint("ClickableViewAccessibility")
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
-        View view = inflater.inflate(R.layout.fragment_a1, container, false);
+        final View view = inflater.inflate(R.layout.fragment_a1, container, false);
 
         //region MQTT服务有关
         //region 动态注册接收mqtt服务的广播接收器,
@@ -126,7 +127,7 @@ public class A1Fragment extends Fragment {
         tbtn_switch = view.findViewById(R.id.tbtn_button);
         tbtn_switch.setOnClickListener(MainButtonListener);
 
-        tv_task=view.findViewById(R.id.tv_task);
+        tv_task = view.findViewById(R.id.tv_task);
         tv_task.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -138,14 +139,24 @@ public class A1Fragment extends Fragment {
         });
         //endregion
 
-        seekBar=view.findViewById(R.id.seekBar);
+        //region 拖动条 处理viewpage/SwipeRefreshLayout滑动冲突事件
+        seekBar = view.findViewById(R.id.seekBar);
         seekBar.setOnTouchListener(new View.OnTouchListener() {
             @Override
             public boolean onTouch(View v, MotionEvent event) {
-               // mDrawerLayout.requestDisallowInterceptTouchEvent(true);
+                view.getParent().requestDisallowInterceptTouchEvent(true);
+                if (event.getAction() == MotionEvent.ACTION_UP) mSwipeLayout.setEnabled(true);
+                else mSwipeLayout.setEnabled(false);
                 return false;
             }
         });
+        seekBar.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                seekBar.getParent().requestDisallowInterceptTouchEvent(true);
+            }
+        });
+        //endregion
         //region 更新当前状态
         mSwipeLayout = (SwipeRefreshLayout) view.findViewById(R.id.swipeRefreshLayout);
         mSwipeLayout.setColorSchemeResources(R.color.colorAccent, R.color.colorPrimaryDark, R.color.colorAccent, R.color.colorPrimary);
@@ -157,8 +168,7 @@ public class A1Fragment extends Fragment {
             }
         });
         //endregion
-
-
+        
         //region log 相关
         final ScrollView scrollView = (ScrollView) view.findViewById(R.id.scrollView);
         log = (TextView) view.findViewById(R.id.tv_log);
