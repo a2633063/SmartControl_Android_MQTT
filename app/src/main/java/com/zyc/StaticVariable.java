@@ -38,6 +38,7 @@ public class StaticVariable {
             R.drawable.ic_filter_3_black_24dp,//2
             R.drawable.ic_filter_4_black_24dp,//3
             R.drawable.ic_filter_5_black_24dp,//4
+            R.drawable.ic_filter_6_black_24dp,//4
     };
 
 
