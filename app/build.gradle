@@ -6,8 +6,8 @@ android {
         applicationId "com.zyc.zcontrol"
         minSdkVersion 19
         targetSdkVersion 28
-        versionCode 15
-        versionName "0.10.3"
+        versionCode 16
+        versionName "0.11.0"
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
     }
     buildTypes {

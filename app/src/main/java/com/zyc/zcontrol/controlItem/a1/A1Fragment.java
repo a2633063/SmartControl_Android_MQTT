@@ -282,7 +282,7 @@ public class A1Fragment extends Fragment {
             if (jsonObject.has("mac")) mac = jsonObject.getString("mac");
             if (jsonObject.has("setting")) jsonSetting = jsonObject.getJSONObject("setting");
             if (mac == null || !mac.equals(device_mac)) return;
-/*
+
             //region 解析on
             if (jsonObject.has("on")) {
                 int on = jsonObject.getInt("on");
@@ -294,7 +294,7 @@ public class A1Fragment extends Fragment {
             //region 解析speed
             if (jsonObject.has("speed")) {
                 seekBar.setProgress(jsonObject.getInt("speed"));
-                objectAnimator.setDuration(7000-seekBar.getProgress()*68*);
+                objectAnimator.setDuration(7000-seekBar.getProgress()*68);
             }
             //endregion
 
