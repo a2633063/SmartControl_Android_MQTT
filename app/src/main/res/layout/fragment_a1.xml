@@ -1,0 +1,99 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    tools:context="com.zyc.zcontrol.controlItem.tc1.TC1Fragment">
+
+    <android.support.v4.widget.SwipeRefreshLayout
+        android:id="@+id/swipeRefreshLayout"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_centerInParent="true"
+        android:layout_weight="1"
+        android:paddingTop="20dp">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:layout_weight="1"
+            android:orientation="vertical"
+            android:padding="16dp">
+
+
+            <android.support.constraint.ConstraintLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:background="#ff3f3f3f"
+                android:elevation="3dp"
+                android:gravity="center"
+                android:outlineProvider="bounds"
+                android:paddingTop="20dp"
+                android:paddingBottom="20dp"
+                android:translationZ="3dp">
+
+                <SeekBar
+                    android:id="@+id/seekBar"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:max="100"
+                    android:min="1"
+                    app:layout_constraintTop_toTopOf="parent" />
+
+                <Switch
+                    android:id="@+id/tbtn_button"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="16dp"
+                    android:minWidth="0dp"
+                    android:minHeight="0dp"
+                    android:paddingBottom="8dp"
+                    android:textOff="@null"
+                    android:textOn="@null"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@id/seekBar"
+                    app:srcCompat="@drawable/ic_switch_off" />
+
+
+                <TextView
+                    android:id="@+id/tv_task"
+                    style="@style/TC1SwitchTextViewStyle"
+                    android:text="插口1"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@+id/tbtn_button" />
+
+            </android.support.constraint.ConstraintLayout>
+        </LinearLayout>
+
+    </android.support.v4.widget.SwipeRefreshLayout>
+
+    <ScrollView
+        android:id="@+id/scrollView"
+        android:layout_width="match_parent"
+        android:layout_height="22sp"
+        android:layout_gravity="bottom"
+        android:addStatesFromChildren="false"
+        android:scrollbars="none">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:orientation="vertical">
+
+            <TextView
+                android:id="@+id/tv_log"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Log"
+                android:textSize="18sp" />
+        </LinearLayout>
+    </ScrollView>
+
+</LinearLayout>

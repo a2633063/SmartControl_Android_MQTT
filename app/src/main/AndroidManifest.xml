@@ -20,6 +20,9 @@
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
         <activity
+            android:name=".controlItem.a1.A1PlugActivity"
+            android:label="插口"/>
+        <activity
             android:name=".controlItem.tc1.TC1PlugActivity"
             android:label="插口"/>
         <activity
