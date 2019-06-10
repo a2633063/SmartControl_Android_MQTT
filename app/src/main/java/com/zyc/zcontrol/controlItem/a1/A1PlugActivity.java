@@ -64,8 +64,8 @@ public class A1PlugActivity extends AppCompatActivity {
     ArrayList<TaskItem> data = new ArrayList<>();
     A1TaskListAdapter adapter;
 
-    TextView tv_name;
-    Switch tbt_button;
+
+
     Button btn_count_down;
 
     String device_mac = null;
@@ -79,7 +79,7 @@ public class A1PlugActivity extends AppCompatActivity {
         public void handleMessage(Message msg) {// handler接收到消息后就会执行此方法
             switch (msg.what) {
                 case 1:
-                    Send("{\"mac\": \"" + device_mac + "\",\"plug_" + plug_id + "\" : {\"on\" : null,\"setting\":{\"name\":null,\"task_0\":{},\"task_1\":{},\"task_2\":{},\"task_3\":{},\"task_4\":{}}}}");
+                    Send("{\"mac\": \"" + device_mac + "\",\"task_0\":{},\"task_1\":{},\"task_2\":{},\"task_3\":{},\"task_4\":{}}");
                     break;
             }
         }
@@ -94,19 +94,16 @@ public class A1PlugActivity extends AppCompatActivity {
         getSupportActionBar().setHomeButtonEnabled(true); //设置返回键可用
 
         Intent intent = this.getIntent();
-        if (!intent.hasExtra("name") || !intent.hasExtra("mac")
-                || !intent.hasExtra("plug_id") || !intent.hasExtra("plug_name"))//判断是否有值传入,并判断是否有特定key
+        if (!intent.hasExtra("name") || !intent.hasExtra("mac"))//判断是否有值传入,并判断是否有特定key
         {
             Toast.makeText(A1PlugActivity.this, "数据错误!请联系开发者", Toast.LENGTH_SHORT).show();
             finish();
         }
 
         device_name = intent.getStringExtra("name");
-        plug_name = intent.getStringExtra("plug_name");
         device_mac = intent.getStringExtra("mac");
-        plug_id = intent.getIntExtra("plug_id", -1);
 
-        if (device_mac.length() < 1 || plug_name.length() < 1 || device_name.length() < 1 || plug_id == -1) {
+        if (device_mac.length() < 1 || device_name.length() < 1) {
             Toast.makeText(A1PlugActivity.this, "数据错误!请联系开发者", Toast.LENGTH_SHORT).show();
             finish();
         }
@@ -139,7 +136,7 @@ public class A1PlugActivity extends AppCompatActivity {
                 int on = ((Switch) v).isChecked() ? 1 : 0;
                 int repeat = task.repeat;
 
-                Send("{\"mac\": \"" + device_mac + "\",\"plug_" + plug_id + "\" : {\"setting\":{\"task_" + position + "\":{\"hour\":" + hour + ",\"minute\":" + minute + ",\"repeat\":" + repeat + ",\"action\":" + action + ",\"on\":" + on + "}}}}");
+                Send("{\"mac\": \"" + device_mac + "\",\"task_" + position + "\":{\"hour\":" + hour + ",\"minute\":" + minute + ",\"repeat\":" + repeat + ",\"action\":" + action + ",\"on\":" + on + "}}");
             }
         });
         lv_task.setAdapter(adapter);
@@ -148,49 +145,7 @@ public class A1PlugActivity extends AppCompatActivity {
 
 
         //region 开关按键/名称
-        tv_name = findViewById(R.id.tv_name);
-        tbt_button = findViewById(R.id.tbtn_button);
         btn_count_down = findViewById(R.id.btn_count_down);
-        tv_name.setText(plug_name);
-
-        //region 控制开关
-        tbt_button.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Send("{\"name\":\"" + device_name + "\",\"mac\":\"" + device_mac + "\",\"plug_" + plug_id + "\":{\"on\":" + String.valueOf(((Switch) v).isChecked() ? 1 : 0) + "}" + "}");
-
-            }
-        });
-        //endregion
-
-        //region 设置名称
-        tv_name.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                final EditText mEditText = new EditText(A1PlugActivity.this);
-                mEditText.setText(tv_name.getText());
-                mEditText.setHint("建议长度在8个字以内");
-                AlertDialog.Builder builder = new AlertDialog.Builder(A1PlugActivity.this);
-                builder.setTitle("设置插口" + String.valueOf(plug_id + 1) + "名称")
-                        .setView(mEditText)
-                        .setMessage("自定义插口名称,建议长度在8个字以内")
-                        .setNegativeButton("Cancel", null)
-                        .setPositiveButton("Ok", new DialogInterface.OnClickListener() {
-                            public void onClick(DialogInterface dialog, int which) {
-                                String str = mEditText.getText().toString();
-                                if (str.length() > 16)
-                                    str = str.substring(0, 16);
-                                else if (str.length() < 1) {
-                                    Toast.makeText(A1PlugActivity.this, "名称不能为空!", Toast.LENGTH_SHORT).show();
-                                    return;
-                                }
-                                Send("{\"name\":\"" + device_name + "\",\"mac\":\"" + device_mac + "\",\"plug_" + plug_id + "\":{\"setting\":{\"name\":\"" + str + "\"}}" + "}");
-                            }
-                        });
-                builder.show();
-            }
-        });
-        //endregion
 
         btn_count_down.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -201,20 +156,8 @@ public class A1PlugActivity extends AppCompatActivity {
         //endregion
 
 
-        //region 初始化下滑刷新功能
-        AppBarLayout appBarLayout = findViewById(R.id.app_bar);
-        appBarLayout.addOnOffsetChangedListener(new AppBarLayout.OnOffsetChangedListener() {
-            @Override
-            public void onOffsetChanged(AppBarLayout appBarLayout, int verticalOffset) {
+        //region 初始化下滑刷新功能:更新当前状态
 
-                if (verticalOffset >= 0) {
-                    mSwipeLayout.setEnabled(true);
-                } else {
-                    mSwipeLayout.setEnabled(false);
-                }
-            }
-        });
-        //region 更新当前状态
         mSwipeLayout = (SwipeRefreshLayout) findViewById(R.id.swipeRefreshLayout);
         mSwipeLayout.setColorSchemeResources(R.color.colorAccent, R.color.colorPrimaryDark, R.color.colorAccent, R.color.colorPrimary);
         mSwipeLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
@@ -224,8 +167,7 @@ public class A1PlugActivity extends AppCompatActivity {
                 mSwipeLayout.setRefreshing(false);
             }
         });
-        //endregion
-        //endregion
+
         //endregion
 
         //region MQTT服务有关
@@ -353,7 +295,7 @@ public class A1PlugActivity extends AppCompatActivity {
                     if (tbtn_week[i - 1].isChecked()) repeat |= 1;
                 }
 
-                Send("{\"mac\": \"" + device_mac + "\",\"plug_" + plug_id + "\" : {\"setting\":{\"task_" + task_id + "\":{\"hour\":" + hour + ",\"minute\":" + minute + ",\"repeat\":" + repeat + ",\"action\":" + action + ",\"on\":" + on + "}}}}");
+                Send("{\"mac\": \"" + device_mac + "\",\"task_" + task_id + "\":{\"hour\":" + hour + ",\"minute\":" + minute + ",\"repeat\":" + repeat + ",\"action\":" + action + ",\"on\":" + on + "}}");
                 window.dismiss();
             }
         });
@@ -439,7 +381,7 @@ public class A1PlugActivity extends AppCompatActivity {
                 hour = c.get(Calendar.HOUR_OF_DAY);
                 minute = c.get(Calendar.MINUTE);
 
-                Send("{\"mac\": \"" + device_mac + "\",\"plug_" + plug_id + "\" : {\"setting\":{\"task_" + task_id + "\":{\"hour\":" + hour + ",\"minute\":" + minute + ",\"repeat\":" + repeat + ",\"action\":" + action + ",\"on\":" + on + "}}}}");
+                Send("{\"mac\": \"" + device_mac + "\",\"task_" + task_id + "\":{\"hour\":" + hour + ",\"minute\":" + minute + ",\"repeat\":" + repeat + ",\"action\":" + action + ",\"on\":" + on + "}}");
                 window.dismiss();
             }
         });
@@ -466,7 +408,7 @@ public class A1PlugActivity extends AppCompatActivity {
     //region 数据接收发送处理函数
     void Send(String message) {
         boolean b = getSharedPreferences("Setting_" + device_mac, 0).getBoolean("always_UDP", false);
-        mConnectService.Send(b ? null : "device/za1/set", message);
+        mConnectService.Send(b ? null : "device/za1/"+device_mac+"/set", message);
     }
 
     void Receive(String ip, int port, String message) {
@@ -488,22 +430,14 @@ public class A1PlugActivity extends AppCompatActivity {
             if (mac == null || !mac.equals(device_mac)) return;
 
             //region 解析当个plug
-            if (!jsonObject.has("plug_" + plug_id)) return;
-            JSONObject jsonPlug = jsonObject.getJSONObject("plug_" + plug_id);
-            if (jsonPlug.has("on")) {
-                int on = jsonPlug.getInt("on");
-                tbt_button.setChecked(on != 0);
-            }
-            if (!jsonPlug.has("setting")) return;
-            JSONObject jsonPlugSetting = jsonPlug.getJSONObject("setting");
-            if (jsonPlugSetting.has("name")) {
-                tv_name.setText(jsonPlugSetting.getString("name"));
-            }
+//            JSONObject jsonPlug = jsonObject.getJSONObject("plug_" + plug_id);
+//            if (!jsonPlug.has("setting")) return;
+//            JSONObject jsonPlugSetting = jsonPlug.getJSONObject("setting");
 
             //region 识别5组定时任务
             for (int i = 0; i < 5; i++) {
-                if (!jsonPlugSetting.has("task_" + i)) continue;
-                JSONObject jsonPlugTask = jsonPlugSetting.getJSONObject("task_" + i);
+                if (!jsonObject.has("task_" + i)) continue;
+                JSONObject jsonPlugTask = jsonObject.getJSONObject("task_" + i);
                 if (!jsonPlugTask.has("hour") || !jsonPlugTask.has("minute") ||
                         !jsonPlugTask.has("repeat") || !jsonPlugTask.has("action") ||
                         !jsonPlugTask.has("on")) continue;

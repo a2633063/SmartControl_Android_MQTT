@@ -374,12 +374,9 @@ public class A1SettingFragment extends PreferenceFragment {
 
     //endregion
 
-
-
-
     void Send(String message) {
         boolean b = getActivity().getSharedPreferences("Setting_" + device_mac, 0).getBoolean("always_UDP", false);
-        mConnectService.Send(b ? null : "device/za1/set", message);
+        mConnectService.Send(b ? null : "device/za1/"+device_mac+"/set", message);
     }
 
     //数据接收处理函数

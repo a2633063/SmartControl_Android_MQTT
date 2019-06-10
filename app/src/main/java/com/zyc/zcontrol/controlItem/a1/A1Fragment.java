@@ -58,14 +58,13 @@ public class A1Fragment extends Fragment {
     //endregion
 
     //region 控件
-    final private int PLUG_COUNT = 6;
-
     private SwipeRefreshLayout mSwipeLayout;
     Switch tbtn_switch;
     TextView tv_task;
     SeekBar seekBar;
     //endregion
     TextView log;
+
 
     String device_mac = null;
     String device_name = null;
@@ -90,6 +89,11 @@ public class A1Fragment extends Fragment {
             switch (msg.what) {
                 case 1:
                     Send("{\"mac\":\"" + device_mac + "\",\"on\":null,\"speed\":null}");
+                    break;
+                case  2:
+                    Log.d(Tag,"send seekbar:"+msg.arg1);
+
+                    Send("{\"mac\":\"" + device_mac + "\",\"speed\":"+msg.arg1+"}");
                     break;
             }
         }
@@ -141,6 +145,7 @@ public class A1Fragment extends Fragment {
 
         //region 拖动条 处理viewpage/SwipeRefreshLayout滑动冲突事件
         seekBar = view.findViewById(R.id.seekBar);
+        //region 处理viewpage/SwipeRefreshLayout滑动冲突事件
         seekBar.setOnTouchListener(new View.OnTouchListener() {
             @Override
             public boolean onTouch(View v, MotionEvent event) {
@@ -150,12 +155,23 @@ public class A1Fragment extends Fragment {
                 return false;
             }
         });
-        seekBar.setOnClickListener(new View.OnClickListener() {
+        //endregion
+        seekBar.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
             @Override
-            public void onClick(View v) {
-                seekBar.getParent().requestDisallowInterceptTouchEvent(true);
+            public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
+            }
+            @Override
+            public void onStartTrackingTouch(SeekBar seekBar) {
+            }
+            @Override
+            public void onStopTrackingTouch(SeekBar seekBar) {
+                Message msg=new Message();
+                msg.arg1=seekBar.getProgress();
+                msg.what=2;
+                handler.sendMessageDelayed(msg,1);
             }
         });
+
         //endregion
         //region 更新当前状态
         mSwipeLayout = (SwipeRefreshLayout) view.findViewById(R.id.swipeRefreshLayout);
@@ -168,7 +184,7 @@ public class A1Fragment extends Fragment {
             }
         });
         //endregion
-        
+
         //region log 相关
         final ScrollView scrollView = (ScrollView) view.findViewById(R.id.scrollView);
         log = (TextView) view.findViewById(R.id.tv_log);
@@ -221,26 +237,12 @@ public class A1Fragment extends Fragment {
     };
 
     //endregion
-    // region 文本
-
-    private View.OnClickListener MainTextListener = new View.OnClickListener() {
-        @Override
-        public void onClick(View v) {
-            Intent intent = new Intent(getContext(), A1PlugActivity.class);
-            intent.putExtra("name", device_name);
-            intent.putExtra("plug_name", ((TextView) v).getText());
-            intent.putExtra("mac", device_mac);
-            intent.putExtra("plug_id", v.getId() % PLUG_COUNT);
-            startActivity(intent);
-        }
-    };
-    //endregion
     //endregion
 
 
     void Send(String message) {
         boolean b = getActivity().getSharedPreferences("Setting_" + device_mac, 0).getBoolean("always_UDP", false);
-        mConnectService.Send(b ? null : "device/za1/set", message);
+        mConnectService.Send(b ? null : "device/za1/"+device_mac+"/set", message);
     }
 
     //数据接收处理函数
@@ -270,9 +272,8 @@ public class A1Fragment extends Fragment {
             }
             //endregion
             //region 解析speed
-            if (jsonObject.has("解析speed")) {
-//                int on = jsonObject.getInt("解析speed");
-//                tbtn_switch.setChecked(on != 0);
+            if (jsonObject.has("speed")) {
+                seekBar.setProgress(jsonObject.getInt("speed"));
             }
             //endregion
 

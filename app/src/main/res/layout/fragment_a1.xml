@@ -48,7 +48,7 @@
                     android:id="@+id/tbtn_button"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_marginTop="16dp"
+                    android:layout_marginTop="10dp"
                     android:minWidth="0dp"
                     android:minHeight="0dp"
                     android:paddingBottom="8dp"
@@ -63,8 +63,13 @@
 
                 <TextView
                     android:id="@+id/tv_task"
-                    style="@style/TC1SwitchTextViewStyle"
-                    android:text="插口1"
+                    android:layout_height="wrap_content"
+                    android:layout_width="wrap_content"
+                    android:layout_marginTop="6dp"
+                    android:textSize="20dp"
+                    android:gravity="center_horizontal"
+                    android:drawableRight="@drawable/ic_chevron_right_black_24dp"
+                    android:text="定时任务"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toBottomOf="@+id/tbtn_button" />
