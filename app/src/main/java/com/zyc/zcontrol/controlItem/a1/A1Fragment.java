@@ -1,6 +1,7 @@
 package com.zyc.zcontrol.controlItem.a1;
 
 
+import android.animation.ObjectAnimator;
 import android.annotation.SuppressLint;
 import android.content.BroadcastReceiver;
 import android.content.ComponentName;
@@ -23,7 +24,9 @@ import android.view.LayoutInflater;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.animation.LinearInterpolator;
 import android.widget.CompoundButton;
+import android.widget.ImageView;
 import android.widget.ScrollView;
 import android.widget.SeekBar;
 import android.widget.Switch;
@@ -62,6 +65,10 @@ public class A1Fragment extends Fragment {
     Switch tbtn_switch;
     TextView tv_task;
     SeekBar seekBar;
+    //region imageview及动画效果
+    ImageView iv_fan;
+    private ObjectAnimator objectAnimator;
+    //endregion
     //endregion
     TextView log;
 
@@ -126,6 +133,17 @@ public class A1Fragment extends Fragment {
         //endregion
 
         //region 控件初始化
+
+        //region 图片及动画
+        iv_fan=view.findViewById(R.id.iv_fan);
+        objectAnimator = ObjectAnimator.ofFloat(iv_fan, "rotation", 0f, 360f);//添加旋转动画，旋转中心默认为控件中点
+        objectAnimator.setDuration(3600);//设置动画时间
+        objectAnimator.setInterpolator(new LinearInterpolator());//动画时间线性渐变
+        objectAnimator.setRepeatCount(ObjectAnimator.INFINITE);
+        objectAnimator.setRepeatMode(ObjectAnimator.RESTART);
+
+        //endregion
+
 
         //region 控制按钮/跳转定时任务界面等
         tbtn_switch = view.findViewById(R.id.tbtn_button);
@@ -264,16 +282,19 @@ public class A1Fragment extends Fragment {
             if (jsonObject.has("mac")) mac = jsonObject.getString("mac");
             if (jsonObject.has("setting")) jsonSetting = jsonObject.getJSONObject("setting");
             if (mac == null || !mac.equals(device_mac)) return;
-
+/*
             //region 解析on
             if (jsonObject.has("on")) {
                 int on = jsonObject.getInt("on");
                 tbtn_switch.setChecked(on != 0);
+                if(tbtn_switch.isChecked())objectAnimator.start();
+                else objectAnimator.pause();
             }
             //endregion
             //region 解析speed
             if (jsonObject.has("speed")) {
                 seekBar.setProgress(jsonObject.getInt("speed"));
+                objectAnimator.setDuration(7000-seekBar.getProgress()*68*);
             }
             //endregion
 

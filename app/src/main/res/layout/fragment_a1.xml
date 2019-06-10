@@ -36,13 +36,24 @@
                 android:paddingBottom="20dp"
                 android:translationZ="3dp">
 
+                <ImageView
+                    android:id="@+id/iv_fan"
+                    android:layout_width="100dp"
+                    android:layout_height="100dp"
+                    android:layout_gravity="center"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toTopOf="parent"
+                    app:srcCompat="@drawable/fan" />
+
                 <SeekBar
                     android:id="@+id/seekBar"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
+                    android:layout_margin="16dp"
                     android:max="100"
                     android:min="1"
-                    app:layout_constraintTop_toTopOf="parent" />
+                    app:layout_constraintTop_toBottomOf="@id/iv_fan" />
 
                 <Switch
                     android:id="@+id/tbtn_button"
@@ -63,16 +74,15 @@
 
                 <TextView
                     android:id="@+id/tv_task"
-                    android:layout_height="wrap_content"
                     android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
                     android:layout_marginTop="6dp"
-                    android:textSize="20dp"
-                    android:gravity="center_horizontal"
                     android:drawableRight="@drawable/ic_chevron_right_black_24dp"
+                    android:gravity="center_horizontal"
                     android:text="定时任务"
-                    app:layout_constraintEnd_toEndOf="parent"
-                    app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toBottomOf="@+id/tbtn_button" />
+                    android:textSize="20dp"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintEnd_toEndOf="parent" />
 
             </android.support.constraint.ConstraintLayout>
         </LinearLayout>
