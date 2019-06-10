@@ -15,17 +15,19 @@ public class StaticVariable {
     public final static int TYPE_BUTTON_MATE=0;
     public final static int TYPE_TC1=1;
     public final static int TYPE_DC1=2;
+    public final static int TYPE_A1=3;
 //    public final static int TYPE_BUTTON=5;
-    public final static int TYPE_RGB=3;
-    public final static int TYPE_CLOCK=4;
-    public final static int TYPE_COUNT=5;
+    public final static int TYPE_RGB=4;
+    public final static int TYPE_CLOCK=5;
+    public final static int TYPE_COUNT=6;
 
     public final static String TYPE_NAME[]={
             "按键伴侣",//0
             "智能排插zTC1",//1
             "智能排插zDC1",   //2
-            "RGB灯",   //3
-            "时钟",    //4
+            "空气净化器zA1", //3
+            "RGB灯",   //4
+            "时钟",    //5
             // "智能按键",//1
     };
 
