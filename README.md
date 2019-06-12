@@ -1,5 +1,11 @@
 # SmartControl_Android_MQTT
 
+点个Star吧~
+
+
+如果不会用github下载或是github下载慢的,可以在到酷安下载:https://www.coolapk.com/apk/com.zyc.zcontrol
+
+
 本文档还在编写中!!!
 
 
