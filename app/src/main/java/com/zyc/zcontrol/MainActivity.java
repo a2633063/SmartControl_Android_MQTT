@@ -126,7 +126,7 @@ public class MainActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-        toolbar =  findViewById(R.id.toolbar);
+        toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
         mSharedPreferences = getSharedPreferences("Setting", 0);
@@ -408,7 +408,7 @@ public class MainActivity extends AppCompatActivity {
 
     @Override
     public void onBackPressed() {
-        DrawerLayout drawer =  findViewById(R.id.drawer_layout);
+        DrawerLayout drawer = findViewById(R.id.drawer_layout);
         if (drawer.isDrawerOpen(GravityCompat.START)) {
             drawer.closeDrawer(GravityCompat.START);
         } else {
@@ -639,7 +639,8 @@ public class MainActivity extends AppCompatActivity {
             final int position = adapter.contains(mac);
             //region 根据收到的消息更改显示列表
             if (position >= 0) {//设备已存在
-                //修改名称
+
+                //region 修改名称
                 if (name != null && !name.equals(data.get(position).name)) {
                     SQLiteClass sqLite = new SQLiteClass(this, "device_list");
                     ContentValues cv = new ContentValues();
@@ -653,6 +654,20 @@ public class MainActivity extends AppCompatActivity {
                     if (position == adapter.getChoice())
                         toolbar.setTitle(name);
                 }
+                //endregion
+
+                //region 反馈mqtt设置回应
+                if (jsonSetting != null && jsonSetting.has("mqtt_uri")
+                        && jsonSetting.has("mqtt_port") && jsonSetting.has("mqtt_user")
+                        && jsonSetting.has("mqtt_password")) {
+                    String toastStr = "已设置\"" + data.get(position).name + "\"mqtt服务器:\r\n"
+                            + jsonSetting.getString("mqtt_uri") + ":" + jsonSetting.getInt("mqtt_port")
+                            + "\n" + jsonSetting.getString("mqtt_user");
+                    Toast.makeText(MainActivity.this, toastStr, Toast.LENGTH_SHORT).show();
+                }
+                //endregion
+
+                //region 获取 局域网设备 状态
                 if (newDeviceFlag) {
                     if (name == null || type_name == null || type == -1 || jsonSetting != null)
                         return;
@@ -671,6 +686,7 @@ public class MainActivity extends AppCompatActivity {
                     });
                     alertDialog.show();
                 }
+                //endregion
             } else {//设备不存在
                 if (newDeviceFlag || getDeviceFlag) {
                     if (name == null || type_name == null || type == -1 || jsonSetting != null)
