@@ -64,6 +64,7 @@ public class A1Fragment extends Fragment {
     private SwipeRefreshLayout mSwipeLayout;
     Switch tbtn_switch;
     TextView tv_task;
+    TextView tv_speed;
     SeekBar seekBar;
     //region imageview及动画效果
     ImageView iv_fan;
@@ -149,6 +150,7 @@ public class A1Fragment extends Fragment {
         tbtn_switch = view.findViewById(R.id.tbtn_button);
         tbtn_switch.setOnClickListener(MainButtonListener);
 
+        tv_speed = view.findViewById(R.id.tv_speed);
         tv_task = view.findViewById(R.id.tv_task);
         tv_task.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -293,8 +295,10 @@ public class A1Fragment extends Fragment {
             //endregion
             //region 解析speed
             if (jsonObject.has("speed")) {
-                seekBar.setProgress(jsonObject.getInt("speed"));
-                objectAnimator.setDuration(7000-seekBar.getProgress()*68);
+                int speed=jsonObject.getInt("speed");
+                seekBar.setProgress(speed);
+                objectAnimator.setDuration(7000-speed*68);
+                tv_speed.setText("风速:"+String.format("%03d", speed)+"%");
             }
             //endregion
 

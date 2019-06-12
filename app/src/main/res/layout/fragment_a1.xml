@@ -32,43 +32,47 @@
                 android:elevation="3dp"
                 android:gravity="center"
                 android:outlineProvider="bounds"
-                android:paddingTop="20dp"
                 android:paddingBottom="20dp"
+                android:paddingTop="32dp"
+                android:paddingStart="16dp"
+                android:paddingEnd="8dp"
                 android:translationZ="3dp">
 
                 <ImageView
                     android:id="@+id/iv_fan"
                     android:layout_width="100dp"
                     android:layout_height="100dp"
-                    android:layout_gravity="center"
-                    app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toTopOf="parent"
                     app:srcCompat="@drawable/fan" />
 
                 <SeekBar
                     android:id="@+id/seekBar"
-                    android:layout_width="match_parent"
+                    android:layout_width="0dp"
                     android:layout_height="wrap_content"
-                    android:layout_margin="16dp"
                     android:max="100"
                     android:min="1"
-                    app:layout_constraintTop_toBottomOf="@id/iv_fan" />
+                    android:progress="60"
+                    android:thumb="@drawable/seekbar_thumb"
+                    app:layout_constraintBottom_toTopOf="@id/tbtn_button"
+                    app:layout_constraintLeft_toRightOf="@id/iv_fan"
+                    app:layout_constraintRight_toRightOf="parent"
+                    app:layout_constraintTop_toTopOf="@id/iv_fan"
+                    app:layout_constraintVertical_bias="0.65" />
 
                 <Switch
                     android:id="@+id/tbtn_button"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_marginTop="10dp"
+                    android:gravity="center"
                     android:minWidth="0dp"
                     android:minHeight="0dp"
-                    android:paddingBottom="8dp"
+                    android:text="开关: "
                     android:textOff="@null"
                     android:textOn="@null"
-                    app:layout_constraintBottom_toBottomOf="parent"
-                    app:layout_constraintEnd_toEndOf="parent"
-                    app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toBottomOf="@id/seekBar"
+                    android:textSize="20dp"
+                    app:layout_constraintBottom_toBottomOf="@id/iv_fan"
+                    app:layout_constraintStart_toEndOf="@id/iv_fan"
                     app:srcCompat="@drawable/ic_switch_off" />
 
 
@@ -76,14 +80,24 @@
                     android:id="@+id/tv_task"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_marginTop="6dp"
                     android:drawableRight="@drawable/ic_chevron_right_black_24dp"
                     android:gravity="center_horizontal"
                     android:text="定时任务"
                     android:textSize="20dp"
-                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintBottom_toBottomOf="@id/iv_fan"
                     app:layout_constraintEnd_toEndOf="parent" />
 
+                <TextView
+                    android:id="@+id/tv_speed"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginEnd="24dp"
+                    android:layout_marginBottom="8dp"
+                    android:gravity="center_horizontal"
+                    android:text="风速:---%"
+                    android:textSize="20dp"
+                    app:layout_constraintBottom_toTopOf="@id/seekBar"
+                    app:layout_constraintEnd_toEndOf="@id/seekBar" />
             </android.support.constraint.ConstraintLayout>
         </LinearLayout>
 
