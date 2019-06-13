@@ -48,6 +48,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.zyc.StaticVariable;
+import com.zyc.webservice.WebService;
 import com.zyc.zcontrol.controlItem.SettingActivity;
 
 import org.json.JSONException;
@@ -111,12 +112,49 @@ public class MainActivity extends AppCompatActivity {
                     }
                     break;
                 //endregion
+                //region 获取设备标志位
                 case 2:
                     newDeviceFlag = false;
                     break;
                 case 3:
                     getDeviceFlag = false;
                     break;
+                //endregion
+
+                //region 获取app最新版本
+                case 100:
+                    try {
+                        JSONObject obj = new JSONObject((String) msg.obj);
+                        if (!obj.has("tag_name")
+                                || !obj.has("name")
+                                || !obj.has("body")) throw new JSONException("获取最新版本信息失败");
+
+                        String body = obj.getString("body");
+                        String name = obj.getString("name");
+                        String tag_name = obj.getString("tag_name");
+
+                        if (!tag_name.equals(getLocalVersionName(MainActivity.this))) {
+                            AlertDialog alertDialog = new AlertDialog.Builder(MainActivity.this)
+                                    .setTitle("请更新版本:" + tag_name)
+                                    .setMessage(name + "\r\n" + body)
+                                    .setPositiveButton("更新", new DialogInterface.OnClickListener() {
+                                        @Override
+                                        public void onClick(DialogInterface dialog, int which) {
+                                            Uri uri = Uri.parse("https://www.coolapk.com/apk/com.zyc.zcontrol");
+                                            Intent intent = new Intent(Intent.ACTION_VIEW, uri);
+                                            startActivity(intent);
+                                        }
+                                    })
+                                    .setNegativeButton("取消", null)
+                                    .create();
+                            alertDialog.show();
+                        }
+                    } catch (JSONException e) {
+//                        e.printStackTrace();
+                        Toast.makeText(MainActivity.this, "获取最新版本失败,请重试", Toast.LENGTH_SHORT).show();
+                    }
+                    break;
+                //endregion
             }
         }
     };
@@ -340,11 +378,25 @@ public class MainActivity extends AppCompatActivity {
 
         //endregion
         //endregion
+        //region 设置标题 无页面时导致闪退
         try {
             toolbar.setTitle(adapter.getChoiceDevice().name);
         } catch (Exception e) {
             e.printStackTrace();
         }
+        //endregion
+
+        //region 获取最新版本
+        new Thread(new Runnable() {
+            @Override
+            public void run() {
+                Message msg = new Message();
+                msg.what = 100;
+                msg.obj = WebService.WebConnect("https://api.github.com/repos/a2633063/SmartControl_Android_MQTT/releases/latest");
+                handler.sendMessageDelayed(msg, 0);// 执行耗时的方法之后发送消给handler
+            }
+        }).start();
+        //endregion
     }
 
     @Override
