@@ -240,8 +240,8 @@ public class A1SettingFragment extends PreferenceFragment {
                 //region 未获取到当前激活信息
                 if (lock.getSummary() == null) {
                     AlertDialog alertDialog = new AlertDialog.Builder(getActivity())
-                            .setTitle("未获取到设备激活信息")
-                            .setMessage("请获取到设备激活信息后重试.")
+                            .setTitle("未获取到当前设备激活信息")
+                            .setMessage("请获取到当前设备激活信息后重试.")
                             .setNegativeButton("确定", new DialogInterface.OnClickListener() {
                                 @Override
                                 public void onClick(DialogInterface dialog, int which) {
@@ -327,7 +327,7 @@ public class A1SettingFragment extends PreferenceFragment {
             public boolean onPreferenceClick(Preference preference) {
 
                 new AlertDialog.Builder(getActivity()).setTitle("重启设备?")
-                        .setMessage("需要固件版本v0.10.1及以上版本.\n如果设备死机此处重启可能无效,依然需要手动拔插插头才能重启设备")
+                        .setMessage("如果设备死机此处重启可能无效,依然需要手动拔插插头才能重启设备")
                         .setPositiveButton("确定", new DialogInterface.OnClickListener() {
                             @Override
                             public void onClick(DialogInterface dialogInterface, int i) {

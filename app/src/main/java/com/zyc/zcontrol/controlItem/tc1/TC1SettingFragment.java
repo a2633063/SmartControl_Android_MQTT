@@ -240,8 +240,8 @@ public class TC1SettingFragment extends PreferenceFragment {
                 //region 未获取到当前激活信息
                 if (lock.getSummary() == null) {
                     AlertDialog alertDialog = new AlertDialog.Builder(getActivity())
-                            .setTitle("未获取到设备激活信息")
-                            .setMessage("请获取到设备激活信息后重试.")
+                            .setTitle("未获取到当前设备激活信息")
+                            .setMessage("请获取到当前设备激活信息后重试.")
                             .setNegativeButton("确定", new DialogInterface.OnClickListener() {
                                 @Override
                                 public void onClick(DialogInterface dialog, int which) {
@@ -285,8 +285,8 @@ public class TC1SettingFragment extends PreferenceFragment {
                 //region 未获取到当前版本信息
                 if (fw_version.getSummary() == null) {
                     AlertDialog alertDialog = new AlertDialog.Builder(getActivity())
-                            .setTitle("未获取到设备版本")
-                            .setMessage("请获取到设备版本后重试.")
+                            .setTitle("未获取到当前设备版本")
+                            .setMessage("请获取到当前设备版本后重试.")
                             .setNegativeButton("确定", new DialogInterface.OnClickListener() {
                                 @Override
                                 public void onClick(DialogInterface dialog, int which) {
