@@ -124,19 +124,22 @@ public class MainActivity extends AppCompatActivity {
                 //region 获取app最新版本
                 case 100:
                     try {
+                        if(msg.obj==null) throw new JSONException("获取版本信息失败,请重试");
                         JSONObject obj = new JSONObject((String) msg.obj);
                         if (!obj.has("tag_name")
                                 || !obj.has("name")
-                                || !obj.has("body")) throw new JSONException("获取最新版本信息失败");
+                                || !obj.has("body")
+                                || !obj.has("created_at")) throw new JSONException("获取最新版本信息失败");
 
                         String body = obj.getString("body");
                         String name = obj.getString("name");
                         String tag_name = obj.getString("tag_name");
+                        String created_at = obj.getString("created_at");
 
                         if (!tag_name.equals(getLocalVersionName(MainActivity.this))) {
                             AlertDialog alertDialog = new AlertDialog.Builder(MainActivity.this)
                                     .setTitle("请更新版本:" + tag_name)
-                                    .setMessage(name + "\r\n" + body)
+                                    .setMessage(name + "\r\n" + body+ "\r\n更新日期:"+created_at)
                                     .setPositiveButton("更新", new DialogInterface.OnClickListener() {
                                         @Override
                                         public void onClick(DialogInterface dialog, int which) {
@@ -148,6 +151,9 @@ public class MainActivity extends AppCompatActivity {
                                     .setNegativeButton("取消", null)
                                     .create();
                             alertDialog.show();
+                        }else
+                        {
+                            Log.d(Tag,"已是最新版本");
                         }
                     } catch (JSONException e) {
 //                        e.printStackTrace();
@@ -392,7 +398,7 @@ public class MainActivity extends AppCompatActivity {
             public void run() {
                 Message msg = new Message();
                 msg.what = 100;
-                msg.obj = WebService.WebConnect("https://api.github.com/repos/a2633063/SmartControl_Android_MQTT/releases/latest");
+                msg.obj = WebService.WebConnect("https://gitee.com/api/v5/repos/zhangyichen/SmartControl_Android_MQTT/releases/latest");
                 handler.sendMessageDelayed(msg, 0);// 执行耗时的方法之后发送消给handler
             }
         }).start();
