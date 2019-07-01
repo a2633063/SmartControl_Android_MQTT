@@ -47,6 +47,7 @@ import android.widget.PopupWindow;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.zyc.Function;
 import com.zyc.StaticVariable;
 import com.zyc.webservice.WebService;
 import com.zyc.zcontrol.controlItem.SettingActivity;
@@ -124,7 +125,7 @@ public class MainActivity extends AppCompatActivity {
                 //region 获取app最新版本
                 case 100:
                     try {
-                        if(msg.obj==null) throw new JSONException("获取版本信息失败,请重试");
+                        if (msg.obj == null) throw new JSONException("获取版本信息失败,请重试");
                         JSONObject obj = new JSONObject((String) msg.obj);
                         if (!obj.has("tag_name")
                                 || !obj.has("name")
@@ -139,7 +140,7 @@ public class MainActivity extends AppCompatActivity {
                         if (!tag_name.equals(getLocalVersionName(MainActivity.this))) {
                             AlertDialog alertDialog = new AlertDialog.Builder(MainActivity.this)
                                     .setTitle("请更新版本:" + tag_name)
-                                    .setMessage(name + "\r\n" + body+ "\r\n更新日期:"+created_at)
+                                    .setMessage(name + "\r\n" + body + "\r\n更新日期:" + created_at)
                                     .setPositiveButton("更新", new DialogInterface.OnClickListener() {
                                         @Override
                                         public void onClick(DialogInterface dialog, int which) {
@@ -151,9 +152,8 @@ public class MainActivity extends AppCompatActivity {
                                     .setNegativeButton("取消", null)
                                     .create();
                             alertDialog.show();
-                        }else
-                        {
-                            Log.d(Tag,"已是最新版本");
+                        } else {
+                            Log.d(Tag, "已是最新版本");
                         }
                     } catch (JSONException e) {
 //                        e.printStackTrace();
@@ -246,10 +246,10 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public boolean onItemLongClick(AdapterView<?> parent, View view, final int position, long id) {
                 AlertDialog alertDialog = new AlertDialog.Builder(MainActivity.this)
-                        .setTitle("")
-                        .setMessage("删除设备 " + data.get(position).name + " ?")
+                        .setTitle("配置设备:" + data.get(position).name)
+                        .setMessage("设置桌面快捷方式请手动开启权限,否则会开启失败.")
                         .create();
-                alertDialog.setButton(DialogInterface.BUTTON_POSITIVE, "删除", new DialogInterface.OnClickListener() {
+                alertDialog.setButton(DialogInterface.BUTTON_POSITIVE, "删除设备", new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
                         SQLiteClass sqLite = new SQLiteClass(MainActivity.this);
@@ -263,6 +263,12 @@ public class MainActivity extends AppCompatActivity {
                     }
                 });
                 alertDialog.setButton(DialogInterface.BUTTON_NEGATIVE, "取消", (DialogInterface.OnClickListener) null);
+                alertDialog.setButton(DialogInterface.BUTTON_NEUTRAL, "创建快捷方式", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        Function.createShortCut(MainActivity.this, data.get(position).mac, data.get(position).name);
+                    }
+                });
                 alertDialog.show();
                 return true;
             }
@@ -438,10 +444,30 @@ public class MainActivity extends AppCompatActivity {
         //endregion
     }
 
+    protected void onNewIntent(Intent intent) {
+        super.onNewIntent(intent);
+        if (intent.hasExtra("mac") && intent.getStringExtra("mac") != null)
+            setIntent(intent);// must store the new intent unless getIntent() will return the old one
+    }
+
     @Override
     public void onResume() {
         Log.d(Tag, "onResume");
         super.onResume();
+        Intent intentget = this.getIntent();
+        if (intentget.hasExtra("mac") && intentget.getStringExtra("mac")!=null)//判断是否有值传入,并判断是否有特定key
+        {
+            int position = adapter.contains(intentget.getStringExtra("mac"));
+            Log.d(Tag, "mac:" + intentget.getStringExtra("mac") + "," + position);
+            if (position >= 0 && position < adapter.getCount()) {
+                adapter.setChoice(position);
+                viewPager.setCurrentItem(position);
+                Log.d(Tag, "set position:" + position);
+            } else if (position == -1) {
+                Toast.makeText(this, "设备不存在!", Toast.LENGTH_SHORT).show();
+            }
+            intentget.putExtra("mac", (String) null);
+        }
         if (mConnectService != null) {
 
             String mqtt_uri = mSharedPreferences.getString("mqtt_uri", null);
@@ -564,7 +590,7 @@ public class MainActivity extends AppCompatActivity {
                                     message = jsonObject.toString(0);
                                     message = message.replace("\r\n", "");
 
-                                    Log.d("Test", "message:" + message);
+                                    Log.d(Tag, "message:" + message);
                                     mConnectService.UDPsend(message);
                                 } catch (JSONException e) {
                                     e.printStackTrace();
@@ -606,7 +632,7 @@ public class MainActivity extends AppCompatActivity {
                 message = jsonObject.toString(0);
                 message = message.replace("\r\n", "");
 
-                Log.d("Test", "message:" + message);
+                Log.d(Tag, "message:" + message);
                 mConnectService.UDPsend(message);
             } catch (JSONException e) {
                 e.printStackTrace();

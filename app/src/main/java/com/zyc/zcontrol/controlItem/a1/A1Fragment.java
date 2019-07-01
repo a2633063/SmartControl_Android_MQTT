@@ -261,6 +261,7 @@ public class A1Fragment extends Fragment {
 
 
     void Send(String message) {
+        if(mConnectService==null) return;
         boolean b = getActivity().getSharedPreferences("Setting_" + device_mac, 0).getBoolean("always_UDP", false);
         mConnectService.Send(b ? null : "device/za1/"+device_mac+"/set", message);
     }
@@ -336,6 +337,7 @@ public class A1Fragment extends Fragment {
             } else if (ConnectService.ACTION_MQTT_CONNECTED.equals(action)) {  //连接成功
                 Log.d(Tag, "ACTION_MQTT_CONNECTED");
                 Log("服务器已连接");
+                handler.sendEmptyMessageDelayed(1, 300);
             } else if (ConnectService.ACTION_MQTT_DISCONNECTED.equals(action)) {  //连接失败/断开
                 Log.w(Tag, "ACTION_MQTT_DISCONNECTED");
                 Log("服务器已断开");
