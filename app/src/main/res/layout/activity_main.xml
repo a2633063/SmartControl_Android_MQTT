@@ -67,7 +67,7 @@
                     android:gravity="center"
                     android:lines="1"
                     android:padding="5dp"
-                    android:text="关于" />
+                    android:text="帮助/关于" />
                 <TextView
                     android:id="@+id/tv_exit"
                     android:layout_width="0dp"

@@ -79,7 +79,24 @@
                 android:text="\n本APP仅为作者个人学习/使用,不为他人使用本APP造成的任何后果负责!"
                 android:textSize="15dp" />
 
-
+            <Button
+                android:id="@+id/btn_app"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="app文档"
+                android:layout_gravity="bottom"/>
+            <Button
+                android:id="@+id/btn_ztc1"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="zTC1文档"
+                android:layout_gravity="bottom"/>
+            <Button
+                android:id="@+id/btn_zdc1"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="zDC1文档"
+                android:layout_gravity="bottom"/>
         </LinearLayout>
     </ScrollView>
 </LinearLayout>

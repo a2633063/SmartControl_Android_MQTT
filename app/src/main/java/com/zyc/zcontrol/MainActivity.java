@@ -31,6 +31,7 @@ import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
+import android.text.Html;
 import android.util.Log;
 import android.view.Gravity;
 import android.view.LayoutInflater;
@@ -152,6 +153,17 @@ public class MainActivity extends AppCompatActivity {
                                     .setNegativeButton("取消", null)
                                     .create();
                             alertDialog.show();
+
+                            // 在dialog执行show之后才能来设置
+                            TextView tvMsg = (TextView) alertDialog.findViewById(android.R.id.message);
+                            String HtmlStr=String.format(getResources().getString(R.string.app_ota_message),name,body,created_at).replace("\n","<br />");
+                            Log.d(Tag,HtmlStr);
+                            if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.N) {
+                                tvMsg.setText(Html.fromHtml(HtmlStr,Html.FROM_HTML_MODE_COMPACT));
+                            } else {
+                                tvMsg.setText(Html.fromHtml(HtmlStr));
+                            }
+
                         } else {
                             Log.d(Tag, "已是最新版本");
                         }
@@ -656,6 +668,7 @@ public class MainActivity extends AppCompatActivity {
         TextView tv_version = popupView.findViewById(R.id.tv_version);
         tv_version.setText("APP当前版本:" + getLocalVersionName(this));
 
+        //region 支付宝跳转
         ImageView imageView = popupView.findViewById(R.id.alipay);
         imageView.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -676,7 +689,38 @@ public class MainActivity extends AppCompatActivity {
                 startActivity(intent);
             }
         });
+        //endregion
 
+        //region app页面跳转
+        popupView.findViewById(R.id.btn_app).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Uri uri = Uri.parse("https://github.com/a2633063/SmartControl_Android_MQTT");
+                Intent intent = new Intent(Intent.ACTION_VIEW, uri);
+                startActivity(intent);
+            }
+        });
+        //endregion
+        //region zTC1页面跳转
+        popupView.findViewById(R.id.btn_ztc1).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Uri uri = Uri.parse("https://a2633063.github.io/zTC1/");
+                Intent intent = new Intent(Intent.ACTION_VIEW, uri);
+                startActivity(intent);
+            }
+        });
+        //endregion
+        //region zDC1页面跳转
+        popupView.findViewById(R.id.btn_app).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Uri uri = Uri.parse("https://a2633063.github.io/zDC1_public/");
+                Intent intent = new Intent(Intent.ACTION_VIEW, uri);
+                startActivity(intent);
+            }
+        });
+        //endregion
 
         //region window初始化
         window.setBackgroundDrawable(new ColorDrawable(android.graphics.Color.alpha(0xffff0000)));
