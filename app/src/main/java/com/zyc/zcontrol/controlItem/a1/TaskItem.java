@@ -16,7 +16,7 @@ public class TaskItem {
     public int hour = 0;      //小时
     public int minute = 0;    //分钟
     public int repeat = 0; //全部为0:一次   bit6-0:周日-周一
-    public int action = 1;    //动作
+    public int action = 100;    //动作
     public int on = 0;    //开关
 
     private void init() {
@@ -27,7 +27,7 @@ public class TaskItem {
     }
 
     public String getAction() {
-        return action != 0 ? "打开" : "关闭";
+        return action != 0 ? action+"%" : "关闭";
     }
 
     public boolean getOn() {

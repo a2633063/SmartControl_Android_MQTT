@@ -273,11 +273,11 @@ public class A1PlugActivity extends AppCompatActivity {
         minute_picker.setValue(task.minute);
         //endregion
         //region 开关
-        String[] action = {"关闭", "开启"};
+        String[] action = {"关闭", "10","20","30","40","50","60","70","80","90","100"};
         action_picker.setDisplayedValues(action);
         action_picker.setMinValue(0);
         action_picker.setMaxValue(action.length - 1);
-        action_picker.setValue(task.action);
+        action_picker.setValue(task.action/10);
         //endregion
         //endregion
 
@@ -287,7 +287,7 @@ public class A1PlugActivity extends AppCompatActivity {
             public void onClick(View v) {
                 int hour = hour_picker.getValue();
                 int minute = minute_picker.getValue();
-                int action = action_picker.getValue();
+                int action = action_picker.getValue()*10;
                 int on = 1;
                 int repeat = 0;
                 for (int i = tbtn_week.length; i > 0; i--) {
@@ -302,14 +302,6 @@ public class A1PlugActivity extends AppCompatActivity {
         //endregion
         //region window初始化
         window.setBackgroundDrawable(new ColorDrawable(android.graphics.Color.alpha(0xffff0000)));
-        window.setOutsideTouchable(true);
-        window.getContentView().setOnTouchListener(new View.OnTouchListener() {
-            @Override
-            public boolean onTouch(View v, MotionEvent event) {
-                window.dismiss();
-                return true;
-            }
-        });
         //endregion
         //endregion
         window.update();
@@ -357,11 +349,11 @@ public class A1PlugActivity extends AppCompatActivity {
         minute_picker.setValue(0);
         //endregion
         //region 开关
-        String[] action = {"关闭", "开启"};
+        String[] action = {"关闭", "10","20","30","40","50","60","70","80","90","100"};
         action_picker.setDisplayedValues(action);
         action_picker.setMinValue(0);
         action_picker.setMaxValue(action.length - 1);
-        action_picker.setValue(1);
+        action_picker.setValue(0);
         //endregion
         //endregion
 
@@ -371,7 +363,7 @@ public class A1PlugActivity extends AppCompatActivity {
             public void onClick(View v) {
                 int hour = hour_picker.getValue();
                 int minute = minute_picker.getValue();
-                int action = action_picker.getValue();
+                int action = action_picker.getValue()*10;
                 int on = 1;
                 int repeat = 0;
 
@@ -388,14 +380,6 @@ public class A1PlugActivity extends AppCompatActivity {
         //endregion
         //region window初始化
         window.setBackgroundDrawable(new ColorDrawable(android.graphics.Color.alpha(0xffff0000)));
-        window.setOutsideTouchable(true);
-        window.getContentView().setOnTouchListener(new View.OnTouchListener() {
-            @Override
-            public boolean onTouch(View v, MotionEvent event) {
-                window.dismiss();
-                return true;
-            }
-        });
         //endregion
         //endregion
         window.update();

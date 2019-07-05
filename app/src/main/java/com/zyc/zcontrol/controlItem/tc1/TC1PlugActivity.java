@@ -360,14 +360,6 @@ public class TC1PlugActivity extends AppCompatActivity {
         //endregion
         //region window初始化
         window.setBackgroundDrawable(new ColorDrawable(android.graphics.Color.alpha(0xffff0000)));
-        window.setOutsideTouchable(true);
-        window.getContentView().setOnTouchListener(new View.OnTouchListener() {
-            @Override
-            public boolean onTouch(View v, MotionEvent event) {
-                window.dismiss();
-                return true;
-            }
-        });
         //endregion
         //endregion
         window.update();
@@ -446,14 +438,6 @@ public class TC1PlugActivity extends AppCompatActivity {
         //endregion
         //region window初始化
         window.setBackgroundDrawable(new ColorDrawable(android.graphics.Color.alpha(0xffff0000)));
-        window.setOutsideTouchable(true);
-        window.getContentView().setOnTouchListener(new View.OnTouchListener() {
-            @Override
-            public boolean onTouch(View v, MotionEvent event) {
-                window.dismiss();
-                return true;
-            }
-        });
         //endregion
         //endregion
         window.update();

@@ -26,10 +26,12 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:gravity="center_vertical"
-        android:text="打开"
+        android:text="100%"
         android:textSize="20dp"
-        app:layout_constraintBottom_toBottomOf="@+id/tv_time"
-        app:layout_constraintStart_toEndOf="@+id/tv_time" />
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintStart_toEndOf="@+id/tv_time"
+        app:layout_constraintEnd_toStartOf="@+id/sw_on"/>
 
     <TextView
         android:id="@+id/tv_repeat"
