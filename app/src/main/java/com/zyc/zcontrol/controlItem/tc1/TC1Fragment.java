@@ -359,11 +359,11 @@ public class TC1Fragment extends Fragment {
                 Receive(ip, port, message);
             } else if (ConnectService.ACTION_MQTT_CONNECTED.equals(action)) {  //连接成功
                 Log.d(Tag, "ACTION_MQTT_CONNECTED");
-                Log("服务器已连接");
+                Log("app已连接mqtt服务器");
                 handler.sendEmptyMessageDelayed(1,300);
             } else if (ConnectService.ACTION_MQTT_DISCONNECTED.equals(action)) {  //连接失败/断开
                 Log.w(Tag, "ACTION_MQTT_DISCONNECTED");
-                Log("服务器已断开");
+                Log("已与mqtt服务器已断开");
             } else if (ConnectService.ACTION_DATA_AVAILABLE.equals(action)) {  //接收到数据
                 String topic = intent.getStringExtra(ConnectService.EXTRA_DATA_TOPIC);
                 String message = intent.getStringExtra(ConnectService.EXTRA_DATA_MESSAGE);

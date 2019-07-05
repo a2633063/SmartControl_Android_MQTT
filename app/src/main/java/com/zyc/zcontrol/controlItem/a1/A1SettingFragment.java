@@ -361,7 +361,7 @@ public class A1SettingFragment extends PreferenceFragment {
         final EditText et = new EditText(getActivity());
         new AlertDialog.Builder(getActivity()).setTitle("请输入激活码")
                 .setView(et)
-                .setMessage("激活码免费提供,如果您为此花钱购买,那您被骗了~\n索要激活码请至项目主页中查看作者联系方式.(关于页面中有项目地址)")
+                .setMessage("")
                 .setPositiveButton("确定", new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialogInterface, int i) {
