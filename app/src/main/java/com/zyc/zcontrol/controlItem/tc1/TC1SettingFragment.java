@@ -160,6 +160,11 @@ public class TC1SettingFragment extends MyPreferenceFragment {
 
                     break;
                 //endregion
+                //region 发送请求数据
+                case 3:
+                    Send("{\"mac\":\"" + device_mac + "\",\"version\":null,\"lock\":null}");
+                    break;
+                //endregion
             }
         }
     };
@@ -195,8 +200,6 @@ public class TC1SettingFragment extends MyPreferenceFragment {
         //endregion
         //endregion
 
-//
-//        CheckBoxPreference mEtPreference = (CheckBoxPreference) findPreference("theme");
         fw_version = findPreference("fw_version");
         lock = findPreference("lock");
         restart = findPreference("restart");
@@ -332,14 +335,13 @@ public class TC1SettingFragment extends MyPreferenceFragment {
         regetdata.setOnPreferenceClickListener(new Preference.OnPreferenceClickListener() {
             @Override
             public boolean onPreferenceClick(Preference preference) {
-                SengToGetData();
+                handler.sendEmptyMessage(3);
                 return false;
             }
         });
         //endregion
 
     }
-
 
     @Override
     public void onDestroy() {
@@ -423,10 +425,6 @@ public class TC1SettingFragment extends MyPreferenceFragment {
 
     //endregion
     //endregion
-
-    void SengToGetData() {
-        Send("{\"mac\":\"" + device_mac + "\",\"version\":null,\"lock\":null}");
-    }
 
     void Send(String message) {
         boolean b = getActivity().getSharedPreferences("Setting_" + device_mac, 0).getBoolean("always_UDP", false);
@@ -546,7 +544,7 @@ public class TC1SettingFragment extends MyPreferenceFragment {
         @Override
         public void onServiceConnected(ComponentName componentName, IBinder service) {
             mConnectService = ((ConnectService.LocalBinder) service).getService();
-            SengToGetData();
+            handler.sendEmptyMessage(3);
         }
 
         @Override

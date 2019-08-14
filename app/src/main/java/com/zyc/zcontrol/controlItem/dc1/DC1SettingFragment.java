@@ -19,24 +19,27 @@ import android.os.IBinder;
 import android.os.Message;
 import android.preference.EditTextPreference;
 import android.preference.Preference;
-import android.preference.PreferenceFragment;
 import android.support.v4.content.LocalBroadcastManager;
 import android.support.v7.app.AlertDialog;
 import android.util.Log;
+import android.view.View;
+import android.widget.AdapterView;
 import android.widget.EditText;
 import android.widget.Toast;
 
 import com.zyc.webservice.WebService;
 import com.zyc.zcontrol.ConnectService;
 import com.zyc.zcontrol.R;
+import com.zyc.zcontrol.controlItem.MyPreferenceFragment;
 
 import org.json.JSONException;
 import org.json.JSONObject;
 
 import static android.content.Context.BIND_AUTO_CREATE;
 
+
 @SuppressLint("ValidFragment")
-public class DC1SettingFragment extends PreferenceFragment {
+public class DC1SettingFragment extends MyPreferenceFragment {
     final static String Tag = "DC1SettingFragment";
     SharedPreferences mSharedPreferences;
     SharedPreferences.Editor editor;
@@ -49,6 +52,8 @@ public class DC1SettingFragment extends PreferenceFragment {
 
     Preference fw_version;
     Preference lock;
+
+    Preference regetdata;
     EditTextPreference name_preference;
 
 
@@ -60,7 +65,7 @@ public class DC1SettingFragment extends PreferenceFragment {
 
     private DC1OTAInfo otaInfo = new DC1OTAInfo();
 
-
+    //region Handler
     @SuppressLint("HandlerLeak")
     Handler handler = new Handler() {
         @Override
@@ -156,9 +161,15 @@ public class DC1SettingFragment extends PreferenceFragment {
 
                     break;
                 //endregion
+                //region 发送请求数据
+                case 3:
+                    Send("{\"mac\":\"" + device_mac + "\",\"version\":null,\"lock\":null}");
+                    break;
+                //endregion
             }
         }
     };
+    //endregion
 
     public DC1SettingFragment(String name, String mac) {
         this.device_name = name;
@@ -190,14 +201,15 @@ public class DC1SettingFragment extends PreferenceFragment {
         //endregion
         //endregion
 
-//
-//        CheckBoxPreference mEtPreference = (CheckBoxPreference) findPreference("theme");
         fw_version = findPreference("fw_version");
         lock = findPreference("lock");
+
+        regetdata = findPreference("regetdata");
         name_preference = (EditTextPreference) findPreference("name");
 
 
         name_preference.setSummary(device_name);
+
         //region mac地址
         findPreference("mac").setSummary(device_mac);
         findPreference("mac").setOnPreferenceClickListener(new Preference.OnPreferenceClickListener() {
@@ -215,6 +227,7 @@ public class DC1SettingFragment extends PreferenceFragment {
             }
         });
         //endregion
+
         //region 设置名称
         name_preference.setOnPreferenceChangeListener(new Preference.OnPreferenceChangeListener() {
             @Override
@@ -224,7 +237,7 @@ public class DC1SettingFragment extends PreferenceFragment {
             }
         });
         //endregion
-
+        //region 激活
         lock.setOnPreferenceClickListener(new Preference.OnPreferenceClickListener() {
             @Override
             public boolean onPreferenceClick(Preference preference) {
@@ -248,6 +261,8 @@ public class DC1SettingFragment extends PreferenceFragment {
                 return false;
             }
         });
+        //endregion
+
 
         //region 版本
         fw_version.setOnPreferenceClickListener(new Preference.OnPreferenceClickListener() {
@@ -271,22 +286,8 @@ public class DC1SettingFragment extends PreferenceFragment {
                         */
                 //endregion
 
-                //region 未获取到当前版本信息
-                if (fw_version.getSummary() == null) {
-                    AlertDialog alertDialog = new AlertDialog.Builder(getActivity())
-                            .setTitle("未获取到当前设备版本")
-                            .setMessage("请获取到当前设备版本后重试.")
-                            .setNegativeButton("确定", new DialogInterface.OnClickListener() {
-                                @Override
-                                public void onClick(DialogInterface dialog, int which) {
-//                                    getActivity().finish();
-                                }
-                            })
-                            .create();
-                    alertDialog.show();
-                    return false;
-                }
-                //endregion
+                //未获取到当前版本信息
+                if (!isGetVersion()) return false;
 
                 String version = fw_version.getSummary().toString();
                 //region 获取最新版本
@@ -311,6 +312,15 @@ public class DC1SettingFragment extends PreferenceFragment {
             }
         });
         //endregion
+        //region 重新获取数据
+        regetdata.setOnPreferenceClickListener(new Preference.OnPreferenceClickListener() {
+            @Override
+            public boolean onPreferenceClick(Preference preference) {
+                handler.sendEmptyMessage(3);
+                return false;
+            }
+        });
+        //endregion
 
     }
 
@@ -323,6 +333,62 @@ public class DC1SettingFragment extends PreferenceFragment {
         getActivity().unbindService(mMQTTServiceConnection);
         super.onDestroy();
     }
+
+    @Override
+    public boolean onItemLongClick(AdapterView<?> parent, View view, int position, long id) {
+        Log.d(Tag, "longclick:" + position);
+        switch (position) {
+            case 4:
+                debugFWUpdate();
+                return true;
+        }
+        return false;
+    }
+
+    //region 弹窗
+    //region 判断是否获取当前版本号
+    boolean isGetVersion() {
+        //region 未获取到当前版本信息
+        if (fw_version.getSummary() == null) {
+            AlertDialog alertDialog = new AlertDialog.Builder(getActivity())
+                    .setTitle("未获取到当前设备版本")
+                    .setMessage("请获取到当前设备版本后重试.")
+                    .setNegativeButton("确定", new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialog, int which) {
+//                                    getActivity().finish();
+                        }
+                    })
+                    .create();
+            alertDialog.show();
+            return false;
+        } else return true;
+        //endregion
+    }
+    //endregion
+
+    //region 手动输入固件下载地址
+    void debugFWUpdate() {
+        //未获取到当前版本信息
+        if (!isGetVersion()) return;
+        final EditText et = new EditText(getActivity());
+        et.setMinLines(2);
+        new AlertDialog.Builder(getActivity()).setTitle("请输入固件下载地址")
+                .setMessage("需要输入2个ota地址,以换行隔开\n警告:输入错误的地址可能导致固件损坏!")
+                .setView(et)
+                .setPositiveButton("确定", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialogInterface, int i) {
+                        String uri = et.getText().toString();
+                        if (uri.length() < 1) return;
+                        if (uri.startsWith("http")) {
+                            String[] ota = uri.split("\r\n");
+                            Send("{\"mac\":\"" + device_mac + "\",\"setting\":{\"ota1\":\"" + ota[0] + "\",\"ota2\":\"" + ota[1] + "\"}}");
+                        }
+                    }
+                }).setNegativeButton("取消", null).show();
+    }
+    //endregion
 
     //region 弹窗激活
     void unlock() {
@@ -342,7 +408,7 @@ public class DC1SettingFragment extends PreferenceFragment {
     }
 
     //endregion
-
+    //endregion
 
     void Send(String message) {
         boolean b = getActivity().getSharedPreferences("Setting_" + device_mac, 0).getBoolean("always_UDP", false);
@@ -462,7 +528,7 @@ public class DC1SettingFragment extends PreferenceFragment {
         @Override
         public void onServiceConnected(ComponentName componentName, IBinder service) {
             mConnectService = ((ConnectService.LocalBinder) service).getService();
-            Send("{\"mac\":\"" + device_mac + "\",\"version\":null,\"lock\":null}");
+            handler.sendEmptyMessage(3);
         }
 
         @Override
