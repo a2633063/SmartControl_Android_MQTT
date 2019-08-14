@@ -19,28 +19,26 @@ import android.os.IBinder;
 import android.os.Message;
 import android.preference.EditTextPreference;
 import android.preference.Preference;
-import android.preference.PreferenceFragment;
 import android.support.v4.content.LocalBroadcastManager;
 import android.support.v7.app.AlertDialog;
 import android.util.Log;
+import android.view.View;
+import android.widget.AdapterView;
 import android.widget.EditText;
 import android.widget.Toast;
 
 import com.zyc.webservice.WebService;
 import com.zyc.zcontrol.ConnectService;
 import com.zyc.zcontrol.R;
+import com.zyc.zcontrol.controlItem.MyPreferenceFragment;
 
-import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
-
-import java.io.UnsupportedEncodingException;
-import java.net.URLDecoder;
 
 import static android.content.Context.BIND_AUTO_CREATE;
 
 @SuppressLint("ValidFragment")
-public class TC1SettingFragment extends PreferenceFragment {
+public class TC1SettingFragment extends MyPreferenceFragment {
     final static String Tag = "TC1SettingFragment";
     SharedPreferences mSharedPreferences;
     SharedPreferences.Editor editor;
@@ -54,6 +52,7 @@ public class TC1SettingFragment extends PreferenceFragment {
     Preference fw_version;
     Preference lock;
     Preference restart;
+    Preference regetdata;
     EditTextPreference name_preference;
 
 
@@ -201,6 +200,7 @@ public class TC1SettingFragment extends PreferenceFragment {
         fw_version = findPreference("fw_version");
         lock = findPreference("lock");
         restart = findPreference("restart");
+        regetdata = findPreference("regetdata");
         name_preference = (EditTextPreference) findPreference("name");
 
 
@@ -282,22 +282,8 @@ public class TC1SettingFragment extends PreferenceFragment {
 
                 //endregion
 
-                //region 未获取到当前版本信息
-                if (fw_version.getSummary() == null) {
-                    AlertDialog alertDialog = new AlertDialog.Builder(getActivity())
-                            .setTitle("未获取到当前设备版本")
-                            .setMessage("请获取到当前设备版本后重试.")
-                            .setNegativeButton("确定", new DialogInterface.OnClickListener() {
-                                @Override
-                                public void onClick(DialogInterface dialog, int which) {
-//                                    getActivity().finish();
-                                }
-                            })
-                            .create();
-                    alertDialog.show();
-                    return false;
-                }
-                //endregion
+                //未获取到当前版本信息
+                if (!isGetVersion()) return false;
 
                 String version = fw_version.getSummary().toString();
                 //region 获取最新版本
@@ -342,6 +328,15 @@ public class TC1SettingFragment extends PreferenceFragment {
             }
         });
         //endregion
+        //region 重新获取数据
+        regetdata.setOnPreferenceClickListener(new Preference.OnPreferenceClickListener() {
+            @Override
+            public boolean onPreferenceClick(Preference preference) {
+                SengToGetData();
+                return false;
+            }
+        });
+        //endregion
 
     }
 
@@ -354,6 +349,60 @@ public class TC1SettingFragment extends PreferenceFragment {
         getActivity().unbindService(mMQTTServiceConnection);
         super.onDestroy();
     }
+
+    @Override
+    public boolean onItemLongClick(AdapterView<?> parent, View view, int position, long id) {
+        Log.d(Tag, "longclick:" + position);
+        switch (position) {
+            case 4:
+                debugFWUpdate();
+                return true;
+        }
+        return false;
+    }
+
+    //region 弹窗
+    //region 判断是否获取当前版本号
+    boolean isGetVersion() {
+        //region 未获取到当前版本信息
+        if (fw_version.getSummary() == null) {
+            AlertDialog alertDialog = new AlertDialog.Builder(getActivity())
+                    .setTitle("未获取到当前设备版本")
+                    .setMessage("请获取到当前设备版本后重试.")
+                    .setNegativeButton("确定", new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialog, int which) {
+//                                    getActivity().finish();
+                        }
+                    })
+                    .create();
+            alertDialog.show();
+            return false;
+        } else return true;
+        //endregion
+    }
+    //endregion
+
+    //region 手动输入固件下载地址
+    void debugFWUpdate() {
+        //未获取到当前版本信息
+        if (!isGetVersion()) return;
+        final EditText et = new EditText(getActivity());
+        new AlertDialog.Builder(getActivity()).setTitle("请输入固件下载地址")
+                .setMessage("警告:输入错误的地址可能导致固件损坏!")
+                .setView(et)
+                .setPositiveButton("确定", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialogInterface, int i) {
+                        String uri = et.getText().toString();
+                        if (uri.length() < 1) return;
+                        if (uri.startsWith("http")) {
+                            Send("{\"mac\":\"" + device_mac + "\",\"setting\":{\"ota\":\"" + uri + "\"}}");
+                        }
+                    }
+                }).setNegativeButton("取消", null).show();
+    }
+    //endregion
 
     //region 弹窗激活
     void unlock() {
@@ -373,9 +422,11 @@ public class TC1SettingFragment extends PreferenceFragment {
     }
 
     //endregion
+    //endregion
 
-
-
+    void SengToGetData() {
+        Send("{\"mac\":\"" + device_mac + "\",\"version\":null,\"lock\":null}");
+    }
 
     void Send(String message) {
         boolean b = getActivity().getSharedPreferences("Setting_" + device_mac, 0).getBoolean("always_UDP", false);
@@ -495,7 +546,7 @@ public class TC1SettingFragment extends PreferenceFragment {
         @Override
         public void onServiceConnected(ComponentName componentName, IBinder service) {
             mConnectService = ((ConnectService.LocalBinder) service).getService();
-            Send("{\"mac\":\"" + device_mac + "\",\"version\":null,\"lock\":null}");
+            SengToGetData();
         }
 
         @Override

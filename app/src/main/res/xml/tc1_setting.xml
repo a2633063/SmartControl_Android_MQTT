@@ -27,6 +27,12 @@
         <Preference
             android:key="restart"
             android:title="重启设备"/>
+
+        <Preference
+            android:key="regetdata"
+            android:title="重新获取数据"
+            android:summary="获取版本/状态失败时点此重试"/>
+
     </PreferenceCategory>
 
 </PreferenceScreen>
