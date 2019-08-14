@@ -32,18 +32,33 @@
                 android:textSize="30dp"
                 android:textStyle="bold" />
 
-            <TextView
-                android:id="@+id/tv_version"
+            <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:gravity="start"
-                android:text="APP当前版本:"
-                android:textSize="18dp" />
+                android:orientation="horizontal">
+
+                <TextView
+                    android:id="@+id/tv_version"
+                    android:layout_width="0dp"
+                    android:layout_height="match_parent"
+                    android:layout_weight="1"
+                    android:gravity="start"
+                    android:text="APP当前版本:"
+                    android:textSize="18dp" />
+
+                <TextView
+                    android:id="@+id/tv_author"
+                    android:layout_width="wrap_content"
+                    android:layout_height="match_parent"
+                    android:layout_gravity="end|center_horizontal"
+                    android:text="作者:Zip_zhang"
+                    android:textSize="15dp" />
+            </LinearLayout>
 
             <TextView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="当前APP支持的控制设备:\nzTC1|zDC1|按键伴侣\n\n本app开源地址:"
+                android:text="当前APP支持的控制设备:\nzTC1(排插)|zDC1(排插)|zA1(空气净化器)|按键伴侣\n\n本app开源地址:"
                 android:textSize="18dp" />
 
             <TextView
@@ -62,8 +77,8 @@
 
             <ImageView
                 android:id="@+id/alipay"
-                android:layout_width="200dp"
-                android:layout_height="200dp"
+                android:layout_width="150dp"
+                android:layout_height="150dp"
                 android:scaleType="centerInside"
                 app:srcCompat="@drawable/alipay" />
 
@@ -77,26 +92,43 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:text="\n本APP仅为作者个人学习/使用,不为他人使用本APP造成的任何后果负责!"
-                android:textSize="15dp" />
+                android:textSize="12dp" />
 
             <Button
                 android:id="@+id/btn_app"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="app文档"
-                android:layout_gravity="bottom"/>
+                android:layout_gravity="bottom"
+                android:text="app文档" />
+
             <Button
                 android:id="@+id/btn_ztc1"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="zTC1文档"
-                android:layout_gravity="bottom"/>
+                android:layout_gravity="bottom"
+                android:text="zTC1文档" />
+
             <Button
                 android:id="@+id/btn_zdc1"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="zDC1文档"
-                android:layout_gravity="bottom"/>
+                android:layout_gravity="bottom"
+                android:text="zDC1文档" />
+
+            <Button
+                android:id="@+id/btn_za1"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_gravity="bottom"
+                android:text="zA1文档" />
+
+            <Button
+                android:id="@+id/btn_zbuttonmate"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_gravity="bottom"
+                android:enabled="false"
+                android:text="按键伴侣文档" />
         </LinearLayout>
     </ScrollView>
 </LinearLayout>

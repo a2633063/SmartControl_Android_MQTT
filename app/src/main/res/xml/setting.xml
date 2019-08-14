@@ -1,7 +1,7 @@
 <PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android">
 
 
-    <PreferenceCategory android:title="网络连接">
+    <PreferenceCategory android:title="MQTT服务器设置">
 
         <EditTextPreference
             android:dialogMessage="MQTT服务器地址,格式必须为 地址:端口\n如192.168.1.1:1883"
@@ -26,12 +26,12 @@
             android:negativeButtonText="取消"
             android:positiveButtonText="保存"
             android:title="MQTT登录密码" />
-        <CheckBoxPreference
-            android:defaultValue="false"
-            android:disableDependentsState="true"
-            android:key="always_UDP"
-            android:summary="即使连接MQTTT服务器,也使用局域网UDP连接设备"
-            android:title="总是通过UDP连接" />
+        <!--<CheckBoxPreference-->
+            <!--android:defaultValue="false"-->
+            <!--android:disableDependentsState="true"-->
+            <!--android:key="always_UDP"-->
+            <!--android:summary="即使连接MQTTT服务器,也使用局域网UDP连接设备"-->
+            <!--android:title="总是通过UDP连接" />-->
 
     </PreferenceCategory>
 

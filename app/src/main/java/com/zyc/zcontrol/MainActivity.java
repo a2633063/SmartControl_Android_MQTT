@@ -11,6 +11,7 @@ import android.content.IntentFilter;
 import android.content.ServiceConnection;
 import android.content.SharedPreferences;
 import android.database.Cursor;
+import android.graphics.Paint;
 import android.graphics.drawable.ColorDrawable;
 import android.net.Uri;
 import android.os.Bundle;
@@ -156,10 +157,10 @@ public class MainActivity extends AppCompatActivity {
 
                             // 在dialog执行show之后才能来设置
                             TextView tvMsg = (TextView) alertDialog.findViewById(android.R.id.message);
-                            String HtmlStr=String.format(getResources().getString(R.string.app_ota_message),name,body,created_at).replace("\n","<br />");
-                            Log.d(Tag,HtmlStr);
+                            String HtmlStr = String.format(getResources().getString(R.string.app_ota_message), name, body, created_at).replace("\n", "<br />");
+                            Log.d(Tag, HtmlStr);
                             if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.N) {
-                                tvMsg.setText(Html.fromHtml(HtmlStr,Html.FROM_HTML_MODE_COMPACT));
+                                tvMsg.setText(Html.fromHtml(HtmlStr, Html.FROM_HTML_MODE_COMPACT));
                             } else {
                                 tvMsg.setText(Html.fromHtml(HtmlStr));
                             }
@@ -467,7 +468,7 @@ public class MainActivity extends AppCompatActivity {
         Log.d(Tag, "onResume");
         super.onResume();
         Intent intentget = this.getIntent();
-        if (intentget.hasExtra("mac") && intentget.getStringExtra("mac")!=null)//判断是否有值传入,并判断是否有特定key
+        if (intentget.hasExtra("mac") && intentget.getStringExtra("mac") != null)//判断是否有值传入,并判断是否有特定key
         {
             int position = adapter.contains(intentget.getStringExtra("mac"));
             Log.d(Tag, "mac:" + intentget.getStringExtra("mac") + "," + position);
@@ -690,7 +691,19 @@ public class MainActivity extends AppCompatActivity {
             }
         });
         //endregion
-
+        //region 作者github跳转
+        TextView tv_author=popupView.findViewById(R.id.tv_author);
+        tv_author.getPaint().setFlags(Paint.UNDERLINE_TEXT_FLAG);
+        tv_author.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Toast.makeText(MainActivity.this, "跳转作者github...", Toast.LENGTH_SHORT).show();
+                Uri uri = Uri.parse("https://github.com/a2633063");
+                Intent intent = new Intent(Intent.ACTION_VIEW, uri);
+                startActivity(intent);
+            }
+        });
+        //endregion
         //region app页面跳转
         popupView.findViewById(R.id.btn_app).setOnClickListener(new View.OnClickListener() {
             @Override
@@ -712,7 +725,7 @@ public class MainActivity extends AppCompatActivity {
         });
         //endregion
         //region zDC1页面跳转
-        popupView.findViewById(R.id.btn_app).setOnClickListener(new View.OnClickListener() {
+        popupView.findViewById(R.id.btn_zdc1).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 Uri uri = Uri.parse("https://a2633063.github.io/zDC1_public/");
@@ -721,7 +734,16 @@ public class MainActivity extends AppCompatActivity {
             }
         });
         //endregion
-
+        //region zA1页面跳转
+        popupView.findViewById(R.id.btn_za1).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Uri uri = Uri.parse("https://a2633063.github.io/zA1/");
+                Intent intent = new Intent(Intent.ACTION_VIEW, uri);
+                startActivity(intent);
+            }
+        });
+        //endregion
         //region window初始化
         window.setBackgroundDrawable(new ColorDrawable(android.graphics.Color.alpha(0xffff0000)));
         window.setOutsideTouchable(true);
