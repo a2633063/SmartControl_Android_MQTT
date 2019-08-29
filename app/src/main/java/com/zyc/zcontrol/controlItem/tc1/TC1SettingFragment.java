@@ -318,7 +318,7 @@ public class TC1SettingFragment extends MyPreferenceFragment {
             public boolean onPreferenceClick(Preference preference) {
 
                 new AlertDialog.Builder(getActivity()).setTitle("重启设备?")
-                        .setMessage("需要固件版本v0.10.1及以上版本.\n如果设备死机此处重启可能无效,依然需要手动拔插插头才能重启设备")
+                        .setMessage("如果设备死机此重启可能无效,依然需要手动拔插插头才能重启设备")
                         .setPositiveButton("确定", new DialogInterface.OnClickListener() {
                             @Override
                             public void onClick(DialogInterface dialogInterface, int i) {
@@ -357,10 +357,9 @@ public class TC1SettingFragment extends MyPreferenceFragment {
     @Override
     public boolean onItemLongClick(AdapterView<?> parent, View view, int position, long id) {
         Log.d(Tag, "longclick:" + position);
-        switch (position) {
-            case 4:
-                debugFWUpdate();
-                return true;
+        if (position == fw_version.getOrder() + 1) {
+            debugFWUpdate();
+            return true;
         }
         return false;
     }
@@ -419,7 +418,7 @@ public class TC1SettingFragment extends MyPreferenceFragment {
                     @Override
                     public void onClick(DialogInterface dialogInterface, int i) {
                         String lockStr = et.getText().toString();
-                        lockStr=lockStr.replace("\r\n", "\n").replace("\n", "").trim();
+                        lockStr = lockStr.replace("\r\n", "\n").replace("\n", "").trim();
                         Send("{\"mac\":\"" + device_mac + "\",\"lock\":\"" + lockStr + "\"}");
                     }
                 }).setNegativeButton("取消", null).show();

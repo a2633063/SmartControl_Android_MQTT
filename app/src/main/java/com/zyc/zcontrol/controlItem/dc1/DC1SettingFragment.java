@@ -337,10 +337,9 @@ public class DC1SettingFragment extends MyPreferenceFragment {
     @Override
     public boolean onItemLongClick(AdapterView<?> parent, View view, int position, long id) {
         Log.d(Tag, "longclick:" + position);
-        switch (position) {
-            case 4:
-                debugFWUpdate();
-                return true;
+        if (position == fw_version.getOrder() + 1) {
+            debugFWUpdate();
+            return true;
         }
         return false;
     }
