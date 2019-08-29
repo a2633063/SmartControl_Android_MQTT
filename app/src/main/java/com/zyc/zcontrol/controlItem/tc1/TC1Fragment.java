@@ -56,7 +56,7 @@ public class TC1Fragment extends Fragment {
     //endregion
 
     //region 控件
-    final private int PLUG_COUNT=6;
+    final private int PLUG_COUNT = 6;
 
     private SwipeRefreshLayout mSwipeLayout;
     Switch tbtn_all;
@@ -87,7 +87,7 @@ public class TC1Fragment extends Fragment {
     Handler handler = new Handler() {
         @Override
         public void handleMessage(Message msg) {// handler接收到消息后就会执行此方法
-            switch(msg.what){
+            switch (msg.what) {
                 case 1:
                     Send("{\"mac\": \"" + device_mac + "\","
                             + "\"plug_0\" : {\"on\" : null,\"setting\":{\"name\":null}},"
@@ -100,6 +100,7 @@ public class TC1Fragment extends Fragment {
             }
         }
     };
+
     //endregion
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -148,7 +149,7 @@ public class TC1Fragment extends Fragment {
         tbtn_all.setOnClickListener(MainButtonListener);
         for (int i = 0; i < 6; i++) {
             tbtn_main_button[i].setId(i);
-            tv_main_button[i].setId(i+PLUG_COUNT);
+            tv_main_button[i].setId(i + PLUG_COUNT);
             tbtn_main_button[i].setOnClickListener(MainButtonListener);
             tbtn_main_button[i].setOnCheckedChangeListener(MainButtonChangeListener);
             tv_main_button[i].setOnClickListener(MainTextListener);
@@ -161,12 +162,11 @@ public class TC1Fragment extends Fragment {
         mSwipeLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
             @Override
             public void onRefresh() {
-                handler.sendEmptyMessageDelayed(1,0);
+                handler.sendEmptyMessageDelayed(1, 0);
                 mSwipeLayout.setRefreshing(false);
             }
         });
         //endregion
-
 
 
         //region log 相关
@@ -220,15 +220,15 @@ public class TC1Fragment extends Fragment {
             if (id >= 0 && id <= 5)
                 Send("{\"name\":\"" + device_name + "\",\"mac\":\"" + device_mac + "\",\"plug_" + id + "\":{\"on\":" + String.valueOf(((Switch) arg0).isChecked() ? 1 : 0) + "}" + "}");
             else if (id == tbtn_all.getId()) {
-                int s=((Switch) arg0).isChecked() ? 1 : 0;
+                int s = ((Switch) arg0).isChecked() ? 1 : 0;
                 Send("{\"name\":\"" + device_name + "\",\"mac\":\"" + device_mac + "\","
-                        +"\"plug_0\":{\"on\":"+s+"},"
-                        +"\"plug_1\":{\"on\":"+s+"},"
-                        +"\"plug_2\":{\"on\":"+s+"},"
-                        +"\"plug_3\":{\"on\":"+s+"},"
-                        +"\"plug_4\":{\"on\":"+s+"},"
-                        +"\"plug_5\":{\"on\":"+s+"}"
-                        +"}");
+                        + "\"plug_0\":{\"on\":" + s + "},"
+                        + "\"plug_1\":{\"on\":" + s + "},"
+                        + "\"plug_2\":{\"on\":" + s + "},"
+                        + "\"plug_3\":{\"on\":" + s + "},"
+                        + "\"plug_4\":{\"on\":" + s + "},"
+                        + "\"plug_5\":{\"on\":" + s + "}"
+                        + "}");
             }
 
         }
@@ -257,7 +257,7 @@ public class TC1Fragment extends Fragment {
             intent.putExtra("name", device_name);
             intent.putExtra("plug_name", ((TextView) v).getText());
             intent.putExtra("mac", device_mac);
-            intent.putExtra("plug_id", v.getId()%PLUG_COUNT);
+            intent.putExtra("plug_id", v.getId() % PLUG_COUNT);
             startActivity(intent);
         }
     };
@@ -266,9 +266,9 @@ public class TC1Fragment extends Fragment {
 
 
     void Send(String message) {
-        if(mConnectService==null) return;
+        if (mConnectService == null) return;
         boolean b = getActivity().getSharedPreferences("Setting_" + device_mac, 0).getBoolean("always_UDP", false);
-        mConnectService.Send(b ? null : "device/ztc1/set", message);
+        mConnectService.Send(b ? null : "device/ztc1/" + device_mac + "/set", message);
     }
 
     //数据接收处理函数
@@ -293,20 +293,20 @@ public class TC1Fragment extends Fragment {
 
             if (jsonObject.has("power")) {
                 String power = jsonObject.getString("power");
-                Log.d(Tag,"power:"+power);
-                tv_power.setText(power+"W");
+                Log.d(Tag, "power:" + power);
+                tv_power.setText(power + "W");
             }
             if (jsonObject.has("total_time")) {
                 int total_time = jsonObject.getInt("total_time");
-                Log.d(Tag,"total_time:"+total_time);
+                Log.d(Tag, "total_time:" + total_time);
 
 
-                Calendar calendar =Calendar.getInstance();
+                Calendar calendar = Calendar.getInstance();
 //                now.setTime(d);
-                calendar.add(Calendar.SECOND,0-total_time);
-                SimpleDateFormat sdf=new SimpleDateFormat("yyyy/MM/dd HH:mm:ss");
+                calendar.add(Calendar.SECOND, 0 - total_time);
+                SimpleDateFormat sdf = new SimpleDateFormat("yyyy/MM/dd HH:mm:ss");
 
-                tv_total_time.setText("运行时间:"+total_time+"秒\n上次开机时间:"+sdf.format(calendar.getTime()));
+                tv_total_time.setText("运行时间:" + total_time + "秒\n上次开机时间:" + sdf.format(calendar.getTime()));
 
             }
             //region 解析plug
@@ -338,7 +338,7 @@ public class TC1Fragment extends Fragment {
         @Override
         public void onServiceConnected(ComponentName componentName, IBinder service) {
             mConnectService = ((ConnectService.LocalBinder) service).getService();
-            handler.sendEmptyMessageDelayed(1,300);
+            handler.sendEmptyMessageDelayed(1, 300);
         }
 
         @Override
@@ -360,7 +360,7 @@ public class TC1Fragment extends Fragment {
             } else if (ConnectService.ACTION_MQTT_CONNECTED.equals(action)) {  //连接成功
                 Log.d(Tag, "ACTION_MQTT_CONNECTED");
                 Log("app已连接mqtt服务器");
-                handler.sendEmptyMessageDelayed(1,300);
+                handler.sendEmptyMessageDelayed(1, 300);
             } else if (ConnectService.ACTION_MQTT_DISCONNECTED.equals(action)) {  //连接失败/断开
                 Log.w(Tag, "ACTION_MQTT_DISCONNECTED");
                 Log("已与mqtt服务器已断开");

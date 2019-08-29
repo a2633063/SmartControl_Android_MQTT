@@ -417,6 +417,7 @@ public class A1SettingFragment extends MyPreferenceFragment {
                     @Override
                     public void onClick(DialogInterface dialogInterface, int i) {
                         String lockStr = et.getText().toString();
+                        lockStr = lockStr.replace("\r\n", "\n").replace("\n", "").trim();
                         Send("{\"mac\":\"" + device_mac + "\",\"lock\":\"" + lockStr + "\"}");
                     }
                 }).setNegativeButton("取消", null).show();

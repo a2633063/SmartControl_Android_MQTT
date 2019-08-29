@@ -450,7 +450,7 @@ public class TC1PlugActivity extends AppCompatActivity {
     //region 数据接收发送处理函数
     void Send(String message) {
         boolean b = getSharedPreferences("Setting_" + device_mac, 0).getBoolean("always_UDP", false);
-        mConnectService.Send(b ? null : "device/ztc1/set", message);
+        mConnectService.Send(b ? null : "device/ztc1/" + device_mac + "/set", message);
     }
 
     void Receive(String ip, int port, String message) {

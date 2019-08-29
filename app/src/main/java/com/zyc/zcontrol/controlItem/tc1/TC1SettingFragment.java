@@ -49,6 +49,7 @@ public class TC1SettingFragment extends MyPreferenceFragment {
     ConnectService mConnectService;
     //endregion
 
+    Preference ssid;
     Preference fw_version;
     Preference lock;
     Preference restart;
@@ -162,7 +163,7 @@ public class TC1SettingFragment extends MyPreferenceFragment {
                 //endregion
                 //region 发送请求数据
                 case 3:
-                    Send("{\"mac\":\"" + device_mac + "\",\"version\":null,\"lock\":null}");
+                    Send("{\"mac\":\"" + device_mac + "\",\"version\":null,\"lock\":null,\"ssid\":null}");
                     break;
                 //endregion
             }
@@ -200,6 +201,7 @@ public class TC1SettingFragment extends MyPreferenceFragment {
         //endregion
         //endregion
 
+        ssid = findPreference("ssid");
         fw_version = findPreference("fw_version");
         lock = findPreference("lock");
         restart = findPreference("restart");
@@ -417,6 +419,7 @@ public class TC1SettingFragment extends MyPreferenceFragment {
                     @Override
                     public void onClick(DialogInterface dialogInterface, int i) {
                         String lockStr = et.getText().toString();
+                        lockStr=lockStr.replace("\r\n", "\n").replace("\n", "").trim();
                         Send("{\"mac\":\"" + device_mac + "\",\"lock\":\"" + lockStr + "\"}");
                     }
                 }).setNegativeButton("取消", null).show();
@@ -428,7 +431,7 @@ public class TC1SettingFragment extends MyPreferenceFragment {
 
     void Send(String message) {
         boolean b = getActivity().getSharedPreferences("Setting_" + device_mac, 0).getBoolean("always_UDP", false);
-        mConnectService.Send(b ? null : "device/ztc1/set", message);
+        mConnectService.Send(b ? null : "device/ztc1/" + device_mac + "/set", message);
     }
 
     //数据接收处理函数
@@ -456,7 +459,12 @@ public class TC1SettingFragment extends MyPreferenceFragment {
                 name_preference.setText(name);
             }
             //endregion
-
+            //region ssid
+            if (jsonObject.has("ssid")) {
+                String ssidString = jsonObject.getString("ssid");
+                ssid.setSummary(ssidString);
+            }
+            //endregion
             //region 获取版本号
             if (jsonObject.has("version")) {
                 String version = jsonObject.getString("version");
