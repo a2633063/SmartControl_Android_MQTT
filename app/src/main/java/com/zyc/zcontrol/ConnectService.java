@@ -349,7 +349,7 @@ public class ConnectService extends Service {
 
     //region MQTT发送函数
     public void MQTTSend(String topic, String str) {
-        MQTTSend(topic, str, 0);
+        MQTTSend(topic, str, 1);
     }
 
     public void MQTTSend(String topic, String str, int qos) {
@@ -367,4 +367,20 @@ public class ConnectService extends Service {
     }
     //endregion
     //endregion
+
+    public boolean Subscribe(String topic, int qos) {
+
+        try {
+            mqttClient.subscribe(topic, qos);
+            return true;
+        } catch (MqttException e) {
+            e.printStackTrace();
+            Log.e("ConnectService", "MQTT subscribe fail");
+            //            broadcastUpdate(ACTION_MQTT_DISCONNECTED); //连接失败
+            return false;
+        } catch (Exception e) {
+            e.printStackTrace();
+            return false;
+        }
+    }
 }
