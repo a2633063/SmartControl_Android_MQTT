@@ -449,8 +449,16 @@ public class TC1PlugActivity extends AppCompatActivity {
 
     //region 数据接收发送处理函数
     void Send(String message) {
-        boolean b = getSharedPreferences("Setting_" + device_mac, 0).getBoolean("always_UDP", false);
-        mConnectService.Send(b ? null : "device/ztc1/" + device_mac + "/set", message);
+        if (mConnectService == null) return;
+        boolean udp = getSharedPreferences("Setting_" + device_mac, 0).getBoolean("always_UDP", false);
+        boolean oldProtocol = getSharedPreferences("Setting_" + device_mac, 0).getBoolean("old_protocol", false);
+
+        String topic = null;
+        if (!udp) {
+            if (oldProtocol) topic = "device/ztc1/set";
+            else topic = "device/ztc1/" + device_mac + "/set";
+        }
+        mConnectService.Send(topic, message);
     }
 
     void Receive(String ip, int port, String message) {

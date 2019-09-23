@@ -38,6 +38,13 @@
             android:title="重新获取数据"
             android:summary="获取版本/激活状态失败时点此重试"/>
 
+        <CheckBoxPreference
+            android:defaultValue="false"
+            android:disableDependentsState="true"
+            android:key="old_protocol"
+            android:summary="固件版本1.0.0以下时,请勾选此项"
+            android:title="使用旧版通信协议" />
+
     </PreferenceCategory>
 
 </PreferenceScreen>

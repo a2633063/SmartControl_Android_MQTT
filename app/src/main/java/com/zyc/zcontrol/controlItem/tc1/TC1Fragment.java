@@ -267,8 +267,15 @@ public class TC1Fragment extends Fragment {
 
     void Send(String message) {
         if (mConnectService == null) return;
-        boolean b = getActivity().getSharedPreferences("Setting_" + device_mac, 0).getBoolean("always_UDP", false);
-        mConnectService.Send(b ? null : "device/ztc1/" + device_mac + "/set", message);
+        boolean udp = getActivity().getSharedPreferences("Setting_" + device_mac, 0).getBoolean("always_UDP", false);
+        boolean oldProtocol = getActivity().getSharedPreferences("Setting_" + device_mac, 0).getBoolean("old_protocol", false);
+
+        String topic = null;
+        if (!udp) {
+            if (oldProtocol) topic = "device/ztc1/set";
+            else topic = "device/ztc1/" + device_mac + "/set";
+        }
+        mConnectService.Send(topic, message);
     }
 
     //数据接收处理函数
