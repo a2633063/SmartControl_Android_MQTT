@@ -25,20 +25,7 @@ public class Function {
 
     public static String getSSID(Context context) {
         String ssid = "unknown id";
-
-        if (Build.VERSION.SDK_INT <= Build.VERSION_CODES.O || Build.VERSION.SDK_INT == Build.VERSION_CODES.P) {
-
-            WifiManager mWifiManager = (WifiManager) context.getApplicationContext().getSystemService(Context.WIFI_SERVICE);
-
-            assert mWifiManager != null;
-            WifiInfo info = mWifiManager.getConnectionInfo();
-
-            if (Build.VERSION.SDK_INT < Build.VERSION_CODES.KITKAT) {
-                return info.getSSID();
-            } else {
-                return info.getSSID().replace("\"", "");
-            }
-        } else if (Build.VERSION.SDK_INT == Build.VERSION_CODES.O_MR1) {
+        if (Build.VERSION.SDK_INT == Build.VERSION_CODES.O_MR1) {
 
             ConnectivityManager connManager = (ConnectivityManager) context.getApplicationContext().getSystemService(Context.CONNECTIVITY_SERVICE);
             assert connManager != null;
@@ -48,6 +35,14 @@ public class Function {
                     return networkInfo.getExtraInfo().replace("\"", "");
                 }
             }
+        } else //if (Build.VERSION.SDK_INT <= Build.VERSION_CODES.O || Build.VERSION.SDK_INT == Build.VERSION_CODES.P) {
+        {
+            WifiManager mWifiManager = (WifiManager) context.getApplicationContext().getSystemService(Context.WIFI_SERVICE);
+
+            assert mWifiManager != null;
+            WifiInfo info = mWifiManager.getConnectionInfo();
+            return info.getSSID().replace("\"", "");
+
         }
         return ssid;
     }
@@ -93,7 +88,7 @@ public class Function {
                 Intent intent = new Intent(context, MainActivity.class);
                 intent.setAction("com.zyc.zcontrol.MainActivity");
                 //intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK);
-                intent.putExtra("mac",mac);
+                intent.putExtra("mac", mac);
                 ShortcutInfo info = new ShortcutInfo.Builder(context, mac)
                         .setIcon(Icon.createWithResource(context, R.mipmap.ic_launcher_round))
                         .setShortLabel(name)
@@ -109,7 +104,7 @@ public class Function {
 
             Intent shortcutIntent = new Intent();
             shortcutIntent.setComponent(new ComponentName(context.getPackageName(), "com.zyc.zcontrol.MainActivity"));
-            shortcutIntent.putExtra("mac",mac);
+            shortcutIntent.putExtra("mac", mac);
 
             //设置点击快捷方式，进入指定的Activity
             Intent resultIntent = new Intent();
