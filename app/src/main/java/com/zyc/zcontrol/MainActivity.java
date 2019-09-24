@@ -203,7 +203,8 @@ public class MainActivity extends AppCompatActivity {
         }
 
         if (data.size() < 1) {
-            data.add(new DeviceItem(MainActivity.this, StaticVariable.TYPE_A1, "演示设备", "123456789abcde"));
+//            data.add(new DeviceItem(MainActivity.this, StaticVariable.TYPE_M1, "演示设备", "b0f8932234f4"));
+            data.add(new DeviceItem(MainActivity.this, StaticVariable.TYPE_TC1, "演示设备", "000000000000"));
         }
         //endregion
 

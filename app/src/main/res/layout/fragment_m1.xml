@@ -1,0 +1,196 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    tools:context="com.zyc.zcontrol.controlItem.tc1.TC1Fragment">
+
+    <android.support.v4.widget.SwipeRefreshLayout
+        android:id="@+id/swipeRefreshLayout"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_centerInParent="true"
+        android:layout_weight="1"
+        android:paddingTop="20dp">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:layout_weight="1"
+            android:orientation="vertical"
+            android:padding="16dp">
+
+            <android.support.constraint.ConstraintLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:background="#ff3f3f3f"
+                android:elevation="3dp"
+                android:gravity="center"
+                android:outlineProvider="bounds"
+                android:paddingStart="32dp"
+                android:paddingTop="32dp"
+                android:paddingEnd="32dp"
+                android:paddingBottom="20dp"
+                android:translationZ="3dp">
+
+                <TextView
+                    android:id="@+id/tv_pm25_text"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:gravity="start"
+                    android:text="PM2.5"
+                    app:layout_constraintEnd_toStartOf="@id/tv_formaldehyde_text"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toTopOf="parent" />
+
+                <TextView
+                    android:id="@+id/tv_pm25_value"
+                    android:layout_width="70dp"
+                    android:layout_height="wrap_content"
+                    android:gravity="end"
+                    android:text="57"
+                    android:textColor="@android:color/white"
+                    android:textSize="40dp"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@id/tv_pm25_text" />
+
+                <TextView
+                    android:id="@+id/tv_pm25_unit"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="ug/m3"
+                    app:layout_constraintBottom_toBottomOf="@id/tv_pm25_value"
+                    app:layout_constraintStart_toEndOf="@id/tv_pm25_value" />
+
+                <TextView
+                    android:id="@+id/tv_formaldehyde_text"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:gravity="start"
+                    android:text="甲醛"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintHorizontal_bias="0.61"
+                    app:layout_constraintStart_toEndOf="@id/tv_pm25_text"
+                    app:layout_constraintTop_toTopOf="parent" />
+
+                <TextView
+                    android:id="@+id/tv_formaldehyde_value"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="0.02"
+                    android:textColor="@android:color/white"
+                    android:textSize="40dp"
+                    app:layout_constraintStart_toStartOf="@id/tv_formaldehyde_text"
+                    app:layout_constraintTop_toBottomOf="@id/tv_formaldehyde_text" />
+
+                <TextView
+                    android:id="@+id/tv_formaldehyde_unit"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="mg/m3"
+                    app:layout_constraintBottom_toBottomOf="@id/tv_formaldehyde_value"
+                    app:layout_constraintStart_toEndOf="@id/tv_formaldehyde_value" />
+
+                <TextView
+                    android:id="@+id/tv_temperature_text"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:gravity="start|bottom"
+                    android:drawableStart="@drawable/temperature_icon"
+                    android:text="温度 "
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintBaseline_toBaselineOf="@id/tv_temperature_value" />
+
+                <TextView
+                    android:id="@+id/tv_temperature_value"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="16dp"
+                    android:textColor="@android:color/white"
+                    android:gravity="start|bottom"
+                    android:text="23.8℃"
+                    android:textSize="25dp"
+                    app:layout_constraintEnd_toStartOf="@id/tv_formaldehyde_text"
+                    app:layout_constraintStart_toEndOf="@id/tv_temperature_text"
+                    app:layout_constraintTop_toBottomOf="@id/tv_pm25_value" />
+
+                <TextView
+                    android:id="@+id/tv_humidity_text"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:gravity="start|bottom"
+                    android:drawableStart="@drawable/humidity_icon"
+                    android:text="湿度 "
+                    app:layout_constraintStart_toStartOf="@id/tv_formaldehyde_text"
+                    app:layout_constraintBaseline_toBaselineOf="@id/tv_humidity_value"/>
+
+                <TextView
+                    android:id="@+id/tv_humidity_value"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="start|bottom"
+                    android:layout_marginTop="16dp"
+                    android:textColor="@android:color/white"
+                    android:gravity="start|bottom"
+                    android:text="23.8%"
+                    android:textSize="25dp"
+                    app:layout_constraintStart_toEndOf="@id/tv_humidity_text"
+                    app:layout_constraintTop_toBottomOf="@id/tv_formaldehyde_value" />
+
+                <TextView
+                    android:id="@+id/tv_brightness"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="16dp"
+                    android:text="亮度"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@id/tv_temperature_value" />
+
+                <SeekBar
+                    android:id="@+id/seekBar"
+                    style="@style/Widget.AppCompat.SeekBar.Discrete"
+                    android:layout_width="0dp"
+                    android:layout_height="0dp"
+                    android:max="4"
+                    android:progress="0"
+                    app:layout_constraintTop_toTopOf="@id/tv_brightness"
+                    app:layout_constraintBottom_toBottomOf="@id/tv_brightness"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toEndOf="@id/tv_brightness"/>
+
+            </android.support.constraint.ConstraintLayout>
+
+
+        </LinearLayout>
+
+    </android.support.v4.widget.SwipeRefreshLayout>
+
+    <ScrollView
+        android:id="@+id/scrollView"
+        android:layout_width="match_parent"
+        android:layout_height="42sp"
+        android:layout_gravity="bottom"
+        android:addStatesFromChildren="false"
+        android:scrollbars="none">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_gravity="bottom"
+            android:orientation="vertical">
+
+            <TextView
+                android:id="@+id/tv_log"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:gravity="bottom"
+                android:text="Log"
+                android:textSize="18sp" />
+        </LinearLayout>
+    </ScrollView>
+
+</LinearLayout>
