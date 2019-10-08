@@ -73,6 +73,7 @@ public class TC1PlugActivity extends AppCompatActivity {
     String device_name = null;
     int plug_id = -1;
 
+    //region Handler
     @SuppressLint("HandlerLeak")
     Handler handler = new Handler() {
         @Override
@@ -84,6 +85,7 @@ public class TC1PlugActivity extends AppCompatActivity {
             }
         }
     };
+    //endregion
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {

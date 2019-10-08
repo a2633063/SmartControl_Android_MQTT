@@ -134,7 +134,6 @@ public class M1PlugActivity extends AppCompatActivity {
                 int minute = task.minute;
                 int action = task.action;
                 int on = ((Switch) v).isChecked() ? 1 : 0;
-                int repeat = task.repeat;
 
                 Send("{\"mac\": \"" + device_mac + "\",\"task_" + position + "\":{\"hour\":" + hour + ",\"minute\":" + minute + ",\"brightness\":" + action + ",\"on\":" + on + "}}");
             }
@@ -229,26 +228,6 @@ public class M1PlugActivity extends AppCompatActivity {
         };
         //endregion
 
-        //region ToggleButton week 初始化
-        ToggleButton.OnCheckedChangeListener checkedChangeListener = new CompoundButton.OnCheckedChangeListener() {
-            @Override
-            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
-                int repeat = 0;
-                for (int i = tbtn_week.length; i > 0; i--) {
-                    repeat = repeat << 1;
-                    if (tbtn_week[i - 1].isChecked()) repeat |= 1;
-                }
-                tv_repeat.setText("重复:" + Function.getWeek(repeat));
-
-            }
-        };
-        int temp = task.repeat;
-        for (int i = 0; i < tbtn_week.length; i++) {
-            tbtn_week[i].setOnCheckedChangeListener(checkedChangeListener);
-            if ((temp & 0x01) != 0) tbtn_week[i].setChecked(true);
-            temp = temp >> 1;
-        }
-        //endregion
         //region NumberPicker初始化
         //region 小时
         hour_picker.setMaxValue(23);
@@ -289,11 +268,6 @@ public class M1PlugActivity extends AppCompatActivity {
                 int minute = minute_picker.getValue();
                 int action = action_picker.getValue();
                 int on = 1;
-                int repeat = 0;
-                for (int i = tbtn_week.length; i > 0; i--) {
-                    repeat = repeat << 1;
-                    if (tbtn_week[i - 1].isChecked()) repeat |= 1;
-                }
 
                 Send("{\"mac\": \"" + device_mac + "\",\"task_" + task_id + "\":{\"hour\":" + hour + ",\"minute\":" + minute +  ",\"brightness\":" + action + ",\"on\":" + on + "}}");
                 window.dismiss();

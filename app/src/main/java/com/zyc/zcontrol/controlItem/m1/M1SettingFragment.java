@@ -237,30 +237,30 @@ public class M1SettingFragment extends MyPreferenceFragment {
         });
         //endregion
         //region 激活
-        lock.setOnPreferenceClickListener(new Preference.OnPreferenceClickListener() {
-            @Override
-            public boolean onPreferenceClick(Preference preference) {
-                //region 未获取到当前激活信息
-                if (lock.getSummary() == null) {
-                    AlertDialog alertDialog = new AlertDialog.Builder(getActivity())
-                            .setTitle("未获取到当前设备激活信息")
-                            .setMessage("请获取到当前设备激活信息后重试.")
-                            .setNegativeButton("确定", new DialogInterface.OnClickListener() {
-                                @Override
-                                public void onClick(DialogInterface dialog, int which) {
-//                                    getActivity().finish();
-                                }
-                            })
-                            .create();
-                    alertDialog.show();
-                    return false;
-                }
-                //endregion
-
-                unlock();
-                return false;
-            }
-        });
+//        lock.setOnPreferenceClickListener(new Preference.OnPreferenceClickListener() {
+//            @Override
+//            public boolean onPreferenceClick(Preference preference) {
+//                //region 未获取到当前激活信息
+//                if (lock.getSummary() == null) {
+//                    AlertDialog alertDialog = new AlertDialog.Builder(getActivity())
+//                            .setTitle("未获取到当前设备激活信息")
+//                            .setMessage("请获取到当前设备激活信息后重试.")
+//                            .setNegativeButton("确定", new DialogInterface.OnClickListener() {
+//                                @Override
+//                                public void onClick(DialogInterface dialog, int which) {
+////                                    getActivity().finish();
+//                                }
+//                            })
+//                            .create();
+//                    alertDialog.show();
+//                    return false;
+//                }
+//                //endregion
+//
+//                unlock();
+//                return false;
+//            }
+//        });
         //endregion
 
         //region 版本
@@ -464,13 +464,13 @@ public class M1SettingFragment extends MyPreferenceFragment {
             }
             //endregion
             //region 激活
-            if (jsonObject.has("lock")) {
-                if (jsonObject.getBoolean("lock")) {
-                    lock.setSummary("已激活");
-                } else {
-                    lock.setSummary("未激活");
-                }
-            }
+//            if (jsonObject.has("lock")) {
+//                if (jsonObject.getBoolean("lock")) {
+//                    lock.setSummary("已激活");
+//                } else {
+//                    lock.setSummary("未激活");
+//                }
+//            }
             //endregion
             //region ota结果/进度
             if (jsonObject.has("ota_progress")) {

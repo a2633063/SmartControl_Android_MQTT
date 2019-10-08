@@ -31,9 +31,9 @@
                 android:elevation="3dp"
                 android:gravity="center"
                 android:outlineProvider="bounds"
-                android:paddingStart="32dp"
-                android:paddingTop="32dp"
-                android:paddingEnd="32dp"
+                android:paddingStart="16dp"
+                android:paddingTop="16dp"
+                android:paddingEnd="16dp"
                 android:paddingBottom="20dp"
                 android:translationZ="3dp">
 
@@ -99,20 +99,24 @@
                     android:id="@+id/tv_temperature_text"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:gravity="start|bottom"
                     android:drawableStart="@drawable/temperature_icon"
+                    android:gravity="start|bottom"
+                    android:maxLines="1"
+                    android:singleLine="true"
                     android:text="温度 "
-                    app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintBaseline_toBaselineOf="@id/tv_temperature_value" />
+                    app:layout_constraintBaseline_toBaselineOf="@id/tv_temperature_value"
+                    app:layout_constraintStart_toStartOf="parent" />
 
                 <TextView
                     android:id="@+id/tv_temperature_value"
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:layout_marginTop="16dp"
-                    android:textColor="@android:color/white"
                     android:gravity="start|bottom"
+                    android:maxLines="1"
+                    android:singleLine="true"
                     android:text="23.8℃"
+                    android:textColor="@android:color/white"
                     android:textSize="25dp"
                     app:layout_constraintEnd_toStartOf="@id/tv_formaldehyde_text"
                     app:layout_constraintStart_toEndOf="@id/tv_temperature_text"
@@ -122,11 +126,11 @@
                     android:id="@+id/tv_humidity_text"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:gravity="start|bottom"
                     android:drawableStart="@drawable/humidity_icon"
+                    android:gravity="start|bottom"
                     android:text="湿度 "
-                    app:layout_constraintStart_toStartOf="@id/tv_formaldehyde_text"
-                    app:layout_constraintBaseline_toBaselineOf="@id/tv_humidity_value"/>
+                    app:layout_constraintBaseline_toBaselineOf="@id/tv_humidity_value"
+                    app:layout_constraintStart_toStartOf="@id/tv_formaldehyde_text" />
 
                 <TextView
                     android:id="@+id/tv_humidity_value"
@@ -134,9 +138,11 @@
                     android:layout_height="wrap_content"
                     android:layout_gravity="start|bottom"
                     android:layout_marginTop="16dp"
-                    android:textColor="@android:color/white"
                     android:gravity="start|bottom"
+                    android:maxLines="1"
+                    android:singleLine="true"
                     android:text="23.8%"
+                    android:textColor="@android:color/white"
                     android:textSize="25dp"
                     app:layout_constraintStart_toEndOf="@id/tv_humidity_text"
                     app:layout_constraintTop_toBottomOf="@id/tv_formaldehyde_value" />
@@ -146,7 +152,10 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginTop="16dp"
+                    android:maxLines="1"
+                    android:singleLine="true"
                     android:text="亮度"
+                    android:drawableRight="@drawable/ic_chevron_right_black_24dp"
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toBottomOf="@id/tv_temperature_value" />
 
@@ -156,11 +165,13 @@
                     android:layout_width="0dp"
                     android:layout_height="0dp"
                     android:max="4"
+                    android:maxLines="1"
                     android:progress="0"
-                    app:layout_constraintTop_toTopOf="@id/tv_brightness"
+                    android:singleLine="true"
                     app:layout_constraintBottom_toBottomOf="@id/tv_brightness"
                     app:layout_constraintEnd_toEndOf="parent"
-                    app:layout_constraintStart_toEndOf="@id/tv_brightness"/>
+                    app:layout_constraintStart_toEndOf="@id/tv_brightness"
+                    app:layout_constraintTop_toTopOf="@id/tv_brightness" />
 
             </android.support.constraint.ConstraintLayout>
 
