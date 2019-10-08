@@ -60,6 +60,7 @@ public class DeviceAddChoiceActivity extends AppCompatActivity {
         });
         //endregion
 
+        //region 按下获取局域网按钮
         findViewById(R.id.button).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -74,6 +75,28 @@ public class DeviceAddChoiceActivity extends AppCompatActivity {
 
             }
         });
+        //endregion
+        //region 手动增加按钮
+        findViewById(R.id.btn_customer).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+
+
+//                    String ip ;
+//                    String mac;
+//
+//                    //返回数据
+//                    Intent intent = new Intent();
+//                    intent.putExtra("type", device_type);
+//                    intent.putExtra("ip", ip);
+//                    intent.putExtra("mac", mac);
+//                    setResult(RESULT_OK, intent);
+//
+//                    finish();
+//                    Log.e(Tag, "customer device result:" + ip + "," + mac + "," + device_type);
+            }
+        });
+        //endregion
 
     }
 
