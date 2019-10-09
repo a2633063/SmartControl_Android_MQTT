@@ -244,7 +244,7 @@ public class ConnectService extends Service {
                     try {
                         mqttClient.subscribe("domoticz/in", 0);
                         mqttClient.subscribe("device/+/+/state", 0);
-                        mqttClient.subscribe("device/+/+/senser", 0);
+                        mqttClient.subscribe("device/+/+/sensor", 0);
                         //mqttClient.subscribe("homeassistant/+/+/#", 0);
                         broadcastUpdate(ACTION_MQTT_CONNECTED); //连接成功
                     } catch (MqttException e) {
