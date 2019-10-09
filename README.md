@@ -13,10 +13,12 @@
 **被控设备:**
 
 1. [按键伴侣ButtonMate](https://github.com/a2633063/SmartControl_ButtonMate_ESP8266)	直接控制墙壁开关,在不修改墙壁开关的前提下实现智能开关的效果
-2. [zTC1_A1](https://github.com/a2633063/zTC1)	     斐讯排插TC1重新开发固件,仅支持a1版本.
+2. [zTC1_a1](https://github.com/a2633063/zTC1)	      斐讯排插TC1重新开发固件,仅支持a1版本.
 3. [zDC1](https://github.com/a2633063/zDC1_public)		       斐讯排插DC1重新开发固件.
-4. RGB灯             开发中
-5. wifi校时时钟   开发中
+4. [zA1](https://github.com/a2633063/zA1)		          斐讯空气净化器悟净A1重新开发固件.
+5. [zM1](https://github.com/a2633063/zM1)		         斐讯空气检测仪悟空M1重新开发固件.
+6. RGB灯             开发中
+7. wifi校时时钟   开发中
 
 
 
