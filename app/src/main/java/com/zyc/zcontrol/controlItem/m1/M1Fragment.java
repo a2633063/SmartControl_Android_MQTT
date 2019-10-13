@@ -259,6 +259,7 @@ public class M1Fragment extends Fragment {
 
     void Send(String message) {
         if (mConnectService == null) return;
+        if(getActivity()==null) Log.e(Tag,"getActivity");
         boolean b = getActivity().getSharedPreferences("Setting_" + device_mac, 0).getBoolean("always_UDP", false);
         mConnectService.Send(b ? null : "device/zm1/" + device_mac + "/set", message);
     }
