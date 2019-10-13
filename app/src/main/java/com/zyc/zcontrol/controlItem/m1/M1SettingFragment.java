@@ -50,6 +50,7 @@ public class M1SettingFragment extends MyPreferenceFragment {
     //endregion
 
     Preference fw_version;
+    Preference time_calibration;
     Preference lock;
     Preference restart;
     Preference regetdata;
@@ -201,6 +202,7 @@ public class M1SettingFragment extends MyPreferenceFragment {
         //endregion
 
         fw_version = findPreference("fw_version");
+        time_calibration = findPreference("time_calibration");
         lock = findPreference("lock");
         restart = findPreference("restart");
         regetdata = findPreference("regetdata");
@@ -240,7 +242,7 @@ public class M1SettingFragment extends MyPreferenceFragment {
 //        lock.setOnPreferenceClickListener(new Preference.OnPreferenceClickListener() {
 //            @Override
 //            public boolean onPreferenceClick(Preference preference) {
-//                //region 未获取到当前激活信息
+                //region 未获取到当前激活信息
 //                if (lock.getSummary() == null) {
 //                    AlertDialog alertDialog = new AlertDialog.Builder(getActivity())
 //                            .setTitle("未获取到当前设备激活信息")
@@ -255,12 +257,31 @@ public class M1SettingFragment extends MyPreferenceFragment {
 //                    alertDialog.show();
 //                    return false;
 //                }
-//                //endregion
+                //endregion
 //
 //                unlock();
 //                return false;
 //            }
 //        });
+        //endregion
+        //region 手动校时
+        time_calibration.setOnPreferenceClickListener(new Preference.OnPreferenceClickListener() {
+            @Override
+            public boolean onPreferenceClick(Preference preference) {
+
+                //未获取到当前版本信息
+                if (!isGetVersion()) return false;
+                new AlertDialog.Builder(getActivity()).setTitle("手动校时?")
+                        .setMessage("注意:校时后,必须等待一分钟才能校时成功,所以请不要快速连续进行手动校时")
+                        .setPositiveButton("确定", new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialogInterface, int i) {
+                                Send("{\"mac\":\"" + device_mac + "\",\"time\":-1}");
+                            }
+                        }).setNegativeButton("取消", null).show();
+                return false;
+            }
+        });
         //endregion
 
         //region 版本
@@ -325,7 +346,6 @@ public class M1SettingFragment extends MyPreferenceFragment {
                             }
                         }).setNegativeButton("取消", null).show();
 
-                //endregion
 
                 return false;
             }
@@ -456,7 +476,17 @@ public class M1SettingFragment extends MyPreferenceFragment {
                 name_preference.setText(name);
             }
             //endregion
-
+            //region 校时结果
+            if (jsonObject.has("time")) {
+                int time = jsonObject.getInt("time");
+                int x=(int)(System.currentTimeMillis() / 1000);
+                if(x-time<60 && time-x<60){
+                    Toast.makeText(getActivity(), "校时成功\n等待一分钟后修改显示", Toast.LENGTH_SHORT).show();
+                }else{
+                    Toast.makeText(getActivity(), "请等待一分钟后确认修改完成", Toast.LENGTH_SHORT).show();
+                }
+            }
+            //endregion
             //region 获取版本号
             if (jsonObject.has("version")) {
                 String version = jsonObject.getString("version");
