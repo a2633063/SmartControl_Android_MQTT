@@ -58,7 +58,7 @@
             <TextView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="当前APP支持的控制设备:\nzTC1(排插)|zDC1(排插)|zA1(空气净化器)|按键伴侣\n\n本app开源地址:"
+                android:text="当前APP支持的控制设备:\nzTC1(排插)|zDC1(排插)|zA1(空气净化器)|zM1(空气检测器)|按键伴侣\n\n本app开源地址:"
                 android:textSize="18dp" />
 
             <TextView
@@ -121,7 +121,12 @@
                 android:layout_height="wrap_content"
                 android:layout_gravity="bottom"
                 android:text="zA1文档" />
-
+            <Button
+                android:id="@+id/btn_zm1"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_gravity="bottom"
+                android:text="zM1文档" />
             <Button
                 android:id="@+id/btn_zbuttonmate"
                 android:layout_width="match_parent"

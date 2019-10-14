@@ -745,6 +745,16 @@ public class MainActivity extends AppCompatActivity {
             }
         });
         //endregion
+        //region zM1页面跳转
+        popupView.findViewById(R.id.btn_zm1).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Uri uri = Uri.parse("https://a2633063.github.io/zM1/");
+                Intent intent = new Intent(Intent.ACTION_VIEW, uri);
+                startActivity(intent);
+            }
+        });
+        //endregion
         //region window初始化
         window.setBackgroundDrawable(new ColorDrawable(android.graphics.Color.alpha(0xffff0000)));
         window.setOutsideTouchable(true);
