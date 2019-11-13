@@ -106,7 +106,7 @@
     <ScrollView
         android:id="@+id/scrollView"
         android:layout_width="match_parent"
-        android:layout_height="22sp"
+        android:layout_height="66sp"
         android:layout_gravity="bottom"
         android:addStatesFromChildren="false"
         android:scrollbars="none">

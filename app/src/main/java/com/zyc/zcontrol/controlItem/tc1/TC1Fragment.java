@@ -307,13 +307,28 @@ public class TC1Fragment extends Fragment {
                 int total_time = jsonObject.getInt("total_time");
                 Log.d(Tag, "total_time:" + total_time);
 
-
-                Calendar calendar = Calendar.getInstance();
-//                now.setTime(d);
-                calendar.add(Calendar.SECOND, 0 - total_time);
-                SimpleDateFormat sdf = new SimpleDateFormat("yyyy/MM/dd HH:mm:ss");
-
-                tv_total_time.setText("运行时间:" + total_time + "秒\n上次开机时间:" + sdf.format(calendar.getTime()));
+                String timeStr = "";
+                int days = total_time / 86400; //天
+                int hours = ((total_time % 86400) / 3600); //小时
+                int minutes = ((total_time % 3600) / 60); //分
+                int second = ((total_time %60) ); //秒
+                if (days > 0)   //天
+                {
+                    timeStr += days + "天";
+                }
+                if (hours > 0)   //小时
+                {
+                    timeStr += hours + "小时";
+                }
+                if (minutes > 0)   //分
+                {
+                    timeStr += minutes + "分";
+                }
+                if (second > 0)   //秒
+                {
+                    timeStr += second + "秒";
+                }
+                tv_total_time.setText("运行时间: " + timeStr );
 
             }
             //region 解析plug

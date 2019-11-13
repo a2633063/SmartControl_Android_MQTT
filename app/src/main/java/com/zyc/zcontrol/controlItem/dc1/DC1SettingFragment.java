@@ -301,7 +301,10 @@ public class DC1SettingFragment extends MyPreferenceFragment {
                         otaInfo = new DC1OTAInfo();
                         Message msg = new Message();
                         msg.what = 0;
-                        msg.obj = WebService.WebConnect("https://gitee.com/api/v5/repos/zhangyichen/zDC1_public/releases/latest");
+                        String res=WebService.WebConnect("https://gitee.com/api/v5/repos/a2633063/zDC1_public/releases/latest");
+                        if(res==null || res.length()<100)
+                            res=WebService.WebConnect("https://gitee.com/api/v5/repos/zhangyichen/zDC1_public/releases/latest");
+                        msg.obj=res;
                         handler.sendMessageDelayed(msg, 0);// 执行耗时的方法之后发送消给handler
                     }
                 }).start();

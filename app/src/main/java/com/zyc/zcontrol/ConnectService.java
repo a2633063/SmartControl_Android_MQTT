@@ -242,9 +242,9 @@ public class ConnectService extends Service {
                 public void onSuccess(IMqttToken asyncActionToken) {
                     Log.d("ConnectService", "connect onSuccess");
                     try {
-                        mqttClient.subscribe("domoticz/in", 0);
-                        mqttClient.subscribe("device/+/+/state", 0);
-                        mqttClient.subscribe("device/+/+/sensor", 0);
+                        //mqttClient.subscribe("domoticz/in", 1);
+                        mqttClient.subscribe("device/+/+/state", 1);
+                        mqttClient.subscribe("device/+/+/sensor", 1);
                         //mqttClient.subscribe("homeassistant/+/+/#", 0);
                         broadcastUpdate(ACTION_MQTT_CONNECTED); //连接成功
                     } catch (MqttException e) {

@@ -418,7 +418,10 @@ public class MainActivity extends AppCompatActivity {
             public void run() {
                 Message msg = new Message();
                 msg.what = 100;
-                msg.obj = WebService.WebConnect("https://gitee.com/api/v5/repos/zhangyichen/SmartControl_Android_MQTT/releases/latest");
+                String res=WebService.WebConnect("https://gitee.com/api/v5/repos/a2633063/SmartControl_Android_MQTT/releases/latest");
+                if(res==null || res.length()<100)
+                    res=WebService.WebConnect("https://gitee.com/api/v5/repos/zhangyichen/SmartControl_Android_MQTT/releases/latest");
+                msg.obj=res;
                 handler.sendMessageDelayed(msg, 0);// 执行耗时的方法之后发送消给handler
             }
         }).start();
