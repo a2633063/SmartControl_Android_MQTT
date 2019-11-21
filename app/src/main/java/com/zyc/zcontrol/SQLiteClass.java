@@ -12,12 +12,12 @@ public class SQLiteClass {
     SQLDBHelper dbHelper;
 
     public SQLiteClass(Context context, String filename) {
-        dbHelper = new SQLDBHelper(context, "databases.db", null, 1);
+        dbHelper = new SQLDBHelper(context, "databases.db", null);
         SQLiteDatabase db = dbHelper.getReadableDatabase();
     }
 
     public SQLiteClass(Context context) {
-        dbHelper = new SQLDBHelper(context, "databases.db", null, 1);
+        dbHelper = new SQLDBHelper(context, "databases.db", null);
         SQLiteDatabase db = dbHelper.getReadableDatabase();
     }
 
@@ -70,27 +70,29 @@ public class SQLiteClass {
     class SQLDBHelper extends SQLiteOpenHelper {
 
         private static final String TAG = "SQLDBHelper";
-        public static final int VERSION = 1;
+        public static final int VERSION = 2;
 
         //必须要有构造函数
-        public SQLDBHelper(Context context, String name, SQLiteDatabase.CursorFactory factory,
-                           int version) {
-            super(context, name, factory, version);
+        public SQLDBHelper(Context context, String name, SQLiteDatabase.CursorFactory factory) {
+            super(context, name, factory, VERSION);
         }
 
         // 当第一次创建数据库的时候，调用该方法
         public void onCreate(SQLiteDatabase db) {
-            String sql = "create table device_list(id INTEGER PRIMARY KEY AUTOINCREMENT,name varchar(32) NOT NULL,type int NOT NULL,mac varchar(12) NOT NULL)";
-//输出创建数据库的日志信息
+            String sql = "create table device_list(id INTEGER PRIMARY KEY AUTOINCREMENT,name varchar(32) NOT NULL,type int NOT NULL,mac varchar(12) NOT NULL,sort int)";
+            //输出创建数据库的日志信息
             Log.i(TAG, "create Database------------->");
-//execSQL函数用于执行SQL语句
+            //execSQL函数用于执行SQL语句
             db.execSQL(sql);
         }
 
         //当更新数据库的时候执行该方法
         public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
-//输出更新数据库的日志信息
+            //输出更新数据库的日志信息
             Log.i(TAG, "update Database------------->");
+            if (oldVersion == 1 && newVersion == 2) {
+                db.execSQL("ALTER TABLE device_list ADD COLUMN sort integer;");
+            }
         }
     }
 }

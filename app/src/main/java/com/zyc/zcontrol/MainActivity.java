@@ -81,6 +81,7 @@ public class MainActivity extends AppCompatActivity {
     private MsgReceiver msgReceiver;
     //endregion
 
+    private TextView tvDeviceSort;
     private Toolbar toolbar;
     private TabLayout tabLayout;
     private ViewPager viewPager;
@@ -191,7 +192,7 @@ public class MainActivity extends AppCompatActivity {
         SQLiteClass sqLite = new SQLiteClass(this, "device_list");
         //参数1：表名    参数2：要想显示的列    参数3：where子句   参数4：where子句对应的条件值
         // 参数5：分组方式  参数6：having条件  参数7：排序方式
-        Cursor cursor = sqLite.Query("device_list", new String[]{"id", "name", "type", "mac"}, null, null, null, null, null);
+        Cursor cursor = sqLite.Query("device_list", new String[]{"id", "name", "type", "mac", "sort"}, null, null, null, null, "sort");
         while (cursor.moveToNext()) {
             String id = cursor.getString(cursor.getColumnIndex("id"));
             String name = cursor.getString(cursor.getColumnIndex("name"));
@@ -223,6 +224,17 @@ public class MainActivity extends AppCompatActivity {
 
         //endregion
 
+        //region 排序提示初始化
+        tvDeviceSort = findViewById(R.id.tv_device_list_tips);
+        tvDeviceSort.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(MainActivity.this, DeviceSortActivity.class);
+                startActivity(intent);
+                finish();
+            }
+        });
+        //endregion
         int page = mSharedPreferences.getInt("page", 0);
         //region listview及adapter
 
@@ -418,10 +430,10 @@ public class MainActivity extends AppCompatActivity {
             public void run() {
                 Message msg = new Message();
                 msg.what = 100;
-                String res=WebService.WebConnect("https://gitee.com/api/v5/repos/a2633063/SmartControl_Android_MQTT/releases/latest");
-                if(res==null || res.length()<100)
-                    res=WebService.WebConnect("https://gitee.com/api/v5/repos/zhangyichen/SmartControl_Android_MQTT/releases/latest");
-                msg.obj=res;
+                String res = WebService.WebConnect("https://gitee.com/api/v5/repos/a2633063/SmartControl_Android_MQTT/releases/latest");
+                if (res == null || res.length() < 100)
+                    res = WebService.WebConnect("https://gitee.com/api/v5/repos/zhangyichen/SmartControl_Android_MQTT/releases/latest");
+                msg.obj = res;
                 handler.sendMessageDelayed(msg, 0);// 执行耗时的方法之后发送消给handler
             }
         }).start();
@@ -696,7 +708,7 @@ public class MainActivity extends AppCompatActivity {
         });
         //endregion
         //region 作者github跳转
-        TextView tv_author=popupView.findViewById(R.id.tv_author);
+        TextView tv_author = popupView.findViewById(R.id.tv_author);
         tv_author.getPaint().setFlags(Paint.UNDERLINE_TEXT_FLAG);
         tv_author.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -863,6 +875,7 @@ public class MainActivity extends AppCompatActivity {
                     cv.put("name", name);
                     cv.put("type", type);
                     cv.put("mac", mac);
+                    cv.put("sort",data.size());
                     sqLite.Insert("device_list", cv);
                     data.add(d);
                     fragmentAdapter.notifyDataSetChanged();

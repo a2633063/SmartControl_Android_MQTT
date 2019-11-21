@@ -27,6 +27,17 @@
             android:layout_marginTop="@dimen/nav_header_height"
             android:orientation="vertical">
 
+            <TextView
+                android:id="@+id/tv_device_list_tips"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:gravity="center"
+                android:textSize="8dp"
+                android:text="长按删除/创建快捷方式.点此设置排序" />
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="1dp"
+                android:background="#80ededed" />
             <ListView
                 android:id="@+id/lv_device"
                 android:layout_width="match_parent"
@@ -49,33 +60,35 @@
                     android:layout_width="0dp"
                     android:layout_height="match_parent"
                     android:layout_weight="1"
+                    android:background="@drawable/state_side_nav_bottom_btn"
                     android:clickable="true"
                     android:drawableTop="@drawable/ic_settings_black_24dp"
-                    android:background="@drawable/state_side_nav_bottom_btn"
                     android:gravity="center"
                     android:lines="1"
                     android:padding="5dp"
                     android:text="设置" />
+
                 <TextView
                     android:id="@+id/tv_info"
                     android:layout_width="0dp"
                     android:layout_height="match_parent"
                     android:layout_weight="1"
+                    android:background="@drawable/state_side_nav_bottom_btn"
                     android:clickable="true"
                     android:drawableTop="@drawable/ic_info_black_24dp"
-                    android:background="@drawable/state_side_nav_bottom_btn"
                     android:gravity="center"
                     android:lines="1"
                     android:padding="5dp"
                     android:text="帮助/关于" />
+
                 <TextView
                     android:id="@+id/tv_exit"
                     android:layout_width="0dp"
                     android:layout_height="match_parent"
                     android:layout_weight="1"
+                    android:background="@drawable/state_side_nav_bottom_btn"
                     android:clickable="true"
                     android:drawableTop="@drawable/ic_power_settings_new_black_24dp"
-                    android:background="@drawable/state_side_nav_bottom_btn"
                     android:gravity="center"
                     android:lines="1"
                     android:padding="5dp"

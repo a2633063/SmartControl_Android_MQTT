@@ -8,17 +8,11 @@
     <uses-permission android:name="android.permission.CHANGE_WIFI_MULTICAST_STATE" />
     <uses-permission android:name="android.permission.CHANGE_WIFI_STATE" />
     <uses-permission android:name="android.permission.WAKE_LOCK" />
-
     <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
-    <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
-
-    <!--创建桌面快捷方式相关权限-->
-    <uses-permission android:name="com.android.launcher.permission.WRITE_SETTINGS" />
-    <!-- 添加快捷方式 -->
-    <uses-permission android:name="com.android.launcher.permission.INSTALL_SHORTCUT" />
-    <!-- 移除快捷方式 -->
-    <uses-permission android:name="com.android.launcher.permission.UNINSTALL_SHORTCUT" />
-    <!-- 查询快捷方式 -->
+    <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" /> <!-- 创建桌面快捷方式相关权限 -->
+    <uses-permission android:name="com.android.launcher.permission.WRITE_SETTINGS" /> <!-- 添加快捷方式 -->
+    <uses-permission android:name="com.android.launcher.permission.INSTALL_SHORTCUT" /> <!-- 移除快捷方式 -->
+    <uses-permission android:name="com.android.launcher.permission.UNINSTALL_SHORTCUT" /> <!-- 查询快捷方式 -->
     <uses-permission android:name="com.android.launcher.permission.READ_SETTINGS" />
     <uses-permission android:name="com.android.launcher2.permission.READ_SETTINGS" />
     <uses-permission android:name="com.android.launcher2.permission.WRITE_SETTINGS" />
@@ -62,7 +56,6 @@
     <uses-permission android:name="telecom.mdesk.permission.WRITE_SETTINGS" />
     <uses-permission android:name="dianxin.permission.ACCESS_LAUNCHER_DATA" />
 
-
     <application
         android:allowBackup="false"
         android:icon="@mipmap/ic_launcher"
@@ -70,6 +63,7 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
+        <activity android:name=".DeviceSortActivity"></activity>
         <activity
             android:name=".controlItem.a1.A1PlugActivity"
             android:label="插口" />
