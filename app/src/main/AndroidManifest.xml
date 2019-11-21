@@ -63,7 +63,8 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
-        <activity android:name=".DeviceSortActivity"></activity>
+        <activity android:name=".DeviceSortActivity"
+            android:label="排序"></activity>
         <activity
             android:name=".controlItem.a1.A1PlugActivity"
             android:label="插口" />
