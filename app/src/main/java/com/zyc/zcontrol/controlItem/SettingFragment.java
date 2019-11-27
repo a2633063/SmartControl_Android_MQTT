@@ -32,6 +32,7 @@ public class SettingFragment extends PreferenceFragment {
         EditTextPreference mqtt_uri = (EditTextPreference) findPreference("mqtt_uri");
         EditTextPreference mqtt_user = (EditTextPreference) findPreference("mqtt_user");
         EditTextPreference mqtt_password = (EditTextPreference) findPreference("mqtt_password");
+        EditTextPreference mqtt_clientid = (EditTextPreference) findPreference("mqtt_clientid");
 
         mqtt_user.setOnPreferenceChangeListener(new Preference.OnPreferenceChangeListener() {
             @Override
@@ -75,10 +76,18 @@ public class SettingFragment extends PreferenceFragment {
             }
         });
 
+        mqtt_clientid.setOnPreferenceChangeListener(new Preference.OnPreferenceChangeListener() {
+            @Override
+            public boolean onPreferenceChange(Preference preference, Object newValue) {
+                preference.setSummary((String) newValue);
+                Toast.makeText(getActivity(), "注意:同个MQTT服务器内,ClientID必须唯一,否则将导致设备掉线\n修改ClientID APP重启才生效", Toast.LENGTH_SHORT).show();
 
+                return true;
+            }
+        });
         mqtt_uri.setSummary(mqtt_uri.getText());
         mqtt_user.setSummary(mqtt_user.getText());
-
+        mqtt_clientid.setSummary(mqtt_clientid.getText());
         if (mqtt_password.getText()!=null && mqtt_password.getText().length() > 0)
             mqtt_password.setSummary("***********");
         else

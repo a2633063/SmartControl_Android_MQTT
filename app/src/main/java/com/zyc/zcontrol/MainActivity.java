@@ -105,14 +105,16 @@ public class MainActivity extends AppCompatActivity {
                     if (mConnectService != null) {
                         handler.removeMessages(1);
                         String mqtt_uri = mSharedPreferences.getString("mqtt_uri", null);
-                        String mqtt_id = mConnectService.mqtt_id;
+                        String mqtt_id = mSharedPreferences.getString("mqtt_clientid", null);
                         String mqtt_user = mSharedPreferences.getString("mqtt_user", null);
                         String mqtt_password = mSharedPreferences.getString("mqtt_password", null);
 
                         Log.d(Tag, "mqtt connect: " + mqtt_uri + ",user:" + mqtt_user + "," + mqtt_password);
-                        if (mqtt_id == null) mqtt_id = "Android_" + new Random().nextInt(1000);
-                        mConnectService.connect(mqtt_uri, mqtt_id,
-                                mqtt_user, mqtt_password);
+                        if (mqtt_id == null || mqtt_id.length() < 1)
+                            mqtt_id = "Android_" + new Random().nextInt(10000);
+
+                        Log.d(Tag,"mqtt_id:"+mqtt_id);
+                        mConnectService.connect(mqtt_uri, mqtt_id, mqtt_user, mqtt_password);
                     }
                     break;
                 //endregion
@@ -500,7 +502,7 @@ public class MainActivity extends AppCompatActivity {
         if (mConnectService != null) {
 
             String mqtt_uri = mSharedPreferences.getString("mqtt_uri", null);
-            String mqtt_id = mConnectService.mqtt_id;
+            String mqtt_id = mSharedPreferences.getString("mqtt_clientid", null);
             String mqtt_user = mSharedPreferences.getString("mqtt_user", null);
             String mqtt_password = mSharedPreferences.getString("mqtt_password", null);
 
@@ -875,7 +877,7 @@ public class MainActivity extends AppCompatActivity {
                     cv.put("name", name);
                     cv.put("type", type);
                     cv.put("mac", mac);
-                    cv.put("sort",data.size());
+                    cv.put("sort", data.size());
                     sqLite.Insert("device_list", cv);
                     data.add(d);
                     fragmentAdapter.notifyDataSetChanged();

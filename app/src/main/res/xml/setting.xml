@@ -26,6 +26,14 @@
             android:negativeButtonText="取消"
             android:positiveButtonText="保存"
             android:title="MQTT登录密码" />
+
+        <EditTextPreference
+            android:dialogTitle="MQTT Client ID"
+            android:dialogMessage="非特殊需要建议为空,使之随机生成"
+            android:key="mqtt_clientid"
+            android:negativeButtonText="取消"
+            android:positiveButtonText="保存"
+            android:title="MQTT Client ID(不填时随机生成)" />
         <!--<CheckBoxPreference-->
             <!--android:defaultValue="false"-->
             <!--android:disableDependentsState="true"-->
