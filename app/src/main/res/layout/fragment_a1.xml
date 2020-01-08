@@ -47,7 +47,7 @@
                     app:srcCompat="@drawable/fan" />
 
                 <SeekBar
-                    android:id="@+id/seekBar"
+                    android:id="@+id/seekBarR"
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:max="100"
@@ -96,8 +96,8 @@
                     android:gravity="center_horizontal"
                     android:text="风速:---%"
                     android:textSize="20dp"
-                    app:layout_constraintBottom_toTopOf="@id/seekBar"
-                    app:layout_constraintEnd_toEndOf="@id/seekBar" />
+                    app:layout_constraintBottom_toTopOf="@id/seekBarR"
+                    app:layout_constraintEnd_toEndOf="@id/seekBarR" />
             </android.support.constraint.ConstraintLayout>
         </LinearLayout>
 

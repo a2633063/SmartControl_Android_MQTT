@@ -1,4 +1,4 @@
-package com.zyc.zcontrol.controlItem.m1;
+package com.zyc.zcontrol.controlItem.rgbw;
 
 
 import android.annotation.SuppressLint;
@@ -17,7 +17,6 @@ import android.support.v4.app.Fragment;
 import android.support.v4.content.LocalBroadcastManager;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.text.Editable;
-import android.text.Html;
 import android.text.TextWatcher;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -37,14 +36,15 @@ import org.json.JSONObject;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.Locale;
 
 import static android.content.Context.BIND_AUTO_CREATE;
 
 /**
  * A simple {@link Fragment} subclass.
  */
-public class M1Fragment extends Fragment {
-    public final static String Tag = "M1Fragment";
+public class RGBWFragment extends Fragment {
+    public final static String Tag = "RGBWFragment";
 
     private SharedPreferences mSharedPreferences;
     private SharedPreferences.Editor mEditor;
@@ -57,12 +57,15 @@ public class M1Fragment extends Fragment {
 
     //region 控件
     private SwipeRefreshLayout mSwipeLayout;
-    TextView tvPm25;
-    TextView tvFormaldehyde;
-    TextView tvTemperature;
-    TextView tvHumidity;
-    SeekBar seekBar;
-    TextView tvBrightness;
+
+    TextView textViewR;
+    TextView textViewG;
+    TextView textViewB;
+    TextView textViewW;
+    SeekBar seekBarR;
+    SeekBar seekBarG;
+    SeekBar seekBarB;
+    SeekBar seekBarW;
 
     //endregion
     TextView log;
@@ -71,13 +74,13 @@ public class M1Fragment extends Fragment {
     String device_mac = null;
     String device_name = null;
 
-    public M1Fragment() {
+    public RGBWFragment() {
 
         // Required empty public constructor
     }
 
     @SuppressLint("ValidFragment")
-    public M1Fragment(String name, String mac) {
+    public RGBWFragment(String name, String mac) {
         this.device_mac = mac;
         this.device_name = name;
         // Required empty public constructor
@@ -85,17 +88,17 @@ public class M1Fragment extends Fragment {
 
     //region Handler
     @SuppressLint("HandlerLeak")
-    Handler  handler = new Handler() {
+    Handler handler = new Handler() {
         @Override
         public void handleMessage(Message msg) {// handler接收到消息后就会执行此方法
             switch (msg.what) {
                 case 1:
-                    Send("{\"mac\":\"" + device_mac + "\",\"brightness\":null}");
+                    Send("{\"mac\":\"" + device_mac + "\",\"rgb\":null}");
                     break;
                 case 2:
-                    Log.d(Tag, "send seekbar:" + msg.arg1);
+                    Log.d(Tag, "send color:" + msg.obj);
 
-                    Send("{\"mac\":\"" + device_mac + "\",\"brightness\":" + msg.arg1 + "}");
+                    Send("{\"mac\":\"" + device_mac + "\",\"rgb\":" + msg.obj + "}");
                     break;
             }
         }
@@ -107,7 +110,7 @@ public class M1Fragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
-        final View view = inflater.inflate(R.layout.fragment_m1, container, false);
+        final View view = inflater.inflate(R.layout.fragment_rgbw, container, false);
 
         //region MQTT服务有关
         //region 动态注册接收mqtt服务的广播接收器,
@@ -129,23 +132,18 @@ public class M1Fragment extends Fragment {
 
         //region 控件初始化
 
-        tvPm25 = view.findViewById(R.id.tv_pm25_value);
-        tvFormaldehyde = view.findViewById(R.id.tv_formaldehyde_value);
-        tvTemperature = view.findViewById(R.id.tv_temperature_value);
-        tvHumidity = view.findViewById(R.id.tv_humidity_value);
-
-        tvPm25.setText("---");
-        tvFormaldehyde.setText("-.--");
-
-        String exchange = getActivity().getResources().getString(R.string.m1_num_string, "--", "-");
-        tvTemperature.setText(Html.fromHtml(exchange));
-        exchange = getActivity().getResources().getString(R.string.m1_num_string, "--", "-").replace("℃", "%");
-        tvHumidity.setText(Html.fromHtml(exchange));
+        textViewR = view.findViewById(R.id.textViewR);
+        textViewG = view.findViewById(R.id.textViewG);
+        textViewB = view.findViewById(R.id.textViewB);
+        textViewW = view.findViewById(R.id.textViewW);
 
         //region 拖动条 处理viewpage/SwipeRefreshLayout滑动冲突事件
-        seekBar = view.findViewById(R.id.seekBarR);
+        seekBarR = view.findViewById(R.id.seekBarR);
+        seekBarG = view.findViewById(R.id.seekBarG);
+        seekBarB = view.findViewById(R.id.seekBarB);
+        seekBarW = view.findViewById(R.id.seekBarW);
         //region 处理viewpage/SwipeRefreshLayout滑动冲突事件
-        seekBar.setOnTouchListener(new View.OnTouchListener() {
+        View.OnTouchListener seekBarTouchListener = new View.OnTouchListener() {
             @Override
             public boolean onTouch(View v, MotionEvent event) {
                 view.getParent().requestDisallowInterceptTouchEvent(true);
@@ -153,39 +151,46 @@ public class M1Fragment extends Fragment {
                 else mSwipeLayout.setEnabled(false);
                 return false;
             }
-        });
+        };
+
+        seekBarR.setOnTouchListener(seekBarTouchListener);
+        seekBarG.setOnTouchListener(seekBarTouchListener);
+        seekBarB.setOnTouchListener(seekBarTouchListener);
+        seekBarW.setOnTouchListener(seekBarTouchListener);
         //endregion
-        seekBar.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
+
+        //region SeekBar拖动事件函数
+        SeekBar.OnSeekBarChangeListener seekBarSeekBarChangeListener = new SeekBar.OnSeekBarChangeListener() {
             @Override
             public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
+                textViewR.setText(String.format(Locale.getDefault(), "R:%03d", seekBarR.getProgress()));
+                textViewG.setText(String.format(Locale.getDefault(), "G:%03d", seekBarG.getProgress()));
+                textViewB.setText(String.format(Locale.getDefault(), "B:%03d", seekBarB.getProgress()));
+                textViewW.setText(String.format(Locale.getDefault(), "W:%03d", seekBarW.getProgress()));
             }
+
             @Override
             public void onStartTrackingTouch(SeekBar seekBar) {
             }
+
             @Override
             public void onStopTrackingTouch(SeekBar seekBar) {
-                Message msg=new Message();
-                msg.arg1=seekBar.getProgress();
-                msg.what=2;
-                handler.sendMessageDelayed(msg,1);
+                Message msg = new Message();
+                msg.obj = "["+seekBarR.getProgress() + "," + seekBarG.getProgress() + "," +
+                        seekBarB.getProgress() + "," + seekBarW.getProgress()+"]";
+                msg.what = 2;
+                handler.sendMessageDelayed(msg, 1);
             }
-        });
-
+        };
+        seekBarR.setOnSeekBarChangeListener(seekBarSeekBarChangeListener);
+        seekBarG.setOnSeekBarChangeListener(seekBarSeekBarChangeListener);
+        seekBarB.setOnSeekBarChangeListener(seekBarSeekBarChangeListener);
+        seekBarW.setOnSeekBarChangeListener(seekBarSeekBarChangeListener);
+        //endregion
         //endregion
 
-        tvBrightness=view.findViewById(R.id.textViewR);
-        tvBrightness.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Intent intent = new Intent(getContext(), M1PlugActivity.class);
-                intent.putExtra("name", device_name);
-                intent.putExtra("mac", device_mac);
-                startActivity(intent);
-            }
-        });
-
-        //region 更新当前状态
-        mSwipeLayout = (SwipeRefreshLayout) view.findViewById(R.id.swipeRefreshLayout);
+        //region SwipeLayout更新当前状态
+        mSwipeLayout = view.findViewById(R.id.swipeRefreshLayout);
         mSwipeLayout.setColorSchemeResources(R.color.colorAccent, R.color.colorPrimaryDark, R.color.colorAccent, R.color.colorPrimary);
         mSwipeLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
             @Override
@@ -237,11 +242,16 @@ public class M1Fragment extends Fragment {
         super.onDestroy();
     }
 
+    //region 按钮事件
+
+    //endregion
+
+
     void Send(String message) {
         if (mConnectService == null) return;
-        if(getActivity()==null) Log.e(Tag,"getActivity");
+        if (getActivity() == null) Log.e(Tag, "getActivity");
         boolean b = getActivity().getSharedPreferences("Setting_" + device_mac, 0).getBoolean("always_UDP", false);
-        mConnectService.Send(b ? null : "device/zm1/" + device_mac + "/set", message);
+        mConnectService.Send(b ? null : "device/zrgbw/" + device_mac + "/set", message);
     }
 
     //数据接收处理函数
@@ -263,36 +273,12 @@ public class M1Fragment extends Fragment {
             if (jsonObject.has("mac")) mac = jsonObject.getString("mac");
             if (jsonObject.has("setting")) jsonSetting = jsonObject.getJSONObject("setting");
             if (mac == null || !mac.equals(device_mac)) return;
-            //region 解析传感器参数
 
-            if (jsonObject.has("PM25")) {
-                int PM25 = jsonObject.getInt("PM25");
-                tvPm25.setText(String.valueOf(PM25));
-            }
-
-            if (jsonObject.has("formaldehyde")) {
-                double formaldehyde = jsonObject.getDouble("formaldehyde");
-                tvFormaldehyde.setText(String.valueOf(formaldehyde));
-            }
-            String exchange;
-            if (jsonObject.has("temperature")) {
-                double temperature = jsonObject.getDouble("temperature");
-                int t = (int) (temperature * 10);
-                exchange = getActivity().getResources().getString(R.string.m1_num_string, String.valueOf(t / 10), String.valueOf(t % 10));
-                tvTemperature.setText(Html.fromHtml(exchange));
-            }
-            if (jsonObject.has("humidity")) {
-                double humidity = jsonObject.getDouble("humidity");
-                int h = (int) (humidity * 10);
-                exchange = getActivity().getResources().getString(R.string.m1_num_string, String.valueOf(h / 10), String.valueOf(h % 10)).replace("℃","%");
-                tvHumidity.setText(Html.fromHtml(exchange));
-            }
-            //endregion
             //region 解析on
-            if (jsonObject.has("brightness")) {
-                int brightness = jsonObject.getInt("brightness");
-                seekBar.setProgress(brightness);
-            }
+//            if (jsonObject.has("brightness")) {
+//                int brightness = jsonObject.getInt("brightness");
+//                seekBarR.setProgress(brightness);
+//            }
             //endregion
 
         } catch (JSONException e) {

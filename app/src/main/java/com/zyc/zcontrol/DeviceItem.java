@@ -10,6 +10,7 @@ import com.zyc.zcontrol.controlItem.a1.A1Fragment;
 import com.zyc.zcontrol.controlItem.buttonmate.ButtonMateFragment;
 import com.zyc.zcontrol.controlItem.dc1.DC1Fragment;
 import com.zyc.zcontrol.controlItem.m1.M1Fragment;
+import com.zyc.zcontrol.controlItem.rgbw.RGBWFragment;
 import com.zyc.zcontrol.controlItem.tc1.TC1Fragment;
 
 
@@ -64,6 +65,9 @@ public class DeviceItem {
                 break;
             case StaticVariable.TYPE_M1:
                 fragment=new M1Fragment(name,mac);
+                break;
+            case StaticVariable.TYPE_RGBW:
+                fragment=new RGBWFragment(name,mac);
                 break;
         }
         if(fragment==null)

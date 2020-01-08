@@ -25,7 +25,6 @@ import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.animation.LinearInterpolator;
-import android.widget.CompoundButton;
 import android.widget.ImageView;
 import android.widget.ScrollView;
 import android.widget.SeekBar;
@@ -40,7 +39,6 @@ import org.json.JSONObject;
 
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
-import java.util.Calendar;
 import java.util.Date;
 
 import static android.content.Context.BIND_AUTO_CREATE;
@@ -164,7 +162,7 @@ public class A1Fragment extends Fragment {
         //endregion
 
         //region 拖动条 处理viewpage/SwipeRefreshLayout滑动冲突事件
-        seekBar = view.findViewById(R.id.seekBar);
+        seekBar = view.findViewById(R.id.seekBarR);
         //region 处理viewpage/SwipeRefreshLayout滑动冲突事件
         seekBar.setOnTouchListener(new View.OnTouchListener() {
             @Override

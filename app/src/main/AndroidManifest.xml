@@ -72,6 +72,9 @@
             android:name=".controlItem.m1.M1PlugActivity"
             android:label="定时" />
         <activity
+            android:name=".controlItem.rgbw.RGBWTaskActivity"
+            android:label="定时" />
+        <activity
             android:name=".controlItem.tc1.TC1PlugActivity"
             android:label="插口" />
         <activity

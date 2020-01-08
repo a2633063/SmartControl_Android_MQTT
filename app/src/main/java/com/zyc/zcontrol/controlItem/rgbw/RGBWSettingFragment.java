@@ -1,4 +1,4 @@
-package com.zyc.zcontrol.controlItem.dc1;
+package com.zyc.zcontrol.controlItem.rgbw;
 
 
 import android.annotation.SuppressLint;
@@ -37,10 +37,9 @@ import org.json.JSONObject;
 
 import static android.content.Context.BIND_AUTO_CREATE;
 
-
 @SuppressLint("ValidFragment")
-public class DC1SettingFragment extends MyPreferenceFragment {
-    final static String Tag = "DC1SettingFragment";
+public class RGBWSettingFragment extends MyPreferenceFragment {
+    final static String Tag = "RGBWSettingFragment";
     SharedPreferences mSharedPreferences;
     SharedPreferences.Editor editor;
 
@@ -50,9 +49,8 @@ public class DC1SettingFragment extends MyPreferenceFragment {
     ConnectService mConnectService;
     //endregion
 
+    Preference ssid;
     Preference fw_version;
-    Preference lock;
-
     Preference regetdata;
     EditTextPreference name_preference;
 
@@ -63,7 +61,7 @@ public class DC1SettingFragment extends MyPreferenceFragment {
     boolean ota_flag = false;
     private ProgressDialog pd;
 
-    private DC1OTAInfo otaInfo = new DC1OTAInfo();
+    private RGBWOTAInfo otaInfo = new RGBWOTAInfo();
 
     //region Handler
     @SuppressLint("HandlerLeak")
@@ -85,7 +83,7 @@ public class DC1SettingFragment extends MyPreferenceFragment {
                         if (obj.has("id") && obj.has("tag_name") && obj.has("target_commitish")
                                 && obj.has("name") && obj.has("body") && obj.has("created_at")
                                 && obj.has("assets")) {
-                            otaInfo.title = obj.getString("name");   //
+                            otaInfo.title = obj.getString("name");
                             otaInfo.message = obj.getString("body");
                             otaInfo.tag_name = obj.getString("tag_name");
                             otaInfo.created_at = obj.getString("created_at");
@@ -117,7 +115,7 @@ public class DC1SettingFragment extends MyPreferenceFragment {
                         public void run() {
                             Message msg = new Message();
                             msg.what = 2;
-                            msg.obj = WebService.WebConnect("https://gitee.com/api/v5/repos/zhangyichen/Release/releases/tags/zDC1");
+                            msg.obj = WebService.WebConnect("https://gitee.com/api/v5/repos/zhangyichen/Release/releases/tags/zRGBW");
                             handler.sendMessageDelayed(msg, 0);// 执行耗时的方法之后发送消给handler
                         }
                     }).start();
@@ -134,7 +132,7 @@ public class DC1SettingFragment extends MyPreferenceFragment {
 
                         obj = new JSONObject(JsonStr);
 
-                        if (obj.getString("name").equals("zDC1发布地址_" + otaInfo.tag_name)) {
+                        if (obj.getString("name").equals("zRGBW发布地址_" + otaInfo.tag_name)) {
                             String otauriAll = obj.getString("body");
                             otaInfo.ota = otauriAll.split("\r\n");
 
@@ -163,7 +161,7 @@ public class DC1SettingFragment extends MyPreferenceFragment {
                 //endregion
                 //region 发送请求数据
                 case 3:
-                    Send("{\"mac\":\"" + device_mac + "\",\"version\":null,\"lock\":null}");
+                    Send("{\"mac\":\"" + device_mac + "\",\"version\":null,\"ssid\":null}");
                     break;
                 //endregion
             }
@@ -171,7 +169,7 @@ public class DC1SettingFragment extends MyPreferenceFragment {
     };
     //endregion
 
-    public DC1SettingFragment(String name, String mac) {
+    public RGBWSettingFragment(String name, String mac) {
         this.device_name = name;
         this.device_mac = mac;
     }
@@ -182,7 +180,7 @@ public class DC1SettingFragment extends MyPreferenceFragment {
         getPreferenceManager().setSharedPreferencesName("Setting_" + device_mac);
 
         Log.d(Tag, "设置文件:" + "Setting" + device_mac);
-        addPreferencesFromResource(R.xml.dc1_setting);
+        addPreferencesFromResource(R.xml.rgbw_setting);
 
 
         //region MQTT服务有关
@@ -201,13 +199,10 @@ public class DC1SettingFragment extends MyPreferenceFragment {
         //endregion
         //endregion
 
+        ssid = findPreference("ssid");
         fw_version = findPreference("fw_version");
-        lock = findPreference("lock");
-
         regetdata = findPreference("regetdata");
         name_preference = (EditTextPreference) findPreference("name");
-
-
         name_preference.setSummary(device_name);
 
         //region mac地址
@@ -237,57 +232,30 @@ public class DC1SettingFragment extends MyPreferenceFragment {
             }
         });
         //endregion
-        //region 激活
-        lock.setOnPreferenceClickListener(new Preference.OnPreferenceClickListener() {
-            @Override
-            public boolean onPreferenceClick(Preference preference) {
-                //region 未获取到当前激活信息
-                if (lock.getSummary() == null) {
-                    AlertDialog alertDialog = new AlertDialog.Builder(getActivity())
-                            .setTitle("未获取到当前设备激活信息")
-                            .setMessage("请获取到当前设备激活信息后重试.")
-                            .setNegativeButton("确定", new DialogInterface.OnClickListener() {
-                                @Override
-                                public void onClick(DialogInterface dialog, int which) {
-//                                    getActivity().finish();
-                                }
-                            })
-                            .create();
-                    alertDialog.show();
-                    return false;
-                }
-                //endregion
-                unlock();
-                return false;
-            }
-        });
-        //endregion
-
-
         //region 版本
         fw_version.setOnPreferenceClickListener(new Preference.OnPreferenceClickListener() {
             @Override
             public boolean onPreferenceClick(Preference preference) {
                 //region 手动输入固件下载地址注释
-                /*
-                final EditText et = new EditText(getActivity());
-                new AlertDialog.Builder(getActivity()).setTitle("请输入固件下载地址")
-                        .setView(et)
-                        .setPositiveButton("确定", new DialogInterface.OnClickListener() {
-                            @Override
-                            public void onClick(DialogInterface dialogInterface, int i) {
-                                String uri = et.getText().toString();
-                                if (uri.length() < 1) return;
-                                if (uri.startsWith("http") && uri.endsWith("/DC1_MK3031_moc.ota.bin")) {
-                                    Send("{\"mac\":\"" + device_mac + "\",\"setting\":{\"ota\":\"" + uri + "\"}}");
-                                }
-                            }
-                        }).setNegativeButton("取消", null).show();
-                        */
-                //endregion
 
+//                final EditText et = new EditText(getActivity());
+//                new AlertDialog.Builder(getActivity()).setTitle("请输入固件下载地址")
+//                        .setView(et)
+//                        .setPositiveButton("确定", new DialogInterface.OnClickListener() {
+//                            @Override
+//                            public void onClick(DialogInterface dialogInterface, int i) {
+//                                String uri = et.getText().toString();
+//                                if (uri.length() < 1) return;
+//                                if (uri.startsWith("http")) {
+//                                    Send("{\"mac\":\"" + device_mac + "\",\"setting\":{\"ota\":\"" + uri + "\"}}");
+//                                }
+//                            }
+//                        }).setNegativeButton("取消", null).show();
+
+                //endregion
                 //未获取到当前版本信息
                 if (!isGetVersion()) return false;
+
 
                 String version = fw_version.getSummary().toString();
                 //region 获取最新版本
@@ -298,12 +266,11 @@ public class DC1SettingFragment extends MyPreferenceFragment {
                 new Thread(new Runnable() {
                     @Override
                     public void run() {
-                        otaInfo = new DC1OTAInfo();
                         Message msg = new Message();
                         msg.what = 0;
-                        String res=WebService.WebConnect("https://gitee.com/api/v5/repos/a2633063/zDC1/releases/latest");
+                        String res=WebService.WebConnect("https://gitee.com/api/v5/repos/a2633063/zRGBW/releases/latest");
                         if(res==null || res.length()<100)
-                            res=WebService.WebConnect("https://gitee.com/api/v5/repos/zhangyichen/zDC1/releases/latest");
+                            res=WebService.WebConnect("https://gitee.com/api/v5/repos/zhangyichen/zRGBW/releases/latest");
                         msg.obj=res;
                         handler.sendMessageDelayed(msg, 0);// 执行耗时的方法之后发送消给handler
                     }
@@ -324,7 +291,6 @@ public class DC1SettingFragment extends MyPreferenceFragment {
             }
         });
         //endregion
-
     }
 
 
@@ -374,9 +340,8 @@ public class DC1SettingFragment extends MyPreferenceFragment {
         //未获取到当前版本信息
         if (!isGetVersion()) return;
         final EditText et = new EditText(getActivity());
-        et.setMinLines(2);
         new AlertDialog.Builder(getActivity()).setTitle("请输入固件下载地址")
-                .setMessage("需要输入2个ota地址,以换行隔开\n警告:输入错误的地址可能导致固件损坏!")
+                .setMessage("警告:输入错误的地址可能导致固件损坏!")
                 .setView(et)
                 .setPositiveButton("确定", new DialogInterface.OnClickListener() {
                     @Override
@@ -384,26 +349,25 @@ public class DC1SettingFragment extends MyPreferenceFragment {
                         String uri = et.getText().toString();
                         if (uri.length() < 1) return;
                         if (uri.startsWith("http")) {
-                            String[] ota = uri.split("\r\n");
-                            Send("{\"mac\":\"" + device_mac + "\",\"setting\":{\"ota1\":\"" + ota[0] + "\",\"ota2\":\"" + ota[1] + "\"}}");
+                            Send("{\"mac\":\"" + device_mac + "\",\"setting\":{\"ota\":\"" + uri + "\"}}");
                         }
                     }
                 }).setNegativeButton("取消", null).show();
     }
-    //endregion
 
+    //endregion
     //region 弹窗激活
     void unlock() {
 
         final EditText et = new EditText(getActivity());
         new AlertDialog.Builder(getActivity()).setTitle("请输入激活码")
                 .setView(et)
-                .setMessage("激活码免费提供,如果您为此花钱购买,那您被骗了~\n索要激活码请至项目主页中查看作者联系方式.(关于页面中有项目地址)")
+                .setMessage("")
                 .setPositiveButton("确定", new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialogInterface, int i) {
                         String lockStr = et.getText().toString();
-                        lockStr=lockStr.replace("\r\n", "\n").replace("\n", "").trim();
+                        lockStr = lockStr.replace("\r\n", "\n").replace("\n", "").trim();
                         Send("{\"mac\":\"" + device_mac + "\",\"lock\":\"" + lockStr + "\"}");
                     }
                 }).setNegativeButton("取消", null).show();
@@ -414,16 +378,8 @@ public class DC1SettingFragment extends MyPreferenceFragment {
     //endregion
 
     void Send(String message) {
-        if (mConnectService == null) return;
-        boolean udp = getActivity().getSharedPreferences("Setting_" + device_mac, 0).getBoolean("always_UDP", false);
-        boolean oldProtocol = getActivity().getSharedPreferences("Setting_" + device_mac, 0).getBoolean("old_protocol", false);
-
-        String topic = null;
-        if (!udp) {
-            if (oldProtocol) topic = "device/zdc1/set";
-            else topic = "device/zdc1/" + device_mac + "/set";
-        }
-        mConnectService.Send(topic, message);
+        boolean b = getActivity().getSharedPreferences("Setting_" + device_mac, 0).getBoolean("always_UDP", false);
+        mConnectService.Send(b ? null : "device/rgbw/" + device_mac + "/set", message);
     }
 
     //数据接收处理函数
@@ -451,20 +407,16 @@ public class DC1SettingFragment extends MyPreferenceFragment {
                 name_preference.setText(name);
             }
             //endregion
-
+            //region ssid
+            if (jsonObject.has("ssid")) {
+                String ssidString = jsonObject.getString("ssid");
+                ssid.setSummary(ssidString);
+            }
+            //endregion
             //region 获取版本号
             if (jsonObject.has("version")) {
                 String version = jsonObject.getString("version");
                 fw_version.setSummary(version);
-            }
-            //endregion
-            //region 激活
-            if (jsonObject.has("lock")) {
-                if (jsonObject.getBoolean("lock")) {
-                    lock.setSummary("已激活");
-                } else {
-                    lock.setSummary("未激活");
-                }
             }
             //endregion
             //region ota结果/进度
@@ -489,8 +441,9 @@ public class DC1SettingFragment extends MyPreferenceFragment {
                 } else {
                     if (ota_flag) {
                         //todo 显示更新进度
+
                         if (pd != null && pd.isShowing())
-                            pd.setMessage("正在更新最新固件版本,请稍后....\n" + "进度:" + ota_progress + "%");
+                            pd.setMessage("正在获取最新固件版本,请稍后....\n" + "进度:" + ota_progress + "%");
 //                        Toast.makeText(getActivity(), "ota进度:"+ota_progress+"%", Toast.LENGTH_SHORT).show();
                     }
                 }
@@ -502,10 +455,9 @@ public class DC1SettingFragment extends MyPreferenceFragment {
             if (jsonSetting != null) {
 
                 //region ota
-                if (jsonSetting.has("ota1") && jsonSetting.has("ota2")) {
-                    String ota_uri1 = jsonSetting.getString("ota1");
-                    String ota_uri2 = jsonSetting.getString("ota2");
-                    if (ota_uri1.endsWith(".bin") && ota_uri2.endsWith(".bin")) {
+                if (jsonSetting.has("ota")) {
+                    String ota_uri = jsonSetting.getString("ota");
+                    if (ota_uri.endsWith("ota.bin")) {
                         ota_flag = true;
                         pd = new ProgressDialog(getActivity());
                         pd.setButton(DialogInterface.BUTTON_POSITIVE, "取消", new DialogInterface.OnClickListener() {

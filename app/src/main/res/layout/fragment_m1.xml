@@ -148,7 +148,7 @@
                     app:layout_constraintTop_toBottomOf="@id/tv_formaldehyde_value" />
 
                 <TextView
-                    android:id="@+id/tv_brightness"
+                    android:id="@+id/textViewR"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginTop="16dp"
@@ -160,7 +160,7 @@
                     app:layout_constraintTop_toBottomOf="@id/tv_temperature_value" />
 
                 <SeekBar
-                    android:id="@+id/seekBar"
+                    android:id="@+id/seekBarR"
                     style="@style/Widget.AppCompat.SeekBar.Discrete"
                     android:layout_width="0dp"
                     android:layout_height="0dp"
@@ -168,10 +168,10 @@
                     android:maxLines="1"
                     android:progress="0"
                     android:singleLine="true"
-                    app:layout_constraintBottom_toBottomOf="@id/tv_brightness"
+                    app:layout_constraintBottom_toBottomOf="@id/textViewR"
                     app:layout_constraintEnd_toEndOf="parent"
-                    app:layout_constraintStart_toEndOf="@id/tv_brightness"
-                    app:layout_constraintTop_toTopOf="@id/tv_brightness" />
+                    app:layout_constraintStart_toEndOf="@id/textViewR"
+                    app:layout_constraintTop_toTopOf="@id/textViewR" />
 
             </android.support.constraint.ConstraintLayout>
 

@@ -1,0 +1,172 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    tools:context="com.zyc.zcontrol.controlItem.tc1.TC1Fragment">
+
+    <android.support.v4.widget.SwipeRefreshLayout
+        android:id="@+id/swipeRefreshLayout"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_centerInParent="true"
+        android:layout_weight="1"
+        android:paddingTop="20dp">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:layout_weight="1"
+            android:orientation="vertical"
+            android:padding="16dp">
+
+            <android.support.constraint.ConstraintLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:background="#ff3f3f3f"
+                android:elevation="3dp"
+                android:gravity="center"
+                android:outlineProvider="bounds"
+                android:paddingStart="0dp"
+                android:paddingTop="16dp"
+                android:paddingEnd="16dp"
+                android:paddingBottom="20dp"
+                android:translationZ="3dp">
+
+                <TextView
+                    android:id="@+id/textViewR"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="16dp"
+                    android:ems="3"
+                    android:gravity="end"
+                    android:maxLines="1"
+                    android:singleLine="true"
+                    android:text="R:000"
+                    android:textSize="26dp"
+                    app:layout_constraintBottom_toTopOf="@id/textViewG"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toTopOf="parent" />
+
+                <SeekBar
+                    android:id="@+id/seekBarR"
+                    android:layout_width="0dp"
+                    android:layout_height="0dp"
+                    android:max="255"
+                    android:progress="0"
+                    app:layout_constraintBottom_toBottomOf="@id/textViewR"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toEndOf="@id/textViewR"
+                    app:layout_constraintTop_toTopOf="@id/textViewR" />
+
+                <TextView
+                    android:id="@+id/textViewG"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:ems="3"
+                    android:gravity="end"
+                    android:maxLines="1"
+                    android:singleLine="true"
+                    android:text="G:000"
+                    android:textSize="26dp"
+                    app:layout_constraintBottom_toTopOf="@id/textViewB"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@id/textViewR" />
+
+                <SeekBar
+                    android:id="@+id/seekBarG"
+                    android:layout_width="0dp"
+                    android:layout_height="0dp"
+                    android:max="255"
+                    android:progress="0"
+                    app:layout_constraintBottom_toBottomOf="@id/textViewG"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toEndOf="@id/textViewG"
+                    app:layout_constraintTop_toTopOf="@id/textViewG" />
+
+                <TextView
+                    android:id="@+id/textViewB"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:ems="3"
+                    android:gravity="end"
+                    android:maxLines="1"
+                    android:singleLine="true"
+                    android:text="B:000"
+                    android:textSize="26dp"
+                    app:layout_constraintBottom_toTopOf="@id/textViewW"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@id/textViewG" />
+
+                <SeekBar
+                    android:id="@+id/seekBarB"
+                    android:layout_width="0dp"
+                    android:layout_height="0dp"
+                    android:max="255"
+                    android:progress="0"
+                    app:layout_constraintBottom_toBottomOf="@id/textViewB"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toEndOf="@id/textViewB"
+                    app:layout_constraintTop_toTopOf="@id/textViewB" />
+
+                <TextView
+                    android:id="@+id/textViewW"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:ems="3"
+                    android:gravity="end"
+                    android:maxLines="1"
+                    android:singleLine="true"
+                    android:text="W:000"
+                    android:textSize="26dp"
+                    app:layout_constraintBottom_toTopOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@id/textViewB" />
+
+                <SeekBar
+                    android:id="@+id/seekBarW"
+                    android:layout_width="0dp"
+                    android:layout_height="0dp"
+                    android:max="255"
+                    android:progress="0"
+                    app:layout_constraintBottom_toBottomOf="@id/textViewW"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toEndOf="@id/textViewW"
+                    app:layout_constraintTop_toTopOf="@id/textViewW" />
+
+            </android.support.constraint.ConstraintLayout>
+
+
+        </LinearLayout>
+
+    </android.support.v4.widget.SwipeRefreshLayout>
+
+    <ScrollView
+        android:id="@+id/scrollView"
+        android:layout_width="match_parent"
+        android:layout_height="66sp"
+        android:layout_gravity="bottom"
+        android:addStatesFromChildren="false"
+        android:scrollbars="none">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_gravity="bottom"
+            android:orientation="vertical">
+
+            <TextView
+                android:id="@+id/tv_log"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:gravity="bottom"
+                android:text="Log"
+                android:textSize="18sp" />
+        </LinearLayout>
+    </ScrollView>
+
+</LinearLayout>

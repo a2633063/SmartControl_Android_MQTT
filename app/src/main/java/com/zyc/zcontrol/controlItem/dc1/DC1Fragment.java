@@ -91,6 +91,7 @@ public class DC1Fragment extends Fragment {
         public void handleMessage(Message msg) {// handler接收到消息后就会执行此方法
             switch (msg.what) {
                 case 1:
+                    handler.removeMessages(1);
                     Send("{\"mac\": \"" + device_mac + "\","
                             + "\"lock\":null,"
                             + "\"plug_0\" : {\"on\" : null,\"setting\":{\"name\":null}},"
@@ -286,9 +287,16 @@ public class DC1Fragment extends Fragment {
 
     //endregion
     void Send(String message) {
-        if(mConnectService==null) return;
-        boolean b = getActivity().getSharedPreferences("Setting_" + device_mac, 0).getBoolean("always_UDP", false);
-        mConnectService.Send(b ? null : "device/zdc1/set", message);
+        if (mConnectService == null) return;
+        boolean udp = getActivity().getSharedPreferences("Setting_" + device_mac, 0).getBoolean("always_UDP", false);
+        boolean oldProtocol = getActivity().getSharedPreferences("Setting_" + device_mac, 0).getBoolean("old_protocol", false);
+
+        String topic = null;
+        if (!udp) {
+            if (oldProtocol) topic = "device/zdc1/set";
+            else topic = "device/zdc1/" + device_mac + "/set";
+        }
+        mConnectService.Send(topic, message);
     }
 
     //数据接收处理函数
