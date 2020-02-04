@@ -59,7 +59,6 @@
                     app:layout_constraintTop_toBottomOf="@id/tv_pm25_text" />
 
                 <TextView
-                    android:id="@+id/tv_pm25_unit"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="ug/m3"
@@ -88,7 +87,6 @@
                     app:layout_constraintTop_toBottomOf="@id/tv_formaldehyde_text" />
 
                 <TextView
-                    android:id="@+id/tv_formaldehyde_unit"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="mg/m3"

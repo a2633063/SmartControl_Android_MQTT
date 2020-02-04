@@ -62,7 +62,6 @@
                 android:textSize="18dp" />
 
             <TextView
-                android:id="@+id/tv_github1"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:text="https://github.com/a2633063/SmartControl_Android_MQTT"
@@ -128,7 +127,6 @@
                 android:layout_gravity="bottom"
                 android:text="zM1文档" />
             <Button
-                android:id="@+id/btn_zbuttonmate"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_gravity="bottom"
