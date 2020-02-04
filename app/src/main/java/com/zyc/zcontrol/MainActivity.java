@@ -147,17 +147,17 @@ public class MainActivity extends AppCompatActivity {
                         if (tag_name.equals(tag_name_old)) {
                             Log.d(Tag, "已是最新版本");
                         } else {
-                            Log.d(Tag,"当前版本:"+tag_name_old+",发布版本:"+tag_name);
-                            boolean show_ota=true;
+                            Log.d(Tag, "当前版本:" + tag_name_old + ",发布版本:" + tag_name);
+                            boolean show_ota = true;
                             String[] version_new = tag_name.replaceAll("[^.1234567890]", "").split("\\.");
                             String[] version_old = tag_name_old.replaceAll("[^.1234567890]", "").split("\\.");
 
-                            for(int i=0;i<version_new.length&&i<version_old.length;i++){
+                            for (int i = 0; i < version_new.length && i < version_old.length; i++) {
                                 try {
-                                    int a=Integer.parseInt(version_new[i]);
-                                    int b=Integer.parseInt(version_old[i]);
-                                    if(b>a){
-                                        show_ota=false;
+                                    int a = Integer.parseInt(version_new[i]);
+                                    int b = Integer.parseInt(version_old[i]);
+                                    if (b > a) {
+                                        show_ota = false;
                                         break;
                                     }
                                 } catch (NumberFormatException e) {
@@ -165,8 +165,8 @@ public class MainActivity extends AppCompatActivity {
                                 }
                             }
 
-                            if(!show_ota){
-                                Toast.makeText(MainActivity.this, "此为测试版本\n当前版本:"+tag_name_old+"\n发布版本:"+tag_name, Toast.LENGTH_LONG).show();
+                            if (!show_ota) {
+                                Toast.makeText(MainActivity.this, "此为测试版本\n当前版本:" + tag_name_old + "\n发布版本:" + tag_name, Toast.LENGTH_LONG).show();
                                 break;
                             }
 

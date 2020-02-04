@@ -117,7 +117,10 @@ public class M1SettingFragment extends MyPreferenceFragment {
                         public void run() {
                             Message msg = new Message();
                             msg.what = 2;
-                            msg.obj = WebService.WebConnect("https://gitee.com/api/v5/repos/zhangyichen/Release/releases/tags/zM1");
+                            String res = WebService.WebConnect("https://gitee.com/api/v5/repos/a2633063/Release/releases/tags/zM1");
+                            if (res == null || res.length() < 100)
+                                res = WebService.WebConnect("https://gitee.com/api/v5/repos/zhangyichen/Release/releases/tags/zM1");
+                            msg.obj = res;
                             handler.sendMessageDelayed(msg, 0);// 执行耗时的方法之后发送消给handler
                         }
                     }).start();
@@ -242,7 +245,7 @@ public class M1SettingFragment extends MyPreferenceFragment {
 //        lock.setOnPreferenceClickListener(new Preference.OnPreferenceClickListener() {
 //            @Override
 //            public boolean onPreferenceClick(Preference preference) {
-                //region 未获取到当前激活信息
+        //region 未获取到当前激活信息
 //                if (lock.getSummary() == null) {
 //                    AlertDialog alertDialog = new AlertDialog.Builder(getActivity())
 //                            .setTitle("未获取到当前设备激活信息")
@@ -257,7 +260,7 @@ public class M1SettingFragment extends MyPreferenceFragment {
 //                    alertDialog.show();
 //                    return false;
 //                }
-                //endregion
+        //endregion
 //
 //                unlock();
 //                return false;
@@ -320,10 +323,10 @@ public class M1SettingFragment extends MyPreferenceFragment {
                     public void run() {
                         Message msg = new Message();
                         msg.what = 0;
-                        String res=WebService.WebConnect("https://gitee.com/api/v5/repos/a2633063/zM1/releases/latest");
-                        if(res==null || res.length()<100)
-                            res=WebService.WebConnect("https://gitee.com/api/v5/repos/zhangyichen/zM1/releases/latest");
-                        msg.obj=res;
+                        String res = WebService.WebConnect("https://gitee.com/api/v5/repos/a2633063/zM1/releases/latest");
+                        if (res == null || res.length() < 100)
+                            res = WebService.WebConnect("https://gitee.com/api/v5/repos/zhangyichen/zM1/releases/latest");
+                        msg.obj = res;
                         handler.sendMessageDelayed(msg, 0);// 执行耗时的方法之后发送消给handler
                     }
                 }).start();
@@ -482,10 +485,10 @@ public class M1SettingFragment extends MyPreferenceFragment {
             //region 校时结果
             if (jsonObject.has("time")) {
                 int time = jsonObject.getInt("time");
-                int x=(int)(System.currentTimeMillis() / 1000);
-                if(x-time<60 && time-x<60){
+                int x = (int) (System.currentTimeMillis() / 1000);
+                if (x - time < 60 && time - x < 60) {
                     Toast.makeText(getActivity(), "校时成功\n等待一分钟后修改显示", Toast.LENGTH_SHORT).show();
-                }else{
+                } else {
                     Toast.makeText(getActivity(), "请等待一分钟后确认修改完成", Toast.LENGTH_SHORT).show();
                 }
             }
