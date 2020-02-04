@@ -53,6 +53,7 @@ import com.zyc.Function;
 import com.zyc.StaticVariable;
 import com.zyc.webservice.WebService;
 import com.zyc.zcontrol.controlItem.SettingActivity;
+import com.zyc.zcontrol.deviceScan.DeviceAddChoiceActivity;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -486,7 +487,7 @@ public class MainActivity extends AppCompatActivity {
                 e.printStackTrace();
             }
 
-            if (ip.equals("255.255.255.255")) {
+            if (ip != null && ip.equals("255.255.255.255")) {
                 getDeviceFlag = true;
                 handler.sendEmptyMessageDelayed(3, 2000);
             } else {
@@ -989,14 +990,12 @@ public class MainActivity extends AppCompatActivity {
         //这个函数的作用是当切换到第arg0个页面的时候调用。
         @Override
         public Fragment getItem(int arg0) {
-            return this.data.get(arg0).fragment;
+            return this.data.get(arg0).getFragment();
         }
 
         @Override
         public long getItemId(int position) {
-
-            return data.get(position).fragment.hashCode();
-
+            return data.get(position).getFragment().hashCode();
         }
 
         @Override

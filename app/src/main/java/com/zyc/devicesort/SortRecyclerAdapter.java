@@ -39,8 +39,8 @@ public class SortRecyclerAdapter extends RecyclerView.Adapter<SortRecyclerAdapte
 
         ViewHolder mHolder = holder;
         mHolder.name.setText(mData.get(position).name);
-        if (mData.get(position).Icon != null) {
-            holder.icon.setImageDrawable(mData.get(position).Icon);
+        if (mData.get(position).getIcon() != null) {
+            holder.icon.setImageDrawable(mData.get(position).getIcon());
             holder.icon.setVisibility(View.VISIBLE);
         } else {
             holder.icon.setVisibility(View.INVISIBLE);

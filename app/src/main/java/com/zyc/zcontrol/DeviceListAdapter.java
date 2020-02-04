@@ -56,8 +56,8 @@ class DeviceListAdapter extends BaseAdapter {
         convertView.setBackgroundColor(0x20ffffff);
         else convertView.setBackgroundColor(0x00000000);
         holder.tv.setText(mdata.get(position).name);
-        if (mdata.get(position).Icon != null) {
-            holder.im.setImageDrawable(mdata.get(position).Icon);
+        if (mdata.get(position).getIcon() != null) {
+            holder.im.setImageDrawable(mdata.get(position).getIcon());
             holder.im.setVisibility(View.VISIBLE);
         } else {
             holder.im.setVisibility(View.INVISIBLE);
