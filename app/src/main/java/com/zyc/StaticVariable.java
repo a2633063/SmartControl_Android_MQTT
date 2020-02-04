@@ -35,12 +35,12 @@ public class StaticVariable {
 
     public final static @DrawableRes
     int TYPE_ICON[] = {
-            R.drawable.ic_filter_1_black_24dp,//0
-            R.drawable.ic_filter_2_black_24dp,//1
-            R.drawable.ic_filter_3_black_24dp,//2
-            R.drawable.ic_filter_4_black_24dp,//3
-            R.drawable.ic_filter_5_black_24dp,//4
-            R.drawable.ic_filter_6_black_24dp,//5
-            R.drawable.ic_filter_9_plus_black_24dp,//4
+            R.drawable.device_icon_null,//0
+            R.drawable.device_icon_ztc1,//1
+            R.drawable.device_icon_zdc1,//2
+            R.drawable.device_icon_za1,//3
+            R.drawable.device_icon_zm1,//4
+            R.drawable.device_icon_ongoing,//5
+            R.drawable.device_icon_ongoing,//4
     };
 }
