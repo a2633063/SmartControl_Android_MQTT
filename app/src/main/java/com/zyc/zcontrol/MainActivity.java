@@ -63,6 +63,7 @@ import java.util.Random;
 
 import static android.view.ViewGroup.LayoutParams.MATCH_PARENT;
 import static com.zyc.Function.getLocalVersionName;
+import static java.lang.Integer.parseInt;
 
 public class MainActivity extends AppCompatActivity {
     public final static String Tag = "MainActivity";
@@ -113,7 +114,7 @@ public class MainActivity extends AppCompatActivity {
                         if (mqtt_id == null || mqtt_id.length() < 1)
                             mqtt_id = "Android_" + new Random().nextInt(10000);
 
-                        Log.d(Tag,"mqtt_id:"+mqtt_id);
+                        Log.d(Tag, "mqtt_id:" + mqtt_id);
                         mConnectService.connect(mqtt_uri, mqtt_id, mqtt_user, mqtt_password);
                     }
                     break;
@@ -142,7 +143,33 @@ public class MainActivity extends AppCompatActivity {
                         String tag_name = obj.getString("tag_name");
                         String created_at = obj.getString("created_at");
 
-                        if (!tag_name.equals(getLocalVersionName(MainActivity.this))) {
+                        String tag_name_old = getLocalVersionName(MainActivity.this);
+                        if (tag_name.equals(tag_name_old)) {
+                            Log.d(Tag, "已是最新版本");
+                        } else {
+                            Log.d(Tag,"当前版本:"+tag_name_old+",发布版本:"+tag_name);
+                            boolean show_ota=true;
+                            String[] version_new = tag_name.replaceAll("[^.1234567890]", "").split("\\.");
+                            String[] version_old = tag_name_old.replaceAll("[^.1234567890]", "").split("\\.");
+
+                            for(int i=0;i<version_new.length&&i<version_old.length;i++){
+                                try {
+                                    int a=Integer.parseInt(version_new[i]);
+                                    int b=Integer.parseInt(version_old[i]);
+                                    if(b>a){
+                                        show_ota=false;
+                                        break;
+                                    }
+                                } catch (NumberFormatException e) {
+                                    e.printStackTrace();
+                                }
+                            }
+
+                            if(!show_ota){
+                                Toast.makeText(MainActivity.this, "此为测试版本\n当前版本:"+tag_name_old+"\n发布版本:"+tag_name, Toast.LENGTH_LONG).show();
+                                break;
+                            }
+
                             AlertDialog alertDialog = new AlertDialog.Builder(MainActivity.this)
                                     .setTitle("请更新版本:" + tag_name)
                                     .setMessage(name + "\r\n" + body + "\r\n更新日期:" + created_at)
@@ -168,12 +195,11 @@ public class MainActivity extends AppCompatActivity {
                                 tvMsg.setText(Html.fromHtml(HtmlStr));
                             }
 
-                        } else {
-                            Log.d(Tag, "已是最新版本");
                         }
+
                     } catch (JSONException e) {
 //                        e.printStackTrace();
-                        Toast.makeText(MainActivity.this, "获取最新版本失败,请重试", Toast.LENGTH_SHORT).show();
+                        Toast.makeText(MainActivity.this, "获取最新版本失败,请在酷安搜索zConrotl更新最新版本", Toast.LENGTH_LONG).show();
                     }
                     break;
                 //endregion
@@ -644,7 +670,7 @@ public class MainActivity extends AppCompatActivity {
                 jsonObject.put("mac", d.mac);
 
                 String[] strArry = mqtt_uri.split(":");
-                int port = Integer.parseInt(strArry[1]);
+                int port = parseInt(strArry[1]);
 
                 jsonObject1.put("mqtt_uri", strArry[0]);
                 jsonObject1.put("mqtt_port", port);
