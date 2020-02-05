@@ -763,7 +763,7 @@ public class MainActivity extends AppCompatActivity {
         popupView.findViewById(R.id.btn_ztc1).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Uri uri = Uri.parse("https://a2633063.github.io/zTC1/");
+                Uri uri = Uri.parse("https://github.com/a2633063/zTC1/");
                 Intent intent = new Intent(Intent.ACTION_VIEW, uri);
                 startActivity(intent);
             }
@@ -773,7 +773,7 @@ public class MainActivity extends AppCompatActivity {
         popupView.findViewById(R.id.btn_zdc1).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Uri uri = Uri.parse("https://a2633063.github.io/zDC1_public/");
+                Uri uri = Uri.parse("https://github.com/a2633063/zDC1/");
                 Intent intent = new Intent(Intent.ACTION_VIEW, uri);
                 startActivity(intent);
             }
@@ -783,7 +783,7 @@ public class MainActivity extends AppCompatActivity {
         popupView.findViewById(R.id.btn_za1).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Uri uri = Uri.parse("https://a2633063.github.io/zA1/");
+                Uri uri = Uri.parse("https://github.com/a2633063/zA1/");
                 Intent intent = new Intent(Intent.ACTION_VIEW, uri);
                 startActivity(intent);
             }
@@ -793,7 +793,7 @@ public class MainActivity extends AppCompatActivity {
         popupView.findViewById(R.id.btn_zm1).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Uri uri = Uri.parse("https://a2633063.github.io/zM1/");
+                Uri uri = Uri.parse("https://github.com/a2633063/zM1/");
                 Intent intent = new Intent(Intent.ACTION_VIEW, uri);
                 startActivity(intent);
             }
