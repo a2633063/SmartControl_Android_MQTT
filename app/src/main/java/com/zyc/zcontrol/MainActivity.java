@@ -167,7 +167,7 @@ public class MainActivity extends AppCompatActivity {
                             }
 
                             if (!show_ota) {
-                                Toast.makeText(MainActivity.this, "此为测试版本\n当前版本:" + tag_name_old + "\n发布版本:" + tag_name, Toast.LENGTH_LONG).show();
+                                Toast.makeText(MainActivity.this, "当前版本暂时未发布，测试中\n当前版本:" + tag_name_old + "\n发布版本:" + tag_name, Toast.LENGTH_LONG).show();
                                 break;
                             }
 

@@ -3,6 +3,7 @@ package com.zyc.zcontrol.deviceScan;
 import android.annotation.SuppressLint;
 import android.content.Context;
 import android.content.Intent;
+import android.database.Cursor;
 import android.graphics.drawable.ColorDrawable;
 import android.net.nsd.NsdManager;
 import android.net.nsd.NsdServiceInfo;
@@ -34,8 +35,10 @@ import com.espressif.ESPtouchActivity;
 import com.zyc.StaticVariable;
 import com.zyc.zcontrol.DeviceItem;
 import com.zyc.zcontrol.R;
+import com.zyc.zcontrol.SQLiteClass;
 
 import java.util.ArrayList;
+import java.util.List;
 
 import static com.zyc.StaticVariable.TYPE_TC1;
 
@@ -50,6 +53,7 @@ public class DeviceAddChoiceActivity extends AppCompatActivity {
     DeviceAddMdnsAdapter mdnsAdapter;
     int device_type = -1;
 
+    List<String> knownDevice = new ArrayList<>();
 
     ArrayList<DeviceItem> data = new ArrayList<DeviceItem>();
     //region Handler
@@ -61,8 +65,12 @@ public class DeviceAddChoiceActivity extends AppCompatActivity {
                 //region mdns 刷新显示
                 case 1:
                     //handler.removeMessages(1);
-                    if (data.size() > 0)
-                        mdnsAdapter.notifyItemInserted(msg.arg1);
+                    DeviceItem deviceItem = (DeviceItem) msg.obj;
+                    if (!knownDevice.contains(deviceItem.mac)) {
+                        data.add(deviceItem);
+                        if (data.size() > 0)
+                            mdnsAdapter.notifyItemInserted(msg.arg1);
+                    }
                     break;
                 //endregion
                 case 2:
@@ -83,6 +91,24 @@ public class DeviceAddChoiceActivity extends AppCompatActivity {
             actionBar.setHomeButtonEnabled(true);
             actionBar.setDisplayHomeAsUpEnabled(true);
         }
+
+        //region 数据库初始化
+        SQLiteClass sqLite = new SQLiteClass(this, "device_list");
+        //参数1：表名    参数2：要想显示的列    参数3：where子句   参数4：where子句对应的条件值
+        // 参数5：分组方式  参数6：having条件  参数7：排序方式
+        Cursor cursor = sqLite.Query("device_list", new String[]{"id", "name", "type", "mac", "sort"}, null, null, null, null, "sort");
+        while (cursor.moveToNext()) {
+//            String id = cursor.getString(cursor.getColumnIndex("id"));
+//            String name = cursor.getString(cursor.getColumnIndex("name"));
+//            int type = cursor.getInt(cursor.getColumnIndex("type"));
+            String mac = cursor.getString(cursor.getColumnIndex("mac"));
+            //Log.d(Tag, "query------->" + "id：" + id + " " + "name：" + name + " " + "type：" + type + " " + "mac：" + mac);
+
+            knownDevice.add(mac);
+        }
+
+        //endregion
+
 
         //region listview及adapter
 
@@ -165,7 +191,7 @@ public class DeviceAddChoiceActivity extends AppCompatActivity {
             @Override
             public void onItemClick(View view, int position, DeviceItem deviceItem) {
                 Toast.makeText(DeviceAddChoiceActivity.this, deviceItem.name + "," + deviceItem.mac, Toast.LENGTH_SHORT).show();
-                Log.d(Tag,"ip:"+deviceItem.ip+"mac:"+ deviceItem.mac+ "type:"+deviceItem.type);
+                Log.d(Tag, "ip:" + deviceItem.ip + "mac:" + deviceItem.mac + "type:" + deviceItem.type);
                 returnActivityDevice(deviceItem.ip, deviceItem.mac, deviceItem.type);
             }
         });
@@ -258,12 +284,13 @@ public class DeviceAddChoiceActivity extends AppCompatActivity {
 
                         DeviceItem d = new DeviceItem(DeviceAddChoiceActivity.this, type, arg0.getServiceName(), mac);
                         d.ip = arg0.getHost().getHostAddress();
-                        data.add(d);
+                        //data.add(d);
                         //mdnsAdapter.notifyItemInserted(data.size()-1);
                         //handler.removeMessages(1);
                         Message message = new Message();
                         message.arg1 = data.size() - 1;
                         message.what = 1;
+                        message.obj = d;
                         handler.sendMessageDelayed(message, 200);
                     }
 
