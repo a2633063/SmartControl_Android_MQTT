@@ -66,7 +66,7 @@ public class DeviceAddChoiceActivity extends AppCompatActivity {
                 case 1:
                     //handler.removeMessages(1);
                     DeviceItem deviceItem = (DeviceItem) msg.obj;
-                    if (!knownDevice.contains(deviceItem.mac)) {
+                    if (!knownDevice.contains(deviceItem.getMac())) {
                         data.add(deviceItem);
                         if (data.size() > 0)
                             mdnsAdapter.notifyItemInserted(msg.arg1);
@@ -190,9 +190,9 @@ public class DeviceAddChoiceActivity extends AppCompatActivity {
         mdnsAdapter.setOnItemClickListener(new DeviceAddMdnsAdapter.OnItemClickListener() {
             @Override
             public void onItemClick(View view, int position, DeviceItem deviceItem) {
-                Toast.makeText(DeviceAddChoiceActivity.this, deviceItem.name + "," + deviceItem.mac, Toast.LENGTH_SHORT).show();
-                Log.d(Tag, "ip:" + deviceItem.ip + "mac:" + deviceItem.mac + "type:" + deviceItem.type);
-                returnActivityDevice(deviceItem.ip, deviceItem.mac, deviceItem.type);
+                Toast.makeText(DeviceAddChoiceActivity.this, deviceItem.getName() + "," + deviceItem.getMac(), Toast.LENGTH_SHORT).show();
+                Log.d(Tag, "ip:" + deviceItem.getIp() + "mac:" + deviceItem.getMac() + "type:" + deviceItem.getType());
+                returnActivityDevice(deviceItem.getIp(), deviceItem.getMac(), deviceItem.getType());
             }
         });
         //endregion
@@ -283,7 +283,7 @@ public class DeviceAddChoiceActivity extends AppCompatActivity {
                         }
 
                         DeviceItem d = new DeviceItem(DeviceAddChoiceActivity.this, type, arg0.getServiceName(), mac);
-                        d.ip = arg0.getHost().getHostAddress();
+                        d.setIp(arg0.getHost().getHostAddress());
                         //data.add(d);
                         //mdnsAdapter.notifyItemInserted(data.size()-1);
                         //handler.removeMessages(1);

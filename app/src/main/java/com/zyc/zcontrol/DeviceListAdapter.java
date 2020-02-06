@@ -55,7 +55,7 @@ class DeviceListAdapter extends BaseAdapter {
         if(choice==position)
         convertView.setBackgroundColor(0x20ffffff);
         else convertView.setBackgroundColor(0x00000000);
-        holder.tv.setText(mdata.get(position).name);
+        holder.tv.setText(mdata.get(position).getName());
         if (mdata.get(position).getIcon() != null) {
             holder.im.setImageDrawable(mdata.get(position).getIcon());
             holder.im.setVisibility(View.VISIBLE);
@@ -99,7 +99,7 @@ class DeviceListAdapter extends BaseAdapter {
     {
         for(int i=0;i<mdata.size();i++)
         {
-            if(mdata.get(i).mac.equalsIgnoreCase(d.mac))
+            if(mdata.get(i).getMac().equalsIgnoreCase(d.getMac()))
                 return i;
         }
         return -1;
@@ -110,7 +110,7 @@ class DeviceListAdapter extends BaseAdapter {
         if(mac==null ||mac.length()==0) return -1;
         for(int i=0;i<mdata.size();i++)
         {
-            if(mdata.get(i).mac.equalsIgnoreCase(mac))
+            if(mdata.get(i).getMac().equalsIgnoreCase(mac))
                 return i;
         }
         return -1;

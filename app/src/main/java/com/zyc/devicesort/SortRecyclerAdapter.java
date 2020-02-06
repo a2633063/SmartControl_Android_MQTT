@@ -38,7 +38,7 @@ public class SortRecyclerAdapter extends RecyclerView.Adapter<SortRecyclerAdapte
     public void onBindViewHolder(ViewHolder holder, int position) {
 
         ViewHolder mHolder = holder;
-        mHolder.name.setText(mData.get(position).name);
+        mHolder.name.setText(mData.get(position).getName());
         if (mData.get(position).getIcon() != null) {
             holder.icon.setImageDrawable(mData.get(position).getIcon());
             holder.icon.setVisibility(View.VISIBLE);

@@ -104,9 +104,9 @@ public class DeviceSortActivity extends AppCompatActivity {
         for (int i = 0; i < mData.size(); i++) {
             DeviceItem d = mData.get(i);
             ContentValues cv = new ContentValues();
-            cv.put("name", d.name);
-            cv.put("type", d.type);
-            cv.put("mac", d.mac);
+            cv.put("name", d.getName());
+            cv.put("type", d.getType());
+            cv.put("mac", d.getMac());
             cv.put("sort", i);
             sqLite.Insert("device_list", cv);
         }

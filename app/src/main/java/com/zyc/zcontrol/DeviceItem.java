@@ -35,9 +35,9 @@ public class DeviceItem {
 
     private Context context;
 
-    public String name;
-    public String mac;
-    public String ip;
+    private String name;
+    private String mac;
+    private String ip;
 
     public Drawable getIcon() {
         if (Icon == null) {
@@ -51,10 +51,42 @@ public class DeviceItem {
         return Icon;
     }
 
-    public Drawable Icon = null;
+    private Drawable Icon = null;
     public int Group;
     private Fragment fragment = null;
-    public int type = -1;
+    private int type = -1;
+
+    public String getName() {
+        return name;
+    }
+
+    public void setName(String name) {
+        this.name = name;
+    }
+
+    public String getMac() {
+        return mac;
+    }
+
+    public void setMac(String mac) {
+        this.mac = mac;
+    }
+
+    public String getIp() {
+        return ip;
+    }
+
+    public void setIp(String ip) {
+        this.ip = ip;
+    }
+
+    public int getType() {
+        return type;
+    }
+
+    public void setType(int type) {
+        this.type = type;
+    }
 
     private void init() {
 

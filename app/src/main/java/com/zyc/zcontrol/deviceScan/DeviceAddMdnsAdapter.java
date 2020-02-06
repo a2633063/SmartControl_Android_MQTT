@@ -91,7 +91,7 @@ public class DeviceAddMdnsAdapter extends RecyclerView.Adapter<DeviceAddMdnsAdap
         }
 
         //region 显示名称,并自动调整字体大小
-        holder.name.setText(deviceItem.name);
+        holder.name.setText(deviceItem.getName());
         final TextView v = holder.name;
         if (textSizeHashMap.get(v.getText().length()) != null)
             v.setTextSize(TypedValue.COMPLEX_UNIT_PX, textSizeHashMap.get(v.getText().length()));

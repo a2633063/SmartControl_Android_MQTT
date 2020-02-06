@@ -35,7 +35,7 @@ public class StaticVariable {
 
     public final static @DrawableRes
     int TYPE_ICON[] = {
-            R.drawable.device_icon_null,//0
+            R.drawable.device_icon_diy,//0
             R.drawable.device_icon_ztc1,//1
             R.drawable.device_icon_zdc1,//2
             R.drawable.device_icon_za1,//3

@@ -301,7 +301,7 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public boolean onItemLongClick(AdapterView<?> parent, View view, final int position, long id) {
                 AlertDialog alertDialog = new AlertDialog.Builder(MainActivity.this)
-                        .setTitle("配置设备:" + data.get(position).name)
+                        .setTitle("配置设备:" + data.get(position).getName())
                         .setMessage("设置桌面快捷方式请手动开启权限,否则会开启失败.")
                         .create();
                 alertDialog.setButton(DialogInterface.BUTTON_POSITIVE, "删除设备", new DialogInterface.OnClickListener() {
@@ -309,7 +309,7 @@ public class MainActivity extends AppCompatActivity {
                     public void onClick(DialogInterface dialog, int which) {
                         SQLiteClass sqLite = new SQLiteClass(MainActivity.this);
                         String whereClauses = "mac=?";
-                        String[] whereArgs = {data.get(position).mac};
+                        String[] whereArgs = {data.get(position).getMac()};
                         sqLite.Delete("device_list", whereClauses, whereArgs);
 
                         data.remove(position);
@@ -321,7 +321,7 @@ public class MainActivity extends AppCompatActivity {
                 alertDialog.setButton(DialogInterface.BUTTON_NEUTRAL, "创建快捷方式", new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
-                        Function.createShortCut(MainActivity.this, data.get(position).mac, data.get(position).name);
+                        Function.createShortCut(MainActivity.this, data.get(position).getMac(), data.get(position).getName());
                     }
                 });
                 alertDialog.show();
@@ -361,7 +361,7 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onPageSelected(int position) {
                 adapter.setChoice(position);
-                toolbar.setTitle(adapter.getChoiceDevice().name);
+                toolbar.setTitle(adapter.getChoiceDevice().getName());
             }
 
             @Override
@@ -447,7 +447,7 @@ public class MainActivity extends AppCompatActivity {
         //endregion
         //region 设置标题 无页面时导致闪退
         try {
-            toolbar.setTitle(adapter.getChoiceDevice().name);
+            toolbar.setTitle(adapter.getChoiceDevice().getName());
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -593,9 +593,9 @@ public class MainActivity extends AppCompatActivity {
             if (data.size() > 0) {
                 DeviceItem d = adapter.getChoiceDevice();
                 Intent intent = new Intent(MainActivity.this, SettingActivity.class);
-                intent.putExtra("name", d.name);
-                intent.putExtra("mac", d.mac);
-                intent.putExtra("type", d.type);
+                intent.putExtra("name", d.getName());
+                intent.putExtra("mac", d.getMac());
+                intent.putExtra("type", d.getType());
                 startActivity(intent);
             }
             return true;
@@ -628,8 +628,8 @@ public class MainActivity extends AppCompatActivity {
                                 JSONObject jsonObject1 = new JSONObject();
 
                                 try {
-                                    jsonObject.put("name", d.name);
-                                    jsonObject.put("mac", d.mac);
+                                    jsonObject.put("name", d.getName());
+                                    jsonObject.put("mac", d.getMac());
 
                                     jsonObject1.put("mqtt_uri", "");
                                     jsonObject1.put("mqtt_port", 0);
@@ -667,8 +667,8 @@ public class MainActivity extends AppCompatActivity {
             JSONObject jsonObject1 = new JSONObject();
 
             try {
-                jsonObject.put("name", d.name);
-                jsonObject.put("mac", d.mac);
+                jsonObject.put("name", d.getName());
+                jsonObject.put("mac", d.getMac());
 
                 String[] strArry = mqtt_uri.split(":");
                 int port = parseInt(strArry[1]);
@@ -846,14 +846,14 @@ public class MainActivity extends AppCompatActivity {
             if (position >= 0) {//设备已存在
 
                 //region 修改名称
-                if (name != null && !name.equals(data.get(position).name)) {
+                if (name != null && !name.equals(data.get(position).getName())) {
                     SQLiteClass sqLite = new SQLiteClass(this, "device_list");
                     ContentValues cv = new ContentValues();
                     cv.put("name", name);
                     if (type >= 0) cv.put("type", type);
                     sqLite.Modify("device_list", cv, "mac=?", new String[]{mac});
 
-                    data.get(position).name = name;
+                    data.get(position).setName(name);
                     fragmentAdapter.notifyDataSetChanged();
                     adapter.notifyDataSetChanged();
                     if (position == adapter.getChoice())
@@ -865,7 +865,7 @@ public class MainActivity extends AppCompatActivity {
                 if (jsonSetting != null && jsonSetting.has("mqtt_uri")
                         && jsonSetting.has("mqtt_port") && jsonSetting.has("mqtt_user")
                         && jsonSetting.has("mqtt_password")) {
-                    String toastStr = "已设置\"" + data.get(position).name + "\"mqtt服务器:\r\n"
+                    String toastStr = "已设置\"" + data.get(position).getName() + "\"mqtt服务器:\r\n"
                             + jsonSetting.getString("mqtt_uri") + ":" + jsonSetting.getInt("mqtt_port")
                             + "\n" + jsonSetting.getString("mqtt_user");
                     Toast.makeText(MainActivity.this, toastStr, Toast.LENGTH_SHORT).show();
@@ -1020,7 +1020,7 @@ public class MainActivity extends AppCompatActivity {
         @Override
         public CharSequence getPageTitle(int position) {
             if (data != null)
-                return data.get(position).name;
+                return data.get(position).getName();
             else return "";
         }
 
