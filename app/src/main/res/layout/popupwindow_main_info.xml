@@ -71,6 +71,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:gravity="start"
+                android:textColor="@android:color/white"
                 android:text="\n支付宝打赏:(点击图片可直接跳转支付宝)\n"
                 android:textSize="18dp" />
 
