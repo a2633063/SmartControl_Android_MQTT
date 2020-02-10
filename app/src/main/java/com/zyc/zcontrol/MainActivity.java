@@ -159,7 +159,8 @@ public class MainActivity extends AppCompatActivity {
                                 try {
                                     int a = Integer.parseInt(version_new[i]);
                                     int b = Integer.parseInt(version_old[i]);
-                                    if (b > a) {
+                                    if (b < a) break;
+                                    else if (b > a) {
                                         show_ota = false;
                                         break;
                                     }
@@ -442,7 +443,7 @@ public class MainActivity extends AppCompatActivity {
 
 
         WifiManager manager = (WifiManager) getApplicationContext().getSystemService(Context.WIFI_SERVICE);
-        wifiLock  = manager.createMulticastLock("localWifi");
+        wifiLock = manager.createMulticastLock("localWifi");
         wifiLock.acquire();
         //region 启动MQTT服务
         Intent intent = new Intent(MainActivity.this, ConnectService.class);
