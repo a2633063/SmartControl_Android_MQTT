@@ -14,6 +14,7 @@ import android.database.Cursor;
 import android.graphics.Paint;
 import android.graphics.drawable.ColorDrawable;
 import android.net.Uri;
+import android.net.wifi.WifiManager;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.IBinder;
@@ -81,6 +82,7 @@ public class MainActivity extends AppCompatActivity {
     //region 使用本地广播与service通信
     LocalBroadcastManager localBroadcastManager;
     private MsgReceiver msgReceiver;
+    WifiManager.MulticastLock wifiLock;
     //endregion
 
     private TextView tvDeviceSort;
@@ -438,6 +440,10 @@ public class MainActivity extends AppCompatActivity {
         localBroadcastManager.registerReceiver(msgReceiver, intentFilter);
         //endregion
 
+
+        WifiManager manager = (WifiManager) getApplicationContext().getSystemService(Context.WIFI_SERVICE);
+        wifiLock  = manager.createMulticastLock("localWifi");
+        wifiLock.acquire();
         //region 启动MQTT服务
         Intent intent = new Intent(MainActivity.this, ConnectService.class);
         startService(intent);
@@ -566,6 +572,7 @@ public class MainActivity extends AppCompatActivity {
         Intent intent = new Intent(MainActivity.this, ConnectService.class);
         stopService(intent);
         unbindService(mMQTTServiceConnection);
+        if (null != wifiLock) wifiLock.release();//必须调用
         super.onDestroy();
     }
 
