@@ -55,6 +55,7 @@ public class M1SettingFragment extends MyPreferenceFragment {
     Preference restart;
     Preference regetdata;
     EditTextPreference name_preference;
+    EditTextPreference interval;
 
 
     String device_name = null;
@@ -166,7 +167,7 @@ public class M1SettingFragment extends MyPreferenceFragment {
                 //endregion
                 //region 发送请求数据
                 case 3:
-                    Send("{\"mac\":\"" + device_mac + "\",\"version\":null,\"lock\":null}");
+                    Send("{\"mac\":\"" + device_mac + "\",\"version\":null,\"lock\":null,\"interval\":null}");
                     break;
                 //endregion
             }
@@ -210,7 +211,7 @@ public class M1SettingFragment extends MyPreferenceFragment {
         restart = findPreference("restart");
         regetdata = findPreference("regetdata");
         name_preference = (EditTextPreference) findPreference("name");
-
+        interval = (EditTextPreference) findPreference("interval");
 
         name_preference.setSummary(device_name);
 
@@ -237,6 +238,22 @@ public class M1SettingFragment extends MyPreferenceFragment {
             @Override
             public boolean onPreferenceChange(Preference preference, Object newValue) {
                 Send("{\"mac\":\"" + device_mac + "\",\"setting\":{\"name\":\"" + (String) newValue + "\"}}");
+                return false;
+            }
+        });
+        //endregion
+        //region 设置反馈间隔
+        interval.setOnPreferenceChangeListener(new Preference.OnPreferenceChangeListener() {
+            @Override
+            public boolean onPreferenceChange(Preference preference, Object newValue) {
+
+                int val = Integer.parseInt((String) newValue);
+
+                if (val > 0 && val <= 255) {
+                    Send("{\"mac\":\"" + device_mac + "\",\"setting\":{\"interval\":" + (String) newValue + "}}");
+                } else {
+                    Toast.makeText(getActivity(), "输入有误!范围1-255", Toast.LENGTH_SHORT).show();
+                }
                 return false;
             }
         });
@@ -480,6 +497,14 @@ public class M1SettingFragment extends MyPreferenceFragment {
                 name = jsonObject.getString("name");
                 name_preference.setSummary(name);
                 name_preference.setText(name);
+            }
+            //endregion
+
+            //region 获取间隔时间
+            if (jsonObject.has("interval")) {
+                int interval_time = jsonObject.getInt("interval");
+                interval.setSummary(String.valueOf(interval_time));
+                interval.setText(String.valueOf(interval_time));
             }
             //endregion
             //region 校时结果
