@@ -250,7 +250,7 @@ public class M1SettingFragment extends MyPreferenceFragment {
                 int val = Integer.parseInt((String) newValue);
 
                 if (val > 0 && val <= 255) {
-                    Send("{\"mac\":\"" + device_mac + "\",\"setting\":{\"interval\":" + (String) newValue + "}}");
+                    Send("{\"mac\":\"" + device_mac + "\",\"interval\":" + (String) newValue + "}");
                 } else {
                     Toast.makeText(getActivity(), "输入有误!范围1-255", Toast.LENGTH_SHORT).show();
                 }
