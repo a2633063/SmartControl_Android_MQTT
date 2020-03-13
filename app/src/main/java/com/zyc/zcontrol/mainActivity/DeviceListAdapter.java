@@ -1,4 +1,4 @@
-package com.zyc.zcontrol;
+package com.zyc.zcontrol.mainActivity;
 
 import android.content.Context;
 import android.view.LayoutInflater;
@@ -8,9 +8,12 @@ import android.widget.BaseAdapter;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import com.zyc.zcontrol.DeviceItem;
+import com.zyc.zcontrol.R;
+
 import java.util.List;
 
-class DeviceListAdapter extends BaseAdapter {
+public class DeviceListAdapter extends BaseAdapter {
 
     private Context context;
     private List<DeviceItem> mdata;

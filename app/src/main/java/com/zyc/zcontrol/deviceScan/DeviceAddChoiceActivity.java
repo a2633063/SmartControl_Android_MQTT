@@ -162,11 +162,6 @@ public class DeviceAddChoiceActivity extends AppCompatActivity {
 
         //region mdns扫描函数相关
 
-//        data.add(new DeviceItem(DeviceAddChoiceActivity.this, StaticVariable.TYPE_TC1, "ztc1_0000", "000000000000"));
-//        data.add(new DeviceItem(DeviceAddChoiceActivity.this, StaticVariable.TYPE_DC1, "zdc1_0001", "000000000001"));
-//        data.add(new DeviceItem(DeviceAddChoiceActivity.this, StaticVariable.TYPE_A1, "za1_0002", "000000000002"));
-//        data.add(new DeviceItem(DeviceAddChoiceActivity.this, StaticVariable.TYPE_M1, "zm1_0002", "000000000003"));
-
         //region RecyclerView控件初始化
         mdns_recyclerView = findViewById(R.id.mdns_recyclerView);
         //创建一个layoutManager，这里使用LinearLayoutManager指定为线性，也就可以有ListView这样的效果

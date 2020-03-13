@@ -19,8 +19,10 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.os.IBinder;
 import android.os.Message;
+
 import com.google.android.material.navigation.NavigationView;
 import com.google.android.material.tabs.TabLayout;
+
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentPagerAdapter;
@@ -33,6 +35,7 @@ import androidx.appcompat.app.ActionBarDrawerToggle;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
+
 import android.text.Html;
 import android.util.Log;
 import android.view.Gravity;
@@ -55,6 +58,8 @@ import com.zyc.StaticVariable;
 import com.zyc.webservice.WebService;
 import com.zyc.zcontrol.controlItem.SettingActivity;
 import com.zyc.zcontrol.deviceScan.DeviceAddChoiceActivity;
+import com.zyc.zcontrol.mainActivity.DeviceListAdapter;
+import com.zyc.zcontrol.mainActivity.MainDeviceFragmentAdapter;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -89,7 +94,7 @@ public class MainActivity extends AppCompatActivity {
     private Toolbar toolbar;
     private TabLayout tabLayout;
     private ViewPager viewPager;
-    private FragmentAdapter fragmentAdapter;
+    private MainDeviceFragmentAdapter mainDeviceFragmentAdapter;
 
     ConnectService mConnectService;
     boolean newDeviceFlag = false;
@@ -317,7 +322,7 @@ public class MainActivity extends AppCompatActivity {
 
                         data.remove(position);
                         adapter.notifyDataSetChanged();
-                        fragmentAdapter.notifyDataSetChanged();
+                        mainDeviceFragmentAdapter.notifyDataSetChanged();
                     }
                 });
                 alertDialog.setButton(DialogInterface.BUTTON_NEGATIVE, "取消", (DialogInterface.OnClickListener) null);
@@ -338,14 +343,13 @@ public class MainActivity extends AppCompatActivity {
         tabLayout = (TabLayout) findViewById(R.id.tablayout);
 
         viewPager = (ViewPager) findViewById(R.id.viewpager);
-        fragmentAdapter = new FragmentAdapter(getSupportFragmentManager(), data);
-        viewPager.setAdapter(fragmentAdapter);
+        mainDeviceFragmentAdapter = new MainDeviceFragmentAdapter(getSupportFragmentManager(), data);
+        viewPager.setAdapter(mainDeviceFragmentAdapter);
         viewPager.setOffscreenPageLimit(data.size());
         tabLayout.setupWithViewPager(viewPager);
 
-        if (page < fragmentAdapter.data.size()) viewPager.setCurrentItem(page);
+        if (page < mainDeviceFragmentAdapter.getCount()) viewPager.setCurrentItem(page);
         viewPager.addOnPageChangeListener(new ViewPager.OnPageChangeListener() {
-
             @Override
             public void onPageScrolled(int position, float positionOffset, int positionOffsetPixels) {
                 if (position == 0 && positionOffset == 0 && positionOffsetPixels == 0) {
@@ -862,7 +866,7 @@ public class MainActivity extends AppCompatActivity {
                     sqLite.Modify("device_list", cv, "mac=?", new String[]{mac});
 
                     data.get(position).setName(name);
-                    fragmentAdapter.notifyDataSetChanged();
+                    mainDeviceFragmentAdapter.notifyDataSetChanged();
                     adapter.notifyDataSetChanged();
                     if (position == adapter.getChoice())
                         toolbar.setTitle(name);
@@ -915,7 +919,7 @@ public class MainActivity extends AppCompatActivity {
                     cv.put("sort", data.size());
                     sqLite.Insert("device_list", cv);
                     data.add(d);
-                    fragmentAdapter.notifyDataSetChanged();
+                    mainDeviceFragmentAdapter.notifyDataSetChanged();
                     adapter.notifyDataSetChanged();
                     viewPager.setCurrentItem(adapter.getCount() - 1);
                 }
@@ -980,60 +984,5 @@ public class MainActivity extends AppCompatActivity {
     }
     //endregion
 
-
-    //region FragmentPagerAdapter
-    class FragmentAdapter extends FragmentPagerAdapter {
-
-        private ArrayList<DeviceItem> data;
-
-        public FragmentAdapter(FragmentManager fm, ArrayList<DeviceItem> fragmentArray) {
-            this(fm);
-            this.data = fragmentArray;
-        }
-
-        public FragmentAdapter(FragmentManager fm) {
-            super(fm);
-        }
-
-        //这个函数的作用是当切换到第arg0个页面的时候调用。
-        @Override
-        public Fragment getItem(int arg0) {
-            return this.data.get(arg0).getFragment();
-        }
-
-        @Override
-        public long getItemId(int position) {
-            return data.get(position).getFragment().hashCode();
-        }
-
-        @Override
-        public int getItemPosition(Object object) {
-            // TODO Auto-generated method stub
-            return PagerAdapter.POSITION_NONE;
-        }
-
-        @Override
-        public Object instantiateItem(ViewGroup container, int position) {
-            //int viewPagerId=container.getId();
-            //makeFragmentName(viewPagerId,getItemId(position));
-            return super.instantiateItem(container, position);
-        }
-
-        @Override
-        public int getCount() {
-            return this.data.size();
-        }
-
-        //重写这个方法，将设置每个Tab的标题
-        @Override
-        public CharSequence getPageTitle(int position) {
-            if (data != null)
-                return data.get(position).getName();
-            else return "";
-        }
-
-
-    }
-    //endregion
 
 }
