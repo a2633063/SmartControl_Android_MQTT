@@ -7,7 +7,7 @@
     android:orientation="vertical"
     tools:context="com.zyc.zcontrol.controlItem.tc1.TC1Fragment">
 
-    <android.support.v4.widget.SwipeRefreshLayout
+    <androidx.swiperefreshlayout.widget.SwipeRefreshLayout
         android:id="@+id/swipeRefreshLayout"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
@@ -24,7 +24,7 @@
             android:padding="16dp">
 
 
-            <android.support.constraint.ConstraintLayout
+            <androidx.constraintlayout.widget.ConstraintLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_gravity="center"
@@ -98,10 +98,10 @@
                     android:textSize="20dp"
                     app:layout_constraintBottom_toTopOf="@id/seekBarR"
                     app:layout_constraintEnd_toEndOf="@id/seekBarR" />
-            </android.support.constraint.ConstraintLayout>
+            </androidx.constraintlayout.widget.ConstraintLayout>
         </LinearLayout>
 
-    </android.support.v4.widget.SwipeRefreshLayout>
+    </androidx.swiperefreshlayout.widget.SwipeRefreshLayout>
 
     <ScrollView
         android:id="@+id/scrollView"

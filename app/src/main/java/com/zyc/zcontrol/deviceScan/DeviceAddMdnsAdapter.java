@@ -1,7 +1,8 @@
 package com.zyc.zcontrol.deviceScan;
 
 
-import android.support.v7.widget.RecyclerView;
+import androidx.constraintlayout.widget.ConstraintLayout;
+import androidx.recyclerview.widget.RecyclerView;
 import android.util.TypedValue;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -100,7 +101,7 @@ public class DeviceAddMdnsAdapter extends RecyclerView.Adapter<DeviceAddMdnsAdap
 
             holder.name.post(new Runnable() {
                 public void run() {
-                    if (v.getLeft() + v.getLeft()/2 >= ((android.support.constraint.ConstraintLayout) v.getParent()).getWidth()) {
+                    if (v.getLeft() + v.getLeft()/2 >= ((ConstraintLayout) v.getParent()).getWidth()) {
                         v.setTextSize(TypedValue.COMPLEX_UNIT_PX, v.getTextSize() - 1);
                         v.post(this);
                     } else if (!textSizeHashMap.containsKey(v.getText().length())) {

@@ -2,8 +2,8 @@ package com.zyc.zcontrol;
 
 import android.content.Context;
 import android.graphics.drawable.Drawable;
-import android.support.annotation.DrawableRes;
-import android.support.v4.app.Fragment;
+import androidx.annotation.DrawableRes;
+import androidx.fragment.app.Fragment;
 
 import com.zyc.StaticVariable;
 import com.zyc.zcontrol.controlItem.a1.A1Fragment;

@@ -8,12 +8,12 @@
     tools:context=".deviceScan.DeviceAddChoiceActivity">
 
 
-    <android.support.design.widget.CoordinatorLayout
+    <androidx.coordinatorlayout.widget.CoordinatorLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_weight="1">
 
-        <android.support.design.widget.AppBarLayout
+        <com.google.android.material.appbar.AppBarLayout
             android:id="@+id/app_bar"
             android:layout_width="match_parent"
             android:layout_height="140dp"
@@ -21,7 +21,7 @@
             android:minHeight="20dp"
             android:theme="@style/AppTheme.AppBarOverlay">
 
-            <android.support.constraint.ConstraintLayout
+            <androidx.constraintlayout.widget.ConstraintLayout
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:background="#303030"
@@ -49,7 +49,7 @@
                     app:layout_constraintStart_toEndOf="@id/progressBar"
                     app:layout_constraintTop_toTopOf="parent" />
 
-                <android.support.v7.widget.RecyclerView
+                <androidx.recyclerview.widget.RecyclerView
                     android:id="@+id/mdns_recyclerView"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
@@ -65,12 +65,12 @@
                     android:layout_height="10dp"
                     android:background="#282828"
                     app:layout_constraintBottom_toBottomOf="parent" />
-            </android.support.constraint.ConstraintLayout>
+            </androidx.constraintlayout.widget.ConstraintLayout>
 
-        </android.support.design.widget.AppBarLayout>
+        </com.google.android.material.appbar.AppBarLayout>
 
 
-        <android.support.v4.widget.NestedScrollView
+        <androidx.core.widget.NestedScrollView
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:fillViewport="true"
@@ -96,9 +96,9 @@
                     android:paddingEnd="8dp" />
 
             </LinearLayout>
-        </android.support.v4.widget.NestedScrollView>
+        </androidx.core.widget.NestedScrollView>
 
-    </android.support.design.widget.CoordinatorLayout>
+    </androidx.coordinatorlayout.widget.CoordinatorLayout>
 
 
     <Button
