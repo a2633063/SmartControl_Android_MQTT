@@ -3,18 +3,23 @@ package com.zyc.zcontrol;
 import android.content.ContentValues;
 import android.content.Intent;
 import android.database.Cursor;
+
 import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.app.AppCompatActivity;
+
 import android.os.Bundle;
+
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 import androidx.recyclerview.widget.ItemTouchHelper;
+
 import android.util.Log;
 import android.view.MenuItem;
 
 import com.zyc.devicesort.SortRecyclerAdapter;
 import com.zyc.devicesort.SortRecyclerItemTouchHelper;
 import com.zyc.devicesort.SortRecyclerViewSpacesItemDecoration;
+import com.zyc.zcontrol.deviceItem.DeviceClass.Device;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -22,7 +27,7 @@ import java.util.List;
 public class DeviceSortActivity extends AppCompatActivity {
     public final static String Tag = "DeviceSortActivity";
 
-    List<DeviceItem> mData = new ArrayList<>();
+    List<Device> mData = new ArrayList<>();
     private SortRecyclerAdapter adapter;
 
     @Override
@@ -47,12 +52,12 @@ public class DeviceSortActivity extends AppCompatActivity {
             String mac = cursor.getString(cursor.getColumnIndex("mac"));
             Log.d(Tag, "query------->" + "id：" + id + " " + "name：" + name + " " + "type：" + type + " " + "mac：" + mac);
 
-            mData.add(new DeviceItem(DeviceSortActivity.this, type, name, mac));
+            mData.add(new Device(type, name, mac));
         }
 
 //        if (mData.size() < 1) {
-////            data.add(new DeviceItem(MainActivity.this, StaticVariable.TYPE_M1, "演示设备", "b0f8932234f4"));
-//            mData.add(new DeviceItem(MainActivity.this, StaticVariable.TYPE_TC1, "演示设备", "000000000000"));
+////            deviceData.add(new Device(MainActivity.this, StaticVariable.TYPE_M1, "演示设备", "b0f8932234f4"));
+//            mData.add(new Device(MainActivity.this, StaticVariable.TYPE_TC1, "演示设备", "000000000000"));
 //        }
         //endregion
 
@@ -100,7 +105,7 @@ public class DeviceSortActivity extends AppCompatActivity {
 
         //SQLiteClass sqLite = new SQLiteClass(this, "device_list");
         for (int i = 0; i < mData.size(); i++) {
-            DeviceItem d = mData.get(i);
+            Device d = mData.get(i);
             ContentValues cv = new ContentValues();
             cv.put("name", d.getName());
             cv.put("type", d.getType());

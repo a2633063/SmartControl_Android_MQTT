@@ -3,6 +3,7 @@ package com.zyc.zcontrol.deviceScan;
 
 import androidx.constraintlayout.widget.ConstraintLayout;
 import androidx.recyclerview.widget.RecyclerView;
+
 import android.util.TypedValue;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -10,7 +11,7 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
 
-import com.zyc.zcontrol.DeviceItem;
+import com.zyc.zcontrol.deviceItem.DeviceClass.Device;
 import com.zyc.zcontrol.R;
 
 import java.util.HashMap;
@@ -20,7 +21,7 @@ import java.util.Map;
 
 public class DeviceAddMdnsAdapter extends RecyclerView.Adapter<DeviceAddMdnsAdapter.ViewHolder> {
 
-    private List<DeviceItem> mList;
+    private List<Device> mList;
 
 
     //记录不同字数时的字体大小
@@ -32,11 +33,11 @@ public class DeviceAddMdnsAdapter extends RecyclerView.Adapter<DeviceAddMdnsAdap
         /**
          * 当RecyclerView某个被点击的时候回调
          *
-         * @param view       点击item的视图
-         * @param position   在adapter中的位置
-         * @param deviceItem 点击的设备
+         * @param view     点击item的视图
+         * @param position 在adapter中的位置
+         * @param device   点击的设备
          */
-        void onItemClick(View view, int position, DeviceItem deviceItem);
+        void onItemClick(View view, int position, Device device);
     }
 
     private OnItemClickListener onItemClickListener;
@@ -68,7 +69,7 @@ public class DeviceAddMdnsAdapter extends RecyclerView.Adapter<DeviceAddMdnsAdap
         }
     }
 
-    public DeviceAddMdnsAdapter(List<DeviceItem> iconList) {
+    public DeviceAddMdnsAdapter(List<Device> iconList) {
         mList = iconList;
     }
 
@@ -82,17 +83,13 @@ public class DeviceAddMdnsAdapter extends RecyclerView.Adapter<DeviceAddMdnsAdap
 
     @Override
     public void onBindViewHolder(final ViewHolder holder, int position) {
-        DeviceItem deviceItem = mList.get(position);
+        Device device = mList.get(position);
 
-        if (deviceItem.getIcon() != null) {
-            holder.imageView.setImageDrawable(deviceItem.getIcon());
-            holder.imageView.setVisibility(View.VISIBLE);
-        } else {
-            holder.imageView.setVisibility(View.INVISIBLE);
-        }
+        holder.imageView.setImageResource(device.getIcon());
+        holder.imageView.setVisibility(View.VISIBLE);
 
         //region 显示名称,并自动调整字体大小
-        holder.name.setText(deviceItem.getName());
+        holder.name.setText(device.getName());
         final TextView v = holder.name;
         if (textSizeHashMap.get(v.getText().length()) != null)
             v.setTextSize(TypedValue.COMPLEX_UNIT_PX, textSizeHashMap.get(v.getText().length()));
@@ -101,7 +98,7 @@ public class DeviceAddMdnsAdapter extends RecyclerView.Adapter<DeviceAddMdnsAdap
 
             holder.name.post(new Runnable() {
                 public void run() {
-                    if (v.getLeft() + v.getLeft()/2 >= ((ConstraintLayout) v.getParent()).getWidth()) {
+                    if (v.getLeft() + v.getLeft() / 2 >= ((ConstraintLayout) v.getParent()).getWidth()) {
                         v.setTextSize(TypedValue.COMPLEX_UNIT_PX, v.getTextSize() - 1);
                         v.post(this);
                     } else if (!textSizeHashMap.containsKey(v.getText().length())) {
@@ -127,7 +124,7 @@ public class DeviceAddMdnsAdapter extends RecyclerView.Adapter<DeviceAddMdnsAdap
         mList.clear();
     }
 
-    public DeviceItem getItem(int position) {
+    public Device getItem(int position) {
         return mList.get(position);
     }
 

@@ -8,7 +8,7 @@ import android.widget.BaseAdapter;
 import android.widget.ImageView;
 import android.widget.TextView;
 
-import com.zyc.zcontrol.DeviceItem;
+import com.zyc.zcontrol.deviceItem.DeviceClass.Device;
 import com.zyc.zcontrol.R;
 
 import java.util.List;
@@ -16,9 +16,9 @@ import java.util.List;
 public class DeviceListAdapter extends BaseAdapter {
 
     private Context context;
-    private List<DeviceItem> mdata;
+    private List<Device> mdata;
     private LayoutInflater inflater;
-    private int choice=-1;
+    private int choice = -1;
 
     public DeviceListAdapter(Context context, List data) {
         this.context = context;
@@ -30,7 +30,7 @@ public class DeviceListAdapter extends BaseAdapter {
         return mdata.size();
     }
 
-    public DeviceItem getItem(int position) {
+    public Device getItem(int position) {
         return mdata.get(position);
     }
 
@@ -55,16 +55,12 @@ public class DeviceListAdapter extends BaseAdapter {
             view = convertView;
             holder = (ViewHolder) view.getTag();
         }
-        if(choice==position)
-        convertView.setBackgroundColor(0x20ffffff);
+        if (choice == position)
+            convertView.setBackgroundColor(0x20ffffff);
         else convertView.setBackgroundColor(0x00000000);
         holder.tv.setText(mdata.get(position).getName());
-        if (mdata.get(position).getIcon() != null) {
-            holder.im.setImageDrawable(mdata.get(position).getIcon());
-            holder.im.setVisibility(View.VISIBLE);
-        } else {
-            holder.im.setVisibility(View.INVISIBLE);
-        }
+        holder.im.setImageResource(mdata.get(position).getIcon());
+        holder.im.setVisibility(View.VISIBLE);
 
 
 //        holder.tv.setText(((Map<String, Object>) mdata.get(position)).get("name").toString());
@@ -72,48 +68,44 @@ public class DeviceListAdapter extends BaseAdapter {
         return convertView;
     }
 
-    public void add(DeviceItem d)
-    {
+    public void add(Device d) {
         mdata.add(d);
         this.notifyDataSetChanged();
     }
-    public void setChoice(int c)
-    {
-        if(c>=getCount() || c<0) c=-1;
-        this.choice=c;
+
+    public void setChoice(int c) {
+        if (c >= getCount() || c < 0) c = -1;
+        this.choice = c;
         this.notifyDataSetChanged();
     }
-    public int getChoice()
-    {
-        if(mdata.size()<1) return -1;
-        else if(choice>=getCount() || choice<0)
+
+    public int getChoice() {
+        if (mdata.size() < 1) return -1;
+        else if (choice >= getCount() || choice < 0)
             return -1;
         return choice;
     }
-    public DeviceItem getChoiceDevice()
-    {
-        if(choice>=getCount() || choice<0) {
+
+    public Device getChoiceDevice() {
+        if (choice >= getCount() || choice < 0) {
             if (mdata.size() > 0) return mdata.get(0);
             else return null;
         }
         return mdata.get(choice);
     }
-    public int contains(DeviceItem d)
-    {
-        for(int i=0;i<mdata.size();i++)
-        {
-            if(mdata.get(i).getMac().equalsIgnoreCase(d.getMac()))
+
+    public int contains(Device d) {
+        for (int i = 0; i < mdata.size(); i++) {
+            if (mdata.get(i).getMac().equalsIgnoreCase(d.getMac()))
                 return i;
         }
         return -1;
     }
 
-    public int contains(String mac)
-    {
-        if(mac==null ||mac.length()==0) return -1;
-        for(int i=0;i<mdata.size();i++)
-        {
-            if(mdata.get(i).getMac().equalsIgnoreCase(mac))
+    public int contains(String mac) {
+        if (mac == null || mac.length() == 0) return -1;
+        for (int i = 0; i < mdata.size(); i++) {
+            if (mdata.get(i).getMac().equalsIgnoreCase(mac))
                 return i;
         }
         return -1;

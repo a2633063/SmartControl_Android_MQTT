@@ -7,14 +7,14 @@ import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentPagerAdapter;
 import androidx.viewpager.widget.PagerAdapter;
 
-import com.zyc.zcontrol.DeviceItem;
+import com.zyc.zcontrol.deviceItem.DeviceClass.Device;
 
 import java.util.ArrayList;
 public class MainDeviceFragmentAdapter extends FragmentPagerAdapter {
 
-    private ArrayList<DeviceItem> data;
+    private ArrayList<Device> data;
 
-    public MainDeviceFragmentAdapter(FragmentManager fm, ArrayList<DeviceItem> fragmentArray) {
+    public MainDeviceFragmentAdapter(FragmentManager fm, ArrayList<Device> fragmentArray) {
         this(fm);
         this.data = fragmentArray;
     }

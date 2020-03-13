@@ -23,12 +23,8 @@ import android.os.Message;
 import com.google.android.material.navigation.NavigationView;
 import com.google.android.material.tabs.TabLayout;
 
-import androidx.fragment.app.Fragment;
-import androidx.fragment.app.FragmentManager;
-import androidx.fragment.app.FragmentPagerAdapter;
 import androidx.localbroadcastmanager.content.LocalBroadcastManager;
 import androidx.core.view.GravityCompat;
-import androidx.viewpager.widget.PagerAdapter;
 import androidx.viewpager.widget.ViewPager;
 import androidx.drawerlayout.widget.DrawerLayout;
 import androidx.appcompat.app.ActionBarDrawerToggle;
@@ -44,7 +40,6 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.MotionEvent;
 import android.view.View;
-import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.Button;
 import android.widget.ImageView;
@@ -57,6 +52,7 @@ import com.zyc.Function;
 import com.zyc.StaticVariable;
 import com.zyc.webservice.WebService;
 import com.zyc.zcontrol.controlItem.SettingActivity;
+import com.zyc.zcontrol.deviceItem.DeviceClass.Device;
 import com.zyc.zcontrol.deviceScan.DeviceAddChoiceActivity;
 import com.zyc.zcontrol.mainActivity.DeviceListAdapter;
 import com.zyc.zcontrol.mainActivity.MainDeviceFragmentAdapter;
@@ -81,7 +77,7 @@ public class MainActivity extends AppCompatActivity {
 
     DrawerLayout drawerLayout;
     ListView lv_device;
-    ArrayList<DeviceItem> data = new ArrayList<DeviceItem>();
+    ArrayList<Device> deviceData;
     DeviceListAdapter adapter;
 
     //region 使用本地广播与service通信
@@ -225,6 +221,8 @@ public class MainActivity extends AppCompatActivity {
         setSupportActionBar(toolbar);
 
         mSharedPreferences = getSharedPreferences("Setting", 0);
+        deviceData = ((MainApplication) getApplication()).getDeviceList();
+
         //region 数据库初始化
         SQLiteClass sqLite = new SQLiteClass(this, "device_list");
         //参数1：表名    参数2：要想显示的列    参数3：where子句   参数4：where子句对应的条件值
@@ -237,12 +235,12 @@ public class MainActivity extends AppCompatActivity {
             String mac = cursor.getString(cursor.getColumnIndex("mac"));
             Log.d(Tag, "query------->" + "id：" + id + " " + "name：" + name + " " + "type：" + type + " " + "mac：" + mac);
 
-            data.add(new DeviceItem(MainActivity.this, type, name, mac));
+            deviceData.add(new Device(type, name, mac));
         }
 
-        if (data.size() < 1) {
-//            data.add(new DeviceItem(MainActivity.this, StaticVariable.TYPE_M1, "演示设备", "b0f8932234f4"));
-            data.add(new DeviceItem(MainActivity.this, StaticVariable.TYPE_TC1, "演示设备", "000000000000"));
+        if (deviceData.size() < 1) {
+//            deviceData.add(new Device( StaticVariable.TYPE_M1, "演示设备", "b0f8932234f4"));
+            deviceData.add(new Device(StaticVariable.TYPE_TC1, "演示设备", "000000000000"));
         }
         //endregion
 
@@ -276,7 +274,7 @@ public class MainActivity extends AppCompatActivity {
         //region listview及adapter
 
         lv_device = findViewById(R.id.lv_device);
-        adapter = new DeviceListAdapter(MainActivity.this, data);
+        adapter = new DeviceListAdapter(MainActivity.this, deviceData);
         if (adapter.getCount() > 0) adapter.setChoice(0);
 
         Button b = new Button(this);
@@ -309,7 +307,7 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public boolean onItemLongClick(AdapterView<?> parent, View view, final int position, long id) {
                 AlertDialog alertDialog = new AlertDialog.Builder(MainActivity.this)
-                        .setTitle("配置设备:" + data.get(position).getName())
+                        .setTitle("配置设备:" + deviceData.get(position).getName())
                         .setMessage("设置桌面快捷方式请手动开启权限,否则会开启失败.")
                         .create();
                 alertDialog.setButton(DialogInterface.BUTTON_POSITIVE, "删除设备", new DialogInterface.OnClickListener() {
@@ -317,10 +315,10 @@ public class MainActivity extends AppCompatActivity {
                     public void onClick(DialogInterface dialog, int which) {
                         SQLiteClass sqLite = new SQLiteClass(MainActivity.this);
                         String whereClauses = "mac=?";
-                        String[] whereArgs = {data.get(position).getMac()};
+                        String[] whereArgs = {deviceData.get(position).getMac()};
                         sqLite.Delete("device_list", whereClauses, whereArgs);
 
-                        data.remove(position);
+                        deviceData.remove(position);
                         adapter.notifyDataSetChanged();
                         mainDeviceFragmentAdapter.notifyDataSetChanged();
                     }
@@ -329,7 +327,7 @@ public class MainActivity extends AppCompatActivity {
                 alertDialog.setButton(DialogInterface.BUTTON_NEUTRAL, "创建快捷方式", new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
-                        Function.createShortCut(MainActivity.this, data.get(position).getMac(), data.get(position).getName());
+                        Function.createShortCut(MainActivity.this, deviceData.get(position).getMac(), deviceData.get(position).getName());
                     }
                 });
                 alertDialog.show();
@@ -343,9 +341,9 @@ public class MainActivity extends AppCompatActivity {
         tabLayout = (TabLayout) findViewById(R.id.tablayout);
 
         viewPager = (ViewPager) findViewById(R.id.viewpager);
-        mainDeviceFragmentAdapter = new MainDeviceFragmentAdapter(getSupportFragmentManager(), data);
+        mainDeviceFragmentAdapter = new MainDeviceFragmentAdapter(getSupportFragmentManager(), deviceData);
         viewPager.setAdapter(mainDeviceFragmentAdapter);
-        viewPager.setOffscreenPageLimit(data.size());
+        viewPager.setOffscreenPageLimit(deviceData.size());
         tabLayout.setupWithViewPager(viewPager);
 
         if (page < mainDeviceFragmentAdapter.getCount()) viewPager.setCurrentItem(page);
@@ -602,8 +600,8 @@ public class MainActivity extends AppCompatActivity {
 //            mConnectService.Send(null, "UDP TEST");
 
 
-            if (data.size() > 0) {
-                DeviceItem d = adapter.getChoiceDevice();
+            if (deviceData.size() > 0) {
+                Device d = adapter.getChoiceDevice();
                 Intent intent = new Intent(MainActivity.this, SettingActivity.class);
                 intent.putExtra("name", d.getName());
                 intent.putExtra("mac", d.getMac());
@@ -614,7 +612,7 @@ public class MainActivity extends AppCompatActivity {
         } else if (id == R.id.action_mqtt_send) {
 
 
-            if (data.size() < 1) {
+            if (deviceData.size() < 1) {
                 AlertDialog alertDialog = new AlertDialog.Builder(MainActivity.this)
                         .setTitle("设备列表为空")
                         .setMessage("请先添加设备")
@@ -635,7 +633,7 @@ public class MainActivity extends AppCompatActivity {
                             @Override
                             public void onClick(DialogInterface dialog, int which) {
 
-                                DeviceItem d = adapter.getChoiceDevice();
+                                Device d = adapter.getChoiceDevice();
                                 JSONObject jsonObject = new JSONObject();
                                 JSONObject jsonObject1 = new JSONObject();
 
@@ -674,7 +672,7 @@ public class MainActivity extends AppCompatActivity {
             }
 
 
-            DeviceItem d = adapter.getChoiceDevice();
+            Device d = adapter.getChoiceDevice();
             JSONObject jsonObject = new JSONObject();
             JSONObject jsonObject1 = new JSONObject();
 
@@ -858,14 +856,14 @@ public class MainActivity extends AppCompatActivity {
             if (position >= 0) {//设备已存在
 
                 //region 修改名称
-                if (name != null && !name.equals(data.get(position).getName())) {
+                if (name != null && !name.equals(deviceData.get(position).getName())) {
                     SQLiteClass sqLite = new SQLiteClass(this, "device_list");
                     ContentValues cv = new ContentValues();
                     cv.put("name", name);
                     if (type >= 0) cv.put("type", type);
                     sqLite.Modify("device_list", cv, "mac=?", new String[]{mac});
 
-                    data.get(position).setName(name);
+                    deviceData.get(position).setName(name);
                     mainDeviceFragmentAdapter.notifyDataSetChanged();
                     adapter.notifyDataSetChanged();
                     if (position == adapter.getChoice())
@@ -877,7 +875,7 @@ public class MainActivity extends AppCompatActivity {
                 if (jsonSetting != null && jsonSetting.has("mqtt_uri")
                         && jsonSetting.has("mqtt_port") && jsonSetting.has("mqtt_user")
                         && jsonSetting.has("mqtt_password")) {
-                    String toastStr = "已设置\"" + data.get(position).getName() + "\"mqtt服务器:\r\n"
+                    String toastStr = "已设置\"" + deviceData.get(position).getName() + "\"mqtt服务器:\r\n"
                             + jsonSetting.getString("mqtt_uri") + ":" + jsonSetting.getInt("mqtt_port")
                             + "\n" + jsonSetting.getString("mqtt_user");
                     Toast.makeText(MainActivity.this, toastStr, Toast.LENGTH_SHORT).show();
@@ -910,15 +908,15 @@ public class MainActivity extends AppCompatActivity {
                         return;
                     handler.removeMessages(2);
                     newDeviceFlag = false;
-                    DeviceItem d = new DeviceItem(MainActivity.this, type, name, mac);
+                    Device d = new Device(type, name, mac);
                     SQLiteClass sqLite = new SQLiteClass(this, "device_list");
                     ContentValues cv = new ContentValues();
                     cv.put("name", name);
                     cv.put("type", type);
                     cv.put("mac", mac);
-                    cv.put("sort", data.size());
+                    cv.put("sort", deviceData.size());
                     sqLite.Insert("device_list", cv);
-                    data.add(d);
+                    deviceData.add(d);
                     mainDeviceFragmentAdapter.notifyDataSetChanged();
                     adapter.notifyDataSetChanged();
                     viewPager.setCurrentItem(adapter.getCount() - 1);

@@ -1,4 +1,4 @@
-package com.zyc.zcontrol;
+package com.zyc.zcontrol.deviceItem.DeviceClass;
 
 import android.content.Context;
 import android.graphics.drawable.Drawable;
@@ -6,6 +6,7 @@ import androidx.annotation.DrawableRes;
 import androidx.fragment.app.Fragment;
 
 import com.zyc.StaticVariable;
+import com.zyc.zcontrol.R;
 import com.zyc.zcontrol.controlItem.a1.A1Fragment;
 import com.zyc.zcontrol.controlItem.buttonmate.ButtonMateFragment;
 import com.zyc.zcontrol.controlItem.dc1.DC1Fragment;
@@ -14,47 +15,52 @@ import com.zyc.zcontrol.controlItem.rgbw.RGBWFragment;
 import com.zyc.zcontrol.controlItem.tc1.TC1Fragment;
 
 
-public class DeviceItem {
+public class Device {
 
-    public DeviceItem(Context context, int type, String name, String mac) {
-        this.context = context;
-        this.name = name;
-        this.type = type;
-        this.mac = mac;
-        init();
-    }
+    //region 静态变量
+    public final static int TYPE_UNKNOWN = -1;
+    public final static int TYPE_BUTTON_MATE = 0;
+    public final static int TYPE_TC1 = 1;
+    public final static int TYPE_DC1 = 2;
+    public final static int TYPE_A1 = 3;
+    public final static int TYPE_M1 = 4;
+    public final static int TYPE_RGBW = 5;
+    public final static int TYPE_CLOCK = 6;
+    public final static int TYPE_COUNT = 7;
 
-    public DeviceItem(Context context, int type, String name, String mac, @DrawableRes int resId) {
-        this.context = context;
-        this.name = name;
-        this.type = type;
-        this.Icon = context.getResources().getDrawable(resId);
-        this.mac = mac;
-        init();
-    }
 
-    private Context context;
+    final static String[] TyepName = new String[]{
+            "按键伴侣",//0
+            "智能排插zTC1",//1
+            "智能排插zDC1",   //2
+            "空气净化器zA1", //3
+            "空气检测仪zM1", //4
+            "zRGBW灯",   //5
+            "时钟",    //
+    };
+    public final static @DrawableRes
+    int TYPE_ICON[] = {
+            R.drawable.device_icon_diy,//0
+            R.drawable.device_icon_ztc1,//1
+            R.drawable.device_icon_zdc1,//2
+            R.drawable.device_icon_za1,//3
+            R.drawable.device_icon_zm1,//4
+            R.drawable.device_icon_ongoing,//5
+            R.drawable.device_icon_ongoing,//4
+    };
+    //endregion
 
+    protected int type = TYPE_UNKNOWN;
     private String name;
     private String mac;
     private String ip;
+    private String group;
 
-    public Drawable getIcon() {
-        if (Icon == null) {
-            try {
-                setIcon(StaticVariable.TYPE_ICON[type]);
-            } catch (Exception e) {
-                e.printStackTrace();
-                return null;
-            }
-        }
-        return Icon;
+
+    //region gitter and setter
+    public int getType() {
+        return type;
     }
-
-    private Drawable Icon = null;
-    public int Group;
-    private Fragment fragment = null;
-    private int type = -1;
 
     public String getName() {
         return name;
@@ -68,10 +74,6 @@ public class DeviceItem {
         return mac;
     }
 
-    public void setMac(String mac) {
-        this.mac = mac;
-    }
-
     public String getIp() {
         return ip;
     }
@@ -80,21 +82,44 @@ public class DeviceItem {
         this.ip = ip;
     }
 
-    public int getType() {
-        return type;
+    public String getGroup() {
+        return group;
     }
 
-    public void setType(int type) {
+    public void setGroup(String group) {
+        this.group = group;
+    }
+    //endregion
+
+    public Device( int type,String name, String mac) {
+        this.name = name;
+        this.mac = mac;
         this.type = type;
     }
 
-    private void init() {
-
+    public String getTypeName() {
+        return TyepName[type];
     }
 
-    public void setIcon(@DrawableRes int resId) {
-        this.Icon = context.getResources().getDrawable(resId);
+    public int getIcon() {
+        return TYPE_ICON[type];
     }
+
+    //region 子类必须重构函数
+    public String[] getMqttTopic() {
+        return null;
+    }
+
+    public String getSendMqttTopic() {
+        return null;
+    }
+
+    Fragment fragment;
+
+//    public Fragment getFragment() {
+//        if (fragment == null) fragment = new Fragment();
+//        return fragment;
+//    }
 
     public Fragment getFragment() {
         if (fragment == null) {
@@ -126,5 +151,6 @@ public class DeviceItem {
         }
         return fragment;
     }
+    //endregion
 
 }

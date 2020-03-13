@@ -9,10 +9,12 @@ import android.net.nsd.NsdServiceInfo;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
+
 import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
+
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.MenuItem;
@@ -28,7 +30,7 @@ import android.widget.Toast;
 import com.easylink.EasylinkActivity;
 import com.espressif.ESPtouchActivity;
 import com.zyc.StaticVariable;
-import com.zyc.zcontrol.DeviceItem;
+import com.zyc.zcontrol.deviceItem.DeviceClass.Device;
 import com.zyc.zcontrol.R;
 import com.zyc.zcontrol.SQLiteClass;
 
@@ -48,7 +50,7 @@ public class DeviceAddChoiceActivity extends AppCompatActivity {
 
     List<String> knownDevice = new ArrayList<>();
 
-    ArrayList<DeviceItem> data = new ArrayList<DeviceItem>();
+    ArrayList<Device> data = new ArrayList<Device>();
     //region Handler
     @SuppressLint("HandlerLeak")
     private Handler handler = new Handler() {
@@ -58,9 +60,9 @@ public class DeviceAddChoiceActivity extends AppCompatActivity {
                 //region mdns 刷新显示
                 case 1:
                     //handler.removeMessages(1);
-                    DeviceItem deviceItem = (DeviceItem) msg.obj;
-                    if (!knownDevice.contains(deviceItem.getMac())) {
-                        data.add(deviceItem);
+                    Device device = (Device) msg.obj;
+                    if (!knownDevice.contains(device.getMac())) {
+                        data.add(device);
                         if (data.size() > 0)
                             mdnsAdapter.notifyItemInserted(msg.arg1);
                     }
@@ -177,10 +179,10 @@ public class DeviceAddChoiceActivity extends AppCompatActivity {
 
         mdnsAdapter.setOnItemClickListener(new DeviceAddMdnsAdapter.OnItemClickListener() {
             @Override
-            public void onItemClick(View view, int position, DeviceItem deviceItem) {
-                Toast.makeText(DeviceAddChoiceActivity.this, deviceItem.getName() + "," + deviceItem.getMac(), Toast.LENGTH_SHORT).show();
-                Log.d(Tag, "ip:" + deviceItem.getIp() + "mac:" + deviceItem.getMac() + "type:" + deviceItem.getType());
-                returnActivityDevice(deviceItem.getIp(), deviceItem.getMac(), deviceItem.getType());
+            public void onItemClick(View view, int position, Device device) {
+                Toast.makeText(DeviceAddChoiceActivity.this, device.getName() + "," + device.getMac(), Toast.LENGTH_SHORT).show();
+                Log.d(Tag, "ip:" + device.getIp() + "mac:" + device.getMac() + "type:" + device.getType());
+                returnActivityDevice(device.getIp(), device.getMac(), device.getType());
             }
         });
         //endregion
@@ -270,7 +272,7 @@ public class DeviceAddChoiceActivity extends AppCompatActivity {
                             mac = new String(arg0.getAttributes().get("mac"));
                         }
 
-                        DeviceItem d = new DeviceItem(DeviceAddChoiceActivity.this, type, arg0.getServiceName(), mac);
+                        Device d = new Device(type, arg0.getServiceName(), mac);
                         d.setIp(arg0.getHost().getHostAddress());
                         //data.add(d);
                         //mdnsAdapter.notifyItemInserted(data.size()-1);
@@ -321,7 +323,7 @@ public class DeviceAddChoiceActivity extends AppCompatActivity {
     class DeviceChoiceListAdapter extends BaseAdapter {
 
         private Context context;
-        //        private List<DeviceItem> mdata;
+        //        private List<Device> mdata;
         private LayoutInflater inflater;
 
         public DeviceChoiceListAdapter(Context context) {
