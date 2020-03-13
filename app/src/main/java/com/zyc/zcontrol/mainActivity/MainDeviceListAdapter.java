@@ -13,14 +13,14 @@ import com.zyc.zcontrol.R;
 
 import java.util.List;
 
-public class DeviceListAdapter extends BaseAdapter {
+public class MainDeviceListAdapter extends BaseAdapter {
 
     private Context context;
     private List<Device> mdata;
     private LayoutInflater inflater;
     private int choice = -1;
 
-    public DeviceListAdapter(Context context, List data) {
+    public MainDeviceListAdapter(Context context, List data) {
         this.context = context;
         this.mdata = data;
         inflater = LayoutInflater.from(context);

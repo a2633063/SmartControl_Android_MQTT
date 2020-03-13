@@ -53,8 +53,9 @@ import com.zyc.StaticVariable;
 import com.zyc.webservice.WebService;
 import com.zyc.zcontrol.controlItem.SettingActivity;
 import com.zyc.zcontrol.deviceItem.DeviceClass.Device;
+import com.zyc.zcontrol.deviceItem.DeviceClass.DeviceTC1;
 import com.zyc.zcontrol.deviceScan.DeviceAddChoiceActivity;
-import com.zyc.zcontrol.mainActivity.DeviceListAdapter;
+import com.zyc.zcontrol.mainActivity.MainDeviceListAdapter;
 import com.zyc.zcontrol.mainActivity.MainDeviceFragmentAdapter;
 
 import org.json.JSONException;
@@ -63,6 +64,8 @@ import org.json.JSONObject;
 import java.net.URISyntaxException;
 import java.util.ArrayList;
 import java.util.Random;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import static android.view.ViewGroup.LayoutParams.MATCH_PARENT;
 import static com.zyc.Function.getLocalVersionName;
@@ -78,7 +81,7 @@ public class MainActivity extends AppCompatActivity {
     DrawerLayout drawerLayout;
     ListView lv_device;
     ArrayList<Device> deviceData;
-    DeviceListAdapter adapter;
+    MainDeviceListAdapter mainDeviceListAdapter;
 
     //region 使用本地广播与service通信
     LocalBroadcastManager localBroadcastManager;
@@ -123,8 +126,16 @@ public class MainActivity extends AppCompatActivity {
                     }
                     break;
                 //endregion
-                //region 获取设备标志位
+                //region 需要刷新设备adapter
                 case 2:
+                    handler.removeMessages(2);
+                    mainDeviceListAdapter.notifyDataSetChanged();
+                    mainDeviceFragmentAdapter.notifyDataSetChanged();
+
+                    break;
+                //endregion
+                //region 获取设备标志位
+                case 4:
                     newDeviceFlag = false;
                     break;
                 case 3:
@@ -222,7 +233,7 @@ public class MainActivity extends AppCompatActivity {
 
         mSharedPreferences = getSharedPreferences("Setting", 0);
         deviceData = ((MainApplication) getApplication()).getDeviceList();
-
+        deviceData.clear();
         //region 数据库初始化
         SQLiteClass sqLite = new SQLiteClass(this, "device_list");
         //参数1：表名    参数2：要想显示的列    参数3：where子句   参数4：where子句对应的条件值
@@ -240,7 +251,12 @@ public class MainActivity extends AppCompatActivity {
 
         if (deviceData.size() < 1) {
 //            deviceData.add(new Device( StaticVariable.TYPE_M1, "演示设备", "b0f8932234f4"));
-            deviceData.add(new Device(StaticVariable.TYPE_TC1, "演示设备", "000000000000"));
+            deviceData.add(new DeviceTC1("演示设备1", "000000000001"));
+            deviceData.add(new DeviceTC1("演示设备2", "000000002001"));
+            deviceData.add(new DeviceTC1("ztc18baa", "d0bae4638baa"));
+//            deviceData.add(new Device(2, "演示设备2", "000000000002"));
+//            deviceData.add(new Device(3, "演示设备3", "000000000003"));
+//            deviceData.add(new Device(4, "演示设备4", "000000000004"));
         }
         //endregion
 
@@ -274,8 +290,8 @@ public class MainActivity extends AppCompatActivity {
         //region listview及adapter
 
         lv_device = findViewById(R.id.lv_device);
-        adapter = new DeviceListAdapter(MainActivity.this, deviceData);
-        if (adapter.getCount() > 0) adapter.setChoice(0);
+        mainDeviceListAdapter = new MainDeviceListAdapter(MainActivity.this, deviceData);
+        if (mainDeviceListAdapter.getCount() > 0) mainDeviceListAdapter.setChoice(0);
 
         Button b = new Button(this);
         b.setBackground(null);
@@ -292,13 +308,13 @@ public class MainActivity extends AppCompatActivity {
         });
         View footView = (View) LayoutInflater.from(this).inflate(R.layout.nav_header_main, null);
         lv_device.addFooterView(b);
-        lv_device.setAdapter(adapter);
-        if (page < adapter.getCount()) adapter.setChoice(page);
+        lv_device.setAdapter(mainDeviceListAdapter);
+        if (page < mainDeviceListAdapter.getCount()) mainDeviceListAdapter.setChoice(page);
         lv_device.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
                 drawerLayout.closeDrawer(GravityCompat.START);//关闭侧边栏
-                adapter.setChoice(position);
+                mainDeviceListAdapter.setChoice(position);
                 viewPager.setCurrentItem(position);
             }
         });
@@ -319,8 +335,7 @@ public class MainActivity extends AppCompatActivity {
                         sqLite.Delete("device_list", whereClauses, whereArgs);
 
                         deviceData.remove(position);
-                        adapter.notifyDataSetChanged();
-                        mainDeviceFragmentAdapter.notifyDataSetChanged();
+                        handler.sendEmptyMessage(2);
                     }
                 });
                 alertDialog.setButton(DialogInterface.BUTTON_NEGATIVE, "取消", (DialogInterface.OnClickListener) null);
@@ -343,7 +358,7 @@ public class MainActivity extends AppCompatActivity {
         viewPager = (ViewPager) findViewById(R.id.viewpager);
         mainDeviceFragmentAdapter = new MainDeviceFragmentAdapter(getSupportFragmentManager(), deviceData);
         viewPager.setAdapter(mainDeviceFragmentAdapter);
-        viewPager.setOffscreenPageLimit(deviceData.size());
+        viewPager.setOffscreenPageLimit(deviceData.size()+3);
         tabLayout.setupWithViewPager(viewPager);
 
         if (page < mainDeviceFragmentAdapter.getCount()) viewPager.setCurrentItem(page);
@@ -365,8 +380,8 @@ public class MainActivity extends AppCompatActivity {
 
             @Override
             public void onPageSelected(int position) {
-                adapter.setChoice(position);
-                toolbar.setTitle(adapter.getChoiceDevice().getName());
+                mainDeviceListAdapter.setChoice(position);
+                toolbar.setTitle(mainDeviceListAdapter.getChoiceDevice().getName());
             }
 
             @Override
@@ -456,7 +471,7 @@ public class MainActivity extends AppCompatActivity {
         //endregion
         //region 设置标题 无页面时导致闪退
         try {
-            toolbar.setTitle(adapter.getChoiceDevice().getName());
+            toolbar.setTitle(mainDeviceListAdapter.getChoiceDevice().getName());
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -500,7 +515,7 @@ public class MainActivity extends AppCompatActivity {
                 getDeviceFlag = true;
                 handler.sendEmptyMessageDelayed(3, 2000);
             } else {
-                handler.sendEmptyMessageDelayed(2, 1000);
+                handler.sendEmptyMessageDelayed(4, 1000);
                 newDeviceFlag = true;
             }
             String message = jsonObject.toString();
@@ -524,10 +539,10 @@ public class MainActivity extends AppCompatActivity {
         Intent intentget = this.getIntent();
         if (intentget.hasExtra("mac") && intentget.getStringExtra("mac") != null)//判断是否有值传入,并判断是否有特定key
         {
-            int position = adapter.contains(intentget.getStringExtra("mac"));
+            int position = mainDeviceListAdapter.contains(intentget.getStringExtra("mac"));
             Log.d(Tag, "mac:" + intentget.getStringExtra("mac") + "," + position);
-            if (position >= 0 && position < adapter.getCount()) {
-                adapter.setChoice(position);
+            if (position >= 0 && position < mainDeviceListAdapter.getCount()) {
+                mainDeviceListAdapter.setChoice(position);
                 viewPager.setCurrentItem(position);
                 Log.d(Tag, "set position:" + position);
             } else if (position == -1) {
@@ -601,7 +616,7 @@ public class MainActivity extends AppCompatActivity {
 
 
             if (deviceData.size() > 0) {
-                Device d = adapter.getChoiceDevice();
+                Device d = mainDeviceListAdapter.getChoiceDevice();
                 Intent intent = new Intent(MainActivity.this, SettingActivity.class);
                 intent.putExtra("name", d.getName());
                 intent.putExtra("mac", d.getMac());
@@ -633,7 +648,7 @@ public class MainActivity extends AppCompatActivity {
                             @Override
                             public void onClick(DialogInterface dialog, int which) {
 
-                                Device d = adapter.getChoiceDevice();
+                                Device d = mainDeviceListAdapter.getChoiceDevice();
                                 JSONObject jsonObject = new JSONObject();
                                 JSONObject jsonObject1 = new JSONObject();
 
@@ -672,7 +687,7 @@ public class MainActivity extends AppCompatActivity {
             }
 
 
-            Device d = adapter.getChoiceDevice();
+            Device d = mainDeviceListAdapter.getChoiceDevice();
             JSONObject jsonObject = new JSONObject();
             JSONObject jsonObject1 = new JSONObject();
 
@@ -829,15 +844,58 @@ public class MainActivity extends AppCompatActivity {
 
 
     //数据接收处理函数
-    void Receive(String ip, int port, String message) {
-        //TODO 数据接收处理
-        Receive(null, message);
-    }
-
-    void Receive(String topic, String message) {
-        //TODO 数据接收处理
+    void Receive(String ip, int port, String topic, String message) {
         Log.d(Tag, "RECV DATA,topic:" + topic + ",content:" + message);
 
+
+        //region 接收availability数据,非Json,单独处理
+        if (topic != null && topic.endsWith("availability")) {
+            String regexp = "device/(.*?)/([0123456789abcdef]{12})/(.*)";
+            Pattern pattern = Pattern.compile(regexp);
+            Matcher matcher = pattern.matcher(topic);
+            if (matcher.find() && matcher.groupCount() == 3) {
+                String device_type = matcher.group(1);
+                String device_mac = matcher.group(2);
+                String device_state = matcher.group(3);
+                broadcastUpdate(device_mac, ip, port, topic, message);
+                return;
+            }
+        }
+        //endregion
+        try {
+
+            JSONObject jsonObject = new JSONObject(message);
+            String device_mac = null;
+            if (jsonObject.has("mac")) device_mac = jsonObject.getString("mac");
+            if (device_mac == null) return;
+            broadcastUpdate(device_mac, ip, port, topic, message);
+
+            //region 修改名称 只有当获取到的设备名称,与当前记录名称不同时,修改数据库内名称.
+            //且为当前选择设备时,更新toolbar标题
+            if (jsonObject.has("name")) {
+                String name = jsonObject.getString("name");
+                final int position = mainDeviceListAdapter.contains(device_mac);
+                if (name != null && !name.equals(deviceData.get(position).getName())) {
+                    SQLiteClass sqLite = new SQLiteClass(this, "device_list");
+                    ContentValues cv = new ContentValues();
+                    cv.put("name", name);
+                    sqLite.Modify("device_list", cv, "mac=?", new String[]{device_mac});
+
+                    deviceData.get(position).setName(name);
+                    handler.sendEmptyMessage(2);
+                    if (position == mainDeviceListAdapter.getChoice())
+                        toolbar.setTitle(name);
+                }
+            }
+            //endregion
+
+            return;
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+
+
+        //TODO 修改设备新增方式
         try {
             JSONObject jsonObject = new JSONObject(message);
             String name = null;
@@ -851,7 +909,7 @@ public class MainActivity extends AppCompatActivity {
             if (jsonObject.has("type")) type = jsonObject.getInt("type");
             if (jsonObject.has("setting")) jsonSetting = jsonObject.getJSONObject("setting");
             if (mac == null) return;
-            final int position = adapter.contains(mac);
+            final int position = mainDeviceListAdapter.contains(mac);
             //region 根据收到的消息更改显示列表
             if (position >= 0) {//设备已存在
 
@@ -864,9 +922,8 @@ public class MainActivity extends AppCompatActivity {
                     sqLite.Modify("device_list", cv, "mac=?", new String[]{mac});
 
                     deviceData.get(position).setName(name);
-                    mainDeviceFragmentAdapter.notifyDataSetChanged();
-                    adapter.notifyDataSetChanged();
-                    if (position == adapter.getChoice())
+                    handler.sendEmptyMessage(2);
+                    if (position == mainDeviceListAdapter.getChoice())
                         toolbar.setTitle(name);
                 }
                 //endregion
@@ -886,7 +943,7 @@ public class MainActivity extends AppCompatActivity {
                 if (newDeviceFlag) {
                     if (name == null || type_name == null || type == -1 || jsonSetting != null)
                         return;
-                    handler.removeMessages(2);
+                    handler.removeMessages(4);
                     newDeviceFlag = false;
                     AlertDialog alertDialog = new AlertDialog.Builder(MainActivity.this)
                             .setTitle("设备重复添加")
@@ -906,7 +963,7 @@ public class MainActivity extends AppCompatActivity {
                 if (newDeviceFlag || getDeviceFlag) {
                     if (name == null || type_name == null || type == -1 || jsonSetting != null)
                         return;
-                    handler.removeMessages(2);
+                    handler.removeMessages(4);
                     newDeviceFlag = false;
                     Device d = new Device(type, name, mac);
                     SQLiteClass sqLite = new SQLiteClass(this, "device_list");
@@ -917,14 +974,11 @@ public class MainActivity extends AppCompatActivity {
                     cv.put("sort", deviceData.size());
                     sqLite.Insert("device_list", cv);
                     deviceData.add(d);
-                    mainDeviceFragmentAdapter.notifyDataSetChanged();
-                    adapter.notifyDataSetChanged();
-                    viewPager.setCurrentItem(adapter.getCount() - 1);
+                    handler.sendEmptyMessage(2);
+                    viewPager.setCurrentItem(mainDeviceListAdapter.getCount() - 1);
                 }
             }
             //endregion
-
-
         } catch (JSONException e) {
             e.printStackTrace();
         }
@@ -939,7 +993,7 @@ public class MainActivity extends AppCompatActivity {
         public void onServiceConnected(ComponentName componentName, IBinder service) {
             mConnectService = ((ConnectService.LocalBinder) service).getService();
             // Automatically connects to the device upon successful start-up initialization.
-            handler.sendEmptyMessage(1);
+            handler.sendEmptyMessageDelayed(1,0);
         }
 
         @Override
@@ -958,29 +1012,48 @@ public class MainActivity extends AppCompatActivity {
                 String ip = intent.getStringExtra(ConnectService.EXTRA_UDP_DATA_IP);
                 String message = intent.getStringExtra(ConnectService.EXTRA_UDP_DATA_MESSAGE);
                 int port = intent.getIntExtra(ConnectService.EXTRA_UDP_DATA_PORT, -1);
-                Receive(ip, port, message);
+                Receive(ip, port, null, message);
             } else if (ConnectService.ACTION_MQTT_CONNECTED.equals(action)) {  //连接成功
                 Log.d(Tag, "ACTION_MQTT_CONNECTED");
-            } else if (ConnectService.ACTION_MQTT_DISCONNECTED.equals(action)) {  //连接失败/断开
+
+                for (Device d : deviceData) {
+                    String[] topic = d.getRecvMqttTopic();
+                    int[] qos = new int[topic.length];
+                    for (int i = 0; i < qos.length; i++) qos[i] = 1;
+                    if (topic != null) {
+                        mConnectService.subscribe(topic, qos);
+//                        Log.d(Tag, "subscribe:" + d.getMqttStateTopic());
+                    }
+                }
+            } else if (ConnectService.ACTION_MQTT_DISCONNECTED.equals(action)) {  //连接失败/断开,尝试重新连接
                 Log.w(Tag, "ACTION_MQTT_DISCONNECTED");
                 if (mConnectService != null) {
                     if (mConnectService.isConnected()) {
                         mConnectService.disconnect();
                     }
-
                     //1秒后重连
                     handler.sendEmptyMessageDelayed(1, 1000);
-
                 }
             } else if (ConnectService.ACTION_DATA_AVAILABLE.equals(action)) {  //接收到数据
                 String topic = intent.getStringExtra(ConnectService.EXTRA_DATA_TOPIC);
                 String message = intent.getStringExtra(ConnectService.EXTRA_DATA_MESSAGE);
-                Receive(topic, message);
-
+                Receive(null, -1, topic, message);
             }
         }
     }
-    //endregion
 
+    //endregion
+//    void broadcastUpdate(String action) {
+//        localBroadcastManager.sendBroadcast(new Intent(action));
+//    }
+
+    void broadcastUpdate(String action, String ip, int port, String topic, String message) {
+        final Intent intent = new Intent(action);
+        intent.putExtra(ConnectService.EXTRA_UDP_DATA_IP, ip);
+        intent.putExtra(ConnectService.EXTRA_UDP_DATA_PORT, port);
+        intent.putExtra(ConnectService.EXTRA_DATA_TOPIC, topic);
+        intent.putExtra(ConnectService.EXTRA_DATA_MESSAGE, message);
+        localBroadcastManager.sendBroadcast(intent);
+    }
 
 }

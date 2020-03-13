@@ -36,7 +36,10 @@ public class MainDeviceFragmentAdapter extends FragmentPagerAdapter {
 
     @Override
     public int getItemPosition(Object object) {
-        // TODO Auto-generated method stub
+        // todo Auto-generated method stub
+        for(int i=0;i<data.size();i++){
+            if(object.hashCode()==data.get(i).getFragment().hashCode()) return i;
+        }
         return PagerAdapter.POSITION_NONE;
     }
 

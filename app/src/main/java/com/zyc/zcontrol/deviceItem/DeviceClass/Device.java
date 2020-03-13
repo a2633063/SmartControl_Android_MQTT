@@ -2,6 +2,7 @@ package com.zyc.zcontrol.deviceItem.DeviceClass;
 
 import android.content.Context;
 import android.graphics.drawable.Drawable;
+
 import androidx.annotation.DrawableRes;
 import androidx.fragment.app.Fragment;
 
@@ -55,7 +56,7 @@ public class Device {
     private String mac;
     private String ip;
     private String group;
-
+    private boolean online;
 
     //region gitter and setter
     public int getType() {
@@ -89,9 +90,19 @@ public class Device {
     public void setGroup(String group) {
         this.group = group;
     }
+
+
+    public boolean isOnline() {
+        return online;
+    }
+
+    public void setOnline(boolean online) {
+        this.online = online;
+    }
+
     //endregion
 
-    public Device( int type,String name, String mac) {
+    public Device(int type, String name, String mac) {
         this.name = name;
         this.mac = mac;
         this.type = type;
@@ -106,7 +117,7 @@ public class Device {
     }
 
     //region 子类必须重构函数
-    public String[] getMqttTopic() {
+    public String[] getRecvMqttTopic() {
         return null;
     }
 
@@ -114,12 +125,8 @@ public class Device {
         return null;
     }
 
-    Fragment fragment;
 
-//    public Fragment getFragment() {
-//        if (fragment == null) fragment = new Fragment();
-//        return fragment;
-//    }
+    Fragment fragment;
 
     public Fragment getFragment() {
         if (fragment == null) {
