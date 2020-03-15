@@ -131,6 +131,7 @@ public class TC1Fragment extends DeviceFragment {
         mSwipeLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
             @Override
             public void onRefresh() {
+
                 handler.sendEmptyMessageDelayed(1, 0);
                 mSwipeLayout.setRefreshing(false);
             }
@@ -235,6 +236,7 @@ public class TC1Fragment extends DeviceFragment {
                 String device_mac = matcher.group(2);
                 if (device_mac.equals(device.getMac())) {
                     device.setOnline(message.equals("1"));
+                    Log(device.isOnline()?"设备在线":"设备离线"+"(功能调试中)");
                 }
                 return;
             }

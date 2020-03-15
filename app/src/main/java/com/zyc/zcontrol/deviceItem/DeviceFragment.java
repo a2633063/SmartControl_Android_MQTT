@@ -111,7 +111,7 @@ public class DeviceFragment extends Fragment implements View.OnLongClickListener
             Log("当前发送消息为:mqtt");
         } else if ((isUDP || topic == null || !mConnectService.isConnected()) && send_net_flag != 1) { //当前通过udp发送
             send_net_flag=1;
-            Log("当前发送消息为:udp");
+            Log("当前发送消息为:udp"+(mConnectService.isConnected()?"(mqtt已连接)":""));
         }
     }
 
@@ -206,7 +206,10 @@ public class DeviceFragment extends Fragment implements View.OnLongClickListener
 
     protected void Log(String str) {
         if (log == null) return;
-        log.setText(log.getText() + "\n" + str);
+
+        DateFormat df = new SimpleDateFormat("[HH:mm:ss.sss]");
+        log.setText(log.getText() + "\n" +df.format(new Date())+""+ str);
+//        log.setText(log.getText() + "\n" + str);
         Log.w("log","log:"+log.getText());
 //        log.append();
     }
