@@ -131,7 +131,8 @@ public class MainActivity extends AppCompatActivity {
                     handler.removeMessages(2);
                     mainDeviceListAdapter.notifyDataSetChanged();
                     mainDeviceFragmentAdapter.notifyDataSetChanged();
-
+                    toolbar.setTitle(mainDeviceListAdapter.getChoiceDevice().getName());
+                    Log.d(Tag, "device list update");
                     break;
                 //endregion
                 //region 获取设备标志位
@@ -251,7 +252,7 @@ public class MainActivity extends AppCompatActivity {
 
         if (deviceData.size() < 1) {
 //            deviceData.add(new Device( StaticVariable.TYPE_M1, "演示设备", "b0f8932234f4"));
-            deviceData.add(new DeviceTC1("演示设备1", "000000000001"));
+            deviceData.add(new DeviceTC1("演示设备", "000000000000"));
             deviceData.add(new DeviceTC1("演示设备2", "000000002001"));
             deviceData.add(new DeviceTC1("ztc18baa", "d0bae4638baa"));
 //            deviceData.add(new Device(2, "演示设备2", "000000000002"));
@@ -282,7 +283,7 @@ public class MainActivity extends AppCompatActivity {
             public void onClick(View v) {
                 Intent intent = new Intent(MainActivity.this, DeviceSortActivity.class);
                 startActivity(intent);
-                finish();
+                //finish();
             }
         });
         //endregion
@@ -358,7 +359,7 @@ public class MainActivity extends AppCompatActivity {
         viewPager = (ViewPager) findViewById(R.id.viewpager);
         mainDeviceFragmentAdapter = new MainDeviceFragmentAdapter(getSupportFragmentManager(), deviceData);
         viewPager.setAdapter(mainDeviceFragmentAdapter);
-        viewPager.setOffscreenPageLimit(deviceData.size()+3);
+        viewPager.setOffscreenPageLimit(deviceData.size() + 3);
         tabLayout.setupWithViewPager(viewPager);
 
         if (page < mainDeviceFragmentAdapter.getCount()) viewPager.setCurrentItem(page);
@@ -455,6 +456,7 @@ public class MainActivity extends AppCompatActivity {
         intentFilter.addAction(ConnectService.ACTION_MQTT_DISCONNECTED);
         intentFilter.addAction(ConnectService.ACTION_DATA_AVAILABLE);
         intentFilter.addAction(ConnectService.ACTION_UDP_DATA_AVAILABLE);//UDP监听
+        intentFilter.addAction(ConnectService.ACTION_MAINACTIVITY_DEVICELISTUPDATE); //device list更新
         localBroadcastManager.registerReceiver(msgReceiver, intentFilter);
         //endregion
 
@@ -883,8 +885,6 @@ public class MainActivity extends AppCompatActivity {
 
                     deviceData.get(position).setName(name);
                     handler.sendEmptyMessage(2);
-                    if (position == mainDeviceListAdapter.getChoice())
-                        toolbar.setTitle(name);
                 }
             }
             //endregion
@@ -923,8 +923,6 @@ public class MainActivity extends AppCompatActivity {
 
                     deviceData.get(position).setName(name);
                     handler.sendEmptyMessage(2);
-                    if (position == mainDeviceListAdapter.getChoice())
-                        toolbar.setTitle(name);
                 }
                 //endregion
 
@@ -993,7 +991,7 @@ public class MainActivity extends AppCompatActivity {
         public void onServiceConnected(ComponentName componentName, IBinder service) {
             mConnectService = ((ConnectService.LocalBinder) service).getService();
             // Automatically connects to the device upon successful start-up initialization.
-            handler.sendEmptyMessageDelayed(1,0);
+            handler.sendEmptyMessageDelayed(1, 0);
         }
 
         @Override
@@ -1018,9 +1016,9 @@ public class MainActivity extends AppCompatActivity {
 
                 for (Device d : deviceData) {
                     String[] topic = d.getRecvMqttTopic();
-                    int[] qos = new int[topic.length];
-                    for (int i = 0; i < qos.length; i++) qos[i] = 1;
                     if (topic != null) {
+                        int[] qos = new int[topic.length];
+                        for (int i = 0; i < qos.length; i++) qos[i] = 1;
                         mConnectService.subscribe(topic, qos);
 //                        Log.d(Tag, "subscribe:" + d.getMqttStateTopic());
                     }
@@ -1038,6 +1036,8 @@ public class MainActivity extends AppCompatActivity {
                 String topic = intent.getStringExtra(ConnectService.EXTRA_DATA_TOPIC);
                 String message = intent.getStringExtra(ConnectService.EXTRA_DATA_MESSAGE);
                 Receive(null, -1, topic, message);
+            } else if (ConnectService.ACTION_MAINACTIVITY_DEVICELISTUPDATE.equals(action)) {  //接收到数据
+                handler.sendEmptyMessageDelayed(2, 0);
             }
         }
     }

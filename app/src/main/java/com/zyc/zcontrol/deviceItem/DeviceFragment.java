@@ -115,7 +115,7 @@ public class DeviceFragment extends Fragment implements View.OnLongClickListener
         }
     }
 
-    //
+    //接收处理函数,修改device属性,同时修改ui界面
     //此处要先处理判断网络状态显示log信息,因此需要执行super
     @CallSuper
     public void Receive(String ip, int port, String topic, String message) {

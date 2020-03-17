@@ -30,6 +30,8 @@ public class ConnectService extends Service {
 
     //region 广播静态变量
 
+
+    public final static String ACTION_MAINACTIVITY_DEVICELISTUPDATE = "com.zyc.zcontrol.mainactivity.DEVICELISTUPDATE";
     //region MQTT相关
     public final static String ACTION_MQTT_CONNECTED = "com.zyc.zcontrol.mqtt.ACTION_MQTT_CONNECTED";
     public final static String ACTION_MQTT_DISCONNECTED = "com.zyc.zcontrol.mqtt.ACTION_MQTT_DISCONNECTED";

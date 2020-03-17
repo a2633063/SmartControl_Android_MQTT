@@ -140,7 +140,7 @@ public class TC1Fragment extends DeviceFragment {
         mSwipeLayout.post(new Runnable() {
             @Override
             public void run() {
-                Log.d(Tag,"post"+device.getMac());
+                Log.d(Tag, "post" + device.getMac());
                 handler.sendEmptyMessageDelayed(1, 300);
             }
         });
@@ -236,13 +236,12 @@ public class TC1Fragment extends DeviceFragment {
                 String device_mac = matcher.group(2);
                 if (device_mac.equals(device.getMac())) {
                     device.setOnline(message.equals("1"));
-                    Log(device.isOnline()?"设备在线":"设备离线"+"(功能调试中)");
+                    Log(device.isOnline() ? "设备在线" : "设备离线" + "(功能调试中)");
                 }
                 return;
             }
         }
         //endregion
-
 
         try {
             JSONObject jsonObject = new JSONObject(message);
@@ -257,6 +256,7 @@ public class TC1Fragment extends DeviceFragment {
             if (jsonObject.has("power") && jsonObject.get("power") instanceof String) {
                 try {
                     device.setPower(jsonObject.getDouble("power"));
+                    tv_power.setText(String.format("%.1fW", device.getPower()));
                 } catch (JSONException e) {
                     Log("功率数据出错");
                     e.printStackTrace();
@@ -265,6 +265,31 @@ public class TC1Fragment extends DeviceFragment {
             if (jsonObject.has("total_time") && jsonObject.get("total_time") instanceof Integer) {
                 try {
                     device.setTotal_time(jsonObject.getInt("total_time"));
+                    int total_time = device.getTotal_time();
+                    Log.d(Tag, "total_time:" + total_time);
+
+                    String timeStr = "";
+                    int days = total_time / 86400; //天
+                    int hours = ((total_time % 86400) / 3600); //小时
+                    int minutes = ((total_time % 3600) / 60); //分
+                    int second = ((total_time % 60)); //秒
+                    if (days > 0)   //天
+                    {
+                        timeStr += days + "天";
+                    }
+                    if (hours > 0)   //小时
+                    {
+                        timeStr += hours + "小时";
+                    }
+                    if (minutes > 0)   //分
+                    {
+                        timeStr += minutes + "分";
+                    }
+                    if (second > 0)   //秒
+                    {
+                        timeStr += second + "秒";
+                    }
+                    tv_total_time.setText("运行时间: " + timeStr);
                 } catch (JSONException e) {
                     Log("运行时间数据出错");
                     e.printStackTrace();
@@ -279,63 +304,16 @@ public class TC1Fragment extends DeviceFragment {
                 if (jsonPlug.has("on")) {
                     int on = jsonPlug.getInt("on");
                     device.setPlug(plug_id, on != 0);
-                }
-                if (!jsonPlug.has("setting")) continue;
-                JSONObject jsonPlugSetting = jsonPlug.getJSONObject("setting");
-                if (jsonPlugSetting.has("name")) {
-                    device.setPlug_name(plug_id, jsonPlugSetting.getString("name"));
-                }
-            }
-            //endregion
-
-            //region 更新UI
-            if (jsonObject.has("power"))
-                tv_power.setText(String.format("%.1fW", device.getPower()));
-
-            if (jsonObject.has("total_time")) {
-                int total_time = device.getTotal_time();
-                Log.d(Tag, "total_time:" + total_time);
-
-                String timeStr = "";
-                int days = total_time / 86400; //天
-                int hours = ((total_time % 86400) / 3600); //小时
-                int minutes = ((total_time % 3600) / 60); //分
-                int second = ((total_time % 60)); //秒
-                if (days > 0)   //天
-                {
-                    timeStr += days + "天";
-                }
-                if (hours > 0)   //小时
-                {
-                    timeStr += hours + "小时";
-                }
-                if (minutes > 0)   //分
-                {
-                    timeStr += minutes + "分";
-                }
-                if (second > 0)   //秒
-                {
-                    timeStr += second + "秒";
-                }
-                tv_total_time.setText("运行时间: " + timeStr);
-
-            }
-            //region 解析plug
-            for (int plug_id = 0; plug_id < 6; plug_id++) {
-                if (!jsonObject.has("plug_" + plug_id)) continue;
-                JSONObject jsonPlug = jsonObject.getJSONObject("plug_" + plug_id);
-                if (jsonPlug.has("on")) {
                     tbtn_plug[plug_id].setChecked(device.isPlug(plug_id));
                 }
                 if (!jsonPlug.has("setting")) continue;
                 JSONObject jsonPlugSetting = jsonPlug.getJSONObject("setting");
                 if (jsonPlugSetting.has("name")) {
+                    device.setPlug_name(plug_id, jsonPlugSetting.getString("name"));
                     tv_plug_name[plug_id].setText(device.getPlug_name(plug_id));
                 }
             }
             //endregion
-            //endregion
-
 
         } catch (JSONException e) {
             e.printStackTrace();

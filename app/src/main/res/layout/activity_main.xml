@@ -32,7 +32,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:gravity="center"
-                android:textSize="8dp"
+                android:textSize="12dp"
                 android:text="长按删除/创建快捷方式.点此设置排序" />
             <View
                 android:layout_width="match_parent"
