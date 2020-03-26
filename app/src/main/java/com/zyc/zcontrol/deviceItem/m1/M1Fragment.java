@@ -2,45 +2,28 @@ package com.zyc.zcontrol.deviceItem.m1;
 
 
 import android.annotation.SuppressLint;
-import android.content.BroadcastReceiver;
-import android.content.ComponentName;
-import android.content.Context;
 import android.content.Intent;
-import android.content.IntentFilter;
-import android.content.ServiceConnection;
-import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.os.Handler;
-import android.os.IBinder;
 import android.os.Message;
-import androidx.fragment.app.Fragment;
-import androidx.localbroadcastmanager.content.LocalBroadcastManager;
-import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
-import android.text.Editable;
 import android.text.Html;
-import android.text.TextWatcher;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ScrollView;
 import android.widget.SeekBar;
 import android.widget.TextView;
 
-import com.zyc.zcontrol.ConnectService;
+import androidx.fragment.app.Fragment;
+import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
+
 import com.zyc.zcontrol.R;
 import com.zyc.zcontrol.deviceItem.DeviceClass.DeviceFragment;
 import com.zyc.zcontrol.deviceItem.DeviceClass.DeviceM1;
 
 import org.json.JSONException;
 import org.json.JSONObject;
-
-import java.text.DateFormat;
-import java.text.SimpleDateFormat;
-import java.util.Date;
-
-import static android.content.Context.BIND_AUTO_CREATE;
 
 /**
  * A simple {@link Fragment} subclass.
@@ -74,7 +57,7 @@ public class M1Fragment extends DeviceFragment {
 
     //region Handler
     @SuppressLint("HandlerLeak")
-    Handler  handler = new Handler() {
+    Handler handler = new Handler() {
         @Override
         public void handleMessage(Message msg) {// handler接收到消息后就会执行此方法
             switch (msg.what) {
@@ -131,21 +114,23 @@ public class M1Fragment extends DeviceFragment {
             @Override
             public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
             }
+
             @Override
             public void onStartTrackingTouch(SeekBar seekBar) {
             }
+
             @Override
             public void onStopTrackingTouch(SeekBar seekBar) {
-                Message msg=new Message();
-                msg.arg1=seekBar.getProgress();
-                msg.what=2;
-                handler.sendMessageDelayed(msg,1);
+                Message msg = new Message();
+                msg.arg1 = seekBar.getProgress();
+                msg.what = 2;
+                handler.sendMessageDelayed(msg, 1);
             }
         });
 
         //endregion
 
-        tvBrightness=view.findViewById(R.id.textViewR);
+        tvBrightness = view.findViewById(R.id.textViewR);
         tvBrightness.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -179,7 +164,7 @@ public class M1Fragment extends DeviceFragment {
 
     void Send(String message) {
         boolean b = getActivity().getSharedPreferences("Setting_" + device.getMac(), 0).getBoolean("always_UDP", false);
-        super.Send(b ,device.getSendMqttTopic(), message);
+        super.Send(b, device.getSendMqttTopic(), message);
     }
 
     //数据接收处理更新函数
@@ -215,7 +200,7 @@ public class M1Fragment extends DeviceFragment {
             if (jsonObject.has("humidity")) {
                 double humidity = jsonObject.getDouble("humidity");
                 int h = (int) (humidity * 10);
-                exchange = getActivity().getResources().getString(R.string.m1_num_string, String.valueOf(h / 10), String.valueOf(h % 10)).replace("℃","%");
+                exchange = getActivity().getResources().getString(R.string.m1_num_string, String.valueOf(h / 10), String.valueOf(h % 10)).replace("℃", "%");
                 tvHumidity.setText(Html.fromHtml(exchange));
             }
             //endregion
@@ -230,6 +215,7 @@ public class M1Fragment extends DeviceFragment {
             e.printStackTrace();
         }
     }
+
     //region 事件监听调用函数,主要为在子类中重写此函数实现在service建立成功/mqtt连接成功/失败时执行功能
     //Service建立成功时调用    此函数需要时在子类中重写
     public void ServiceConnected() {

@@ -3,19 +3,12 @@ package com.zyc.zcontrol.deviceItem.a1;
 
 import android.annotation.SuppressLint;
 import android.app.ProgressDialog;
-import android.content.BroadcastReceiver;
 import android.content.ClipData;
 import android.content.ClipboardManager;
-import android.content.ComponentName;
 import android.content.Context;
 import android.content.DialogInterface;
-import android.content.Intent;
-import android.content.IntentFilter;
-import android.content.ServiceConnection;
-import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.os.Handler;
-import android.os.IBinder;
 import android.os.Message;
 import android.preference.EditTextPreference;
 import android.preference.Preference;
@@ -26,19 +19,14 @@ import android.widget.EditText;
 import android.widget.Toast;
 
 import androidx.appcompat.app.AlertDialog;
-import androidx.localbroadcastmanager.content.LocalBroadcastManager;
 
 import com.zyc.webservice.WebService;
-import com.zyc.zcontrol.ConnectService;
 import com.zyc.zcontrol.R;
-import com.zyc.zcontrol.controlItem.MyPreferenceFragment;
 import com.zyc.zcontrol.deviceItem.DeviceClass.DeviceA1;
 import com.zyc.zcontrol.deviceItem.DeviceClass.SettingFragment;
 
 import org.json.JSONException;
 import org.json.JSONObject;
-
-import static android.content.Context.BIND_AUTO_CREATE;
 
 @SuppressLint("ValidFragment")
 public class A1SettingFragment extends SettingFragment {

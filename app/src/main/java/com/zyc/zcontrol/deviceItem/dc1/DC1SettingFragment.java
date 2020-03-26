@@ -3,18 +3,12 @@ package com.zyc.zcontrol.deviceItem.dc1;
 
 import android.annotation.SuppressLint;
 import android.app.ProgressDialog;
-import android.content.BroadcastReceiver;
 import android.content.ClipData;
 import android.content.ClipboardManager;
-import android.content.ComponentName;
 import android.content.Context;
 import android.content.DialogInterface;
-import android.content.Intent;
-import android.content.IntentFilter;
-import android.content.ServiceConnection;
 import android.os.Bundle;
 import android.os.Handler;
-import android.os.IBinder;
 import android.os.Message;
 import android.preference.EditTextPreference;
 import android.preference.Preference;
@@ -25,18 +19,14 @@ import android.widget.EditText;
 import android.widget.Toast;
 
 import androidx.appcompat.app.AlertDialog;
-import androidx.localbroadcastmanager.content.LocalBroadcastManager;
 
 import com.zyc.webservice.WebService;
-import com.zyc.zcontrol.ConnectService;
 import com.zyc.zcontrol.R;
 import com.zyc.zcontrol.deviceItem.DeviceClass.DeviceDC1;
 import com.zyc.zcontrol.deviceItem.DeviceClass.SettingFragment;
 
 import org.json.JSONException;
 import org.json.JSONObject;
-
-import static android.content.Context.BIND_AUTO_CREATE;
 
 
 @SuppressLint("ValidFragment")
@@ -344,7 +334,7 @@ public class DC1SettingFragment extends SettingFragment {
             if (oldProtocol) topic = "device/zdc1/set";
             else topic = device.getSendMqttTopic();
         }
-        super.Send(udp,topic, message);
+        super.Send(udp, topic, message);
     }
 
     //数据接收处理函数

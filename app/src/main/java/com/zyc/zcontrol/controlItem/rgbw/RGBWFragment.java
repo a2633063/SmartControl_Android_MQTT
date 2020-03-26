@@ -13,9 +13,11 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.os.IBinder;
 import android.os.Message;
+
 import androidx.fragment.app.Fragment;
 import androidx.localbroadcastmanager.content.LocalBroadcastManager;
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
+
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.util.Log;
@@ -176,8 +178,8 @@ public class RGBWFragment extends Fragment {
             @Override
             public void onStopTrackingTouch(SeekBar seekBar) {
                 Message msg = new Message();
-                msg.obj = "["+seekBarR.getProgress() + "," + seekBarG.getProgress() + "," +
-                        seekBarB.getProgress() + "," + seekBarW.getProgress()+"]";
+                msg.obj = "[" + seekBarR.getProgress() + "," + seekBarG.getProgress() + "," +
+                        seekBarB.getProgress() + "," + seekBarW.getProgress() + "]";
                 msg.what = 2;
                 handler.sendMessageDelayed(msg, 1);
             }

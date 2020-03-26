@@ -10,6 +10,7 @@ import androidx.viewpager.widget.PagerAdapter;
 import com.zyc.zcontrol.deviceItem.DeviceClass.Device;
 
 import java.util.ArrayList;
+
 public class MainDeviceFragmentAdapter extends FragmentPagerAdapter {
 
     private ArrayList<Device> data;
@@ -37,8 +38,8 @@ public class MainDeviceFragmentAdapter extends FragmentPagerAdapter {
     @Override
     public int getItemPosition(Object object) {
         // todo Auto-generated method stub
-        for(int i=0;i<data.size();i++){
-            if(object.hashCode()==data.get(i).getFragment().hashCode()) return i;
+        for (int i = 0; i < data.size(); i++) {
+            if (object.hashCode() == data.get(i).getFragment().hashCode()) return i;
         }
         return PagerAdapter.POSITION_NONE;
     }

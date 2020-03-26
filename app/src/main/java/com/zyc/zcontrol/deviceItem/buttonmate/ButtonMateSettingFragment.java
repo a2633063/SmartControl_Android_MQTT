@@ -2,34 +2,19 @@ package com.zyc.zcontrol.deviceItem.buttonmate;
 
 
 import android.annotation.SuppressLint;
-import android.content.BroadcastReceiver;
-import android.content.ComponentName;
-import android.content.Context;
-import android.content.Intent;
-import android.content.IntentFilter;
-import android.content.ServiceConnection;
-import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.os.Handler;
-import android.os.IBinder;
 import android.os.Message;
 import android.preference.EditTextPreference;
 import android.preference.Preference;
-import android.preference.PreferenceFragment;
-
-import androidx.localbroadcastmanager.content.LocalBroadcastManager;
-
 import android.util.Log;
 
-import com.zyc.zcontrol.ConnectService;
 import com.zyc.zcontrol.R;
 import com.zyc.zcontrol.deviceItem.DeviceClass.DeviceButtonMate;
 import com.zyc.zcontrol.deviceItem.DeviceClass.SettingFragment;
 
 import org.json.JSONException;
 import org.json.JSONObject;
-
-import static android.content.Context.BIND_AUTO_CREATE;
 
 @SuppressLint("ValidFragment")
 public class ButtonMateSettingFragment extends SettingFragment {

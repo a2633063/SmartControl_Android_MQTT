@@ -3,19 +3,10 @@ package com.zyc.zcontrol.deviceItem.a1;
 
 import android.animation.ObjectAnimator;
 import android.annotation.SuppressLint;
-import android.content.BroadcastReceiver;
-import android.content.ComponentName;
-import android.content.Context;
 import android.content.Intent;
-import android.content.IntentFilter;
-import android.content.ServiceConnection;
-import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.os.Handler;
-import android.os.IBinder;
 import android.os.Message;
-import android.text.Editable;
-import android.text.TextWatcher;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
@@ -23,16 +14,13 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.view.animation.LinearInterpolator;
 import android.widget.ImageView;
-import android.widget.ScrollView;
 import android.widget.SeekBar;
 import android.widget.Switch;
 import android.widget.TextView;
 
 import androidx.fragment.app.Fragment;
-import androidx.localbroadcastmanager.content.LocalBroadcastManager;
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 
-import com.zyc.zcontrol.ConnectService;
 import com.zyc.zcontrol.R;
 import com.zyc.zcontrol.deviceItem.DeviceClass.DeviceA1;
 import com.zyc.zcontrol.deviceItem.DeviceClass.DeviceFragment;
@@ -40,13 +28,8 @@ import com.zyc.zcontrol.deviceItem.DeviceClass.DeviceFragment;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import java.text.DateFormat;
-import java.text.SimpleDateFormat;
-import java.util.Date;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
-
-import static android.content.Context.BIND_AUTO_CREATE;
 
 /**
  * A simple {@link Fragment} subclass.
@@ -88,10 +71,10 @@ public class A1Fragment extends DeviceFragment {
                 case 1:
                     Send("{\"mac\":\"" + device.getMac() + "\",\"on\":null,\"speed\":null}");
                     break;
-                case  2:
-                    Log.d(Tag,"send seekbar:"+msg.arg1);
+                case 2:
+                    Log.d(Tag, "send seekbar:" + msg.arg1);
 
-                    Send("{\"mac\":\"" + device.getMac() + "\",\"speed\":"+msg.arg1+"}");
+                    Send("{\"mac\":\"" + device.getMac() + "\",\"speed\":" + msg.arg1 + "}");
                     break;
             }
         }
@@ -109,7 +92,7 @@ public class A1Fragment extends DeviceFragment {
         //region 控件初始化
 
         //region 图片及动画
-        iv_fan=view.findViewById(R.id.iv_fan);
+        iv_fan = view.findViewById(R.id.iv_fan);
         objectAnimator = ObjectAnimator.ofFloat(iv_fan, "rotation", 0f, 360f);//添加旋转动画，旋转中心默认为控件中点
         objectAnimator.setDuration(3600);//设置动画时间
         objectAnimator.setInterpolator(new LinearInterpolator());//动画时间线性渐变
@@ -152,15 +135,17 @@ public class A1Fragment extends DeviceFragment {
             @Override
             public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
             }
+
             @Override
             public void onStartTrackingTouch(SeekBar seekBar) {
             }
+
             @Override
             public void onStopTrackingTouch(SeekBar seekBar) {
-                Message msg=new Message();
-                msg.arg1=seekBar.getProgress();
-                msg.what=2;
-                handler.sendMessageDelayed(msg,1);
+                Message msg = new Message();
+                msg.arg1 = seekBar.getProgress();
+                msg.what = 2;
+                handler.sendMessageDelayed(msg, 1);
             }
         });
 
@@ -203,7 +188,7 @@ public class A1Fragment extends DeviceFragment {
 
     void Send(String message) {
         boolean b = getActivity().getSharedPreferences("Setting_" + device.getMac(), 0).getBoolean("always_UDP", false);
-        super.Send(b,device.getSendMqttTopic(), message);
+        super.Send(b, device.getSendMqttTopic(), message);
     }
 
     //数据接收处理函数
@@ -237,16 +222,16 @@ public class A1Fragment extends DeviceFragment {
             if (jsonObject.has("on")) {
                 int on = jsonObject.getInt("on");
                 tbtn_switch.setChecked(on != 0);
-                if(tbtn_switch.isChecked())objectAnimator.start();
+                if (tbtn_switch.isChecked()) objectAnimator.start();
                 else objectAnimator.pause();
             }
             //endregion
             //region 解析speed
             if (jsonObject.has("speed")) {
-                int speed=jsonObject.getInt("speed");
+                int speed = jsonObject.getInt("speed");
                 seekBar.setProgress(speed);
-                objectAnimator.setDuration(7000-speed*68);
-                tv_speed.setText("风速:"+String.format("%03d", speed)+"%");
+                objectAnimator.setDuration(7000 - speed * 68);
+                tv_speed.setText("风速:" + String.format("%03d", speed) + "%");
             }
             //endregion
 

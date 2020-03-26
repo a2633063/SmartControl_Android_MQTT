@@ -4,8 +4,6 @@ import android.preference.PreferenceFragment;
 
 import androidx.fragment.app.Fragment;
 
-import com.zyc.zcontrol.deviceItem.a1.A1Fragment;
-import com.zyc.zcontrol.deviceItem.a1.A1SettingFragment;
 import com.zyc.zcontrol.deviceItem.m1.M1Fragment;
 import com.zyc.zcontrol.deviceItem.m1.M1SettingFragment;
 
@@ -31,13 +29,15 @@ public class DeviceM1 extends Device {
 
     Fragment fragment;
     PreferenceFragment settingFragment;
+
     public Fragment getFragment() {
         if (fragment == null) {
             fragment = new M1Fragment(this);
         }
         return fragment;
     }
-    public PreferenceFragment getSettingFragment(){
+
+    public PreferenceFragment getSettingFragment() {
         if (settingFragment == null) {
             settingFragment = new M1SettingFragment(this);
         }

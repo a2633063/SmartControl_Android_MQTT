@@ -1,24 +1,11 @@
 package com.zyc.zcontrol.deviceItem.m1;
 
 import android.annotation.SuppressLint;
-import android.content.BroadcastReceiver;
-import android.content.ComponentName;
-import android.content.Context;
 import android.content.Intent;
-import android.content.IntentFilter;
-import android.content.ServiceConnection;
-import android.content.SharedPreferences;
 import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
 import android.os.Handler;
-import android.os.IBinder;
 import android.os.Message;
-
-import androidx.localbroadcastmanager.content.LocalBroadcastManager;
-import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
-import androidx.appcompat.app.AppCompatActivity;
-
-import android.util.Log;
 import android.view.Gravity;
 import android.view.MenuItem;
 import android.view.View;
@@ -32,7 +19,8 @@ import android.widget.TextView;
 import android.widget.Toast;
 import android.widget.ToggleButton;
 
-import com.zyc.zcontrol.ConnectService;
+import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
+
 import com.zyc.zcontrol.MainApplication;
 import com.zyc.zcontrol.R;
 import com.zyc.zcontrol.ServiceActivity;
@@ -353,6 +341,7 @@ public class M1PlugActivity extends ServiceActivity {
         }
 
     }
+
     //endregion
     //region 事件监听调用函数,主要为在子类中重写此函数实现在service建立成功/mqtt连接成功/失败时执行功能
     //Service建立成功时调用    此函数需要时在子类中重写

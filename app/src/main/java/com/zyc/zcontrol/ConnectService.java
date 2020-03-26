@@ -295,25 +295,25 @@ public class ConnectService extends Service {
         }
     }
 
-    public void subscribe(String topic,int qos){
+    public void subscribe(String topic, int qos) {
         try {
-            mqttClient.subscribe(topic,qos);
-        } catch (MqttException e) {
-            e.printStackTrace();
-            disconnect();
-        }
-    }
-    public void subscribe(String[] topic,int[] qos){
-        try {
-            mqttClient.subscribe(topic,qos);
+            mqttClient.subscribe(topic, qos);
         } catch (MqttException e) {
             e.printStackTrace();
             disconnect();
         }
     }
 
-    public void unsubscribe(String topic)
-    {
+    public void subscribe(String[] topic, int[] qos) {
+        try {
+            mqttClient.subscribe(topic, qos);
+        } catch (MqttException e) {
+            e.printStackTrace();
+            disconnect();
+        }
+    }
+
+    public void unsubscribe(String topic) {
         try {
             mqttClient.unsubscribe(topic);
         } catch (MqttException e) {
@@ -321,8 +321,8 @@ public class ConnectService extends Service {
             disconnect();
         }
     }
-    public void unsubscribe(String[] topic)
-    {
+
+    public void unsubscribe(String[] topic) {
         try {
             mqttClient.unsubscribe(topic);
         } catch (MqttException e) {
