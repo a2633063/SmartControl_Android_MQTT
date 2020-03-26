@@ -1,7 +1,6 @@
 package com.zyc.zcontrol.deviceItem.DeviceClass;
 
-import android.content.Context;
-import android.graphics.drawable.Drawable;
+import android.preference.PreferenceFragment;
 
 import androidx.annotation.DrawableRes;
 import androidx.fragment.app.Fragment;
@@ -13,7 +12,6 @@ import com.zyc.zcontrol.controlItem.buttonmate.ButtonMateFragment;
 import com.zyc.zcontrol.controlItem.dc1.DC1Fragment;
 import com.zyc.zcontrol.controlItem.m1.M1Fragment;
 import com.zyc.zcontrol.controlItem.rgbw.RGBWFragment;
-import com.zyc.zcontrol.controlItem.tc1.TC1Fragment;
 
 
 public class Device {
@@ -57,6 +55,8 @@ public class Device {
     private String ip;
     private String group;
     private boolean online;
+    private String version=null;
+    private String ssid=null;
 
     //region gitter and setter
     public int getType() {
@@ -100,7 +100,25 @@ public class Device {
         this.online = online;
     }
 
+    public String getVersion() {
+        return version;
+    }
+
+    public void setVersion(String version) {
+        this.version = version;
+    }
+
+    public String getSsid() {
+        return ssid;
+    }
+
+    public void setSsid(String ssid) {
+        this.ssid = ssid;
+    }
+
     //endregion
+
+
 
     public Device(int type, String name, String mac) {
         this.name = name;
@@ -137,9 +155,7 @@ public class Device {
                 case StaticVariable.TYPE_BUTTON_MATE:
                     fragment = new ButtonMateFragment(name, mac);
                     break;
-                case StaticVariable.TYPE_TC1:
-                    fragment = new TC1Fragment(name, mac);
-                    break;
+
                 case StaticVariable.TYPE_DC1:
                     fragment = new DC1Fragment(name, mac);
                     break;
@@ -157,6 +173,9 @@ public class Device {
             }
         }
         return fragment;
+    }
+    public PreferenceFragment getSettingFragment(){
+        return null;
     }
     //endregion
 

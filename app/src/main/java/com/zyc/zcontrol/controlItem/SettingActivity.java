@@ -16,7 +16,6 @@ import com.zyc.zcontrol.controlItem.buttonmate.ButtonMateSettingFragment;
 import com.zyc.zcontrol.controlItem.dc1.DC1SettingFragment;
 import com.zyc.zcontrol.controlItem.m1.M1SettingFragment;
 import com.zyc.zcontrol.controlItem.rgbw.RGBWSettingFragment;
-import com.zyc.zcontrol.controlItem.tc1.TC1SettingFragment;
 
 public class SettingActivity extends AppCompatActivity {
 
@@ -52,9 +51,7 @@ public class SettingActivity extends AppCompatActivity {
                 case StaticVariable.TYPE_BUTTON_MATE:
                     prefFragment = new ButtonMateSettingFragment(name, mac);
                     break;
-                case StaticVariable.TYPE_TC1:
-                    prefFragment = new TC1SettingFragment(name, mac);
-                    break;
+
                 case StaticVariable.TYPE_DC1:
                     prefFragment = new DC1SettingFragment(name, mac);
                     break;

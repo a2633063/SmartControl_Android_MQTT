@@ -1,4 +1,4 @@
-package com.zyc.zcontrol.controlItem.tc1;
+package com.zyc.zcontrol.deviceItem.tc1;
 
 import android.content.Context;
 import android.view.LayoutInflater;
@@ -9,6 +9,7 @@ import android.widget.Switch;
 import android.widget.TextView;
 
 import com.zyc.zcontrol.R;
+import com.zyc.zcontrol.controlItem.tc1.TaskItem;
 
 import java.util.List;
 

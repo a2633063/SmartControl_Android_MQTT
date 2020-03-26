@@ -77,7 +77,7 @@
             android:name=".controlItem.rgbw.RGBWTaskActivity"
             android:label="定时" />
         <activity
-            android:name=".controlItem.tc1.TC1PlugActivity"
+            android:name=".deviceItem.tc1.TC1PlugActivity"
             android:label="插口" />
         <activity
             android:name=".controlItem.dc1.DC1PlugActivity"
@@ -115,6 +115,10 @@
             android:screenOrientation="portrait" />
         <activity
             android:name=".controlItem.SettingActivity"
+            android:label="设置"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name=".deviceItem.SettingActivity"
             android:label="设置"
             android:screenOrientation="portrait" />
     </application>

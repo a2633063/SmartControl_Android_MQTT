@@ -80,7 +80,7 @@ public class MainDeviceListAdapter extends BaseAdapter {
     }
 
     public int getChoice() {
-        if (mdata.size() < 1) return -1;
+        if (getCount() < 1) return -1;
         else if (choice >= getCount() || choice < 0)
             return -1;
         return choice;

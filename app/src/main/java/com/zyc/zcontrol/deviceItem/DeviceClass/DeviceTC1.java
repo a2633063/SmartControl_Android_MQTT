@@ -1,8 +1,11 @@
 package com.zyc.zcontrol.deviceItem.DeviceClass;
 
+import android.preference.PreferenceFragment;
+
 import androidx.fragment.app.Fragment;
 
 import com.zyc.zcontrol.deviceItem.tc1.TC1Fragment;
+import com.zyc.zcontrol.deviceItem.tc1.TC1SettingFragment;
 
 public class DeviceTC1 extends Device {
 
@@ -25,21 +28,36 @@ public class DeviceTC1 extends Device {
 
 
     Fragment fragment;
-
+    PreferenceFragment settingFragment;
     public Fragment getFragment() {
         if (fragment == null) {
             fragment = new TC1Fragment(this);
         }
         return fragment;
     }
+    public PreferenceFragment getSettingFragment(){
+        if (settingFragment == null) {
+            settingFragment = new TC1SettingFragment(this);
+        }
+        return settingFragment;
+    }
     //endregion
 
     //region 参数
+    boolean lock;
     double power;
     int total_time;
-    boolean[] plug = new boolean[6];
-    String[] plug_name = new String[6];
+    boolean[] plug = {false,false,false,false,false,false};
+    String[] plug_name = {"插口1","插口2","插口3","插口4","插口5","插口6"};
 
+
+    public boolean isLock() {
+        return lock;
+    }
+
+    public void setLock(boolean lock) {
+        this.lock = lock;
+    }
 
     public double getPower() {
         return power;

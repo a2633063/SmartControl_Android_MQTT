@@ -12,4 +12,11 @@ public class MainApplication extends Application {
     }
 
     private ArrayList<Device> mData = new ArrayList<>();
+
+    public int getDeviceIndex(String mac){
+        for(int i=0;i<mData.size();i++){
+            if(mac.equals(mData.get(i).getMac())) return i;
+        }
+        return -1;
+    }
 }

@@ -1,4 +1,4 @@
-package com.zyc.zcontrol.deviceItem;
+package com.zyc.zcontrol.deviceItem.DeviceClass;
 
 
 import android.annotation.SuppressLint;

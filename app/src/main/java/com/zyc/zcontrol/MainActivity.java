@@ -51,9 +51,9 @@ import android.widget.Toast;
 import com.zyc.Function;
 import com.zyc.StaticVariable;
 import com.zyc.webservice.WebService;
-import com.zyc.zcontrol.controlItem.SettingActivity;
 import com.zyc.zcontrol.deviceItem.DeviceClass.Device;
 import com.zyc.zcontrol.deviceItem.DeviceClass.DeviceTC1;
+import com.zyc.zcontrol.deviceItem.SettingActivity;
 import com.zyc.zcontrol.deviceScan.DeviceAddChoiceActivity;
 import com.zyc.zcontrol.mainActivity.MainDeviceListAdapter;
 import com.zyc.zcontrol.mainActivity.MainDeviceFragmentAdapter;
@@ -618,11 +618,8 @@ public class MainActivity extends AppCompatActivity {
 
 
             if (deviceData.size() > 0) {
-                Device d = mainDeviceListAdapter.getChoiceDevice();
                 Intent intent = new Intent(MainActivity.this, SettingActivity.class);
-                intent.putExtra("name", d.getName());
-                intent.putExtra("mac", d.getMac());
-                intent.putExtra("type", d.getType());
+                intent.putExtra("index", mainDeviceListAdapter.getChoice());
                 startActivity(intent);
             }
             return true;
