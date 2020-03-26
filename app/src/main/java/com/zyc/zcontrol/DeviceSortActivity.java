@@ -16,6 +16,7 @@ import androidx.recyclerview.widget.ItemTouchHelper;
 
 import android.util.Log;
 import android.view.MenuItem;
+import android.widget.Toast;
 
 import com.zyc.devicesort.SortRecyclerAdapter;
 import com.zyc.devicesort.SortRecyclerItemTouchHelper;
@@ -48,6 +49,7 @@ public class DeviceSortActivity extends AppCompatActivity {
 
         if (mData.size() > 1 && mData.get(0).getMac().equals("000000000000")) {
             mData.remove(0);
+            Toast.makeText(this, "已删除演示设备", Toast.LENGTH_SHORT).show();
         }
 
         LocalBroadcastManager localBroadcastManager = LocalBroadcastManager.getInstance(this);

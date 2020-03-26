@@ -281,6 +281,10 @@ public class MainActivity extends AppCompatActivity {
         tvDeviceSort.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                if (deviceData.size() == 1 && deviceData.get(0).getMac().equals("000000000000")) {
+                    Toast.makeText(MainActivity.this, "仅演示设备,无需排序", Toast.LENGTH_SHORT).show();
+                    return;
+                }
                 Intent intent = new Intent(MainActivity.this, DeviceSortActivity.class);
                 startActivity(intent);
                 //finish();
