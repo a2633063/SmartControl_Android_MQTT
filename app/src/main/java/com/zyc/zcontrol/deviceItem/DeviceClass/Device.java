@@ -55,8 +55,8 @@ public class Device {
     private String ip;
     private String group;
     private boolean online;
-    private String version=null;
-    private String ssid=null;
+//    private String version=null;
+//    private String ssid=null;
 
     //region gitter and setter
     public int getType() {
@@ -100,21 +100,21 @@ public class Device {
         this.online = online;
     }
 
-    public String getVersion() {
-        return version;
-    }
-
-    public void setVersion(String version) {
-        this.version = version;
-    }
-
-    public String getSsid() {
-        return ssid;
-    }
-
-    public void setSsid(String ssid) {
-        this.ssid = ssid;
-    }
+//    public String getVersion() {
+//        return version;
+//    }
+//
+//    public void setVersion(String version) {
+//        this.version = version;
+//    }
+//
+//    public String getSsid() {
+//        return ssid;
+//    }
+//
+//    public void setSsid(String ssid) {
+//        this.ssid = ssid;
+//    }
 
     //endregion
 

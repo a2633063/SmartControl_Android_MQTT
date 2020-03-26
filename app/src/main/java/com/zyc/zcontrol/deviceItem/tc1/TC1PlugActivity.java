@@ -64,6 +64,7 @@ public class TC1PlugActivity extends ServiceActivity {
     Button btn_count_down;
 
     DeviceTC1 device;
+    String plug_name = null;
     int plug_id = -1;
 
     //region Handler
@@ -88,27 +89,30 @@ public class TC1PlugActivity extends ServiceActivity {
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);//左侧添加一个默认的返回图标
         getSupportActionBar().setHomeButtonEnabled(true); //设置返回键可用
 
-        Intent getIntent = this.getIntent();
-        if (getIntent.hasExtra("index") && getIntent.hasExtra("plug_id")) {//判断是否有值传入,并判断是否有特定key
-            try {
-                int index = getIntent.getIntExtra("index", -1);
-                device = (DeviceTC1) (((MainApplication) getApplication()).getDeviceList()).get(index);
-                plug_id = getIntent.getIntExtra("plug_id", -1);
-                if (device == null || plug_id == -1) {
-                    throw new Exception();
-                }
-            } catch (Exception e) {
-                e.printStackTrace();
-                Toast.makeText(TC1PlugActivity.this, "数据错误!请联系开发者", Toast.LENGTH_SHORT).show();
-                finish();
+        Intent intent = this.getIntent();
+//        if (intent.hasExtra("mac") && intent.hasExtra("plug_id")
+//                && intent.hasExtra("plug_name"))//判断是否有值传入,并判断是否有特定key
+
+        try {
+            plug_name = intent.getStringExtra("plug_name");
+            plug_id = intent.getIntExtra("plug_id", -1);
+            device = (DeviceTC1) ((MainApplication) getApplication()).getDevice(intent.getStringExtra("mac"));
+            if (device == null || plug_id < 0 || plug_id > 5) {
+                throw new Exception("获取数据出错:" + intent.getStringExtra("mac") + "," + plug_id); // 异常信息
             }
+        } catch (Exception e) {
+            e.printStackTrace();
+            Toast.makeText(TC1PlugActivity.this, "数据错误!请联系开发者", Toast.LENGTH_SHORT).show();
+            finish();
         }
+
 
         data.add(new TaskItem(this));
         data.add(new TaskItem(this));
         data.add(new TaskItem(this));
         data.add(new TaskItem(this));
         data.add(new TaskItem(this));
+
         //region 控件初始化
         //region listview及adapter
         lv_task = findViewById(R.id.lv);
@@ -140,8 +144,8 @@ public class TC1PlugActivity extends ServiceActivity {
         tv_name = findViewById(R.id.tv_name);
         tbt_button = findViewById(R.id.tbtn_button);
         btn_count_down = findViewById(R.id.btn_count_down);
-        tv_name.setText(device.getPlug_name(plug_id));
-        tbt_button.setChecked(device.isPlug(plug_id));
+        tv_name.setText(plug_name);
+
         //region 控制开关
         tbt_button.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -216,7 +220,6 @@ public class TC1PlugActivity extends ServiceActivity {
         //endregion
         //endregion
         //endregion
-
     }
 
     public boolean onOptionsItemSelected(MenuItem item) {
@@ -470,6 +473,23 @@ public class TC1PlugActivity extends ServiceActivity {
             e.printStackTrace();
         }
 
+    }
+
+    //endregion
+    //region 事件监听调用函数,主要为在子类中重写此函数实现在service建立成功/mqtt连接成功/失败时执行功能
+    //Service建立成功时调用    此函数需要时在子类中重写
+    public void ServiceConnected() {
+        handler.sendEmptyMessageDelayed(1, 0);
+    }
+
+    //mqtt连接成功时调用    此函数需要时在子类中重写
+    public void MqttConnected() {
+        handler.sendEmptyMessageDelayed(1, 0);
+    }
+
+    //mqtt连接断开时调用    此函数需要时在子类中重写
+    public void MqttDisconnected() {
+        handler.sendEmptyMessageDelayed(1, 0);
     }
     //endregion
 

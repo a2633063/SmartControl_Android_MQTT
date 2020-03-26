@@ -17,10 +17,9 @@ import android.widget.TextView;
 import androidx.fragment.app.Fragment;
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 
-import com.zyc.zcontrol.MainApplication;
 import com.zyc.zcontrol.R;
-import com.zyc.zcontrol.deviceItem.DeviceClass.DeviceTC1;
 import com.zyc.zcontrol.deviceItem.DeviceClass.DeviceFragment;
+import com.zyc.zcontrol.deviceItem.DeviceClass.DeviceTC1;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -182,10 +181,9 @@ public class TC1Fragment extends DeviceFragment {
     private View.OnClickListener MainTextListener = new View.OnClickListener() {
         @Override
         public void onClick(View v) {
-
-            int index = ((MainApplication) getActivity().getApplication()).getDeviceIndex(device.getMac());
             Intent intent = new Intent(getContext(), TC1PlugActivity.class);
-            intent.putExtra("index", index);
+            intent.putExtra("plug_name", ((TextView) v).getText());
+            intent.putExtra("mac", device.getMac());
             intent.putExtra("plug_id", (v.getId()) % 6);
             startActivity(intent);
         }
@@ -238,8 +236,9 @@ public class TC1Fragment extends DeviceFragment {
             //{"mac":"d0bae4638baa","power":"24.7","total_time":9139790}
             if (jsonObject.has("power") && jsonObject.get("power") instanceof String) {
                 try {
-                    device.setPower(jsonObject.getDouble("power"));
-                    tv_power.setText(String.format("%.1fW", device.getPower()));
+//                    device.setPower(jsonObject.getDouble("power"));
+//                    tv_power.setText(String.format("%.1fW", device.getPower()));
+                    tv_power.setText(jsonObject.getString("power"));
                 } catch (JSONException e) {
                     Log("功率数据出错");
                     e.printStackTrace();
@@ -247,9 +246,9 @@ public class TC1Fragment extends DeviceFragment {
             }
             if (jsonObject.has("total_time") && jsonObject.get("total_time") instanceof Integer) {
                 try {
-                    device.setTotal_time(jsonObject.getInt("total_time"));
-                    int total_time = device.getTotal_time();
-                    Log.d(Tag, "total_time:" + total_time);
+//                    device.setTotal_time(jsonObject.getInt("total_time"));
+//                    int total_time = device.getTotal_time();
+                    int total_time = jsonObject.getInt("total_time");
 
                     String timeStr = "";
                     int days = total_time / 86400; //天
@@ -286,14 +285,16 @@ public class TC1Fragment extends DeviceFragment {
                 JSONObject jsonPlug = jsonObject.getJSONObject("plug_" + plug_id);
                 if (jsonPlug.has("on")) {
                     int on = jsonPlug.getInt("on");
-                    device.setPlug(plug_id, on != 0);
-                    tbtn_plug[plug_id].setChecked(device.isPlug(plug_id));
+//                    device.setPlug(plug_id, on != 0);
+//                    tbtn_plug[plug_id].setChecked(device.isPlug(plug_id));
+                    tbtn_plug[plug_id].setChecked(on != 0);
                 }
                 if (!jsonPlug.has("setting")) continue;
                 JSONObject jsonPlugSetting = jsonPlug.getJSONObject("setting");
                 if (jsonPlugSetting.has("name")) {
-                    device.setPlug_name(plug_id, jsonPlugSetting.getString("name"));
-                    tv_plug_name[plug_id].setText(device.getPlug_name(plug_id));
+//                    device.setPlug_name(plug_id, jsonPlugSetting.getString("name"));
+//                    tv_plug_name[plug_id].setText(device.getPlug_name(plug_id));
+                    tv_plug_name[plug_id].setText(jsonPlugSetting.getString("name"));
                 }
             }
             //endregion

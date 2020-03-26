@@ -10,6 +10,7 @@ import android.content.DialogInterface;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
+import android.preference.CheckBoxPreference;
 import android.preference.EditTextPreference;
 import android.preference.Preference;
 import android.util.Log;
@@ -40,7 +41,7 @@ public class TC1SettingFragment extends SettingFragment {
     Preference restart;
     Preference regetdata;
     EditTextPreference name_preference;
-
+    CheckBoxPreference old_protocol;
     DeviceTC1 device;
 
     boolean ota_flag = false;
@@ -149,6 +150,7 @@ public class TC1SettingFragment extends SettingFragment {
                 //endregion
                 //region 发送请求数据
                 case 3:
+                    handler.removeMessages(3);
                     Send("{\"mac\":\"" + device.getMac() + "\",\"version\":null,\"lock\":null,\"ssid\":null}");
                     break;
                 //endregion
@@ -176,6 +178,7 @@ public class TC1SettingFragment extends SettingFragment {
         restart = findPreference("restart");
         regetdata = findPreference("regetdata");
         name_preference = (EditTextPreference) findPreference("name");
+        old_protocol = (CheckBoxPreference) findPreference("old_protocol");
 
 
         name_preference.setSummary(device.getName());
@@ -333,14 +336,16 @@ public class TC1SettingFragment extends SettingFragment {
     //region 判断是否获取当前版本号
     boolean isGetVersion() {
         //region 未获取到当前版本信息
-        if (device.getVersion() == null) {
+//        if (device.getVersion() == null) {
+        if (fw_version.getSummary() == null) {
             AlertDialog alertDialog = new AlertDialog.Builder(getActivity())
                     .setTitle("未获取到当前设备版本")
-                    .setMessage("请获取到当前设备版本后重试.")
+                    .setMessage("请点击重新获取数据.获取到当前设备版本后重试.")
                     .setNegativeButton("确定", new DialogInterface.OnClickListener() {
                         @Override
                         public void onClick(DialogInterface dialog, int which) {
-//                                    getActivity().finish();
+                            handler.sendEmptyMessageDelayed(3,0);
+                            Toast.makeText(getActivity(), "请求版本数据...", Toast.LENGTH_SHORT).show();
                         }
                     })
                     .create();
@@ -393,7 +398,7 @@ public class TC1SettingFragment extends SettingFragment {
     //endregion
     //endregion
 
-    void Send(String message) {
+    public void Send(String message) {
         boolean udp = getActivity().getSharedPreferences("Setting_" + device.getMac(), 0).getBoolean("always_UDP", false);
         boolean oldProtocol = getActivity().getSharedPreferences("Setting_" + device.getMac(), 0).getBoolean("old_protocol", false);
 
@@ -405,7 +410,7 @@ public class TC1SettingFragment extends SettingFragment {
         super.Send(udp, topic, message);
     }
 
-
+    @Override
     public void Receive(String ip, int port, String topic, String message) {
         super.Receive(ip, port, topic, message);
         Log.d(Tag, "RECV DATA,topic:" + topic + ",content:" + message);
@@ -427,20 +432,27 @@ public class TC1SettingFragment extends SettingFragment {
             //endregion
             //region ssid
             if (jsonObject.has("ssid")) {
-                device.setSsid(jsonObject.getString("ssid"));
-                ssid.setSummary(device.getSsid());
+                ssid.setSummary(jsonObject.getString("ssid"));
             }
             //endregion
             //region 获取版本号
             if (jsonObject.has("version")) {
-                device.setVersion(jsonObject.getString("version"));
-                fw_version.setSummary(device.getVersion());
+                fw_version.setSummary(jsonObject.getString("version"));
+                if(jsonObject.getString("version").startsWith("v0.") && !old_protocol.isChecked()){
+                    Toast.makeText(getActivity(), "版本低于v1.0.0请勾选使用旧版通信协议!", Toast.LENGTH_LONG).show();
+                }
             }
             //endregion
             //region 激活
             if (jsonObject.has("lock")) {
-                device.setLock(jsonObject.getBoolean("lock"));
-                if (device.isLock()) {
+//                device.setLock(jsonObject.getBoolean("lock"));
+//                if (device.isLock()) {
+//                    lock.setSummary("已激活");
+//                } else {
+//                    lock.setSummary("未激活");
+//                    Toast.makeText(getActivity(), "未激活", Toast.LENGTH_SHORT).show();
+//                }
+                if (jsonObject.getBoolean("lock")) {
                     lock.setSummary("已激活");
                 } else {
                     lock.setSummary("未激活");
@@ -472,7 +484,7 @@ public class TC1SettingFragment extends SettingFragment {
                         //todo 显示更新进度
 
                         if (pd != null && pd.isShowing())
-                            pd.setMessage("正在获取最新固件版本,请稍后....\n" + "进度:" + ota_progress + "%");
+                            pd.setMessage("正在获取最新固件版本,请稍后....\n可以直接取消此窗口,不影响设备ota过程\n" + "进度:" + ota_progress + "%");
 //                        Toast.makeText(getActivity(), "ota进度:"+ota_progress+"%", Toast.LENGTH_SHORT).show();
                     }
                 }
@@ -497,7 +509,7 @@ public class TC1SettingFragment extends SettingFragment {
                             }
                         });
                         pd.setCanceledOnTouchOutside(false);
-                        pd.setMessage("正在更新固件,请勿断开设备电源!\n大约1分钟左右,请稍后....");
+                        pd.setMessage("正在更新固件,请勿断开设备电源!\n大约1分钟左右,请稍后....\n可以直接取消此窗口,不影响设备ota过程");
                         pd.show();
 //                        handler.sendEmptyMessageDelayed(0,5000);
 
@@ -513,4 +525,16 @@ public class TC1SettingFragment extends SettingFragment {
         }
     }
 
+    public void ServiceConnected(){
+        handler.sendEmptyMessageDelayed(3,0);
+    }
+    //mqtt连接成功时调用    此函数需要时在子类中重写
+    public void MqttConnected(){
+        handler.sendEmptyMessageDelayed(3,0);
+    }
+
+    //mqtt连接断开时调用    此函数需要时在子类中重写
+    public void MqttDisconnected(){
+        handler.sendEmptyMessageDelayed(3,0);
+    }
 }

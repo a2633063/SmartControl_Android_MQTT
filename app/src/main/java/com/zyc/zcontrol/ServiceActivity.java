@@ -73,15 +73,10 @@ public class ServiceActivity extends AppCompatActivity {
     public final static String Tag = "ServiceActivity";
 
 
-
-
     //region 使用本地广播与service通信
     LocalBroadcastManager localBroadcastManager;
     private MsgReceiver msgReceiver;
     //endregion
-
-    private Toolbar toolbar;
-
 
     ConnectService mConnectService;
     String device_mac;
@@ -100,16 +95,15 @@ public class ServiceActivity extends AppCompatActivity {
         msgReceiver = new MsgReceiver();
         IntentFilter intentFilter = new IntentFilter();
         Intent getIntent = this.getIntent();
-        if (getIntent.hasExtra("index"))//判断是否有值传入,并判断是否有特定key
+        if (getIntent.hasExtra("mac"))//判断是否有值传入,并判断是否有特定key
         {
             try {
-                int index = getIntent.getIntExtra("index", -1);
-                device_mac = (((MainApplication) getApplication()).getDeviceList()).get(index).getMac();
+                device_mac = getIntent.getStringExtra("mac");
                 intentFilter.addAction(device_mac);
             } catch (Exception e) {
                 e.printStackTrace();
             }
-        }else{
+        } else {
 //        intentFilter.addAction(ConnectService.ACTION_UDP_DATA_AVAILABLE);
 //        intentFilter.addAction(ConnectService.ACTION_MQTT_CONNECTED);
 //        intentFilter.addAction(ConnectService.ACTION_MQTT_DISCONNECTED);
@@ -127,8 +121,6 @@ public class ServiceActivity extends AppCompatActivity {
 
     }
 
-
-
     @Override
     protected void onDestroy() {
         //注销广播
@@ -140,20 +132,36 @@ public class ServiceActivity extends AppCompatActivity {
         super.onDestroy();
     }
 
-    //当服务建立完成时执行此函数
-    protected void connected(){
+    //region 事件监听调用函数,主要为在子类中重写此函数实现在service建立成功/mqtt连接成功/失败时执行功能
+    //Service建立成功时调用    此函数需要时在子类中重写
+    public void ServiceConnected() {
 
     }
 
-    public final void Send(boolean isUDP, String topic, String message) {
+    //mqtt连接成功时调用    此函数需要时在子类中重写
+    public void MqttConnected() {
+
+    }
+
+    //mqtt连接断开时调用    此函数需要时在子类中重写
+    public void MqttDisconnected() {
+
+    }
+    //endregion
+
+
+    //region 数据发送/接收处理函数
+    //此函数在子类中被同名函数调用以发送数据
+    public void Send(boolean isUDP, String topic, String message) {
         Log.d(Tag, "Send:[" + topic + "]:" + message);
         mConnectService.Send(isUDP ? null : topic, message);
     }
 
-    //数据接收处理函数
+    //接收处理函数,修改device属性,同时修改ui界面    此函数在子类中需要重写
     public void Receive(String ip, int port, String topic, String message) {
 
     }
+    //endregion
 
     //region MQTT服务有关
 
@@ -163,7 +171,7 @@ public class ServiceActivity extends AppCompatActivity {
         @Override
         public void onServiceConnected(ComponentName componentName, IBinder service) {
             mConnectService = ((ConnectService.LocalBinder) service).getService();
-            connected();
+            ServiceConnected();
         }
 
         @Override
@@ -185,9 +193,10 @@ public class ServiceActivity extends AppCompatActivity {
                 Receive(ip, port, null, message);
             } else if (ConnectService.ACTION_MQTT_CONNECTED.equals(action)) {  //连接成功
                 Log.d(Tag, "ACTION_MQTT_CONNECTED");
-                connected();
+                MqttConnected();
             } else if (ConnectService.ACTION_MQTT_DISCONNECTED.equals(action)) {  //连接失败/断开,尝试重新连接
                 Log.w(Tag, "ACTION_MQTT_DISCONNECTED");
+                MqttDisconnected();
             } else if (ConnectService.ACTION_DATA_AVAILABLE.equals(action)) {  //接收到数据
                 String topic = intent.getStringExtra(ConnectService.EXTRA_DATA_TOPIC);
                 String message = intent.getStringExtra(ConnectService.EXTRA_DATA_MESSAGE);
