@@ -52,6 +52,7 @@ import com.zyc.Function;
 import com.zyc.StaticVariable;
 import com.zyc.webservice.WebService;
 import com.zyc.zcontrol.deviceItem.DeviceClass.Device;
+import com.zyc.zcontrol.deviceItem.DeviceClass.DeviceDC1;
 import com.zyc.zcontrol.deviceItem.DeviceClass.DeviceTC1;
 import com.zyc.zcontrol.deviceItem.SettingActivity;
 import com.zyc.zcontrol.deviceScan.DeviceAddChoiceActivity;
@@ -253,7 +254,7 @@ public class MainActivity extends AppCompatActivity {
         if (deviceData.size() < 1) {
 //            deviceData.add(new Device( StaticVariable.TYPE_M1, "演示设备", "b0f8932234f4"));
             deviceData.add(new DeviceTC1("演示设备", "000000000000"));
-            deviceData.add(new DeviceTC1("演示设备2", "000000002001"));
+            deviceData.add(new DeviceDC1("演示设备2", "000000000001"));
             deviceData.add(new DeviceTC1("ztc18baa", "d0bae4638baa"));
 //            deviceData.add(new Device(2, "演示设备2", "000000000002"));
 //            deviceData.add(new Device(3, "演示设备3", "000000000003"));

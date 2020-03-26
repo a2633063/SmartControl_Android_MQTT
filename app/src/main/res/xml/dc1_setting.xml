@@ -20,9 +20,6 @@
         <Preference
             android:key="fw_version"
             android:title="当前版本(点击检查新版本)" />
-        <Preference
-            android:key="lock"
-            android:title="激活状态" />
 
         <Preference
             android:key="regetdata"

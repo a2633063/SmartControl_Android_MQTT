@@ -9,7 +9,6 @@ import com.zyc.StaticVariable;
 import com.zyc.zcontrol.R;
 import com.zyc.zcontrol.controlItem.a1.A1Fragment;
 import com.zyc.zcontrol.controlItem.buttonmate.ButtonMateFragment;
-import com.zyc.zcontrol.controlItem.dc1.DC1Fragment;
 import com.zyc.zcontrol.controlItem.m1.M1Fragment;
 import com.zyc.zcontrol.controlItem.rgbw.RGBWFragment;
 
@@ -153,10 +152,6 @@ public class Device {
                     break;
                 case StaticVariable.TYPE_BUTTON_MATE:
                     fragment = new ButtonMateFragment(name, mac);
-                    break;
-
-                case StaticVariable.TYPE_DC1:
-                    fragment = new DC1Fragment(name, mac);
                     break;
                 case StaticVariable.TYPE_A1:
                     fragment = new A1Fragment(name, mac);

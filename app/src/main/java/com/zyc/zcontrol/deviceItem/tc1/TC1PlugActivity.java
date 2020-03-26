@@ -419,7 +419,6 @@ public class TC1PlugActivity extends ServiceActivity {
 
 
     public void Receive(String ip, int port, String topic, String message) {
-        Log.d(Tag, "RECV DATA,topic:" + topic + ",content:" + message);
 
         try {
             JSONObject jsonObject = new JSONObject(message);
@@ -428,7 +427,7 @@ public class TC1PlugActivity extends ServiceActivity {
                 return;
             }
 
-            //region 解析当个plug
+            //region 解析单个plug
             if (!jsonObject.has("plug_" + plug_id)) return;
             JSONObject jsonPlug = jsonObject.getJSONObject("plug_" + plug_id);
             if (jsonPlug.has("on")) {

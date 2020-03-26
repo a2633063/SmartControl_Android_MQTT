@@ -80,7 +80,7 @@
             android:name=".deviceItem.tc1.TC1PlugActivity"
             android:label="插口" />
         <activity
-            android:name=".controlItem.dc1.DC1PlugActivity"
+            android:name=".deviceItem.dc1.DC1PlugActivity"
             android:label="插口" />
         <activity
             android:name=".MainActivity"
