@@ -1,8 +1,6 @@
-package com.zyc.zcontrol.controlItem.rgbw;
+package com.zyc.zcontrol.deviceItem.rgbw;
 
 import android.content.Context;
-
-import com.zyc.Function;
 
 
 public class TaskItem {
@@ -26,13 +24,12 @@ public class TaskItem {
     }
 
     public String getAction() {
-        return action != 0 ? "亮度:"+action : "关屏";
+        return action != 0 ? "亮度:" + action : "关屏";
     }
 
     public boolean getOn() {
         return on != 0;
     }
-
 
 
 }

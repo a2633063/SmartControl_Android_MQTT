@@ -74,7 +74,7 @@
             android:name=".deviceItem.m1.M1PlugActivity"
             android:label="定时" />
         <activity
-            android:name=".controlItem.rgbw.RGBWTaskActivity"
+            android:name=".deviceItem.rgbw.RGBWTaskActivity"
             android:label="定时" />
         <activity
             android:name=".deviceItem.tc1.TC1PlugActivity"

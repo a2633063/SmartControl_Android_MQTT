@@ -1,4 +1,4 @@
-package com.zyc.zcontrol.controlItem.rgbw;
+package com.zyc.zcontrol.deviceItem.rgbw;
 
 import android.content.Context;
 import android.view.LayoutInflater;
@@ -76,11 +76,11 @@ class RGBWTaskListAdapter extends BaseAdapter {
         holder.tv_action.setText(mdata.get(position).getAction());
         holder.on.setChecked(mdata.get(position).getOn());
 
-        if (mCallback!=null){
+        if (mCallback != null) {
             holder.on.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    mCallback.click(v,position);
+                    mCallback.click(v, position);
                 }
             });
         }

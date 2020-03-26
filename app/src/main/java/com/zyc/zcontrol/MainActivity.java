@@ -56,6 +56,7 @@ import com.zyc.zcontrol.deviceItem.DeviceClass.DeviceA1;
 import com.zyc.zcontrol.deviceItem.DeviceClass.DeviceButtonMate;
 import com.zyc.zcontrol.deviceItem.DeviceClass.DeviceDC1;
 import com.zyc.zcontrol.deviceItem.DeviceClass.DeviceM1;
+import com.zyc.zcontrol.deviceItem.DeviceClass.DeviceRGBW;
 import com.zyc.zcontrol.deviceItem.DeviceClass.DeviceTC1;
 import com.zyc.zcontrol.deviceItem.SettingActivity;
 import com.zyc.zcontrol.deviceScan.DeviceAddChoiceActivity;
@@ -262,6 +263,7 @@ public class MainActivity extends AppCompatActivity {
             deviceData.add(new DeviceDC1("演示设备1", "000000000001"));
             deviceData.add(new DeviceA1("演示设备2", "000000000002"));
             deviceData.add(new DeviceM1("演示设备3", "000000000003"));
+            deviceData.add(new DeviceRGBW("演示设备4", "000000000004"));
 //            deviceData.add(new Device(2, "演示设备2", "000000000002"));
 //            deviceData.add(new Device(3, "演示设备3", "000000000003"));
 //            deviceData.add(new Device(4, "演示设备4", "000000000004"));

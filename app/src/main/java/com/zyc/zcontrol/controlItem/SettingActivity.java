@@ -11,9 +11,8 @@ import android.view.MenuItem;
 
 import com.zyc.StaticVariable;
 import com.zyc.zcontrol.R;
-import com.zyc.zcontrol.deviceItem.buttonmate.ButtonMateSettingFragment;
 
-import com.zyc.zcontrol.controlItem.rgbw.RGBWSettingFragment;
+import com.zyc.zcontrol.deviceItem.rgbw.RGBWSettingFragment;
 
 public class SettingActivity extends AppCompatActivity {
 
@@ -47,9 +46,7 @@ public class SettingActivity extends AppCompatActivity {
                     prefFragment = null;
                     break;
 
-                case StaticVariable.TYPE_RGBW:
-                    prefFragment = new RGBWSettingFragment(name, mac);
-                    break;
+
             }
         }
 

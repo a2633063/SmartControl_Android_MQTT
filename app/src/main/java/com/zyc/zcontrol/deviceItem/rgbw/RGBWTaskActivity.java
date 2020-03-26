@@ -1,4 +1,4 @@
-package com.zyc.zcontrol.controlItem.rgbw;
+package com.zyc.zcontrol.deviceItem.rgbw;
 
 import android.annotation.SuppressLint;
 import android.content.BroadcastReceiver;
@@ -16,8 +16,8 @@ import android.os.Message;
 
 import androidx.localbroadcastmanager.content.LocalBroadcastManager;
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
-import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
+
 import android.util.Log;
 import android.view.Gravity;
 import android.view.MenuItem;
@@ -58,7 +58,6 @@ public class RGBWTaskActivity extends AppCompatActivity {
     ListView lv_task;
     ArrayList<TaskItem> data = new ArrayList<>();
     RGBWTaskListAdapter adapter;
-
 
 
     Button btn_count_down;
@@ -247,7 +246,7 @@ public class RGBWTaskActivity extends AppCompatActivity {
         minute_picker.setValue(task.minute);
         //endregion
         //region 开关
-        String[] action = {"关闭", "1","2","3","4"};
+        String[] action = {"关闭", "1", "2", "3", "4"};
         action_picker.setDisplayedValues(action);
         action_picker.setMinValue(0);
         action_picker.setMaxValue(action.length - 1);
@@ -264,7 +263,7 @@ public class RGBWTaskActivity extends AppCompatActivity {
                 int action = action_picker.getValue();
                 int on = 1;
 
-                Send("{\"mac\": \"" + device_mac + "\",\"task_" + task_id + "\":{\"hour\":" + hour + ",\"minute\":" + minute +  ",\"brightness\":" + action + ",\"on\":" + on + "}}");
+                Send("{\"mac\": \"" + device_mac + "\",\"task_" + task_id + "\":{\"hour\":" + hour + ",\"minute\":" + minute + ",\"brightness\":" + action + ",\"on\":" + on + "}}");
                 window.dismiss();
             }
         });
@@ -318,7 +317,7 @@ public class RGBWTaskActivity extends AppCompatActivity {
         minute_picker.setValue(0);
         //endregion
         //region 开关
-        String[] action = {"关闭", "1","2","3","4"};
+        String[] action = {"关闭", "1", "2", "3", "4"};
         action_picker.setDisplayedValues(action);
         action_picker.setMinValue(0);
         action_picker.setMaxValue(action.length - 1);
@@ -341,7 +340,7 @@ public class RGBWTaskActivity extends AppCompatActivity {
                 hour = c.get(Calendar.HOUR_OF_DAY);
                 minute = c.get(Calendar.MINUTE);
 
-                Send("{\"mac\": \"" + device_mac + "\",\"task_" + task_id + "\":{\"hour\":" + hour + ",\"minute\":" + minute +  ",\"brightness\":" + action + ",\"on\":" + on + "}}");
+                Send("{\"mac\": \"" + device_mac + "\",\"task_" + task_id + "\":{\"hour\":" + hour + ",\"minute\":" + minute + ",\"brightness\":" + action + ",\"on\":" + on + "}}");
                 window.dismiss();
             }
         });
@@ -360,7 +359,7 @@ public class RGBWTaskActivity extends AppCompatActivity {
     //region 数据接收发送处理函数
     void Send(String message) {
         boolean b = getSharedPreferences("Setting_" + device_mac, 0).getBoolean("always_UDP", false);
-        mConnectService.Send(b ? null : "device/zrgbw/"+device_mac+"/set", message);
+        mConnectService.Send(b ? null : "device/zrgbw/" + device_mac + "/set", message);
     }
 
     void Receive(String ip, int port, String message) {
