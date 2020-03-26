@@ -617,10 +617,6 @@ public class MainActivity extends AppCompatActivity {
 
         //noinspection SimplifiableIfStatement
         if (id == R.id.action_device_settings) {
-//            mConnectService.Send("/test/Androd", "test message");
-//            mConnectService.Send(null, "UDP TEST");
-
-
             if (deviceData.size() > 0) {
                 Intent intent = new Intent(MainActivity.this, SettingActivity.class);
                 intent.putExtra("index", mainDeviceListAdapter.getChoice());
@@ -713,9 +709,8 @@ public class MainActivity extends AppCompatActivity {
                 e.printStackTrace();
             }
 
-            String message = null;
             try {
-                message = jsonObject.toString(0);
+                String message = jsonObject.toString(0);
                 message = message.replace("\r\n", "");
 
                 Log.d(Tag, "message:" + message);

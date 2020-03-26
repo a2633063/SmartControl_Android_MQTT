@@ -98,7 +98,7 @@ public class DeviceFragment extends Fragment implements View.OnLongClickListener
     }
 
 
-    //region 数据发送/接收处理函数,并在log中显示网络状态(仅改变时显示)
+    //region 数据发送/接收处理函数,并在log中显示网络状态(仅改变时显示) 在子类中重写此函数
     //当前网络状态标志位,1udp   2mqtt
     int send_net_flag = 0;
     int rece_net_flag = 0;
@@ -129,12 +129,29 @@ public class DeviceFragment extends Fragment implements View.OnLongClickListener
     }
     //endregion
 
+    //region 事件监听调用函数,主要为在子类中重写此函数实现在service建立成功/mqtt连接成功/失败时执行功能
+    //Service建立成功时调用    此函数需要时在子类中重写
+    public void ServiceConnected(){
+
+    }
+    //mqtt连接成功时调用    此函数需要时在子类中重写
+    public void MqttConnected(){
+
+    }
+
+    //mqtt连接断开时调用    此函数需要时在子类中重写
+    public void MqttDisconnected(){
+
+    }
+    //endregion
+
     //region mqtt服务及广播接收有关
     private final ServiceConnection mMQTTServiceConnection = new ServiceConnection() {
 
         @Override
         public void onServiceConnected(ComponentName componentName, IBinder service) {
             mConnectService = ((ConnectService.LocalBinder) service).getService();
+            ServiceConnected();
         }
 
         @Override
@@ -151,9 +168,11 @@ public class DeviceFragment extends Fragment implements View.OnLongClickListener
             if (ConnectService.ACTION_MQTT_CONNECTED.equals(action)) {  //连接成功
                 Log.d(Tag, "ACTION_MQTT_CONNECTED");
                 Log("app已连接mqtt服务器");
+                MqttConnected();
             } else if (ConnectService.ACTION_MQTT_DISCONNECTED.equals(action)) {  //连接失败/断开
                 Log.w(Tag, "ACTION_MQTT_DISCONNECTED");
                 Log("app已断开mqtt服务器");
+                MqttDisconnected();
             } else if (action.equals(device_mac)) {//接收到设备独立数据
                 String ip = intent.getStringExtra(ConnectService.EXTRA_UDP_DATA_IP);
                 int port = intent.getIntExtra(ConnectService.EXTRA_UDP_DATA_PORT, -1);

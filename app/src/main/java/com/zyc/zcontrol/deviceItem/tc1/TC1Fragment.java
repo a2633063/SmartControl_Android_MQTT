@@ -6,7 +6,6 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -119,13 +118,6 @@ public class TC1Fragment extends DeviceFragment {
             }
         });
         //endregion
-        mSwipeLayout.post(new Runnable() {
-            @Override
-            public void run() {
-                Log.d(Tag, "post" + device.getMac());
-                handler.sendEmptyMessageDelayed(1, 300);
-            }
-        });
 
         //region log 相关
         setLogTextView((TextView) view.findViewById(R.id.tv_log));
@@ -304,5 +296,21 @@ public class TC1Fragment extends DeviceFragment {
         }
     }
 
+    //region 事件监听调用函数,主要为在子类中重写此函数实现在service建立成功/mqtt连接成功/失败时执行功能
+    //Service建立成功时调用    此函数需要时在子类中重写
+    public void ServiceConnected() {
+        handler.sendEmptyMessageDelayed(1, 0);
+    }
+
+    //mqtt连接成功时调用    此函数需要时在子类中重写
+    public void MqttConnected() {
+        handler.sendEmptyMessageDelayed(1, 0);
+    }
+
+    //mqtt连接断开时调用    此函数需要时在子类中重写
+    public void MqttDisconnected() {
+        handler.sendEmptyMessageDelayed(1, 0);
+    }
+    //endregion
 
 }
