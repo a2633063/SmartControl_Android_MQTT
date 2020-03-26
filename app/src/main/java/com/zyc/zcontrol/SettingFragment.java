@@ -1,7 +1,6 @@
-package com.zyc.zcontrol.controlItem;
+package com.zyc.zcontrol;
 
 import android.annotation.SuppressLint;
-import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.preference.EditTextPreference;
 import android.preference.Preference;
@@ -9,14 +8,9 @@ import android.preference.PreferenceFragment;
 import android.util.Log;
 import android.widget.Toast;
 
-import com.zyc.zcontrol.R;
-
 @SuppressLint("ValidFragment")
 public class SettingFragment extends PreferenceFragment {
     final static String Tag = "SettingFragment_Tag";
-    SharedPreferences mSharedPreferences;
-    SharedPreferences.Editor editor;
-
 
     public SettingFragment() {
 
@@ -66,7 +60,7 @@ public class SettingFragment extends PreferenceFragment {
                     } catch (NumberFormatException e) {
                         e.printStackTrace();
                     }
-                }else if(str.length()==0){
+                } else if (str.length() == 0) {
                     preference.setSummary(str);
                     return true;
                 }
@@ -88,7 +82,7 @@ public class SettingFragment extends PreferenceFragment {
         mqtt_uri.setSummary(mqtt_uri.getText());
         mqtt_user.setSummary(mqtt_user.getText());
         mqtt_clientid.setSummary(mqtt_clientid.getText());
-        if (mqtt_password.getText()!=null && mqtt_password.getText().length() > 0)
+        if (mqtt_password.getText() != null && mqtt_password.getText().length() > 0)
             mqtt_password.setSummary("***********");
         else
             mqtt_password.setSummary("");

@@ -258,12 +258,12 @@ public class MainActivity extends AppCompatActivity {
         if (deviceData.size() < 1) {
 //            deviceData.add(new Device( StaticVariable.TYPE_M1, "演示设备", "b0f8932234f4"));
             deviceData.add(new DeviceTC1("演示设备", "000000000000"));
-            deviceData.add(new DeviceButtonMate("演示设备1", "000000000001"));
             deviceData.add(new DeviceTC1("ztc18baa", "d0bae4638baa"));
-            deviceData.add(new DeviceDC1("演示设备1", "000000000001"));
-            deviceData.add(new DeviceA1("演示设备2", "000000000002"));
-            deviceData.add(new DeviceM1("演示设备3", "000000000003"));
-            deviceData.add(new DeviceRGBW("演示设备4", "000000000004"));
+            deviceData.add(new DeviceButtonMate("演示设备1", "000000000001"));
+            deviceData.add(new DeviceDC1("演示设备2", "000000000002"));
+            deviceData.add(new DeviceA1("演示设备3", "000000000003"));
+            deviceData.add(new DeviceM1("演示设备4", "000000000004"));
+            deviceData.add(new DeviceRGBW("演示设备5", "000000000005"));
 //            deviceData.add(new Device(2, "演示设备2", "000000000002"));
 //            deviceData.add(new Device(3, "演示设备3", "000000000003"));
 //            deviceData.add(new Device(4, "演示设备4", "000000000004"));

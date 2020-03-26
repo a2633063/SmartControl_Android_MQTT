@@ -13,7 +13,7 @@ import androidx.appcompat.app.AppCompatActivity;
 import com.zyc.StaticVariable;
 import com.zyc.zcontrol.MainApplication;
 import com.zyc.zcontrol.R;
-import com.zyc.zcontrol.controlItem.SettingFragment;
+import com.zyc.zcontrol.SettingFragment;
 
 public class SettingActivity extends AppCompatActivity {
 

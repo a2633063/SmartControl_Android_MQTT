@@ -82,7 +82,7 @@ public class DC1PlugActivity extends ServiceActivity {
             plug_name = intent.getStringExtra("plug_name");
             plug_id = intent.getIntExtra("plug_id", -1);
             device = (DeviceDC1) ((MainApplication) getApplication()).getDevice(intent.getStringExtra("mac"));
-            if (device == null || plug_id < 0 || plug_id > 5) {
+            if (device == null || plug_id < 0 || plug_id > 3) {
                 throw new Exception("获取数据出错:" + intent.getStringExtra("mac") + "," + plug_id); // 异常信息
             }
         } catch (Exception e) {

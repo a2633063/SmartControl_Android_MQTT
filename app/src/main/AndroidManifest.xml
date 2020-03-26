@@ -114,10 +114,6 @@
             android:label="添加设备"
             android:screenOrientation="portrait" />
         <activity
-            android:name=".controlItem.SettingActivity"
-            android:label="设置"
-            android:screenOrientation="portrait" />
-        <activity
             android:name=".deviceItem.SettingActivity"
             android:label="设置"
             android:screenOrientation="portrait" />
