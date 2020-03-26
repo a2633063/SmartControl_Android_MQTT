@@ -132,26 +132,8 @@
                 android:textSize="25sp" />
         </LinearLayout>
     </LinearLayout>
-    <ScrollView
-        android:id="@+id/scrollView"
+    <include
+        layout="@layout/view_log_textview"
         android:layout_width="match_parent"
-        android:layout_height="22sp"
-        android:addStatesFromChildren="false"
-        android:layout_gravity="bottom"
-        android:scrollbars="none">
-
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:orientation="vertical">
-
-            <TextView
-                android:id="@+id/tv_log"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:text="Log"
-                android:textSize="18sp" />
-        </LinearLayout>
-    </ScrollView>
-
+        android:layout_height="66sp" />
 </LinearLayout>
