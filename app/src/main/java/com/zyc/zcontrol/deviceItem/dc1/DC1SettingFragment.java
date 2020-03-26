@@ -156,7 +156,7 @@ public class DC1SettingFragment extends SettingFragment {
                 //endregion
                 //region 发送请求数据
                 case 3:
-                    Send("{\"mac\":\"" + device.getMac() + "\",\"version\":null,\"lock\":null}");
+                    Send("{\"mac\":\"" + device.getMac() + "\",\"version\":null,\"lock\":null,\"ssid\":null}");
                     break;
                 //endregion
             }

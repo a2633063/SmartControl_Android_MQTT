@@ -8,7 +8,7 @@ import androidx.fragment.app.Fragment;
 import com.zyc.StaticVariable;
 import com.zyc.zcontrol.R;
 import com.zyc.zcontrol.controlItem.buttonmate.ButtonMateFragment;
-import com.zyc.zcontrol.controlItem.m1.M1Fragment;
+
 import com.zyc.zcontrol.controlItem.rgbw.RGBWFragment;
 
 
@@ -153,9 +153,7 @@ public class Device {
                     fragment = new ButtonMateFragment(name, mac);
                     break;
 
-                case StaticVariable.TYPE_M1:
-                    fragment = new M1Fragment(name, mac);
-                    break;
+
                 case StaticVariable.TYPE_RGBW:
                     fragment = new RGBWFragment(name, mac);
                     break;

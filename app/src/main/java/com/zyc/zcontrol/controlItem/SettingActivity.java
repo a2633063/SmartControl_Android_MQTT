@@ -12,7 +12,7 @@ import android.view.MenuItem;
 import com.zyc.StaticVariable;
 import com.zyc.zcontrol.R;
 import com.zyc.zcontrol.controlItem.buttonmate.ButtonMateSettingFragment;
-import com.zyc.zcontrol.controlItem.m1.M1SettingFragment;
+
 import com.zyc.zcontrol.controlItem.rgbw.RGBWSettingFragment;
 
 public class SettingActivity extends AppCompatActivity {
@@ -49,9 +49,7 @@ public class SettingActivity extends AppCompatActivity {
                 case StaticVariable.TYPE_BUTTON_MATE:
                     prefFragment = new ButtonMateSettingFragment(name, mac);
                     break;
-                case StaticVariable.TYPE_M1:
-                    prefFragment = new M1SettingFragment(name, mac);
-                    break;
+
                 case StaticVariable.TYPE_RGBW:
                     prefFragment = new RGBWSettingFragment(name, mac);
                     break;

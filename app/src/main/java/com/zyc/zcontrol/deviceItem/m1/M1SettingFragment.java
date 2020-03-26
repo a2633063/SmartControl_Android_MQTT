@@ -1,4 +1,4 @@
-package com.zyc.zcontrol.controlItem.m1;
+package com.zyc.zcontrol.deviceItem.m1;
 
 
 import android.annotation.SuppressLint;
@@ -19,8 +19,10 @@ import android.os.IBinder;
 import android.os.Message;
 import android.preference.EditTextPreference;
 import android.preference.Preference;
+
 import androidx.localbroadcastmanager.content.LocalBroadcastManager;
 import androidx.appcompat.app.AlertDialog;
+
 import android.util.Log;
 import android.view.View;
 import android.widget.AdapterView;
@@ -31,6 +33,8 @@ import com.zyc.webservice.WebService;
 import com.zyc.zcontrol.ConnectService;
 import com.zyc.zcontrol.R;
 import com.zyc.zcontrol.controlItem.MyPreferenceFragment;
+import com.zyc.zcontrol.deviceItem.DeviceClass.DeviceM1;
+import com.zyc.zcontrol.deviceItem.DeviceClass.SettingFragment;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -38,17 +42,10 @@ import org.json.JSONObject;
 import static android.content.Context.BIND_AUTO_CREATE;
 
 @SuppressLint("ValidFragment")
-public class M1SettingFragment extends MyPreferenceFragment {
+public class M1SettingFragment extends SettingFragment {
     final static String Tag = "M1SettingFragment";
-    SharedPreferences mSharedPreferences;
-    SharedPreferences.Editor editor;
 
-    //region 使用本地广播与service通信
-    LocalBroadcastManager localBroadcastManager;
-    private MsgReceiver msgReceiver;
-    ConnectService mConnectService;
-    //endregion
-
+    Preference ssid;
     Preference fw_version;
     Preference time_calibration;
     Preference lock;
@@ -58,8 +55,7 @@ public class M1SettingFragment extends MyPreferenceFragment {
     EditTextPreference interval;
 
 
-    String device_name = null;
-    String device_mac = null;
+    DeviceM1 device;
 
     boolean ota_flag = false;
     private ProgressDialog pd;
@@ -148,7 +144,7 @@ public class M1SettingFragment extends MyPreferenceFragment {
                                     .setPositiveButton("更新", new DialogInterface.OnClickListener() {
                                         @Override
                                         public void onClick(DialogInterface dialog, int which) {
-                                            Send("{\"mac\":\"" + device_mac + "\",\"setting\":{\"ota\":\"" + otaInfo.ota + "\"}}");
+                                            Send("{\"mac\":\"" + device.getMac() + "\",\"setting\":{\"ota\":\"" + otaInfo.ota + "\"}}");
                                         }
                                     })
                                     .setNegativeButton("取消", null)
@@ -167,7 +163,7 @@ public class M1SettingFragment extends MyPreferenceFragment {
                 //endregion
                 //region 发送请求数据
                 case 3:
-                    Send("{\"mac\":\"" + device_mac + "\",\"version\":null,\"lock\":null,\"interval\":null}");
+                    Send("{\"mac\":\"" + device.getMac() + "\",\"version\":null,\"interval\":null,\"ssid\":null}");
                     break;
                 //endregion
             }
@@ -175,36 +171,20 @@ public class M1SettingFragment extends MyPreferenceFragment {
     };
     //endregion
 
-    public M1SettingFragment(String name, String mac) {
-        this.device_name = name;
-        this.device_mac = mac;
+    public M1SettingFragment(DeviceM1 device) {
+        super(device.getName(), device.getMac());
+        this.device = device;
     }
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        getPreferenceManager().setSharedPreferencesName("Setting_" + device_mac);
+        getPreferenceManager().setSharedPreferencesName("Setting_" + device.getMac());
 
-        Log.d(Tag, "设置文件:" + "Setting" + device_mac);
+        Log.d(Tag, "设置文件:" + "Setting" + device.getMac());
         addPreferencesFromResource(R.xml.m1_setting);
 
-
-        //region MQTT服务有关
-        //region 动态注册接收mqtt服务的广播接收器,
-        localBroadcastManager = LocalBroadcastManager.getInstance(getActivity().getApplicationContext());
-        msgReceiver = new MsgReceiver();
-        IntentFilter intentFilter = new IntentFilter();
-        intentFilter.addAction(ConnectService.ACTION_DATA_AVAILABLE);
-        intentFilter.addAction(ConnectService.ACTION_UDP_DATA_AVAILABLE);//UDP监听
-        localBroadcastManager.registerReceiver(msgReceiver, intentFilter);
-        //endregion
-
-        //region 启动MQTT 服务以及启动,无需再启动
-        Intent intent = new Intent(getActivity().getApplicationContext(), ConnectService.class);
-        getActivity().bindService(intent, mMQTTServiceConnection, BIND_AUTO_CREATE);
-        //endregion
-        //endregion
-
+        ssid = findPreference("ssid");
         fw_version = findPreference("fw_version");
         time_calibration = findPreference("time_calibration");
         lock = findPreference("lock");
@@ -213,16 +193,16 @@ public class M1SettingFragment extends MyPreferenceFragment {
         name_preference = (EditTextPreference) findPreference("name");
         interval = (EditTextPreference) findPreference("interval");
 
-        name_preference.setSummary(device_name);
+        name_preference.setSummary(device.getName());
 
         //region mac地址
-        findPreference("mac").setSummary(device_mac);
+        findPreference("mac").setSummary(device.getMac());
         findPreference("mac").setOnPreferenceClickListener(new Preference.OnPreferenceClickListener() {
             @Override
             public boolean onPreferenceClick(Preference preference) {
                 try {
                     ClipboardManager clipboardManager = (ClipboardManager) getActivity().getSystemService(Context.CLIPBOARD_SERVICE);
-                    clipboardManager.setPrimaryClip(ClipData.newPlainText("text", device_mac));
+                    clipboardManager.setPrimaryClip(ClipData.newPlainText("text", device.getMac()));
                     Toast.makeText(getActivity(), "已复制mac地址", Toast.LENGTH_SHORT).show();
                 } catch (Exception e) {
                     Toast.makeText(getActivity(), "复制mac地址失败", Toast.LENGTH_SHORT).show();
@@ -237,7 +217,7 @@ public class M1SettingFragment extends MyPreferenceFragment {
         name_preference.setOnPreferenceChangeListener(new Preference.OnPreferenceChangeListener() {
             @Override
             public boolean onPreferenceChange(Preference preference, Object newValue) {
-                Send("{\"mac\":\"" + device_mac + "\",\"setting\":{\"name\":\"" + (String) newValue + "\"}}");
+                Send("{\"mac\":\"" + device.getMac() + "\",\"setting\":{\"name\":\"" + (String) newValue + "\"}}");
                 return false;
             }
         });
@@ -250,39 +230,13 @@ public class M1SettingFragment extends MyPreferenceFragment {
                 int val = Integer.parseInt((String) newValue);
 
                 if (val > 0 && val <= 255) {
-                    Send("{\"mac\":\"" + device_mac + "\",\"interval\":" + (String) newValue + "}");
+                    Send("{\"mac\":\"" + device.getMac() + "\",\"interval\":" + (String) newValue + "}");
                 } else {
                     Toast.makeText(getActivity(), "输入有误!范围1-255", Toast.LENGTH_SHORT).show();
                 }
                 return false;
             }
         });
-        //endregion
-        //region 激活
-//        lock.setOnPreferenceClickListener(new Preference.OnPreferenceClickListener() {
-//            @Override
-//            public boolean onPreferenceClick(Preference preference) {
-        //region 未获取到当前激活信息
-//                if (lock.getSummary() == null) {
-//                    AlertDialog alertDialog = new AlertDialog.Builder(getActivity())
-//                            .setTitle("未获取到当前设备激活信息")
-//                            .setMessage("请获取到当前设备激活信息后重试.")
-//                            .setNegativeButton("确定", new DialogInterface.OnClickListener() {
-//                                @Override
-//                                public void onClick(DialogInterface dialog, int which) {
-////                                    getActivity().finish();
-//                                }
-//                            })
-//                            .create();
-//                    alertDialog.show();
-//                    return false;
-//                }
-        //endregion
-//
-//                unlock();
-//                return false;
-//            }
-//        });
         //endregion
         //region 手动校时
         time_calibration.setOnPreferenceClickListener(new Preference.OnPreferenceClickListener() {
@@ -296,7 +250,7 @@ public class M1SettingFragment extends MyPreferenceFragment {
                         .setPositiveButton("确定", new DialogInterface.OnClickListener() {
                             @Override
                             public void onClick(DialogInterface dialogInterface, int i) {
-                                Send("{\"mac\":\"" + device_mac + "\",\"time\":-1}");
+                                Send("{\"mac\":\"" + device.getMac() + "\",\"time\":-1}");
                             }
                         }).setNegativeButton("取消", null).show();
                 return false;
@@ -319,7 +273,7 @@ public class M1SettingFragment extends MyPreferenceFragment {
 //                                String uri = et.getText().toString();
 //                                if (uri.length() < 1) return;
 //                                if (uri.startsWith("http")) {
-//                                    Send("{\"mac\":\"" + device_mac + "\",\"setting\":{\"ota\":\"" + uri + "\"}}");
+//                                    Send("{\"mac\":\"" + device.getMac() + "\",\"setting\":{\"ota\":\"" + uri + "\"}}");
 //                                }
 //                            }
 //                        }).setNegativeButton("取消", null).show();
@@ -364,7 +318,7 @@ public class M1SettingFragment extends MyPreferenceFragment {
                         .setPositiveButton("确定", new DialogInterface.OnClickListener() {
                             @Override
                             public void onClick(DialogInterface dialogInterface, int i) {
-                                Send("{\"mac\":\"" + device_mac + "\",\"cmd\":\"restart\"}");
+                                Send("{\"mac\":\"" + device.getMac() + "\",\"cmd\":\"restart\"}");
 
                             }
                         }).setNegativeButton("取消", null).show();
@@ -387,15 +341,6 @@ public class M1SettingFragment extends MyPreferenceFragment {
 
 
     @Override
-    public void onDestroy() {
-        //注销广播
-        localBroadcastManager.unregisterReceiver(msgReceiver);
-        //停止服务
-        getActivity().unbindService(mMQTTServiceConnection);
-        super.onDestroy();
-    }
-
-    @Override
     public boolean onItemLongClick(AdapterView<?> parent, View view, int position, long id) {
         Log.d(Tag, "longclick:" + position);
         if (position == fw_version.getOrder() + 1) {
@@ -412,11 +357,12 @@ public class M1SettingFragment extends MyPreferenceFragment {
         if (fw_version.getSummary() == null) {
             AlertDialog alertDialog = new AlertDialog.Builder(getActivity())
                     .setTitle("未获取到当前设备版本")
-                    .setMessage("请获取到当前设备版本后重试.")
+                    .setMessage("请点击重新获取数据.获取到当前设备版本后重试.")
                     .setNegativeButton("确定", new DialogInterface.OnClickListener() {
                         @Override
                         public void onClick(DialogInterface dialog, int which) {
-//                                    getActivity().finish();
+                            handler.sendEmptyMessageDelayed(3, 0);
+                            Toast.makeText(getActivity(), "请求版本数据...", Toast.LENGTH_SHORT).show();
                         }
                     })
                     .create();
@@ -441,62 +387,36 @@ public class M1SettingFragment extends MyPreferenceFragment {
                         String uri = et.getText().toString();
                         if (uri.length() < 1) return;
                         if (uri.startsWith("http")) {
-                            Send("{\"mac\":\"" + device_mac + "\",\"setting\":{\"ota\":\"" + uri + "\"}}");
+                            Send("{\"mac\":\"" + device.getMac() + "\",\"setting\":{\"ota\":\"" + uri + "\"}}");
                         }
                     }
                 }).setNegativeButton("取消", null).show();
     }
 
     //endregion
-    //region 弹窗激活
-    void unlock() {
-
-        final EditText et = new EditText(getActivity());
-        new AlertDialog.Builder(getActivity()).setTitle("请输入激活码")
-                .setView(et)
-                .setMessage("")
-                .setPositiveButton("确定", new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialogInterface, int i) {
-                        String lockStr = et.getText().toString();
-                        lockStr = lockStr.replace("\r\n", "\n").replace("\n", "").trim();
-                        Send("{\"mac\":\"" + device_mac + "\",\"lock\":\"" + lockStr + "\"}");
-                    }
-                }).setNegativeButton("取消", null).show();
-
-    }
-
-    //endregion
     //endregion
 
     void Send(String message) {
-        boolean b = getActivity().getSharedPreferences("Setting_" + device_mac, 0).getBoolean("always_UDP", false);
-        mConnectService.Send(b ? null : "device/zm1/" + device_mac + "/set", message);
+        boolean b = getActivity().getSharedPreferences("Setting_" + device.getMac(), 0).getBoolean("always_UDP", false);
+        super.Send(b, device.getSendMqttTopic(), message);
     }
 
-    //数据接收处理函数
-    void Receive(String ip, int port, String message) {
-        //TODO 数据接收处理
-        Receive(null, message);
-    }
-
-    void Receive(String topic, String message) {
-        //TODO 数据接收处理
+    @Override
+    public void Receive(String ip, int port, String topic, String message) {
+        super.Receive(ip, port, topic, message);
         Log.d(Tag, "RECV DATA,topic:" + topic + ",content:" + message);
 
         try {
             JSONObject jsonObject = new JSONObject(message);
-            String name = null;
-            String mac = null;
-            JSONObject jsonSetting = null;
-            if (jsonObject.has("mac")) mac = jsonObject.getString("mac");
-            if (mac == null || !mac.equals(device_mac)) return;
+            if (!jsonObject.has("mac") || !jsonObject.getString("mac").equals(device.getMac())) {
+                return;
+            }
 
             //region 获取名称
             if (jsonObject.has("name")) {
-                name = jsonObject.getString("name");
-                name_preference.setSummary(name);
-                name_preference.setText(name);
+                device.setName(jsonObject.getString("name"));
+                name_preference.setSummary(device.getName());
+                name_preference.setText(device.getName());
             }
             //endregion
 
@@ -518,20 +438,17 @@ public class M1SettingFragment extends MyPreferenceFragment {
                 }
             }
             //endregion
+            //region ssid
+            if (jsonObject.has("ssid")) {
+                ssid.setSummary(jsonObject.getString("ssid"));
+            }
+            //endregion
+
             //region 获取版本号
             if (jsonObject.has("version")) {
                 String version = jsonObject.getString("version");
                 fw_version.setSummary(version);
             }
-            //endregion
-            //region 激活
-//            if (jsonObject.has("lock")) {
-//                if (jsonObject.getBoolean("lock")) {
-//                    lock.setSummary("已激活");
-//                } else {
-//                    lock.setSummary("未激活");
-//                }
-//            }
             //endregion
             //region ota结果/进度
             if (jsonObject.has("ota_progress")) {
@@ -565,6 +482,7 @@ public class M1SettingFragment extends MyPreferenceFragment {
             }
             //endregion
             //region 接收主机setting
+            JSONObject jsonSetting = null;
             if (jsonObject.has("setting")) jsonSetting = jsonObject.getJSONObject("setting");
             if (jsonSetting != null) {
 
@@ -598,38 +516,20 @@ public class M1SettingFragment extends MyPreferenceFragment {
         }
     }
 
-    //region MQTT服务有关
+    //region 事件监听调用函数,主要为在子类中重写此函数实现在service建立成功/mqtt连接成功/失败时执行功能
+    //Service建立成功时调用    此函数需要时在子类中重写
+    public void ServiceConnected() {
+        handler.sendEmptyMessageDelayed(3, 0);
+    }
 
-    private final ServiceConnection mMQTTServiceConnection = new ServiceConnection() {
+    //mqtt连接成功时调用    此函数需要时在子类中重写
+    public void MqttConnected() {
+        handler.sendEmptyMessageDelayed(3, 0);
+    }
 
-        @Override
-        public void onServiceConnected(ComponentName componentName, IBinder service) {
-            mConnectService = ((ConnectService.LocalBinder) service).getService();
-            handler.sendEmptyMessage(3);
-        }
-
-        @Override
-        public void onServiceDisconnected(ComponentName componentName) {
-            mConnectService = null;
-        }
-    };
-
-    //广播接收,用于处理接收到的数据
-    public class MsgReceiver extends BroadcastReceiver {
-        @Override
-        public void onReceive(Context context, Intent intent) {
-            final String action = intent.getAction();
-            if (ConnectService.ACTION_UDP_DATA_AVAILABLE.equals(action)) {
-                String ip = intent.getStringExtra(ConnectService.EXTRA_UDP_DATA_IP);
-                String message = intent.getStringExtra(ConnectService.EXTRA_UDP_DATA_MESSAGE);
-                int port = intent.getIntExtra(ConnectService.EXTRA_UDP_DATA_PORT, -1);
-                Receive(ip, port, message);
-            } else if (ConnectService.ACTION_DATA_AVAILABLE.equals(action)) {  //接收到数据
-                String topic = intent.getStringExtra(ConnectService.EXTRA_DATA_TOPIC);
-                String message = intent.getStringExtra(ConnectService.EXTRA_DATA_MESSAGE);
-                Receive(topic, message);
-            }
-        }
+    //mqtt连接断开时调用    此函数需要时在子类中重写
+    public void MqttDisconnected() {
+        handler.sendEmptyMessageDelayed(3, 0);
     }
     //endregion
 

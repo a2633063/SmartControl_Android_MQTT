@@ -1,4 +1,4 @@
-package com.zyc.zcontrol.controlItem.m1;
+package com.zyc.zcontrol.deviceItem.m1;
 
 
 import android.annotation.SuppressLint;
@@ -30,6 +30,8 @@ import android.widget.TextView;
 
 import com.zyc.zcontrol.ConnectService;
 import com.zyc.zcontrol.R;
+import com.zyc.zcontrol.deviceItem.DeviceClass.DeviceFragment;
+import com.zyc.zcontrol.deviceItem.DeviceClass.DeviceM1;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -43,18 +45,11 @@ import static android.content.Context.BIND_AUTO_CREATE;
 /**
  * A simple {@link Fragment} subclass.
  */
-public class M1Fragment extends Fragment {
+public class M1Fragment extends DeviceFragment {
     public final static String Tag = "M1Fragment";
 
-    private SharedPreferences mSharedPreferences;
-    private SharedPreferences.Editor mEditor;
 
-    //region 使用本地广播与service通信
-    LocalBroadcastManager localBroadcastManager;
-    private MsgReceiver msgReceiver;
-    ConnectService mConnectService;
-    //endregion
-
+    DeviceM1 device;
     //region 控件
     private SwipeRefreshLayout mSwipeLayout;
     TextView tvPm25;
@@ -65,11 +60,6 @@ public class M1Fragment extends Fragment {
     TextView tvBrightness;
 
     //endregion
-    TextView log;
-
-
-    String device_mac = null;
-    String device_name = null;
 
     public M1Fragment() {
 
@@ -77,10 +67,9 @@ public class M1Fragment extends Fragment {
     }
 
     @SuppressLint("ValidFragment")
-    public M1Fragment(String name, String mac) {
-        this.device_mac = mac;
-        this.device_name = name;
-        // Required empty public constructor
+    public M1Fragment(DeviceM1 device) {
+        super(device.getName(), device.getMac());
+        this.device = device;
     }
 
     //region Handler
@@ -90,12 +79,12 @@ public class M1Fragment extends Fragment {
         public void handleMessage(Message msg) {// handler接收到消息后就会执行此方法
             switch (msg.what) {
                 case 1:
-                    Send("{\"mac\":\"" + device_mac + "\",\"brightness\":null}");
+                    Send("{\"mac\":\"" + device.getMac() + "\",\"brightness\":null}");
                     break;
                 case 2:
                     Log.d(Tag, "send seekbar:" + msg.arg1);
 
-                    Send("{\"mac\":\"" + device_mac + "\",\"brightness\":" + msg.arg1 + "}");
+                    Send("{\"mac\":\"" + device.getMac() + "\",\"brightness\":" + msg.arg1 + "}");
                     break;
             }
         }
@@ -109,23 +98,6 @@ public class M1Fragment extends Fragment {
         // Inflate the layout for this fragment
         final View view = inflater.inflate(R.layout.fragment_m1, container, false);
 
-        //region MQTT服务有关
-        //region 动态注册接收mqtt服务的广播接收器,
-        localBroadcastManager = LocalBroadcastManager.getInstance(getContext());
-        msgReceiver = new MsgReceiver();
-        IntentFilter intentFilter = new IntentFilter();
-        intentFilter.addAction(ConnectService.ACTION_UDP_DATA_AVAILABLE);
-        intentFilter.addAction(ConnectService.ACTION_MQTT_CONNECTED);
-        intentFilter.addAction(ConnectService.ACTION_MQTT_DISCONNECTED);
-        intentFilter.addAction(ConnectService.ACTION_DATA_AVAILABLE);
-        localBroadcastManager.registerReceiver(msgReceiver, intentFilter);
-        //endregion
-
-        //region 启动MQTT 服务以及启动,无需再启动
-        Intent intent = new Intent(getContext(), ConnectService.class);
-        getActivity().bindService(intent, mMQTTServiceConnection, BIND_AUTO_CREATE);
-        //endregion
-        //endregion
 
         //region 控件初始化
 
@@ -178,8 +150,7 @@ public class M1Fragment extends Fragment {
             @Override
             public void onClick(View v) {
                 Intent intent = new Intent(getContext(), M1PlugActivity.class);
-                intent.putExtra("name", device_name);
-                intent.putExtra("mac", device_mac);
+                intent.putExtra("mac", device.getMac());
                 startActivity(intent);
             }
         });
@@ -197,72 +168,32 @@ public class M1Fragment extends Fragment {
         //endregion
 
         //region log 相关
-        final ScrollView scrollView = (ScrollView) view.findViewById(R.id.scrollView);
-        log = (TextView) view.findViewById(R.id.tv_log);
-        log.addTextChangedListener(new TextWatcher() {
-            @Override
-            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
-
-            }
-
-            @Override
-            public void onTextChanged(CharSequence s, int start, int before, int count) {
-
-            }
-
-            @Override
-            public void afterTextChanged(Editable s) {
-                scrollView.post(new Runnable() {
-                    public void run() {
-                        scrollView.fullScroll(View.FOCUS_DOWN);
-                    }
-                });
-            }
-        });
-        DateFormat df = new SimpleDateFormat("---- yyyy/MM/dd HH:mm:ss ----");
-        log.setText(df.format(new Date()));
+        setLogTextView((TextView) view.findViewById(R.id.tv_log));
         //endregion
-
         //endregion
+        super.onCreateView(inflater, container, savedInstanceState);
 
         return view;
     }
 
-    @Override
-    public void onDestroy() {
-        //注销广播
-        localBroadcastManager.unregisterReceiver(msgReceiver);
-        //停止服务
-        getActivity().unbindService(mMQTTServiceConnection);
-        super.onDestroy();
-    }
 
     void Send(String message) {
-        if (mConnectService == null) return;
-        if(getActivity()==null) Log.e(Tag,"getActivity");
-        boolean b = getActivity().getSharedPreferences("Setting_" + device_mac, 0).getBoolean("always_UDP", false);
-        mConnectService.Send(b ? null : "device/zm1/" + device_mac + "/set", message);
+        boolean b = getActivity().getSharedPreferences("Setting_" + device.getMac(), 0).getBoolean("always_UDP", false);
+        super.Send(b ,device.getSendMqttTopic(), message);
     }
 
-    //数据接收处理函数
-    void Receive(String ip, int port, String message) {
-        //TODO 数据接收处理
-        Receive(null, message);
-    }
-
-    void Receive(String topic, String message) {
-        //TODO 数据接收处理
-        Log.d(Tag, "RECV DATA,topic:" + topic + ",content:" + message);
+    //数据接收处理更新函数
+    public void Receive(String ip, int port, String topic, String message) {
+        super.Receive(ip, port, topic, message);
 
         try {
             JSONObject jsonObject = new JSONObject(message);
-            String name = null;
-            String mac = null;
-            JSONObject jsonSetting = null;
-            if (jsonObject.has("name")) name = jsonObject.getString("name");
-            if (jsonObject.has("mac")) mac = jsonObject.getString("mac");
-            if (jsonObject.has("setting")) jsonSetting = jsonObject.getJSONObject("setting");
-            if (mac == null || !mac.equals(device_mac)) return;
+            if (!jsonObject.has("mac") || !jsonObject.getString("mac").equals(device.getMac())) {
+                return;
+            }
+
+            if (jsonObject.has("name")) device.setName(jsonObject.getString("name"));
+
             //region 解析传感器参数
 
             if (jsonObject.has("PM25")) {
@@ -299,50 +230,21 @@ public class M1Fragment extends Fragment {
             e.printStackTrace();
         }
     }
+    //region 事件监听调用函数,主要为在子类中重写此函数实现在service建立成功/mqtt连接成功/失败时执行功能
+    //Service建立成功时调用    此函数需要时在子类中重写
+    public void ServiceConnected() {
+        handler.sendEmptyMessageDelayed(1, 0);
+    }
 
-    //region MQTT服务有关
+    //mqtt连接成功时调用    此函数需要时在子类中重写
+    public void MqttConnected() {
+        handler.sendEmptyMessageDelayed(1, 0);
+    }
 
-    private final ServiceConnection mMQTTServiceConnection = new ServiceConnection() {
-
-        @Override
-        public void onServiceConnected(ComponentName componentName, IBinder service) {
-            mConnectService = ((ConnectService.LocalBinder) service).getService();
-            handler.sendEmptyMessageDelayed(1, 300);
-        }
-
-        @Override
-        public void onServiceDisconnected(ComponentName componentName) {
-            mConnectService = null;
-        }
-    };
-
-    //广播接收,用于处理接收到的数据
-    public class MsgReceiver extends BroadcastReceiver {
-        @Override
-        public void onReceive(Context context, Intent intent) {
-            final String action = intent.getAction();
-            if (ConnectService.ACTION_UDP_DATA_AVAILABLE.equals(action)) {
-                String ip = intent.getStringExtra(ConnectService.EXTRA_UDP_DATA_IP);
-                String message = intent.getStringExtra(ConnectService.EXTRA_UDP_DATA_MESSAGE);
-                int port = intent.getIntExtra(ConnectService.EXTRA_UDP_DATA_PORT, -1);
-                Receive(ip, port, message);
-            } else if (ConnectService.ACTION_MQTT_CONNECTED.equals(action)) {  //连接成功
-                Log.d(Tag, "ACTION_MQTT_CONNECTED");
-                Log("app已连接mqtt服务器");
-                handler.sendEmptyMessageDelayed(1, 300);
-            } else if (ConnectService.ACTION_MQTT_DISCONNECTED.equals(action)) {  //连接失败/断开
-                Log.w(Tag, "ACTION_MQTT_DISCONNECTED");
-                Log("已与mqtt服务器已断开");
-            } else if (ConnectService.ACTION_DATA_AVAILABLE.equals(action)) {  //接收到数据
-                String topic = intent.getStringExtra(ConnectService.EXTRA_DATA_TOPIC);
-                String message = intent.getStringExtra(ConnectService.EXTRA_DATA_MESSAGE);
-                Receive(topic, message);
-            }
-        }
+    //mqtt连接断开时调用    此函数需要时在子类中重写
+    public void MqttDisconnected() {
+        handler.sendEmptyMessageDelayed(1, 0);
     }
     //endregion
 
-    void Log(String str) {
-        log.setText(log.getText() + "\n" + str);
-    }
 }
