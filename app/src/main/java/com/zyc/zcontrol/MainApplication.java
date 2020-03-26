@@ -14,16 +14,16 @@ public class MainApplication extends Application {
     private ArrayList<Device> mData = new ArrayList<>();
 
 
-    public Device getDevice(String mac){
-        for(int i=0;i<mData.size();i++){
-            if(mac.equals(mData.get(i).getMac())) return mData.get(i);
+    public Device getDevice(String mac) {
+        for (int i = 0; i < mData.size(); i++) {
+            if (mac.equals(mData.get(i).getMac())) return mData.get(i);
         }
         return null;
     }
 
-    public int getDeviceIndex(String mac){
-        for(int i=0;i<mData.size();i++){
-            if(mac.equals(mData.get(i).getMac())) return i;
+    public int getDeviceIndex(String mac) {
+        for (int i = 0; i < mData.size(); i++) {
+            if (mac.equals(mData.get(i).getMac())) return i;
         }
         return -1;
     }

@@ -119,7 +119,6 @@ public class Device {
     //endregion
 
 
-
     public Device(int type, String name, String mac) {
         this.name = name;
         this.mac = mac;
@@ -174,7 +173,8 @@ public class Device {
         }
         return fragment;
     }
-    public PreferenceFragment getSettingFragment(){
+
+    public PreferenceFragment getSettingFragment() {
         return null;
     }
     //endregion

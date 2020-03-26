@@ -344,7 +344,7 @@ public class TC1SettingFragment extends SettingFragment {
                     .setNegativeButton("确定", new DialogInterface.OnClickListener() {
                         @Override
                         public void onClick(DialogInterface dialog, int which) {
-                            handler.sendEmptyMessageDelayed(3,0);
+                            handler.sendEmptyMessageDelayed(3, 0);
                             Toast.makeText(getActivity(), "请求版本数据...", Toast.LENGTH_SHORT).show();
                         }
                     })
@@ -438,7 +438,7 @@ public class TC1SettingFragment extends SettingFragment {
             //region 获取版本号
             if (jsonObject.has("version")) {
                 fw_version.setSummary(jsonObject.getString("version"));
-                if(jsonObject.getString("version").startsWith("v0.") && !old_protocol.isChecked()){
+                if (jsonObject.getString("version").startsWith("v0.") && !old_protocol.isChecked()) {
                     Toast.makeText(getActivity(), "版本低于v1.0.0请勾选使用旧版通信协议!", Toast.LENGTH_LONG).show();
                 }
             }
@@ -525,16 +525,17 @@ public class TC1SettingFragment extends SettingFragment {
         }
     }
 
-    public void ServiceConnected(){
-        handler.sendEmptyMessageDelayed(3,0);
+    public void ServiceConnected() {
+        handler.sendEmptyMessageDelayed(3, 0);
     }
+
     //mqtt连接成功时调用    此函数需要时在子类中重写
-    public void MqttConnected(){
-        handler.sendEmptyMessageDelayed(3,0);
+    public void MqttConnected() {
+        handler.sendEmptyMessageDelayed(3, 0);
     }
 
     //mqtt连接断开时调用    此函数需要时在子类中重写
-    public void MqttDisconnected(){
-        handler.sendEmptyMessageDelayed(3,0);
+    public void MqttDisconnected() {
+        handler.sendEmptyMessageDelayed(3, 0);
     }
 }
