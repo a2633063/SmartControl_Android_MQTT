@@ -1,4 +1,4 @@
-package com.zyc.zcontrol.controlItem.tc1;
+package com.zyc.zcontrol.deviceItem.tc1;
 
 import android.content.Context;
 

@@ -23,7 +23,6 @@ import androidx.appcompat.app.AlertDialog;
 
 import com.zyc.webservice.WebService;
 import com.zyc.zcontrol.R;
-import com.zyc.zcontrol.controlItem.tc1.TC1OTAInfo;
 import com.zyc.zcontrol.deviceItem.DeviceClass.DeviceTC1;
 import com.zyc.zcontrol.deviceItem.DeviceClass.SettingFragment;
 
