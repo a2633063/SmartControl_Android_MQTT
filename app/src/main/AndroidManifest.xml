@@ -68,7 +68,7 @@
             android:name=".DeviceSortActivity"
             android:label="排序"></activity>
         <activity
-            android:name=".controlItem.a1.A1PlugActivity"
+            android:name=".deviceItem.a1.A1PlugActivity"
             android:label="插口" />
         <activity
             android:name=".controlItem.m1.M1PlugActivity"

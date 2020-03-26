@@ -1,4 +1,4 @@
-package com.zyc.zcontrol.controlItem.a1;
+package com.zyc.zcontrol.deviceItem.a1;
 
 public class A1OTAInfo {
 

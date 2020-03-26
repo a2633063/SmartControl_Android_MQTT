@@ -1,4 +1,4 @@
-package com.zyc.zcontrol.controlItem.a1;
+package com.zyc.zcontrol.deviceItem.a1;
 
 import android.content.Context;
 import android.view.LayoutInflater;
