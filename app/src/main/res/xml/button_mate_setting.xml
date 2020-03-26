@@ -26,6 +26,10 @@
             android:key="always_UDP"
             android:summary="即使连接MQTT服务器,也使用UDP发送数据"
             android:title="总是通过UDP发送数据" />
+        <Preference
+            android:key="regetdata"
+            android:title="重新获取数据"
+            android:summary="获取版本/激活状态失败时点此重试"/>
 
     </PreferenceCategory>
 
