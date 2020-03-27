@@ -625,7 +625,6 @@ public class MainActivity extends AppCompatActivity {
             SQLiteClass sqLite = new SQLiteClass(MainActivity.this, "device_list");
             sqLite.Delete("device_list", null, null);
 
-            //SQLiteClass sqLite = new SQLiteClass(this, "device_list");
             for (int i = 0; i < deviceData.size(); i++) {
                 Device d = deviceData.get(i);
                 ContentValues cv = new ContentValues();
