@@ -47,13 +47,10 @@ public class DeviceSortActivity extends AppCompatActivity {
         //region 数据库初始化
         mData = ((MainApplication) getApplication()).getDeviceList();
 
-        if (mData.size() > 1 && mData.get(0).getMac().equals("000000000000")) {
-            mData.remove(0);
-            Toast.makeText(this, "已删除演示设备", Toast.LENGTH_SHORT).show();
-        }
-
-        LocalBroadcastManager localBroadcastManager = LocalBroadcastManager.getInstance(this);
-        localBroadcastManager.sendBroadcast(new Intent(ACTION_MAINACTIVITY_DEVICELISTUPDATE));
+//        if (mData.size() > 1 && mData.get(0).getMac().equals("000000000000")) {
+//            mData.remove(0);
+//            Toast.makeText(this, "已删除演示设备", Toast.LENGTH_SHORT).show();
+//        }
 
         //endregion
 
@@ -67,7 +64,7 @@ public class DeviceSortActivity extends AppCompatActivity {
         // 设置RecyclerView Item边距
         sideRecyclerView.addItemDecoration(new SortRecyclerViewSpacesItemDecoration(10, 10, 10, 20));
         //设置长按拖动排序
-        ItemTouchHelper sideHelper = new ItemTouchHelper(new SortRecyclerItemTouchHelper(adapter));
+        ItemTouchHelper sideHelper = new ItemTouchHelper(new SortRecyclerItemTouchHelper(this,adapter));
         sideHelper.attachToRecyclerView(sideRecyclerView);
 
         //endregion
@@ -78,7 +75,7 @@ public class DeviceSortActivity extends AppCompatActivity {
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
             case android.R.id.home:
-                SaveExit();
+                finish();
 //                Intent intent = new Intent(DeviceSortActivity.this, MainActivity.class);
 //                startActivity(intent);
 //                this.finish();
@@ -87,30 +84,5 @@ public class DeviceSortActivity extends AppCompatActivity {
         return super.onOptionsItemSelected(item);
     }
 
-    @Override
-    public void onBackPressed() {
-        SaveExit();
-        //super.onBackPressed();
 
-    }
-
-    void SaveExit() {
-//        //删除数据库所有内容,根据排序重新写入
-//        SQLiteClass sqLite = new SQLiteClass(DeviceSortActivity.this, "device_list");
-//        sqLite.Delete("device_list", null, null);
-//
-//        //SQLiteClass sqLite = new SQLiteClass(this, "device_list");
-//        for (int i = 0; i < mData.size(); i++) {
-//            Device d = mData.get(i);
-//            ContentValues cv = new ContentValues();
-//            cv.put("name", d.getName());
-//            cv.put("type", d.getType());
-//            cv.put("mac", d.getMac());
-//            cv.put("sort", i);
-//            sqLite.Insert("device_list", cv);
-//        }
-//        Intent intent = new Intent(DeviceSortActivity.this, MainActivity.class);
-//        startActivity(intent);
-        finish();
-    }
 }

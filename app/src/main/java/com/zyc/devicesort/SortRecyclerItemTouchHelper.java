@@ -1,18 +1,26 @@
 package com.zyc.devicesort;
 
 
+import android.content.Context;
+import android.content.Intent;
+
+import androidx.localbroadcastmanager.content.LocalBroadcastManager;
 import androidx.recyclerview.widget.GridLayoutManager;
-import androidx.recyclerview.widget.RecyclerView;
 import androidx.recyclerview.widget.ItemTouchHelper;
+import androidx.recyclerview.widget.RecyclerView;
 
 import java.util.Collections;
+
+import static com.zyc.zcontrol.ConnectService.ACTION_MAINACTIVITY_DEVICELISTUPDATE;
 
 //Recycler 长按拖动排序功能
 public class SortRecyclerItemTouchHelper extends ItemTouchHelper.Callback {
     private SortRecyclerAdapter adapter;
+    LocalBroadcastManager localBroadcastManager;
 
-    public SortRecyclerItemTouchHelper(SortRecyclerAdapter adapter) {
+    public SortRecyclerItemTouchHelper(Context content, SortRecyclerAdapter adapter) {
         this.adapter = adapter;
+        localBroadcastManager = LocalBroadcastManager.getInstance(content);
     }
 
     /**
@@ -68,8 +76,8 @@ public class SortRecyclerItemTouchHelper extends ItemTouchHelper.Callback {
         }
 
 
-
         recyclerView.getAdapter().notifyItemMoved(fromPosition, toPosition);
+        localBroadcastManager.sendBroadcast(new Intent(ACTION_MAINACTIVITY_DEVICELISTUPDATE));
         return true;
     }
 
@@ -88,6 +96,7 @@ public class SortRecyclerItemTouchHelper extends ItemTouchHelper.Callback {
             adapter.notifyItemRemoved(position);
         }
         adapter.onItemDissmiss(position);
+        localBroadcastManager.sendBroadcast(new Intent(ACTION_MAINACTIVITY_DEVICELISTUPDATE));
     }
 
     /**

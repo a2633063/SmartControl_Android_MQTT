@@ -71,8 +71,7 @@ import java.util.regex.Pattern;
 
 import static android.view.ViewGroup.LayoutParams.MATCH_PARENT;
 import static com.zyc.Function.getLocalVersionName;
-import static com.zyc.zcontrol.deviceItem.DeviceClass.Device.TYPE_TC1;
-import static com.zyc.zcontrol.deviceItem.DeviceClass.Device.TYPE_UNKNOWN;
+
 import static java.lang.Integer.parseInt;
 
 public class MainActivity extends AppCompatActivity {
@@ -133,8 +132,8 @@ public class MainActivity extends AppCompatActivity {
                 //region 需要刷新设备adapter
                 case 2:
                     handler.removeMessages(2);
-                    mainDeviceListAdapter.notifyDataSetChanged();
                     mainDeviceFragmentAdapter.notifyDataSetChanged();
+                    mainDeviceListAdapter.notifyDataSetChanged();
                     toolbar.setTitle(mainDeviceListAdapter.getChoiceDevice().getName());
                     Log.d(Tag, "device list update");
                     break;
@@ -252,10 +251,25 @@ public class MainActivity extends AppCompatActivity {
             Log.d(Tag, "query------->" + "id：" + id + " " + "name：" + name + " " + "type：" + type + " " + "mac：" + mac);
 
             switch (type) {
-                case TYPE_TC1:
+                case Device.TYPE_BUTTON_MATE:
+                    deviceData.add(new DeviceButtonMate(name, mac));
+                    break;
+                case Device.TYPE_TC1:
                     deviceData.add(new DeviceTC1(name, mac));
+                    break;
+                case Device.TYPE_DC1:
+                    deviceData.add(new DeviceDC1(name, mac));
+                    break;
+                case Device.TYPE_A1:
+                    deviceData.add(new DeviceA1(name, mac));
+                    break;
+                case Device.TYPE_M1:
+                    deviceData.add(new DeviceM1(name, mac));
+                    break;
+                case Device.TYPE_RGBW:
+                    deviceData.add(new DeviceRGBW(name, mac));
+                    break;
             }
-            deviceData.add(new Device(type, name, mac));
         }
 
         if (deviceData.size() < 1) {
@@ -513,7 +527,7 @@ public class MainActivity extends AppCompatActivity {
         if (resultCode != RESULT_OK) return;
         //region 新增设备返回
         if (requestCode == 1) {
-            int type = intent.getIntExtra("type", TYPE_UNKNOWN);
+            int type = intent.getIntExtra("type", Device.TYPE_UNKNOWN);
             String ip = intent.getExtras().getString("ip");
             String mac = intent.getExtras().getString("mac");
             Log.e(Tag, "get device result:" + ip + "," + mac + "," + type);
