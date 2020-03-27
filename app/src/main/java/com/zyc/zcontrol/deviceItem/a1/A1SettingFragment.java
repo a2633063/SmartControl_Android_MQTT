@@ -100,8 +100,6 @@ public class A1SettingFragment extends SettingFragment {
                             Message msg = new Message();
                             msg.what = 2;
                             String res = WebService.WebConnect("https://gitee.com/api/v5/repos/a2633063/Release/releases/tags/zA1");
-                            if (res == null || res.length() < 100)
-                                res = WebService.WebConnect("https://gitee.com/api/v5/repos/zhangyichen/Release/releases/tags/zA1");
                             msg.obj = res;
                             handler.sendMessageDelayed(msg, 0);// 执行耗时的方法之后发送消给handler
                         }
@@ -271,8 +269,6 @@ public class A1SettingFragment extends SettingFragment {
                         Message msg = new Message();
                         msg.what = 0;
                         String res = WebService.WebConnect("https://gitee.com/api/v5/repos/a2633063/zA1/releases/latest");
-                        if (res == null || res.length() < 100)
-                            res = WebService.WebConnect("https://gitee.com/api/v5/repos/zhangyichen/zA1/releases/latest");
                         msg.obj = res;
                         handler.sendMessageDelayed(msg, 0);// 执行耗时的方法之后发送消给handler
                     }

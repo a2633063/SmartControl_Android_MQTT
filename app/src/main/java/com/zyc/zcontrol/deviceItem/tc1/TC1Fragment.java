@@ -230,7 +230,7 @@ public class TC1Fragment extends DeviceFragment {
                 try {
 //                    device.setPower(jsonObject.getDouble("power"));
 //                    tv_power.setText(String.format("%.1fW", device.getPower()));
-                    tv_power.setText(jsonObject.getString("power"));
+                    tv_power.setText(jsonObject.getString("power")+"W");
                 } catch (JSONException e) {
                     Log("功率数据出错");
                     e.printStackTrace();

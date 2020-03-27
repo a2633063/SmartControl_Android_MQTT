@@ -99,6 +99,7 @@ public class MainActivity extends AppCompatActivity {
     private MainDeviceFragmentAdapter mainDeviceFragmentAdapter;
 
     ConnectService mConnectService;
+    boolean updateSqlFlag = false;
     boolean newDeviceFlag = false;
     boolean getDeviceFlag = false;
 
@@ -135,6 +136,7 @@ public class MainActivity extends AppCompatActivity {
                     mainDeviceFragmentAdapter.notifyDataSetChanged();
                     mainDeviceListAdapter.notifyDataSetChanged();
                     toolbar.setTitle(mainDeviceListAdapter.getChoiceDevice().getName());
+                    updateSqlFlag = true; //退出app时需要更新数据库
                     Log.d(Tag, "device list update");
                     break;
                 //endregion
@@ -512,8 +514,6 @@ public class MainActivity extends AppCompatActivity {
                 Message msg = new Message();
                 msg.what = 100;
                 String res = WebService.WebConnect("https://gitee.com/api/v5/repos/a2633063/SmartControl_Android_MQTT/releases/latest");
-                if (res == null || res.length() < 100)
-                    res = WebService.WebConnect("https://gitee.com/api/v5/repos/zhangyichen/SmartControl_Android_MQTT/releases/latest");
                 msg.obj = res;
                 handler.sendMessageDelayed(msg, 0);// 执行耗时的方法之后发送消给handler
             }
@@ -612,6 +612,8 @@ public class MainActivity extends AppCompatActivity {
 
     @Override
     protected void onDestroy() {
+        Log.d(Tag, "onDestroy");
+        //region 停止Service
         //注销广播
         localBroadcastManager.unregisterReceiver(msgReceiver);
         //停止服务
@@ -619,6 +621,25 @@ public class MainActivity extends AppCompatActivity {
         stopService(intent);
         unbindService(mMQTTServiceConnection);
         if (null != wifiLock) wifiLock.release();//必须调用
+        //endregion
+        //region 需要时更新数据库
+        if (updateSqlFlag) {
+            //删除数据库所有内容,根据排序重新写入
+            SQLiteClass sqLite = new SQLiteClass(MainActivity.this, "device_list");
+            sqLite.Delete("device_list", null, null);
+
+            //SQLiteClass sqLite = new SQLiteClass(this, "device_list");
+            for (int i = 0; i < deviceData.size(); i++) {
+                Device d = deviceData.get(i);
+                ContentValues cv = new ContentValues();
+                cv.put("name", d.getName());
+                cv.put("type", d.getType());
+                cv.put("mac", d.getMac());
+                cv.put("sort", i);
+                sqLite.Insert("device_list", cv);
+            }
+        }
+        //endregion
         super.onDestroy();
     }
 
