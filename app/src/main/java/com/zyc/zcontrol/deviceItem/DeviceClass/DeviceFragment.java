@@ -21,6 +21,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ScrollView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 
 import androidx.annotation.CallSuper;
@@ -30,6 +31,9 @@ import androidx.fragment.app.Fragment;
 import androidx.localbroadcastmanager.content.LocalBroadcastManager;
 
 import com.zyc.zcontrol.ConnectService;
+
+import org.json.JSONException;
+import org.json.JSONObject;
 
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
@@ -110,8 +114,8 @@ public class DeviceFragment extends Fragment implements View.OnLongClickListener
             send_net_flag = 2;
             Log("当前发送消息为:mqtt");
         } else if ((isUDP || topic == null || !mConnectService.isConnected()) && send_net_flag != 1) { //当前通过udp发送
-            send_net_flag=1;
-            Log("当前发送消息为:udp"+(mConnectService.isConnected()?"(mqtt已连接)":""));
+            send_net_flag = 1;
+            Log("当前发送消息为:udp" + (mConnectService.isConnected() ? "(mqtt已连接)" : ""));
         }
     }
 
@@ -126,21 +130,37 @@ public class DeviceFragment extends Fragment implements View.OnLongClickListener
             rece_net_flag = 1;
             Log("当前接收消息为:udp");
         }
+
+        //region 反馈mqtt设置回应
+        try {
+            JSONObject jsonObject = new JSONObject(message);
+            JSONObject jsonSetting = jsonObject.getJSONObject("setting");
+            if (jsonObject.getString("mac").equals(device_mac)) {
+                String toastStr = "已设置\"" + device_name + "\"mqtt服务器:\r\n"
+                        + jsonSetting.getString("mqtt_uri") + ":" + jsonSetting.getInt("mqtt_port")
+                        + "\n" + jsonSetting.getString("mqtt_user");
+                Toast.makeText(getActivity(), toastStr, Toast.LENGTH_SHORT).show();
+            }
+        } catch (JSONException e) {
+            // e.printStackTrace();
+        }
+        //endregion
     }
     //endregion
 
     //region 事件监听调用函数,主要为在子类中重写此函数实现在service建立成功/mqtt连接成功/失败时执行功能
     //Service建立成功时调用    此函数需要时在子类中重写
-    public void ServiceConnected(){
+    public void ServiceConnected() {
 
     }
+
     //mqtt连接成功时调用    此函数需要时在子类中重写
-    public void MqttConnected(){
+    public void MqttConnected() {
 
     }
 
     //mqtt连接断开时调用    此函数需要时在子类中重写
-    public void MqttDisconnected(){
+    public void MqttDisconnected() {
 
     }
     //endregion
@@ -192,7 +212,7 @@ public class DeviceFragment extends Fragment implements View.OnLongClickListener
         log.setOnLongClickListener(this);
 
         final View parent = (View) log.getParent().getParent();
-        if (parent!=null && parent instanceof ScrollView) {
+        if (parent != null && parent instanceof ScrollView) {
             log.addTextChangedListener(new TextWatcher() {
                 @Override
                 public void beforeTextChanged(CharSequence s, int start, int count, int after) {
@@ -227,9 +247,9 @@ public class DeviceFragment extends Fragment implements View.OnLongClickListener
         if (log == null) return;
 
         DateFormat df = new SimpleDateFormat("[HH:mm:ss.sss]");
-        log.setText(log.getText() + "\n" +df.format(new Date())+""+ str);
+        log.setText(log.getText() + "\n" + df.format(new Date()) + "" + str);
 //        log.setText(log.getText() + "\n" + str);
-        Log.w("log","log:"+log.getText());
+        Log.w("log", "log:" + log.getText());
 //        log.append();
     }
 

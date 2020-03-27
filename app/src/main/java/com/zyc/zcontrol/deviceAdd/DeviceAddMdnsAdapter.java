@@ -1,4 +1,4 @@
-package com.zyc.zcontrol.deviceScan;
+package com.zyc.zcontrol.deviceAdd;
 
 
 import androidx.constraintlayout.widget.ConstraintLayout;

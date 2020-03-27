@@ -102,7 +102,7 @@
             android:exported="true" />
 
         <activity
-            android:name=".deviceScan.DeviceAddChoiceActivity"
+            android:name=".deviceAdd.DeviceAddChoiceActivity"
             android:label="添加设备"
             android:screenOrientation="portrait" />
         <activity

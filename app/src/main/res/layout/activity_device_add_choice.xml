@@ -5,7 +5,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
-    tools:context=".deviceScan.DeviceAddChoiceActivity">
+    tools:context=".deviceAdd.DeviceAddChoiceActivity">
 
 
     <androidx.coordinatorlayout.widget.CoordinatorLayout
@@ -45,7 +45,7 @@
                     android:layout_height="wrap_content"
                     android:layout_marginStart="8dp"
                     android:layout_marginTop="8dp"
-                    android:text="正在扫描附近设备...."
+                    android:text="正在通过mdns扫描附近设备...."
                     app:layout_constraintStart_toEndOf="@id/progressBar"
                     app:layout_constraintTop_toTopOf="parent" />
 

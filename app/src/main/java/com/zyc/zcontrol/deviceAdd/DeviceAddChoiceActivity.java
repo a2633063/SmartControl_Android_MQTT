@@ -1,9 +1,8 @@
-package com.zyc.zcontrol.deviceScan;
+package com.zyc.zcontrol.deviceAdd;
 
 import android.annotation.SuppressLint;
 import android.content.Context;
 import android.content.Intent;
-import android.database.Cursor;
 import android.net.nsd.NsdManager;
 import android.net.nsd.NsdServiceInfo;
 import android.os.Bundle;
@@ -28,8 +27,8 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.easylink.EasylinkActivity;
 import com.espressif.ESPtouchActivity;
+import com.zyc.zcontrol.MainApplication;
 import com.zyc.zcontrol.R;
-import com.zyc.zcontrol.SQLiteClass;
 import com.zyc.zcontrol.deviceItem.DeviceClass.Device;
 
 import java.util.ArrayList;
@@ -89,23 +88,11 @@ public class DeviceAddChoiceActivity extends AppCompatActivity {
             actionBar.setDisplayHomeAsUpEnabled(true);
         }
 
-        //region 数据库初始化
-        SQLiteClass sqLite = new SQLiteClass(this, "device_list");
-        //参数1：表名    参数2：要想显示的列    参数3：where子句   参数4：where子句对应的条件值
-        // 参数5：分组方式  参数6：having条件  参数7：排序方式
-        Cursor cursor = sqLite.Query("device_list", new String[]{"id", "name", "type", "mac", "sort"}, null, null, null, null, "sort");
-        while (cursor.moveToNext()) {
-//            String id = cursor.getString(cursor.getColumnIndex("id"));
-//            String name = cursor.getString(cursor.getColumnIndex("name"));
-//            int type = cursor.getInt(cursor.getColumnIndex("type"));
-            String mac = cursor.getString(cursor.getColumnIndex("mac"));
-            //Log.d(Tag, "query------->" + "id：" + id + " " + "name：" + name + " " + "type：" + type + " " + "mac：" + mac);
-
-            knownDevice.add(mac);
-        }
-
+        //region 获取已经存在的设备mac地址
+        ArrayList<Device> deviceList = ((MainApplication) getApplication()).getDeviceList();
+        for (int i = 0; i < deviceList.size(); i++)
+            knownDevice.add(deviceList.get(i).getMac());
         //endregion
-
 
         //region listview及adapter
 
@@ -234,17 +221,17 @@ public class DeviceAddChoiceActivity extends AppCompatActivity {
         nsDicListener = new NsdManager.DiscoveryListener() {
             @Override
             public void onStopDiscoveryFailed(String serviceType, int errorCode) {
-                Log.w("发现网络服务", "onStopDiscoveryFailed: " + serviceType);
+                Log.w("mdns", "onStopDiscoveryFailed: " + serviceType);
             }
 
             @Override
             public void onStartDiscoveryFailed(String serviceType, int errorCode) {
-                Log.w("发现网络服务", "onStartDiscoveryFailed: " + serviceType);
+                Log.w("mdns", "onStartDiscoveryFailed: " + serviceType);
             }
 
             @Override
             public void onServiceLost(NsdServiceInfo serviceInfo) {
-                Log.w("发现网络服务", "onServiceLost: " + serviceInfo.toString());
+                Log.w("mdns", "onServiceLost: " + serviceInfo.toString());
                 //Toast.makeText(getApplicationContext(), "Service Lost", Toast.LENGTH_SHORT).show();
             }
 
@@ -252,7 +239,7 @@ public class DeviceAddChoiceActivity extends AppCompatActivity {
             public void onServiceFound(NsdServiceInfo serviceInfo) {
                 // 发现网络服务时就会触发该事件
                 // 可以通过switch或if获取那些你真正关心的服务
-                Log.d("发现网络服务", "onServiceFound: " + serviceInfo.toString());
+                Log.d("mdns", "onServiceFound: " + serviceInfo.toString());
                 nsdManager.resolveService(serviceInfo, new NsdManager.ResolveListener() {
                     @Override
                     public void onServiceResolved(NsdServiceInfo arg0) {
@@ -277,9 +264,10 @@ public class DeviceAddChoiceActivity extends AppCompatActivity {
 
                         Device d = new Device(type, arg0.getServiceName(), mac);
                         d.setIp(arg0.getHost().getHostAddress());
+                        //进程原因,不可直接更新ui
                         //data.add(d);
                         //mdnsAdapter.notifyItemInserted(data.size()-1);
-                        //handler.removeMessages(1);
+
                         Message message = new Message();
                         message.arg1 = data.size() - 1;
                         message.what = 1;
