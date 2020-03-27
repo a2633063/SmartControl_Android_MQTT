@@ -55,11 +55,6 @@ public class DeviceSortActivity extends AppCompatActivity {
         LocalBroadcastManager localBroadcastManager = LocalBroadcastManager.getInstance(this);
         localBroadcastManager.sendBroadcast(new Intent(ACTION_MAINACTIVITY_DEVICELISTUPDATE));
 
-
-//        if (mData.size() < 1) {
-////            deviceData.add(new Device(MainActivity.this, StaticVariable.TYPE_M1, "演示设备", "b0f8932234f4"));
-//            mData.add(new Device(MainActivity.this, StaticVariable.TYPE_TC1, "演示设备", "000000000000"));
-//        }
         //endregion
 
         //region 侧边RecyclerView初始化

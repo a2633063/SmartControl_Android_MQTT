@@ -1,73 +1,17 @@
 package com.zyc.zcontrol;
 
-import android.annotation.SuppressLint;
 import android.content.BroadcastReceiver;
 import android.content.ComponentName;
-import android.content.ContentValues;
 import android.content.Context;
-import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.ServiceConnection;
-import android.content.SharedPreferences;
-import android.database.Cursor;
-import android.graphics.Paint;
-import android.graphics.drawable.ColorDrawable;
-import android.net.Uri;
-import android.net.wifi.WifiManager;
 import android.os.Bundle;
-import android.os.Handler;
 import android.os.IBinder;
-import android.os.Message;
-import android.text.Html;
 import android.util.Log;
-import android.view.Gravity;
-import android.view.LayoutInflater;
-import android.view.Menu;
-import android.view.MenuItem;
-import android.view.MotionEvent;
-import android.view.View;
-import android.widget.AdapterView;
-import android.widget.Button;
-import android.widget.ImageView;
-import android.widget.ListView;
-import android.widget.PopupWindow;
-import android.widget.TextView;
-import android.widget.Toast;
 
-import androidx.appcompat.app.ActionBarDrawerToggle;
-import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.appcompat.widget.Toolbar;
-import androidx.core.view.GravityCompat;
-import androidx.drawerlayout.widget.DrawerLayout;
 import androidx.localbroadcastmanager.content.LocalBroadcastManager;
-import androidx.viewpager.widget.ViewPager;
-
-import com.google.android.material.navigation.NavigationView;
-import com.google.android.material.tabs.TabLayout;
-import com.zyc.Function;
-import com.zyc.StaticVariable;
-import com.zyc.webservice.WebService;
-import com.zyc.zcontrol.deviceItem.DeviceClass.Device;
-import com.zyc.zcontrol.deviceItem.DeviceClass.DeviceTC1;
-import com.zyc.zcontrol.deviceItem.SettingActivity;
-import com.zyc.zcontrol.deviceScan.DeviceAddChoiceActivity;
-import com.zyc.zcontrol.mainActivity.MainDeviceFragmentAdapter;
-import com.zyc.zcontrol.mainActivity.MainDeviceListAdapter;
-
-import org.json.JSONException;
-import org.json.JSONObject;
-
-import java.net.URISyntaxException;
-import java.util.ArrayList;
-import java.util.Random;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
-
-import static android.view.ViewGroup.LayoutParams.MATCH_PARENT;
-import static com.zyc.Function.getLocalVersionName;
-import static java.lang.Integer.parseInt;
 
 public class ServiceActivity extends AppCompatActivity {
     public final static String Tag = "ServiceActivity";

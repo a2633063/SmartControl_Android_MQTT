@@ -9,12 +9,6 @@ import android.net.nsd.NsdServiceInfo;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
-
-import androidx.appcompat.app.ActionBar;
-import androidx.appcompat.app.AppCompatActivity;
-import androidx.recyclerview.widget.LinearLayoutManager;
-import androidx.recyclerview.widget.RecyclerView;
-
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.MenuItem;
@@ -27,17 +21,25 @@ import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import androidx.appcompat.app.ActionBar;
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
+
 import com.easylink.EasylinkActivity;
 import com.espressif.ESPtouchActivity;
-import com.zyc.StaticVariable;
-import com.zyc.zcontrol.deviceItem.DeviceClass.Device;
 import com.zyc.zcontrol.R;
 import com.zyc.zcontrol.SQLiteClass;
+import com.zyc.zcontrol.deviceItem.DeviceClass.Device;
 
 import java.util.ArrayList;
 import java.util.List;
 
-import static com.zyc.StaticVariable.TYPE_TC1;
+import static com.zyc.zcontrol.deviceItem.DeviceClass.Device.TYPE_COUNT;
+import static com.zyc.zcontrol.deviceItem.DeviceClass.Device.TYPE_ICON;
+import static com.zyc.zcontrol.deviceItem.DeviceClass.Device.TYPE_TC1;
+import static com.zyc.zcontrol.deviceItem.DeviceClass.Device.TypeName;
+
 
 public class DeviceAddChoiceActivity extends AppCompatActivity {
     public final static String Tag = "DeviceAddChoiceActivity";
@@ -114,6 +116,7 @@ public class DeviceAddChoiceActivity extends AppCompatActivity {
         lv_device.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                //TODO 配对页面设备点击逻辑处理
                 device_type = position;
                 Intent intent = new Intent(DeviceAddChoiceActivity.this, ESPtouchActivity.class);
                 if (device_type == TYPE_TC1) {
@@ -334,12 +337,12 @@ public class DeviceAddChoiceActivity extends AppCompatActivity {
 
         @Override
         public int getCount() {
-            return StaticVariable.TYPE_NAME.length;
+            return TYPE_COUNT;
         }
 
         @Override
         public String getItem(int position) {
-            return StaticVariable.TYPE_NAME[position];
+            return TypeName[position];
         }
 
         @Override
@@ -366,8 +369,8 @@ public class DeviceAddChoiceActivity extends AppCompatActivity {
                 holder = (ViewHolder) view.getTag();
             }
 
-            holder.tv.setText(StaticVariable.TYPE_NAME[position]);
-            holder.im.setImageResource(StaticVariable.TYPE_ICON[position]);
+            holder.tv.setText(TypeName[position]);
+            holder.im.setImageResource(TYPE_ICON[position]);
 
             return convertView;
         }

@@ -33,7 +33,10 @@ import android.widget.Toast;
 import android.widget.ToggleButton;
 
 import com.zyc.zcontrol.ConnectService;
+import com.zyc.zcontrol.MainApplication;
 import com.zyc.zcontrol.R;
+import com.zyc.zcontrol.ServiceActivity;
+import com.zyc.zcontrol.deviceItem.DeviceClass.DeviceRGBW;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -43,17 +46,10 @@ import java.util.Calendar;
 
 import static android.view.ViewGroup.LayoutParams.MATCH_PARENT;
 
-public class RGBWTaskActivity extends AppCompatActivity {
+public class RGBWTaskActivity extends ServiceActivity {
     public final static String Tag = "RGBWPlugActivity";
 
-    private SharedPreferences mSharedPreferences;
-    private SharedPreferences.Editor mEditor;
-    //region 使用本地广播与service通信
-    LocalBroadcastManager localBroadcastManager;
-    private MsgReceiver msgReceiver;
-    //endregion
-    ConnectService mConnectService;
-
+    
     private SwipeRefreshLayout mSwipeLayout;
     ListView lv_task;
     ArrayList<TaskItem> data = new ArrayList<>();
@@ -62,10 +58,9 @@ public class RGBWTaskActivity extends AppCompatActivity {
 
     Button btn_count_down;
 
-    String device_mac = null;
-    String plug_name = null;
-    String device_name = null;
-    int plug_id = -1;
+
+    DeviceRGBW device;
+
 
     @SuppressLint("HandlerLeak")
     Handler handler = new Handler() {
@@ -73,7 +68,7 @@ public class RGBWTaskActivity extends AppCompatActivity {
         public void handleMessage(Message msg) {// handler接收到消息后就会执行此方法
             switch (msg.what) {
                 case 1:
-                    Send("{\"mac\": \"" + device_mac + "\",\"task_0\":{},\"task_1\":{},\"task_2\":{},\"task_3\":{},\"task_4\":{}}");
+                    Send("{\"mac\": \"" + device.getMac() + "\",\"task_0\":{},\"task_1\":{},\"task_2\":{},\"task_3\":{},\"task_4\":{}}");
                     break;
             }
         }
@@ -88,29 +83,24 @@ public class RGBWTaskActivity extends AppCompatActivity {
         getSupportActionBar().setHomeButtonEnabled(true); //设置返回键可用
 
         Intent intent = this.getIntent();
-        if (!intent.hasExtra("name") || !intent.hasExtra("mac"))//判断是否有值传入,并判断是否有特定key
-        {
+        try {
+            device = (DeviceRGBW) ((MainApplication) getApplication()).getDevice(intent.getStringExtra("mac"));
+            if (device == null ) {
+                throw new Exception("获取数据出错:" + intent.getStringExtra("mac") ); // 异常信息
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
             Toast.makeText(RGBWTaskActivity.this, "数据错误!请联系开发者", Toast.LENGTH_SHORT).show();
             finish();
         }
 
-        device_name = intent.getStringExtra("name");
-        device_mac = intent.getStringExtra("mac");
 
-        if (device_mac.length() < 1 || device_name.length() < 1) {
-            Toast.makeText(RGBWTaskActivity.this, "数据错误!请联系开发者", Toast.LENGTH_SHORT).show();
-            finish();
-        }
-        TaskItem task = new TaskItem(this);
-        data.add(task);
-        TaskItem task1 = new TaskItem(this);
-        data.add(task1);
-        TaskItem task2 = new TaskItem(this);
-        data.add(task2);
-        TaskItem task3 = new TaskItem(this);
-        data.add(task3);
-        TaskItem task4 = new TaskItem(this);
-        data.add(task4);
+        data.add(new TaskItem(this));
+        data.add(new TaskItem(this));
+        data.add(new TaskItem(this));
+        data.add(new TaskItem(this));
+        data.add(new TaskItem(this));
+
         //region 控件初始化
         //region listview及adapter
         lv_task = findViewById(R.id.lv);
@@ -129,7 +119,7 @@ public class RGBWTaskActivity extends AppCompatActivity {
                 int action = task.action;
                 int on = ((Switch) v).isChecked() ? 1 : 0;
 
-                Send("{\"mac\": \"" + device_mac + "\",\"task_" + position + "\":{\"hour\":" + hour + ",\"minute\":" + minute + ",\"brightness\":" + action + ",\"on\":" + on + "}}");
+                Send("{\"mac\": \"" + device.getMac() + "\",\"task_" + position + "\":{\"hour\":" + hour + ",\"minute\":" + minute + ",\"brightness\":" + action + ",\"on\":" + on + "}}");
             }
         });
         lv_task.setAdapter(adapter);
@@ -163,22 +153,6 @@ public class RGBWTaskActivity extends AppCompatActivity {
 
         //endregion
 
-        //region MQTT服务有关
-        //region 动态注册接收mqtt服务的广播接收器,
-        localBroadcastManager = LocalBroadcastManager.getInstance(this);
-        msgReceiver = new MsgReceiver();
-        IntentFilter intentFilter = new IntentFilter();
-        intentFilter.addAction(ConnectService.ACTION_DATA_AVAILABLE);
-        intentFilter.addAction(ConnectService.ACTION_UDP_DATA_AVAILABLE);//UDP监听
-        localBroadcastManager.registerReceiver(msgReceiver, intentFilter);
-        //endregion
-
-        //region 启动MQTT服务
-        Intent serverIntent = new Intent(RGBWTaskActivity.this, ConnectService.class);
-        bindService(serverIntent, mMQTTServiceConnection, BIND_AUTO_CREATE);
-
-        //endregion
-        //endregion
     }
 
     public boolean onOptionsItemSelected(MenuItem item) {
@@ -190,15 +164,6 @@ public class RGBWTaskActivity extends AppCompatActivity {
         return super.onOptionsItemSelected(item);
     }
 
-
-    @Override
-    protected void onDestroy() {
-        //注销广播
-        localBroadcastManager.unregisterReceiver(msgReceiver);
-        //停止服务
-        unbindService(mMQTTServiceConnection);
-        super.onDestroy();
-    }
 
     //region 弹窗
     private void popupwindowTask(final int task_id) {
@@ -263,7 +228,7 @@ public class RGBWTaskActivity extends AppCompatActivity {
                 int action = action_picker.getValue();
                 int on = 1;
 
-                Send("{\"mac\": \"" + device_mac + "\",\"task_" + task_id + "\":{\"hour\":" + hour + ",\"minute\":" + minute + ",\"brightness\":" + action + ",\"on\":" + on + "}}");
+                Send("{\"mac\": \"" + device.getMac() + "\",\"task_" + task_id + "\":{\"hour\":" + hour + ",\"minute\":" + minute + ",\"brightness\":" + action + ",\"on\":" + on + "}}");
                 window.dismiss();
             }
         });
@@ -340,7 +305,7 @@ public class RGBWTaskActivity extends AppCompatActivity {
                 hour = c.get(Calendar.HOUR_OF_DAY);
                 minute = c.get(Calendar.MINUTE);
 
-                Send("{\"mac\": \"" + device_mac + "\",\"task_" + task_id + "\":{\"hour\":" + hour + ",\"minute\":" + minute + ",\"brightness\":" + action + ",\"on\":" + on + "}}");
+                Send("{\"mac\": \"" + device.getMac() + "\",\"task_" + task_id + "\":{\"hour\":" + hour + ",\"minute\":" + minute + ",\"brightness\":" + action + ",\"on\":" + on + "}}");
                 window.dismiss();
             }
         });
@@ -358,28 +323,17 @@ public class RGBWTaskActivity extends AppCompatActivity {
 
     //region 数据接收发送处理函数
     void Send(String message) {
-        boolean b = getSharedPreferences("Setting_" + device_mac, 0).getBoolean("always_UDP", false);
-        mConnectService.Send(b ? null : "device/zrgbw/" + device_mac + "/set", message);
+        boolean b = getSharedPreferences("Setting_" + device.getMac(), 0).getBoolean("always_UDP", false);
+        super.Send(b ,device.getSendMqttTopic(), message);
     }
 
-    void Receive(String ip, int port, String message) {
-        //TODO 数据接收处理
-        Receive(null, message);
-    }
-
-    void Receive(String topic, String message) {
-        //TODO 数据接收处理
-        Log.d(Tag, "RECV DATA,topic:" + topic + ",content:" + message);
+    public void Receive(String ip, int port, String topic, String message) {
 
         try {
             JSONObject jsonObject = new JSONObject(message);
-            String name = null;
-            String mac = null;
-
-            if (jsonObject.has("name")) name = jsonObject.getString("name");
-            if (jsonObject.has("mac")) mac = jsonObject.getString("mac");
-            if (mac == null || !mac.equals(device_mac)) return;
-
+            if (!jsonObject.has("mac") || !jsonObject.getString("mac").equals(device.getMac())) {
+                return;
+            }
             //region 解析当个plug
 //            JSONObject jsonPlug = jsonObject.getJSONObject("plug_" + plug_id);
 //            if (!jsonPlug.has("setting")) return;
@@ -408,40 +362,20 @@ public class RGBWTaskActivity extends AppCompatActivity {
 
     }
     //endregion
-    //region MQTT服务有关
+    //region 事件监听调用函数,主要为在子类中重写此函数实现在service建立成功/mqtt连接成功/失败时执行功能
+    //Service建立成功时调用    此函数需要时在子类中重写
+    public void ServiceConnected() {
+        handler.sendEmptyMessageDelayed(1, 0);
+    }
 
-    private final ServiceConnection mMQTTServiceConnection = new ServiceConnection() {
+    //mqtt连接成功时调用    此函数需要时在子类中重写
+    public void MqttConnected() {
+        handler.sendEmptyMessageDelayed(1, 0);
+    }
 
-        @Override
-        public void onServiceConnected(ComponentName componentName, IBinder service) {
-            mConnectService = ((ConnectService.LocalBinder) service).getService();
-            handler.sendEmptyMessageDelayed(1, 0);
-        }
-
-        @Override
-        public void onServiceDisconnected(ComponentName componentName) {
-            mConnectService = null;
-        }
-    };
-
-    //广播接收,用于处理接收到的数据
-    public class MsgReceiver extends BroadcastReceiver {
-        @Override
-        public void onReceive(Context context, Intent intent) {
-            final String action = intent.getAction();
-
-            if (ConnectService.ACTION_UDP_DATA_AVAILABLE.equals(action)) {
-                String ip = intent.getStringExtra(ConnectService.EXTRA_UDP_DATA_IP);
-                String message = intent.getStringExtra(ConnectService.EXTRA_UDP_DATA_MESSAGE);
-                int port = intent.getIntExtra(ConnectService.EXTRA_UDP_DATA_PORT, -1);
-                Receive(ip, port, message);
-            } else if (ConnectService.ACTION_DATA_AVAILABLE.equals(action)) {  //接收到数据
-                String topic = intent.getStringExtra(ConnectService.EXTRA_DATA_TOPIC);
-                String message = intent.getStringExtra(ConnectService.EXTRA_DATA_MESSAGE);
-                Receive(topic, message);
-
-            }
-        }
+    //mqtt连接断开时调用    此函数需要时在子类中重写
+    public void MqttDisconnected() {
+        handler.sendEmptyMessageDelayed(1, 0);
     }
     //endregion
 

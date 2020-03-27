@@ -102,7 +102,7 @@ public class ButtonMateFragment extends DeviceFragment {
 
             @Override
             public void onStopTrackingTouch(SeekBar seekBar) {
-                //TODO 发送设置测试角度
+                //发送设置测试角度
                 Send("{\"mac\":\"" + device.getMac() + "\",\"setting\":{\"test\":" + String.format("%d", seekBar.getProgress() + 20) + "}}");
 
             }

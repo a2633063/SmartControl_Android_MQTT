@@ -19,19 +19,6 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.os.IBinder;
 import android.os.Message;
-
-import com.google.android.material.navigation.NavigationView;
-import com.google.android.material.tabs.TabLayout;
-
-import androidx.localbroadcastmanager.content.LocalBroadcastManager;
-import androidx.core.view.GravityCompat;
-import androidx.viewpager.widget.ViewPager;
-import androidx.drawerlayout.widget.DrawerLayout;
-import androidx.appcompat.app.ActionBarDrawerToggle;
-import androidx.appcompat.app.AlertDialog;
-import androidx.appcompat.app.AppCompatActivity;
-import androidx.appcompat.widget.Toolbar;
-
 import android.text.Html;
 import android.util.Log;
 import android.view.Gravity;
@@ -48,8 +35,18 @@ import android.widget.PopupWindow;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import androidx.appcompat.app.ActionBarDrawerToggle;
+import androidx.appcompat.app.AlertDialog;
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.widget.Toolbar;
+import androidx.core.view.GravityCompat;
+import androidx.drawerlayout.widget.DrawerLayout;
+import androidx.localbroadcastmanager.content.LocalBroadcastManager;
+import androidx.viewpager.widget.ViewPager;
+
+import com.google.android.material.navigation.NavigationView;
+import com.google.android.material.tabs.TabLayout;
 import com.zyc.Function;
-import com.zyc.StaticVariable;
 import com.zyc.webservice.WebService;
 import com.zyc.zcontrol.deviceItem.DeviceClass.Device;
 import com.zyc.zcontrol.deviceItem.DeviceClass.DeviceA1;
@@ -60,8 +57,8 @@ import com.zyc.zcontrol.deviceItem.DeviceClass.DeviceRGBW;
 import com.zyc.zcontrol.deviceItem.DeviceClass.DeviceTC1;
 import com.zyc.zcontrol.deviceItem.SettingActivity;
 import com.zyc.zcontrol.deviceScan.DeviceAddChoiceActivity;
-import com.zyc.zcontrol.mainActivity.MainDeviceListAdapter;
 import com.zyc.zcontrol.mainActivity.MainDeviceFragmentAdapter;
+import com.zyc.zcontrol.mainActivity.MainDeviceListAdapter;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -74,6 +71,8 @@ import java.util.regex.Pattern;
 
 import static android.view.ViewGroup.LayoutParams.MATCH_PARENT;
 import static com.zyc.Function.getLocalVersionName;
+import static com.zyc.zcontrol.deviceItem.DeviceClass.Device.TYPE_TC1;
+import static com.zyc.zcontrol.deviceItem.DeviceClass.Device.TYPE_UNKNOWN;
 import static java.lang.Integer.parseInt;
 
 public class MainActivity extends AppCompatActivity {
@@ -252,21 +251,21 @@ public class MainActivity extends AppCompatActivity {
             String mac = cursor.getString(cursor.getColumnIndex("mac"));
             Log.d(Tag, "query------->" + "id：" + id + " " + "name：" + name + " " + "type：" + type + " " + "mac：" + mac);
 
+            switch (type) {
+                case TYPE_TC1:
+                    deviceData.add(new DeviceTC1(name, mac));
+            }
             deviceData.add(new Device(type, name, mac));
         }
 
         if (deviceData.size() < 1) {
-//            deviceData.add(new Device( StaticVariable.TYPE_M1, "演示设备", "b0f8932234f4"));
             deviceData.add(new DeviceTC1("演示设备", "000000000000"));
-            deviceData.add(new DeviceTC1("ztc18baa", "d0bae4638baa"));
             deviceData.add(new DeviceButtonMate("演示设备1", "000000000001"));
             deviceData.add(new DeviceDC1("演示设备2", "000000000002"));
             deviceData.add(new DeviceA1("演示设备3", "000000000003"));
             deviceData.add(new DeviceM1("演示设备4", "000000000004"));
             deviceData.add(new DeviceRGBW("演示设备5", "000000000005"));
-//            deviceData.add(new Device(2, "演示设备2", "000000000002"));
-//            deviceData.add(new Device(3, "演示设备3", "000000000003"));
-//            deviceData.add(new Device(4, "演示设备4", "000000000004"));
+            deviceData.add(new DeviceTC1("ztc18baa", "d0bae4638baa"));
         }
         //endregion
 
@@ -514,7 +513,7 @@ public class MainActivity extends AppCompatActivity {
         if (resultCode != RESULT_OK) return;
         //region 新增设备返回
         if (requestCode == 1) {
-            int type = intent.getIntExtra("type", StaticVariable.TYPE_UNKNOWN);
+            int type = intent.getIntExtra("type", TYPE_UNKNOWN);
             String ip = intent.getExtras().getString("ip");
             String mac = intent.getExtras().getString("mac");
             Log.e(Tag, "get device result:" + ip + "," + mac + "," + type);

@@ -10,10 +10,11 @@ import android.view.MenuItem;
 import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.app.AppCompatActivity;
 
-import com.zyc.StaticVariable;
 import com.zyc.zcontrol.MainApplication;
 import com.zyc.zcontrol.R;
 import com.zyc.zcontrol.SettingFragment;
+
+import static com.zyc.zcontrol.deviceItem.DeviceClass.Device.TYPE_UNKNOWN;
 
 public class SettingActivity extends AppCompatActivity {
 
@@ -21,7 +22,7 @@ public class SettingActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_setting);
-        int type = StaticVariable.TYPE_UNKNOWN;
+        int type = TYPE_UNKNOWN;
         String name = null;
         String mac = null;
 
@@ -41,7 +42,7 @@ public class SettingActivity extends AppCompatActivity {
                 prefFragment = (((MainApplication) getApplication()).getDeviceList()).get(index).getSettingFragment();
             } catch (Exception e) {
                 e.printStackTrace();
-                prefFragment=null;
+                prefFragment = null;
             }
         }
 

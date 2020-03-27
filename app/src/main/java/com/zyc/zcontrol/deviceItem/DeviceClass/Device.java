@@ -5,10 +5,7 @@ import android.preference.PreferenceFragment;
 import androidx.annotation.DrawableRes;
 import androidx.fragment.app.Fragment;
 
-import com.zyc.StaticVariable;
 import com.zyc.zcontrol.R;
-
-import com.zyc.zcontrol.deviceItem.rgbw.RGBWFragment;
 
 
 public class Device {
@@ -25,7 +22,7 @@ public class Device {
     public final static int TYPE_COUNT = 7;
 
 
-    final static String[] TyepName = new String[]{
+    public final static String[] TypeName = new String[]{
             "按键伴侣",//0
             "智能排插zTC1",//1
             "智能排插zDC1",   //2
@@ -123,7 +120,7 @@ public class Device {
     }
 
     public String getTypeName() {
-        return TyepName[type];
+        return TypeName[type];
     }
 
     public int getIcon() {
@@ -143,14 +140,6 @@ public class Device {
     Fragment fragment;
 
     public Fragment getFragment() {
-        if (fragment == null) {
-            switch (type) {
-                case StaticVariable.TYPE_UNKNOWN:
-//                throw
-                    break;
-
-            }
-        }
         return fragment;
     }
 
