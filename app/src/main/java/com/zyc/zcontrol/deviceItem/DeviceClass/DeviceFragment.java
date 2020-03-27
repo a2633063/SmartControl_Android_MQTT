@@ -112,7 +112,7 @@ public class DeviceFragment extends Fragment implements View.OnLongClickListener
             Log("当前发送消息为:mqtt");
         } else if ((isUDP || topic == null || !mConnectService.isConnected()) && send_net_flag != 1) { //当前通过udp发送
             send_net_flag = 1;
-            Log("当前发送消息为:udp" + (mConnectService.isConnected() ? "(mqtt已连接)" : ""));
+            Log("当前发送消息为:udp" + (mConnectService.isConnected() ? "(app已连接mqtt服务器)" : ""));
         }
     }
 
@@ -125,7 +125,10 @@ public class DeviceFragment extends Fragment implements View.OnLongClickListener
             Log("当前接收消息为:mqtt");
         } else if (topic == null && rece_net_flag != 1) {  //当前消息为udp消息
             rece_net_flag = 1;
-            Log("当前接收消息为:udp");
+            Log("当前接收消息为:udp" );
+            if (mConnectService.isConnected()) {
+                Log("必须同步过mqtt数据,设备才能连接上mqtt服务器");
+            }
         }
 
         //region 反馈mqtt设置回应

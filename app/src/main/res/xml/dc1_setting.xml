@@ -10,7 +10,7 @@
             android:title="名称" />
         <Preference
             android:key="mac"
-            android:title="MAC地址" />
+            android:title="MAC地址(点击复制)" />
         <CheckBoxPreference
             android:defaultValue="false"
             android:disableDependentsState="true"
