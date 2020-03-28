@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:padding="16dp"
+    tools:context=".deviceItem.a1.A1LinkActivity">
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="1.注意:A1固件不完善,当前设备即使配网完成热点也不会关闭,后续对此修改更新.\n2. 手机连接设备热点zA1_XXXX,打开网址:192.168.0.1,输入wifi名称(必须为2.4G)及密码点击下一步,提示配置成功.\n3. 在路由器管理中确认设备连上wifi,名称为zA1_XXXX.\n4. 搜寻局域网设备添加设备至app.\n \n更多详细内容见使用文档说明\n文档在帮助/关于页面跳转" />
+
+</LinearLayout>

@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:padding="16dp"
+    tools:context=".deviceItem.m1.M1LinkActivity">
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="1.长按侧面按键15秒直到屏幕显示全部点亮.(第一次配网不需要此操作)\n2. 手机连接设备热点zM1_XXXX,打开网址:192.168.0.1,输入wifi名称(必须为2.4G)及密码点击下一步,提示配置成功.\n3. 在路由器管理中确认设备连上wifi,名称为zM1_XXXX.\n4. 搜寻局域网设备添加设备至app.\n \n更多详细内容见使用文档说明\n文档在帮助/关于页面跳转" />
+
+</LinearLayout>

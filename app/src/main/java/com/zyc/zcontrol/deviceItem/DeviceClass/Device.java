@@ -5,7 +5,12 @@ import android.preference.PreferenceFragment;
 import androidx.annotation.DrawableRes;
 import androidx.fragment.app.Fragment;
 
+import com.espressif.ESPtouchActivity;
 import com.zyc.zcontrol.R;
+import com.zyc.zcontrol.deviceItem.a1.A1LinkActivity;
+import com.zyc.zcontrol.deviceItem.dc1.DC1LinkActivity;
+import com.zyc.zcontrol.deviceItem.m1.M1LinkActivity;
+import com.zyc.zcontrol.deviceItem.tc1.TC1LinkActivity;
 
 
 public class Device {
@@ -41,6 +46,18 @@ public class Device {
             R.drawable.device_icon_ongoing,//5
             R.drawable.device_icon_ongoing,//4
     };
+
+
+    public final static Class LinkActivity[] =
+            {
+                    ESPtouchActivity.class,
+                    TC1LinkActivity.class,
+                    DC1LinkActivity.class,
+                    A1LinkActivity.class,
+                    M1LinkActivity.class,
+                    null,
+                    null,
+            };
     //endregion
 
     protected int type = TYPE_UNKNOWN;

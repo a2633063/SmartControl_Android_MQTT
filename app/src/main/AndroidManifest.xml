@@ -64,9 +64,14 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
+        <activity android:name=".deviceItem.m1.M1LinkActivity"
+            android:label="zM1配网" />
+        <activity
+            android:name=".deviceItem.a1.A1LinkActivity"
+            android:label="zA1配网" />
         <activity
             android:name=".DeviceSortActivity"
-            android:label="排序"></activity>
+            android:label="排序" />
         <activity
             android:name=".deviceItem.a1.A1PlugActivity"
             android:label="插口" />
@@ -108,6 +113,14 @@
         <activity
             android:name="com.espressif.ESPtouchActivity"
             android:label="添加设备"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name=".deviceItem.tc1.TC1LinkActivity"
+            android:label="zTC1配网"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name=".deviceItem.dc1.DC1LinkActivity"
+            android:label="zDC1配网"
             android:screenOrientation="portrait" />
         <activity
             android:name="com.easylink.EasylinkActivity"

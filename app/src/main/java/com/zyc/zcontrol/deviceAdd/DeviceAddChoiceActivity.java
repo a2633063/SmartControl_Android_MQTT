@@ -25,8 +25,6 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
-import com.easylink.EasylinkActivity;
-import com.espressif.ESPtouchActivity;
 import com.zyc.zcontrol.MainApplication;
 import com.zyc.zcontrol.R;
 import com.zyc.zcontrol.deviceItem.DeviceClass.Device;
@@ -36,7 +34,6 @@ import java.util.List;
 
 import static com.zyc.zcontrol.deviceItem.DeviceClass.Device.TYPE_COUNT;
 import static com.zyc.zcontrol.deviceItem.DeviceClass.Device.TYPE_ICON;
-import static com.zyc.zcontrol.deviceItem.DeviceClass.Device.TYPE_TC1;
 import static com.zyc.zcontrol.deviceItem.DeviceClass.Device.TypeName;
 
 
@@ -105,11 +102,12 @@ public class DeviceAddChoiceActivity extends AppCompatActivity {
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
                 //TODO 配对页面设备点击逻辑处理
                 device_type = position;
-                Intent intent = new Intent(DeviceAddChoiceActivity.this, ESPtouchActivity.class);
-                if (device_type == TYPE_TC1) {
-                    intent = new Intent(DeviceAddChoiceActivity.this, EasylinkActivity.class);
+                if (Device.LinkActivity[device_type] != null) {
+                    Intent intent = new Intent(DeviceAddChoiceActivity.this, Device.LinkActivity[device_type]);
+                    startActivityForResult(intent, 1);
+                } else {
+                    Toast.makeText(DeviceAddChoiceActivity.this, "此设备无配对页面", Toast.LENGTH_SHORT).show();
                 }
-                startActivityForResult(intent, 1);
             }
         });
         //endregion
