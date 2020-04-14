@@ -233,17 +233,17 @@ public class DC1Fragment extends DeviceFragment {
             //region sensor部分
             if (jsonObject.has("power")) {
                 String power = jsonObject.getString("power");
-                Log.d(Tag, "power:" + power);
+//                Log.d(Tag, "power:" + power);
                 tv_power.setText(power + "W");
             }
             if (jsonObject.has("voltage")) {
                 String voltage = jsonObject.getString("voltage");
-                Log.d(Tag, "voltage:" + voltage);
+//                Log.d(Tag, "voltage:" + voltage);
                 tv_voltage.setText(voltage + "V");
             }
             if (jsonObject.has("current")) {
                 String current = jsonObject.getString("current");
-                Log.d(Tag, "current:" + current);
+//                Log.d(Tag, "current:" + current);
                 tv_current.setText(current + "A");
             }
             //endregion

@@ -3,6 +3,7 @@ package com.zyc.zcontrol.deviceItem.m1;
 
 import android.annotation.SuppressLint;
 import android.content.Intent;
+import android.graphics.Color;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
@@ -18,12 +19,17 @@ import android.widget.TextView;
 import androidx.fragment.app.Fragment;
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 
+import com.google.android.material.snackbar.Snackbar;
 import com.zyc.zcontrol.R;
 import com.zyc.zcontrol.deviceItem.DeviceClass.DeviceFragment;
 import com.zyc.zcontrol.deviceItem.DeviceClass.DeviceM1;
 
 import org.json.JSONException;
 import org.json.JSONObject;
+
+import java.text.SimpleDateFormat;
+import java.util.Date;
+import java.util.TimeZone;
 
 /**
  * A simple {@link Fragment} subclass.
@@ -208,6 +214,22 @@ public class M1Fragment extends DeviceFragment {
             if (jsonObject.has("brightness")) {
                 int brightness = jsonObject.getInt("brightness");
                 seekBar.setProgress(brightness);
+            }
+            //endregion
+            //region 校时结果
+            if (jsonObject.has("time")) {
+                int time = jsonObject.getInt("time");
+
+                if (time < 1586000000) {    //此时间戳为2020/4/4 19:33:20
+                    Log("校时失败,请确认时间正确.");
+                } else {
+                    Date date = new Date((long) time * 1000);
+                    SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+                    format.setTimeZone(TimeZone.getTimeZone("GMT+0:00"));   //传输过来的utc时间包含时区偏差,所以此处应该不考虑时区偏差
+                    Log("校时结果:" + format.format(date));
+                }
+
+
             }
             //endregion
 

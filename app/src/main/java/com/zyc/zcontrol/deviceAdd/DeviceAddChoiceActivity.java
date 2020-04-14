@@ -34,6 +34,7 @@ import java.util.List;
 
 import static com.zyc.zcontrol.deviceItem.DeviceClass.Device.TYPE_COUNT;
 import static com.zyc.zcontrol.deviceItem.DeviceClass.Device.TYPE_ICON;
+import static com.zyc.zcontrol.deviceItem.DeviceClass.Device.TYPE_UNKNOWN;
 import static com.zyc.zcontrol.deviceItem.DeviceClass.Device.TypeName;
 
 
@@ -246,7 +247,7 @@ public class DeviceAddChoiceActivity extends AppCompatActivity {
                         // 可以再这里获取相应网络服务的地址及端口信息，然后决定是否要与之建立连接。
                         // 之后就是一些socket操作了
 
-                        int type = -1;
+                        int type = TYPE_UNKNOWN;
                         String mac = null;
                         if (arg0.getAttributes().containsKey("type")) {
                             try {
@@ -260,17 +261,19 @@ public class DeviceAddChoiceActivity extends AppCompatActivity {
                             mac = new String(arg0.getAttributes().get("mac"));
                         }
 
-                        Device d = new Device(type, arg0.getServiceName(), mac);
-                        d.setIp(arg0.getHost().getHostAddress());
-                        //进程原因,不可直接更新ui
-                        //data.add(d);
-                        //mdnsAdapter.notifyItemInserted(data.size()-1);
+                        if (type > TYPE_UNKNOWN && type < TYPE_COUNT && mac != null) {
+                            Device d = new Device(type, arg0.getServiceName(), mac);
+                            d.setIp(arg0.getHost().getHostAddress());
+                            //进程原因,不可直接更新ui
+                            //data.add(d);
+                            //mdnsAdapter.notifyItemInserted(data.size()-1);
 
-                        Message message = new Message();
-                        message.arg1 = data.size() - 1;
-                        message.what = 1;
-                        message.obj = d;
-                        handler.sendMessageDelayed(message, 200);
+                            Message message = new Message();
+                            message.arg1 = data.size() - 1;
+                            message.what = 1;
+                            message.obj = d;
+                            handler.sendMessageDelayed(message, 200);
+                        }
                     }
 
                     @Override

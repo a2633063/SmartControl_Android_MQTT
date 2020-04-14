@@ -7,10 +7,12 @@ import android.content.ClipData;
 import android.content.ClipboardManager;
 import android.content.Context;
 import android.content.DialogInterface;
+import android.graphics.Color;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
 import android.preference.EditTextPreference;
+import android.preference.ListPreference;
 import android.preference.Preference;
 import android.util.Log;
 import android.view.View;
@@ -20,6 +22,7 @@ import android.widget.Toast;
 
 import androidx.appcompat.app.AlertDialog;
 
+import com.google.android.material.snackbar.Snackbar;
 import com.zyc.webservice.WebService;
 import com.zyc.zcontrol.R;
 import com.zyc.zcontrol.deviceItem.DeviceClass.DeviceM1;
@@ -28,6 +31,12 @@ import com.zyc.zcontrol.deviceItem.DeviceClass.SettingFragment;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.Date;
+import java.util.Locale;
+import java.util.TimeZone;
+
 @SuppressLint("ValidFragment")
 public class M1SettingFragment extends SettingFragment {
     final static String Tag = "M1SettingFragment";
@@ -35,9 +44,9 @@ public class M1SettingFragment extends SettingFragment {
     Preference ssid;
     Preference fw_version;
     Preference time_calibration;
-    Preference lock;
     Preference restart;
     Preference regetdata;
+    ListPreference zone;
     EditTextPreference name_preference;
     EditTextPreference interval;
 
@@ -148,7 +157,7 @@ public class M1SettingFragment extends SettingFragment {
                 //endregion
                 //region 发送请求数据
                 case 3:
-                    Send("{\"mac\":\"" + device.getMac() + "\",\"version\":null,\"interval\":null,\"ssid\":null}");
+                    Send("{\"mac\":\"" + device.getMac() + "\",\"version\":null,\"interval\":null,\"ssid\":null,\"zone\":null}");
                     break;
                 //endregion
             }
@@ -172,7 +181,7 @@ public class M1SettingFragment extends SettingFragment {
         ssid = findPreference("ssid");
         fw_version = findPreference("fw_version");
         time_calibration = findPreference("time_calibration");
-        lock = findPreference("lock");
+        zone = (ListPreference) findPreference("zone");
         restart = findPreference("restart");
         regetdata = findPreference("regetdata");
         name_preference = (EditTextPreference) findPreference("name");
@@ -203,6 +212,19 @@ public class M1SettingFragment extends SettingFragment {
             @Override
             public boolean onPreferenceChange(Preference preference, Object newValue) {
                 Send("{\"mac\":\"" + device.getMac() + "\",\"setting\":{\"name\":\"" + (String) newValue + "\"}}");
+                return false;
+            }
+        });
+        //endregion
+        //region 设置时区
+        Log.d(Tag, "zone val:" + zone.getValue());
+        zone.setOnPreferenceChangeListener(new Preference.OnPreferenceChangeListener() {
+            @Override
+            public boolean onPreferenceChange(Preference preference, Object newValue) {
+                Log.d(Tag, "zone val:" + newValue);
+                Send("{\"mac\":\"" + device.getMac() + "\",\"zone\":" + newValue + "}");
+                Send("{\"mac\":\"" + device.getMac() + "\",\"time\":-1}");
+                Toast.makeText(getActivity(), "已发送时区/校时请求,请等待校时结果返回", Toast.LENGTH_SHORT).show();
                 return false;
             }
         });
@@ -403,6 +425,13 @@ public class M1SettingFragment extends SettingFragment {
             }
             //endregion
 
+            //region 获取时区
+            if (jsonObject.has("zone")) {
+                int zone_time = jsonObject.getInt("zone");
+                zone.setValue(String.valueOf(zone_time));
+                zone.setSummary(zone.getEntry());
+            }
+            //endregion
             //region 获取间隔时间
             if (jsonObject.has("interval")) {
                 int interval_time = jsonObject.getInt("interval");
@@ -413,12 +442,27 @@ public class M1SettingFragment extends SettingFragment {
             //region 校时结果
             if (jsonObject.has("time")) {
                 int time = jsonObject.getInt("time");
-                int x = (int) (System.currentTimeMillis() / 1000);
-                if (x - time < 60 && time - x < 60) {
-                    Toast.makeText(getActivity(), "校时成功\n等待一分钟后修改显示", Toast.LENGTH_SHORT).show();
+
+                Snackbar snackbar=Snackbar.make(getView(),"",Snackbar.LENGTH_LONG);
+                snackbar.setAction("再次校时", new View.OnClickListener() {
+                    @Override
+                    public void onClick(View view) {
+                        time_calibration.getOnPreferenceClickListener().onPreferenceClick(time_calibration);
+                    }
+                });
+                snackbar.getView().setBackgroundColor(Color.parseColor("#66ccff"));
+                snackbar.setActionTextColor(getActivity().getResources().getColor(R.color.colorAccent));
+
+                if (time < 1586000000) {    //此时间戳为2020/4/4 19:33:20
+                    snackbar.setText("校时失败,请重试");
                 } else {
-                    Toast.makeText(getActivity(), "请等待一分钟后确认修改完成", Toast.LENGTH_SHORT).show();
+                    Date date = new Date((long) time * 1000);
+                    SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+                    format.setTimeZone(TimeZone.getTimeZone("GMT+0:00"));   //传输过来的utc时间包含时区偏差,所以此处应该不考虑时区偏差
+                    snackbar.setText("校时结果:" + format.format(date));
                 }
+                snackbar.show();
+
             }
             //endregion
             //region ssid

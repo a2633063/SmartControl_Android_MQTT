@@ -20,12 +20,17 @@
             android:title="总是通过UDP发送数据" />
         <Preference
             android:key="ssid"
-            android:title="连接的热点"/>
+            android:title="连接的热点" />
+        <ListPreference
+            android:entries="@array/zone"
+            android:entryValues="@array/zone_values"
+            android:key="zone"
+            android:title="时区" />
         <EditTextPreference
-            android:dialogTitle="上报频率"
             android:dialogMessage="单位:秒, 范围1-255"
-            android:key="interval"
+            android:dialogTitle="上报频率"
             android:inputType="number"
+            android:key="interval"
             android:negativeButtonText="取消"
             android:positiveButtonText="保存"
             android:title="上报频率" />
