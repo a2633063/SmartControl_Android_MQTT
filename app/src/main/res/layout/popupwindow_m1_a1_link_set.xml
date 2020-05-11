@@ -1,0 +1,315 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:layout_gravity="center"
+    android:background="#80000000"
+    android:gravity="center">
+
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:layout_margin="16dp"
+        android:background="#ff333333"
+        android:gravity="center"
+        android:padding="16dp">
+
+        <TextView
+            android:id="@+id/tv_title"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:gravity="center"
+            android:text="zM1 zA1联动设置"
+            android:textSize="30dp"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_chainStyle="packed"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintVertical_chainStyle="packed" />
+
+
+        <TextView
+            android:id="@+id/tv_a1_device"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="16dp"
+            android:text="zA1设备: "
+            app:layout_constraintEnd_toStartOf="@id/spinner_a1_device"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/tv_title" />
+
+        <Spinner
+            android:id="@+id/spinner_a1_device"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:spinnerMode="dialog"
+            app:layout_constraintBottom_toBottomOf="@id/tv_a1_device"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toEndOf="@id/tv_a1_device"
+            app:layout_constraintTop_toTopOf="@id/tv_a1_device" />
+
+        <TextView
+            android:id="@+id/tv_time"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="16dp"
+            android:text=" 时间段: "
+            app:layout_constraintEnd_toEndOf="@+id/tv_a1_device"
+            app:layout_constraintStart_toStartOf="@+id/tv_a1_device"
+            app:layout_constraintTop_toBottomOf="@id/tv_a1_device" />
+
+        <TextView
+            android:id="@+id/tv_start_time"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="00:00 - 00:00"
+            android:textSize="25dp"
+
+            app:layout_constraintBottom_toBottomOf="@id/tv_time"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toEndOf="@id/tv_time"
+            app:layout_constraintTop_toTopOf="@id/tv_time" />
+
+
+        <EditText
+            android:id="@+id/tv_f_3"
+            style="@style/M1LlinkA1VariableTextViewStyle"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:ems="2"
+            android:gravity="center"
+            android:inputType="numberDecimal"
+            android:text="0.30"
+            android:hint="0.30"
+            app:layout_constraintBottom_toBottomOf="@+id/tv_4"
+            app:layout_constraintStart_toEndOf="@+id/tv_4"
+            app:layout_constraintTop_toTopOf="@+id/tv_4" />
+
+
+        <TextView
+            android:id="@+id/tv_4"
+            style="@style/M1LlinkA1TextViewStyle"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="16dp"
+            android:text="如果甲醛≥"
+            app:layout_constraintEnd_toEndOf="@+id/tv_7"
+            app:layout_constraintTop_toBottomOf="@+id/tv_time" />
+
+        <EditText
+            android:id="@+id/tv_speed_3"
+            style="@style/M1LlinkA1VariableTextViewStyle"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:ems="2"
+            android:gravity="center"
+            android:inputType="number"
+            android:text="100"
+            android:hint="100"
+            app:layout_constraintBottom_toBottomOf="@+id/tv_6"
+            app:layout_constraintStart_toEndOf="@+id/tv_6"
+            app:layout_constraintTop_toTopOf="@+id/tv_6" />
+
+        <EditText
+            android:id="@+id/tv_pm_3"
+            style="@style/M1LlinkA1VariableTextViewStyle"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:ems="2"
+            android:gravity="center"
+            android:inputType="number"
+            android:text="150"
+            android:hint="150"
+            app:layout_constraintBottom_toBottomOf="@+id/tv_5"
+            app:layout_constraintStart_toEndOf="@+id/tv_5"
+            app:layout_constraintTop_toTopOf="@+id/tv_5" />
+
+        <TextView
+            android:id="@+id/tv_5"
+            style="@style/M1LlinkA1TextViewStyle"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="或PM2.5≥ "
+            app:layout_constraintBottom_toBottomOf="@+id/tv_4"
+            app:layout_constraintStart_toEndOf="@+id/tv_f_3" />
+
+        <TextView
+            android:id="@+id/tv_6"
+            style="@style/M1LlinkA1TextViewStyle"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="24dp"
+            android:layout_marginTop="16dp"
+            android:text="则风速调为 "
+            app:layout_constraintStart_toStartOf="@+id/tv_4"
+            app:layout_constraintTop_toBottomOf="@+id/tv_4" />
+
+        <EditText
+            android:id="@+id/tv_f_2"
+            style="@style/M1LlinkA1VariableTextViewStyle"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:ems="2"
+            android:gravity="center"
+            android:inputType="numberDecimal"
+            android:text="0.20"
+            android:hint="0.20"
+            app:layout_constraintBottom_toBottomOf="@+id/tv_7"
+            app:layout_constraintStart_toEndOf="@+id/tv_7"
+            app:layout_constraintTop_toTopOf="@+id/tv_7" />
+
+        <TextView
+            android:id="@+id/tv_7"
+            style="@style/M1LlinkA1TextViewStyle"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="16dp"
+            android:text="否则如果甲醛≥"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/tv_6" />
+
+        <EditText
+            android:id="@+id/tv_speed_2"
+            style="@style/M1LlinkA1VariableTextViewStyle"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:ems="2"
+            android:gravity="center"
+            android:inputType="number"
+            android:text="50"
+            android:hint="50"
+            app:layout_constraintBottom_toBottomOf="@+id/tv_9"
+            app:layout_constraintStart_toEndOf="@+id/tv_9"
+            app:layout_constraintTop_toTopOf="@+id/tv_9" />
+
+        <EditText
+            android:id="@+id/tv_pm_2"
+            style="@style/M1LlinkA1VariableTextViewStyle"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:ems="2"
+            android:gravity="center"
+            android:inputType="number"
+            android:text="100"
+            android:hint="100"
+            app:layout_constraintBottom_toBottomOf="@+id/tv_8"
+            app:layout_constraintStart_toEndOf="@+id/tv_8"
+            app:layout_constraintTop_toTopOf="@+id/tv_8" />
+
+        <TextView
+            android:id="@+id/tv_8"
+            style="@style/M1LlinkA1TextViewStyle"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="或PM2.5≥ "
+            app:layout_constraintBottom_toBottomOf="@+id/tv_7"
+            app:layout_constraintStart_toEndOf="@+id/tv_f_2" />
+
+        <TextView
+            android:id="@+id/tv_9"
+            style="@style/M1LlinkA1TextViewStyle"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="16dp"
+            android:text="则风速调为 "
+            app:layout_constraintStart_toStartOf="@+id/tv_6"
+            app:layout_constraintTop_toBottomOf="@+id/tv_7" />
+
+        <EditText
+            android:id="@+id/tv_f_1"
+            style="@style/M1LlinkA1VariableTextViewStyle"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:ems="2"
+            android:gravity="center"
+            android:inputType="numberDecimal"
+            android:text="0.10"
+            android:hint="0.10"
+            app:layout_constraintBottom_toBottomOf="@+id/tv_10"
+            app:layout_constraintStart_toEndOf="@+id/tv_10"
+            app:layout_constraintTop_toTopOf="@+id/tv_10" />
+
+        <TextView
+            android:id="@+id/tv_10"
+            style="@style/M1LlinkA1TextViewStyle"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="16dp"
+            android:text="否则如果甲醛≥"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/tv_9" />
+
+        <TextView
+            android:id="@+id/tv_13"
+            style="@style/M1LlinkA1TextViewStyle"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="16dp"
+            android:text="否则关闭"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/tv_12" />
+
+        <EditText
+            android:id="@+id/tv_speed_1"
+            style="@style/M1LlinkA1VariableTextViewStyle"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:ems="2"
+            android:gravity="center"
+            android:inputType="number"
+            android:text="25"
+            android:hint="25"
+            app:layout_constraintBottom_toBottomOf="@+id/tv_12"
+            app:layout_constraintStart_toEndOf="@+id/tv_12"
+            app:layout_constraintTop_toTopOf="@+id/tv_12" />
+
+        <EditText
+            android:id="@+id/tv_pm_1"
+            style="@style/M1LlinkA1VariableTextViewStyle"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:ems="2"
+            android:gravity="center"
+            android:inputType="number"
+            android:text="75"
+            android:hint="75"
+            app:layout_constraintBottom_toBottomOf="@+id/tv_11"
+            app:layout_constraintStart_toEndOf="@+id/tv_11"
+            app:layout_constraintTop_toTopOf="@+id/tv_11" />
+
+        <TextView
+            android:id="@+id/tv_11"
+            style="@style/M1LlinkA1TextViewStyle"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="或PM2.5≥ "
+            app:layout_constraintBottom_toBottomOf="@+id/tv_10"
+            app:layout_constraintStart_toEndOf="@+id/tv_f_1" />
+
+        <TextView
+            android:id="@+id/tv_12"
+            style="@style/M1LlinkA1TextViewStyle"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="16dp"
+            android:text="则风速调为 "
+            app:layout_constraintStart_toStartOf="@+id/tv_9"
+            app:layout_constraintTop_toBottomOf="@+id/tv_10" />
+
+
+        <Button
+            android:id="@+id/btn_ok"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="16dp"
+            android:text="确认"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/tv_13" />
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+</LinearLayout>

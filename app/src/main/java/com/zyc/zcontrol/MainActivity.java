@@ -286,7 +286,7 @@ public class MainActivity extends AppCompatActivity {
         }
 
         if (deviceData.size() < 1) {
-            deviceData.add(new DeviceTC1("演示设备", "000000000000"));
+            deviceData.add(new DeviceM1("演示设备", "000000000000"));
 //            deviceData.add(new DeviceButtonMate("演示设备1", "000000000001"));
 //            deviceData.add(new DeviceDC1("演示设备2", "000000000002"));
 //            deviceData.add(new DeviceA1("演示设备3", "000000000003"));

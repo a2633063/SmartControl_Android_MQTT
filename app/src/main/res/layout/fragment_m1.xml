@@ -146,19 +146,18 @@
                     app:layout_constraintTop_toBottomOf="@id/tv_formaldehyde_value" />
 
                 <TextView
-                    android:id="@+id/textViewR"
+                    android:id="@+id/tv_brightness"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginTop="16dp"
                     android:maxLines="1"
                     android:singleLine="true"
                     android:text="亮度"
-                    android:drawableRight="@drawable/ic_chevron_right_black_24dp"
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toBottomOf="@id/tv_temperature_value" />
 
                 <SeekBar
-                    android:id="@+id/seekBarR"
+                    android:id="@+id/seekBar"
                     style="@style/Widget.AppCompat.SeekBar.Discrete"
                     android:layout_width="0dp"
                     android:layout_height="0dp"
@@ -166,10 +165,42 @@
                     android:maxLines="1"
                     android:progress="0"
                     android:singleLine="true"
-                    app:layout_constraintBottom_toBottomOf="@id/textViewR"
+                    app:layout_constraintBottom_toBottomOf="@id/tv_brightness"
                     app:layout_constraintEnd_toEndOf="parent"
-                    app:layout_constraintStart_toEndOf="@id/textViewR"
-                    app:layout_constraintTop_toTopOf="@id/textViewR" />
+                    app:layout_constraintStart_toEndOf="@id/tv_brightness"
+                    app:layout_constraintTop_toTopOf="@id/tv_brightness" />
+
+                <TextView
+                    android:id="@+id/tv_brightness_task"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="16dp"
+                    android:drawableRight="@drawable/ic_chevron_right_black_24dp"
+                    android:maxLines="1"
+                    android:singleLine="true"
+                    android:text="亮度定时"
+                    android:textColor="@android:color/white"
+                    android:textSize="18dp"
+                    app:layout_constraintEnd_toStartOf="@id/tv_zA_speed"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@id/tv_brightness" />
+
+                <TextView
+                    android:id="@+id/tv_zA_speed"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:drawableRight="@drawable/ic_chevron_right_black_24dp"
+                    android:maxLines="1"
+                    android:singleLine="true"
+                    android:text="zA1联动"
+                    android:textColor="@android:color/white"
+                    android:textSize="18dp"
+                    app:layout_constraintBottom_toBottomOf="@id/tv_brightness_task"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toEndOf="@id/tv_brightness_task"
+                    app:layout_constraintTop_toTopOf="@id/tv_brightness_task" />
+
+                />
 
             </androidx.constraintlayout.widget.ConstraintLayout>
 

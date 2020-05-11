@@ -3,7 +3,6 @@ package com.zyc.zcontrol.deviceItem.m1;
 
 import android.annotation.SuppressLint;
 import android.content.Intent;
-import android.graphics.Color;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
@@ -19,7 +18,6 @@ import android.widget.TextView;
 import androidx.fragment.app.Fragment;
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 
-import com.google.android.material.snackbar.Snackbar;
 import com.zyc.zcontrol.R;
 import com.zyc.zcontrol.deviceItem.DeviceClass.DeviceFragment;
 import com.zyc.zcontrol.deviceItem.DeviceClass.DeviceM1;
@@ -47,6 +45,7 @@ public class M1Fragment extends DeviceFragment {
     TextView tvHumidity;
     SeekBar seekBar;
     TextView tvBrightness;
+    TextView tv_zA_speed;
 
     //endregion
 
@@ -104,7 +103,7 @@ public class M1Fragment extends DeviceFragment {
         tvHumidity.setText(Html.fromHtml(exchange));
 
         //region 拖动条 处理viewpage/SwipeRefreshLayout滑动冲突事件
-        seekBar = view.findViewById(R.id.seekBarR);
+        seekBar = view.findViewById(R.id.seekBar);
         //region 处理viewpage/SwipeRefreshLayout滑动冲突事件
         seekBar.setOnTouchListener(new View.OnTouchListener() {
             @Override
@@ -136,7 +135,7 @@ public class M1Fragment extends DeviceFragment {
 
         //endregion
 
-        tvBrightness = view.findViewById(R.id.textViewR);
+        tvBrightness = view.findViewById(R.id.tv_brightness_task);
         tvBrightness.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -145,7 +144,15 @@ public class M1Fragment extends DeviceFragment {
                 startActivity(intent);
             }
         });
-
+        tv_zA_speed = view.findViewById(R.id.tv_zA_speed);
+        tv_zA_speed.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(getContext(), M1LinkA1Activity.class);
+                intent.putExtra("mac", device.getMac());
+                startActivity(intent);
+            }
+        });
         //region 更新当前状态
         mSwipeLayout = (SwipeRefreshLayout) view.findViewById(R.id.swipeRefreshLayout);
         mSwipeLayout.setColorSchemeResources(R.color.colorAccent, R.color.colorPrimaryDark, R.color.colorAccent, R.color.colorPrimary);
