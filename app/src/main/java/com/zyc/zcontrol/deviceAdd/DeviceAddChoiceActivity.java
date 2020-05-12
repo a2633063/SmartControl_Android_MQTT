@@ -63,7 +63,7 @@ public class DeviceAddChoiceActivity extends AppCompatActivity {
                     if (!knownDevice.contains(device.getMac())) {
                         data.add(device);
                         if (data.size() > 0)
-                            mdnsAdapter.notifyItemInserted(msg.arg1);
+                            mdnsAdapter.notifyItemInserted(data.size());
                     }
                     break;
                 //endregion
@@ -236,6 +236,12 @@ public class DeviceAddChoiceActivity extends AppCompatActivity {
 
             @Override
             public void onServiceFound(NsdServiceInfo serviceInfo) {
+
+                try {
+                    Thread.sleep(50);
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
                 // 发现网络服务时就会触发该事件
                 // 可以通过switch或if获取那些你真正关心的服务
                 Log.d("mdns", "onServiceFound: " + serviceInfo.toString());
@@ -269,10 +275,10 @@ public class DeviceAddChoiceActivity extends AppCompatActivity {
                             //mdnsAdapter.notifyItemInserted(data.size()-1);
 
                             Message message = new Message();
-                            message.arg1 = data.size() - 1;
+
                             message.what = 1;
                             message.obj = d;
-                            handler.sendMessageDelayed(message, 200);
+                            handler.sendMessageDelayed(message, 0);
                         }
                     }
 

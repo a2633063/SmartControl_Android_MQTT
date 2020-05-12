@@ -287,12 +287,6 @@ public class MainActivity extends AppCompatActivity {
 
         if (deviceData.size() < 1) {
             deviceData.add(new DeviceM1("演示设备", "000000000000"));
-//            deviceData.add(new DeviceButtonMate("演示设备1", "000000000001"));
-//            deviceData.add(new DeviceDC1("演示设备2", "000000000002"));
-//            deviceData.add(new DeviceA1("演示设备3", "000000000003"));
-//            deviceData.add(new DeviceM1("演示设备4", "000000000004"));
-//            deviceData.add(new DeviceRGBW("演示设备5", "000000000005"));
-//            deviceData.add(new DeviceTC1("ztc18baa", "d0bae4638baa"));
         }
         //endregion
 
@@ -897,6 +891,19 @@ public class MainActivity extends AppCompatActivity {
             public void onClick(View v) {
                 if (mainDeviceLanUdpScanListAdapter.getCount() > 0) {
                     deviceData.addAll(mainDeviceLanUdpScanListAdapter.getData());
+
+                    if (mConnectService.isConnected()) {
+                        for (Device d : mainDeviceLanUdpScanListAdapter.getData()) {
+                            String[] topic = d.getRecvMqttTopic();
+                            if (topic != null) {
+                                int[] qos = new int[topic.length];
+                                for (int i = 0; i < qos.length; i++) qos[i] = 1;
+                                if (!mConnectService.subscribe(topic, qos)) break;
+//                        Log.d(Tag, "subscribe:" + d.getMqttStateTopic());
+                            }
+                        }
+                    }
+
                     Message msg = new Message();
                     msg.what = 2;
                     msg.obj = deviceData.size() - 1;
@@ -994,6 +1001,7 @@ public class MainActivity extends AppCompatActivity {
                             mainDeviceLanUdpScanListAdapter.add(new DeviceRGBW(name, mac));
                             break;
                     }
+
                     mainDeviceLanUdpScanListAdapter.notifyDataSetChanged();
                 }
                 //endregion
@@ -1055,7 +1063,7 @@ public class MainActivity extends AppCompatActivity {
                     if (topic != null) {
                         int[] qos = new int[topic.length];
                         for (int i = 0; i < qos.length; i++) qos[i] = 1;
-                        mConnectService.subscribe(topic, qos);
+                        if (!mConnectService.subscribe(topic, qos)) break;
 //                        Log.d(Tag, "subscribe:" + d.getMqttStateTopic());
                     }
                 }

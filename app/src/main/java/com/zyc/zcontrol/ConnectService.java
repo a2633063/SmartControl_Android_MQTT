@@ -304,12 +304,14 @@ public class ConnectService extends Service {
         }
     }
 
-    public void subscribe(String[] topic, int[] qos) {
+    public boolean subscribe(String[] topic, int[] qos) {
         try {
             mqttClient.subscribe(topic, qos);
+            return true;
         } catch (MqttException e) {
             e.printStackTrace();
             disconnect();
+            return false;
         }
     }
 

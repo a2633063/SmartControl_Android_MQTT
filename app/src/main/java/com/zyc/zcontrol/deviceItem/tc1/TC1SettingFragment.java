@@ -39,6 +39,7 @@ public class TC1SettingFragment extends SettingFragment {
     Preference restart;
     Preference regetdata;
     EditTextPreference name_preference;
+    EditTextPreference interval;
     CheckBoxPreference old_protocol;
     DeviceTC1 device;
 
@@ -147,7 +148,7 @@ public class TC1SettingFragment extends SettingFragment {
                 //region 发送请求数据
                 case 3:
                     handler.removeMessages(3);
-                    Send("{\"mac\":\"" + device.getMac() + "\",\"version\":null,\"lock\":null,\"ssid\":null}");
+                    Send("{\"mac\":\"" + device.getMac() + "\",\"version\":null,\"interval\":null,\"lock\":null,\"ssid\":null}");
                     break;
                 //endregion
             }
@@ -174,6 +175,7 @@ public class TC1SettingFragment extends SettingFragment {
         restart = findPreference("restart");
         regetdata = findPreference("regetdata");
         name_preference = (EditTextPreference) findPreference("name");
+        interval = (EditTextPreference) findPreference("interval");
         old_protocol = (CheckBoxPreference) findPreference("old_protocol");
 
 
@@ -228,6 +230,22 @@ public class TC1SettingFragment extends SettingFragment {
                 //endregion
 
                 unlock();
+                return false;
+            }
+        });
+        //endregion
+        //region 设置反馈间隔
+        interval.setOnPreferenceChangeListener(new Preference.OnPreferenceChangeListener() {
+            @Override
+            public boolean onPreferenceChange(Preference preference, Object newValue) {
+
+                int val = Integer.parseInt((String) newValue);
+
+                if (val > 0 && val <= 255) {
+                    Send("{\"mac\":\"" + device.getMac() + "\",\"interval\":" + (String) newValue + "}");
+                } else {
+                    Toast.makeText(getActivity(), "输入有误!范围1-255", Toast.LENGTH_SHORT).show();
+                }
                 return false;
             }
         });
@@ -435,6 +453,13 @@ public class TC1SettingFragment extends SettingFragment {
                 if (jsonObject.getString("version").startsWith("v0.") && !old_protocol.isChecked()) {
                     Toast.makeText(getActivity(), "版本低于v1.0.0请勾选使用旧版通信协议!", Toast.LENGTH_LONG).show();
                 }
+            }
+            //endregion
+            //region 获取间隔时间
+            if (jsonObject.has("interval")) {
+                int interval_time = jsonObject.getInt("interval");
+                interval.setSummary(String.valueOf(interval_time));
+                interval.setText(String.valueOf(interval_time));
             }
             //endregion
             //region 激活

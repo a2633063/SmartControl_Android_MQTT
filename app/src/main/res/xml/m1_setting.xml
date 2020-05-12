@@ -33,7 +33,7 @@
             android:key="interval"
             android:negativeButtonText="取消"
             android:positiveButtonText="保存"
-            android:title="上报频率" />
+            android:title="上报频率(秒)" />
         <Preference
             android:key="fw_version"
             android:title="当前版本(点击检查新版本)" />
