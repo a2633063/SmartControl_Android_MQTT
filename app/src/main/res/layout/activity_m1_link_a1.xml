@@ -98,7 +98,8 @@
                 style="@style/M1LlinkA1VariableTextViewStyle"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="------------"
+                android:textSize="18dp"
+                android:text="名称|mac"
                 app:layout_constraintBottom_toBottomOf="@+id/tv_0"
                 app:layout_constraintStart_toEndOf="@+id/tv_0" />
             <TextView

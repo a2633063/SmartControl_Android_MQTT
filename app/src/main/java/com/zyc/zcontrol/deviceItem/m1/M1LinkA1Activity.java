@@ -1,11 +1,13 @@
 package com.zyc.zcontrol.deviceItem.m1;
 
+import androidx.appcompat.app.AlertDialog;
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 
 import android.annotation.SuppressLint;
 import android.app.TimePickerDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
 import android.os.Handler;
@@ -24,6 +26,7 @@ import android.widget.TextView;
 import android.widget.TimePicker;
 import android.widget.Toast;
 
+import com.google.android.material.snackbar.Snackbar;
 import com.zyc.zcontrol.MainApplication;
 import com.zyc.zcontrol.ServiceActivity;
 import com.zyc.zcontrol.R;
@@ -128,6 +131,24 @@ public class M1LinkA1Activity extends ServiceActivity {
         switch_link.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+
+                if (a1_mac == null) {
+                    AlertDialog alertDialog = new AlertDialog.Builder(M1LinkA1Activity.this)
+                            .setTitle("未获取到设备当前设置内容")
+                            .setMessage("请下拉尝试重新获取.或检查您的网络状态")
+                            .setNegativeButton("确定", new DialogInterface.OnClickListener() {
+                                @Override
+                                public void onClick(DialogInterface dialog, int which) {
+                                    handler.sendEmptyMessageDelayed(1, 0);
+                                    Toast.makeText(M1LinkA1Activity.this, "尝试请求数据...", Toast.LENGTH_SHORT).show();
+                                }
+                            })
+                            .create();
+                    alertDialog.show();
+                    switch_link.setChecked(!switch_link.isChecked());
+                    return;
+                }
+
                 Send("{\"mac\": \"" + device.getMac() + "\",\"za1\":{\"on\":" + (switch_link.isChecked() ? "1" : "0") + "}}");
             }
         });
@@ -158,6 +179,30 @@ public class M1LinkA1Activity extends ServiceActivity {
 
     //region 弹窗
     private void popupwindowTask() {
+
+        //region zA1设备读取初始化
+        ArrayAdapter<String> dataAdapter = new ArrayAdapter<String>(this, android.R.layout.simple_spinner_dropdown_item);
+        String[] itemNames;
+        String select_a1 = a1_mac;
+        if(select_a1==null)select_a1="虚拟设备|000000000000";
+        dataAdapter.add("虚拟设备|000000000000");
+        for (int i = 0; i < deviceData.size(); i++) // Maximum size of i upto --> Your Array Size
+        {
+            if (deviceData.get(i).getType() == TYPE_A1) {
+                dataAdapter.add(deviceData.get(i).getName() + "|" + deviceData.get(i).getMac());
+                if (deviceData.get(i).getMac().equals(select_a1.replaceAll(".*\\|", ""))) {
+                    select_a1 = deviceData.get(i).getName() + "|" + deviceData.get(i).getMac();
+                }
+            }
+        }
+        if (dataAdapter.getCount()<2) {
+            new AlertDialog.Builder(M1LinkA1Activity.this).setTitle("您当前无zA1设备")
+                    .setMessage("请先将zA1设备添加至app中")
+                    .setPositiveButton("确定", null).show();
+            return;
+        }
+        //endregion
+
 
         final View popupView = getLayoutInflater().inflate(R.layout.popupwindow_m1_a1_link_set, null);
         final PopupWindow window = new PopupWindow(popupView, MATCH_PARENT, MATCH_PARENT, true);//wrap_content,wrap_content
@@ -192,28 +237,14 @@ public class M1LinkA1Activity extends ServiceActivity {
         //endregion
 
         //region 选择a1 下拉框初始化
-        ArrayAdapter<String> dataAdapter = new ArrayAdapter<String>(this, android.R.layout.simple_spinner_dropdown_item);
-        String[] itemNames;
-
-        for (int i = 0; i < deviceData.size(); i++) // Maximum size of i upto --> Your Array Size
-        {
-            if (deviceData.get(i).getType() == TYPE_A1)
-                dataAdapter.add(deviceData.get(i).getName() + "|" + deviceData.get(i).getMac());
-        }
-
         spinner_a1.setAdapter(dataAdapter);
 
-        spinner_a1.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
-            @Override
-            public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
-                Toast.makeText(M1LinkA1Activity.this, parent.getItemAtPosition(position).toString(), Toast.LENGTH_SHORT).show();
+        for (int i=0;i<spinner_a1.getCount();i++){
+            if(select_a1.equals(spinner_a1.getItemAtPosition(i).toString())){
+                spinner_a1.setSelection(i,true);
             }
+        }
 
-            @Override
-            public void onNothingSelected(AdapterView<?> parent) {
-
-            }
-        });
         //endregion
         final int[] popup_set_time = {0, 1440};
 
@@ -255,7 +286,7 @@ public class M1LinkA1Activity extends ServiceActivity {
         btn_ok.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                String popup_a1_mac = spinner_a1.getSelectedItem().toString().replaceAll(".*\\|","");
+                String popup_a1_mac = spinner_a1.getSelectedItem().toString().replaceAll(".*\\|", "");
                 int popup__start_time = popup_set_time[0];
                 int popup__end_time = popup_set_time[1];
                 int[] popup_pm25 = {75, 100, 150};
@@ -269,7 +300,7 @@ public class M1LinkA1Activity extends ServiceActivity {
                         if (tv_popup_speed[i].getText().length() > 0)
                             popup_speed[i] = Integer.parseInt(tv_popup_speed[i].getText().toString());
                         if (tv_popup_formaldehyde[i].getText().length() > 0)
-                            popup_formaldehyde[i] =(int) (Float.parseFloat(tv_popup_formaldehyde[i].getText().toString())*100);
+                            popup_formaldehyde[i] = (int) (Float.parseFloat(tv_popup_formaldehyde[i].getText().toString()) * 100);
                     }
                 } catch (NumberFormatException e) {
                     e.printStackTrace();
