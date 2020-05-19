@@ -606,17 +606,8 @@ public class MainActivity extends AppCompatActivity {
     }
 
     @Override
-    protected void onDestroy() {
+    protected void onPause() {
         Log.d(Tag, "onDestroy");
-        //region 停止Service
-        //注销广播
-        localBroadcastManager.unregisterReceiver(msgReceiver);
-        //停止服务
-        Intent intent = new Intent(MainActivity.this, ConnectService.class);
-        stopService(intent);
-        unbindService(mMQTTServiceConnection);
-        if (null != wifiLock) wifiLock.release();//必须调用
-        //endregion
         //region 需要时更新数据库
         if (updateSqlFlag) {
             //删除数据库所有内容,根据排序重新写入
@@ -633,6 +624,21 @@ public class MainActivity extends AppCompatActivity {
                 sqLite.Insert("device_list", cv);
             }
         }
+        //endregion
+        super.onPause();
+    }
+
+    @Override
+    protected void onDestroy() {
+        Log.d(Tag, "onDestroy");
+        //region 停止Service
+        //注销广播
+        localBroadcastManager.unregisterReceiver(msgReceiver);
+        //停止服务
+        Intent intent = new Intent(MainActivity.this, ConnectService.class);
+        stopService(intent);
+        unbindService(mMQTTServiceConnection);
+        if (null != wifiLock) wifiLock.release();//必须调用
         //endregion
         super.onDestroy();
     }

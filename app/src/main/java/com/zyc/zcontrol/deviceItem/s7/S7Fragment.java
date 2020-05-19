@@ -10,6 +10,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.CompoundButton;
+import android.widget.ImageView;
 import android.widget.Switch;
 import android.widget.TextView;
 
@@ -17,12 +18,17 @@ import com.zyc.zcontrol.R;
 import com.zyc.zcontrol.deviceItem.DeviceClass.DeviceFragment;
 import com.zyc.zcontrol.deviceItem.DeviceClass.DeviceS7;
 
+import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.text.SimpleDateFormat;
+import java.util.Calendar;
+import java.util.Date;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import androidx.annotation.DrawableRes;
 import androidx.appcompat.app.AlertDialog;
 import androidx.fragment.app.Fragment;
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
@@ -36,10 +42,35 @@ public class S7Fragment extends DeviceFragment {
 
     DeviceS7 device;
     //region 控件
+    ImageView im_battery;
+    TextView tv_weight;
+    TextView tv_time;
+    Switch sw_heat;
     private SwipeRefreshLayout mSwipeLayout;
-
     //endregion
 
+    int bat_level = -1;
+    boolean heat_flag = false;//接收到关闭且此为true时提示插上usb电才能加热
+    final @DrawableRes
+    int battery_res[] = {
+            R.drawable.ic_battery_0_black_24dp,
+            R.drawable.ic_battery_20_black_24dp,
+            R.drawable.ic_battery_30_black_24dp,
+            R.drawable.ic_battery_50_black_24dp,
+            R.drawable.ic_battery_60_black_24dp,
+            R.drawable.ic_battery_80_black_24dp,
+            R.drawable.ic_battery_90_black_24dp,
+            R.drawable.ic_battery_full_black_24dp,
+
+            R.drawable.ic_battery_charging_0_black_24dp,
+            R.drawable.ic_battery_charging_20_black_24dp,
+            R.drawable.ic_battery_charging_30_black_24dp,
+            R.drawable.ic_battery_charging_50_black_24dp,
+            R.drawable.ic_battery_charging_60_black_24dp,
+            R.drawable.ic_battery_charging_80_black_24dp,
+            R.drawable.ic_battery_charging_90_black_24dp,
+            R.drawable.ic_battery_charging_full_black_24dp,
+    };
 
     public S7Fragment() {
 
@@ -62,6 +93,8 @@ public class S7Fragment extends DeviceFragment {
                     handler.removeMessages(1);
                     Send("{\"mac\": \"" + device.getMac() + "\","
                             + "\"battery\" : null,"
+                            + "\"heat\" : null,"
+                            + "\"charge\" : null,"
                             + "\"history\" : null}"
                     );
                     break;
@@ -83,8 +116,18 @@ public class S7Fragment extends DeviceFragment {
         View view = inflater.inflate(R.layout.fragment_s7, container, false);
 
         //region 控件初始化
+        im_battery = view.findViewById(R.id.im_battery);
+        tv_weight = view.findViewById(R.id.tv_weight);
+        tv_time = view.findViewById(R.id.tv_time);
+        sw_heat = view.findViewById(R.id.sw_heat);
 
-
+        sw_heat.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if (((Switch) v).isChecked()) heat_flag = true;
+                Send("{\"mac\":\"" + device.getMac() + "\",\"heat\":" + String.valueOf(((Switch) v).isChecked() ? 1 : 0) + "}");
+            }
+        });
         //region 更新当前状态
         mSwipeLayout = (SwipeRefreshLayout) view.findViewById(R.id.swipeRefreshLayout);
         mSwipeLayout.setColorSchemeResources(R.color.colorAccent, R.color.colorPrimaryDark, R.color.colorAccent, R.color.colorPrimary);
@@ -129,7 +172,10 @@ public class S7Fragment extends DeviceFragment {
                 String device_mac = matcher.group(2);
                 if (device_mac.equals(device.getMac())) {
                     device.setOnline(message.equals("1"));
-                    Log(device.isOnline() ? "设备在线" : "设备离线" + "(功能调试中)");
+                    Log(device.isOnline() ? "设备在线" : "设备离线,请站上称点亮屏幕以启动连接");
+                    if(device.isOnline()){
+                        handler.sendEmptyMessageDelayed(1, 0);
+                    }
                 }
                 return;
             }
@@ -141,6 +187,70 @@ public class S7Fragment extends DeviceFragment {
             if (!jsonObject.has("mac") || !jsonObject.getString("mac").equals(device.getMac())) {
                 return;
             }
+
+            //region 电池/充电状态
+            if (jsonObject.has("battery")) {
+                int bat = jsonObject.getInt("battery");
+                bat = (bat - 370) * 2;
+                if (bat_level == -1) bat_level = 0;
+                if (bat > 95) bat_level = 7;
+                else if (bat > 85) bat_level = 6;
+                else if (bat > 70) bat_level = 5;
+                else if (bat > 55) bat_level = 4;
+                else if (bat > 40) bat_level = 3;
+                else if (bat > 25) bat_level = 2;
+                else if (bat > 10) bat_level = 1;
+                else bat_level = 0;
+            }
+            if (jsonObject.has("charge")) {
+                int charge = jsonObject.getInt("charge");
+                if (bat_level == -1) bat_level = battery_res.length / 2;
+                else bat_level += battery_res.length / 2;
+            }
+
+            if (jsonObject.has("battery") || jsonObject.has("charge")) {
+                im_battery.setImageResource(battery_res[bat_level]);
+            }
+            //endregion
+
+            //region 加热
+            if (jsonObject.has("heat")) {
+                int heat = jsonObject.getInt("heat");
+                sw_heat.setChecked(heat != 0);
+
+                if (heat == 0 && jsonObject.has("charge") && jsonObject.getInt("charge") == 0
+                        && heat_flag) {
+                    heat_flag = false;
+                    Log("请插USB电源后再打开加热功能");
+                }
+            }
+            //endregion
+
+            //region 历史体重数据
+            if (jsonObject.has("history")) {
+                JSONObject jsonHistory = jsonObject.getJSONObject("history");
+                JSONArray jsonWeight = jsonHistory.getJSONArray("weight");
+                JSONArray jsonTime = jsonHistory.getJSONArray("utc");
+                int length = jsonWeight.length();
+                if (length < 1) {
+                    tv_weight.setText("无历史数据");
+                } else {
+
+                    int weight = jsonWeight.getInt(length - 1);
+                    long utc = jsonTime.getLong(length - 1) - 28800;   //多算了时区
+                    if (utc > 1500000000) {
+                        Date date = new Date(utc * 1000);
+                        SimpleDateFormat sdf = new SimpleDateFormat("yyyy/MM/dd  HH:mm ");
+                        tv_time.setText("上次测量时间: " + sdf.format(date));
+                    } else {
+                        tv_time.setText("上次测量时间: 未知");
+                    }
+
+                    tv_weight.setText(weight / 100 + "." + weight % 100 + "kg");
+
+                }
+            }
+            //endregion
 
 
         } catch (JSONException e) {

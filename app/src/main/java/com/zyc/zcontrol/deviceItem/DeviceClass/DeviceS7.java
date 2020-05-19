@@ -11,7 +11,7 @@ import androidx.fragment.app.Fragment;
 public class DeviceS7 extends Device {
 
     public DeviceS7(String name, String mac) {
-        super(TYPE_DC1, name, mac);
+        super(TYPE_S7, name, mac);
     }
 
     //region 必须重构的函数
