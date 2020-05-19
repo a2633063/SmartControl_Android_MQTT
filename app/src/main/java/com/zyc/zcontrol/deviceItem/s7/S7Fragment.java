@@ -14,6 +14,8 @@ import android.widget.ImageView;
 import android.widget.Switch;
 import android.widget.TextView;
 
+import com.zyc.linetable.LineTableView;
+import com.zyc.linetable.WeightHistoryData;
 import com.zyc.zcontrol.R;
 import com.zyc.zcontrol.deviceItem.DeviceClass.DeviceFragment;
 import com.zyc.zcontrol.deviceItem.DeviceClass.DeviceS7;
@@ -46,6 +48,7 @@ public class S7Fragment extends DeviceFragment {
     TextView tv_weight;
     TextView tv_time;
     Switch sw_heat;
+    LineTableView lineTable;
     private SwipeRefreshLayout mSwipeLayout;
     //endregion
 
@@ -116,6 +119,7 @@ public class S7Fragment extends DeviceFragment {
         View view = inflater.inflate(R.layout.fragment_s7, container, false);
 
         //region 控件初始化
+        lineTable = view.findViewById(R.id.lineTableView);
         im_battery = view.findViewById(R.id.im_battery);
         tv_weight = view.findViewById(R.id.tv_weight);
         tv_time = view.findViewById(R.id.tv_time);
@@ -146,8 +150,20 @@ public class S7Fragment extends DeviceFragment {
         //endregion
 
         //endregion
-        super.onCreateView(inflater, container, savedInstanceState);
 
+        lineTable.getWeightList().add(new WeightHistoryData(10, 1500000000));
+//        lineTable.getWeightList().add(new WeightHistoryData(50, 1500100000));
+//        lineTable.getWeightList().add(new WeightHistoryData(70, 1500200000));
+//        lineTable.getWeightList().add(new WeightHistoryData(50,1500300000));
+//        lineTable.getWeightList().add(new WeightHistoryData(20,1500400000));
+//        lineTable.getWeightList().add(new WeightHistoryData(250,1500500000));
+//        lineTable.getWeightList().add(new WeightHistoryData(75,1500600000));
+//        lineTable.getWeightList().add(new WeightHistoryData(76,1500700000));
+//        lineTable.getWeightList().add(new WeightHistoryData(77,1500800000));
+//        lineTable.getWeightList().add(new WeightHistoryData(78,1500900000));
+        lineTable.invalidate();
+
+        super.onCreateView(inflater, container, savedInstanceState);
         return view;
     }
 
@@ -173,7 +189,7 @@ public class S7Fragment extends DeviceFragment {
                 if (device_mac.equals(device.getMac())) {
                     device.setOnline(message.equals("1"));
                     Log(device.isOnline() ? "设备在线" : "设备离线,请站上称点亮屏幕以启动连接");
-                    if(device.isOnline()){
+                    if (device.isOnline()) {
                         handler.sendEmptyMessageDelayed(1, 0);
                     }
                 }
@@ -204,8 +220,12 @@ public class S7Fragment extends DeviceFragment {
             }
             if (jsonObject.has("charge")) {
                 int charge = jsonObject.getInt("charge");
-                if (bat_level == -1) bat_level = battery_res.length / 2;
-                else bat_level += battery_res.length / 2;
+                if (charge > 0) {
+                    if (bat_level == -1) bat_level = battery_res.length / 2;
+                    else bat_level += battery_res.length / 2;
+                } else if (bat_level >= battery_res.length / 2) {
+                    bat_level -= battery_res.length / 2;
+                }
             }
 
             if (jsonObject.has("battery") || jsonObject.has("charge")) {
@@ -247,8 +267,28 @@ public class S7Fragment extends DeviceFragment {
                     }
 
                     tv_weight.setText(weight / 100 + "." + weight % 100 + "kg");
-
+                    lineTable.getWeightList().clear();
+                    for (int i = 0; i < length; i++) {
+                        lineTable.getWeightList().add(new WeightHistoryData(jsonWeight.getInt(i), jsonTime.getLong(i) - 28800));
+                    }
+                    lineTable.invalidate();
                 }
+            }
+            //endregion
+
+            //region 更新体重信息
+            if (jsonObject.has("weight") && jsonObject.has("time")) {
+                int weight = jsonObject.getInt("weight");
+                long utc = jsonObject.getLong("time") - 28800;   //多算了时区
+                if (utc > 1500000000) {
+                    Date date = new Date(utc * 1000);
+                    SimpleDateFormat sdf = new SimpleDateFormat("yyyy/MM/dd  HH:mm ");
+                    tv_time.setText("测量时间: " + sdf.format(date));
+                } else {
+                    tv_time.setText("测量时间: 未知");
+                }
+
+                tv_weight.setText(weight / 100 + "." + weight % 100 + "kg");
             }
             //endregion
 

@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <!-- 自定义月视图CalendarView部分 -->
+    <declare-styleable name="MyLineTableView">
+        <attr name="linePaddingTop" format="dimension"></attr>
+        <attr name="linePaddingBottom" format="dimension"></attr>
+
+        <attr name="zeroLinePaddingBottom" format="dimension"></attr>
+        <attr name="weightTextSize" format="dimension"></attr>
+        <attr name="weightTextColor" format="color"></attr>
+        <attr name="timeTextSize" format="dimension"></attr>
+        <attr name="timeTextColor" format="color"></attr>
+
+        <attr name="signShow">
+            <enum name="sign" value="0" />
+            <enum name="dot" value="1" />
+        </attr>
+    </declare-styleable>
+
+
+</resources>

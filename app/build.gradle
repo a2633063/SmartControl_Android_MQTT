@@ -6,8 +6,8 @@ android {
         applicationId "com.zyc.zcontrol"
         minSdkVersion 21
         targetSdkVersion 28
-        versionCode 34
-        versionName "v1.2.1"
+        versionCode 35
+        versionName "v1.3.0"
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
     }
     buildTypes {
@@ -32,4 +32,7 @@ dependencies {
 
     //EasyLink  广播组播同时发的版本
     implementation 'io.fogcloud.sdk:easylinkv3:+'
+
+
+    implementation project(':LineTable')//分享
 }
