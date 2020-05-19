@@ -54,6 +54,7 @@ import com.zyc.zcontrol.deviceItem.DeviceClass.DeviceButtonMate;
 import com.zyc.zcontrol.deviceItem.DeviceClass.DeviceDC1;
 import com.zyc.zcontrol.deviceItem.DeviceClass.DeviceM1;
 import com.zyc.zcontrol.deviceItem.DeviceClass.DeviceRGBW;
+import com.zyc.zcontrol.deviceItem.DeviceClass.DeviceS7;
 import com.zyc.zcontrol.deviceItem.DeviceClass.DeviceTC1;
 import com.zyc.zcontrol.deviceItem.SettingActivity;
 import com.zyc.zcontrol.deviceAdd.DeviceAddChoiceActivity;
@@ -273,6 +274,9 @@ public class MainActivity extends AppCompatActivity {
                 case Device.TYPE_DC1:
                     deviceData.add(new DeviceDC1(name, mac));
                     break;
+                case Device.TYPE_S7:
+                    deviceData.add(new DeviceS7(name, mac));
+                    break;
                 case Device.TYPE_A1:
                     deviceData.add(new DeviceA1(name, mac));
                     break;
@@ -286,7 +290,7 @@ public class MainActivity extends AppCompatActivity {
         }
 
         if (deviceData.size() < 1) {
-            deviceData.add(new DeviceM1("演示设备", "000000000000"));
+            deviceData.add(new DeviceS7("演示设备", "000000000000"));
         }
         //endregion
 
@@ -990,6 +994,9 @@ public class MainActivity extends AppCompatActivity {
                             break;
                         case Device.TYPE_DC1:
                             mainDeviceLanUdpScanListAdapter.add(new DeviceDC1(name, mac));
+                            break;
+                        case Device.TYPE_S7:
+                            mainDeviceLanUdpScanListAdapter.add(new DeviceS7(name, mac));
                             break;
                         case Device.TYPE_A1:
                             mainDeviceLanUdpScanListAdapter.add(new DeviceA1(name, mac));

@@ -10,6 +10,7 @@ import com.zyc.zcontrol.R;
 import com.zyc.zcontrol.deviceItem.a1.A1LinkActivity;
 import com.zyc.zcontrol.deviceItem.dc1.DC1LinkActivity;
 import com.zyc.zcontrol.deviceItem.m1.M1LinkActivity;
+import com.zyc.zcontrol.deviceItem.s7.S7LinkActivity;
 import com.zyc.zcontrol.deviceItem.tc1.TC1LinkActivity;
 
 
@@ -22,9 +23,10 @@ public class Device {
     public final static int TYPE_DC1 = 2;
     public final static int TYPE_A1 = 3;
     public final static int TYPE_M1 = 4;
-    public final static int TYPE_RGBW = 5;
-    public final static int TYPE_CLOCK = 6;
-    public final static int TYPE_COUNT = 7;
+    public final static int TYPE_S7 = 5;
+    public final static int TYPE_RGBW = 6;
+    public final static int TYPE_CLOCK = 7;
+    public final static int TYPE_COUNT = 8;
 
 
     public final static String[] TypeName = new String[]{
@@ -33,7 +35,8 @@ public class Device {
             "智能排插zDC1",   //2
             "空气净化器zA1", //3
             "空气检测仪zM1", //4
-            "zRGBW灯",   //5
+            "体重秤zS7",   //5
+            "zRGBW灯",   //6
             "时钟",    //
     };
     public final static @DrawableRes
@@ -43,6 +46,7 @@ public class Device {
             R.drawable.device_icon_zdc1,//2
             R.drawable.device_icon_za1,//3
             R.drawable.device_icon_zm1,//4
+            R.drawable.device_icon_ongoing,//5
             R.drawable.device_icon_ongoing,//5
             R.drawable.device_icon_ongoing,//4
     };
@@ -55,6 +59,7 @@ public class Device {
                     DC1LinkActivity.class,
                     A1LinkActivity.class,
                     M1LinkActivity.class,
+                    S7LinkActivity.class,
                     null,
                     null,
             };

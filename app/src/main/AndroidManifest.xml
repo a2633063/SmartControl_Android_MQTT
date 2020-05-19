@@ -125,6 +125,10 @@
             android:label="zDC1配网"
             android:screenOrientation="portrait" />
         <activity
+            android:name=".deviceItem.s7.S7LinkActivity"
+            android:label="zS7配网"
+            android:screenOrientation="portrait" />
+        <activity
             android:name="com.easylink.EasylinkActivity"
             android:label="添加设备"
             android:screenOrientation="portrait" />
