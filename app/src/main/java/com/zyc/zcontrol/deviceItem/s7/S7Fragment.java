@@ -151,7 +151,7 @@ public class S7Fragment extends DeviceFragment {
 
         //endregion
 
-        lineTable.getWeightList().add(new WeightHistoryData(10, 1500000000));
+//        lineTable.getWeightList().add(new WeightHistoryData(10, 1500000000));
 //        lineTable.getWeightList().add(new WeightHistoryData(50, 1500100000));
 //        lineTable.getWeightList().add(new WeightHistoryData(70, 1500200000));
 //        lineTable.getWeightList().add(new WeightHistoryData(50,1500300000));
@@ -222,7 +222,8 @@ public class S7Fragment extends DeviceFragment {
                 int charge = jsonObject.getInt("charge");
                 if (charge > 0) {
                     if (bat_level == -1) bat_level = battery_res.length / 2;
-                    else bat_level += battery_res.length / 2;
+                    else if (bat_level < battery_res.length / 2)
+                        bat_level += battery_res.length / 2;
                 } else if (bat_level >= battery_res.length / 2) {
                     bat_level -= battery_res.length / 2;
                 }
@@ -283,9 +284,9 @@ public class S7Fragment extends DeviceFragment {
                 if (utc > 1500000000) {
                     Date date = new Date(utc * 1000);
                     SimpleDateFormat sdf = new SimpleDateFormat("yyyy/MM/dd  HH:mm ");
-                    tv_time.setText("测量时间: " + sdf.format(date));
+                    tv_time.setText("上次测量时间: " + sdf.format(date));
                 } else {
-                    tv_time.setText("测量时间: 未知");
+                    tv_time.setText("上次测量时间: 未知");
                 }
 
                 tv_weight.setText(weight / 100 + "." + weight % 100 + "kg");
