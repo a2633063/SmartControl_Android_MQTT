@@ -60,7 +60,7 @@ public class MainDeviceFragmentAdapter extends FragmentPagerAdapter {
     public CharSequence getPageTitle(int position) {
         if (data != null)
             return data.get(position).getName();
-        else return "";
+        else return "未命名";
     }
 
 

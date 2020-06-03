@@ -35,7 +35,7 @@ public class Device {
             "智能排插zDC1",   //2
             "空气净化器zA1", //3
             "空气检测仪zM1", //4
-            "体重秤zS7",   //5
+            "体重秤zS7/zS7pe",   //5
             "zRGBW灯",   //6
             "时钟",    //
     };
@@ -46,7 +46,7 @@ public class Device {
             R.drawable.device_icon_zdc1,//2
             R.drawable.device_icon_za1,//3
             R.drawable.device_icon_zm1,//4
-            R.drawable.device_icon_ongoing,//5
+            R.drawable.device_icon_zs7,//5
             R.drawable.device_icon_ongoing,//5
             R.drawable.device_icon_ongoing,//4
     };

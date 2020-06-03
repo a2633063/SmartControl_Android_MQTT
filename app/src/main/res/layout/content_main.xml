@@ -17,10 +17,12 @@
     <com.google.android.material.tabs.TabLayout
         android:id="@+id/tablayout"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        app:tabGravity="fill"
-        android:visibility="gone"
-        app:tabMode="fixed" />
+        android:layout_height="30dp"
+        android:padding="1.5dp"
+        app:tabGravity="center"
+        android:visibility="visible"
+        app:tabTextAppearance="@style/TabLayoutTextStyle"
+        app:tabMode="scrollable" />
 
     <androidx.viewpager.widget.ViewPager
         android:id="@+id/viewpager"
