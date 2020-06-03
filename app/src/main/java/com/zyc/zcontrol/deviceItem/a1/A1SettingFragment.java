@@ -457,7 +457,7 @@ public class A1SettingFragment extends SettingFragment {
                         //todo 显示更新进度
 
                         if (pd != null && pd.isShowing())
-                            pd.setMessage("正在获取最新固件版本,请稍后....\n" + "进度:" + ota_progress + "%");
+                            pd.setMessage("正在获取最新固件版本,请稍后....\n此窗口可直接取消,不影响更新.\n" + "进度:" + ota_progress + "%");
 //                        Toast.makeText(getActivity(), "ota进度:"+ota_progress+"%", Toast.LENGTH_SHORT).show();
                     }
                 }
@@ -483,7 +483,7 @@ public class A1SettingFragment extends SettingFragment {
                             }
                         });
                         pd.setCanceledOnTouchOutside(false);
-                        pd.setMessage("正在更新固件,请勿断开设备电源!\n大约1分钟左右,请稍后....");
+                        pd.setMessage("正在更新固件,请勿断开设备电源!\n此窗口可直接取消,不影响更新.\n大约1分钟左右,请稍后.... 时间过长可直接取消查看版本号确认是否更新成功");
                         pd.show();
 //                        handler.sendEmptyMessageDelayed(0,5000);
 

@@ -362,7 +362,7 @@ public class MainActivity extends AppCompatActivity {
             public boolean onItemLongClick(AdapterView<?> parent, View view, final int position, long id) {
                 AlertDialog alertDialog = new AlertDialog.Builder(MainActivity.this)
                         .setTitle("配置设备:" + deviceData.get(position).getName())
-                        .setMessage("设置桌面快捷方式请手动开启权限,否则会开启失败.")
+                        .setMessage("设置桌面快捷方式请手动开启权限,否则会开启失败.\n注意:重新配网设备无需删除设备")
                         .create();
                 alertDialog.setButton(DialogInterface.BUTTON_POSITIVE, "删除设备", new DialogInterface.OnClickListener() {
                     @Override

@@ -392,7 +392,7 @@ public class S7SettingFragment extends SettingFragment {
                             }
                         });
                         pd.setCanceledOnTouchOutside(false);
-                        pd.setMessage("正在更新固件,请勿断开设备电源!\n大约1分钟左右,请稍后....\n可以直接取消此窗口,不影响设备ota过程");
+                        pd.setMessage("正在更新固件,请勿断开设备电源!\n此窗口可直接取消,不影响更新.\n大约1分钟左右,请稍后.... 时间过长可直接取消查看版本号确认是否更新成功");
                         pd.show();
 //                        handler.sendEmptyMessageDelayed(0,5000);
 
