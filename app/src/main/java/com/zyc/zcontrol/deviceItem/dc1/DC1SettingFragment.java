@@ -37,6 +37,7 @@ public class DC1SettingFragment extends SettingFragment {
 
     Preference regetdata;
     EditTextPreference name_preference;
+    EditTextPreference interval;
 
     DeviceDC1 device;
 
@@ -144,7 +145,7 @@ public class DC1SettingFragment extends SettingFragment {
                 //endregion
                 //region 发送请求数据
                 case 3:
-                    Send("{\"mac\":\"" + device.getMac() + "\",\"version\":null,\"lock\":null,\"ssid\":null}");
+                    Send("{\"mac\":\"" + device.getMac() + "\",\"version\":null,\"lock\":null,\"interval\":null,\"ssid\":null}");
                     break;
                 //endregion
             }
@@ -169,7 +170,7 @@ public class DC1SettingFragment extends SettingFragment {
 
         regetdata = findPreference("regetdata");
         name_preference = (EditTextPreference) findPreference("name");
-
+        interval = (EditTextPreference) findPreference("interval");
 
         name_preference.setSummary(device.getName());
 
@@ -196,6 +197,22 @@ public class DC1SettingFragment extends SettingFragment {
             @Override
             public boolean onPreferenceChange(Preference preference, Object newValue) {
                 Send("{\"mac\":\"" + device.getMac() + "\",\"setting\":{\"name\":\"" + (String) newValue + "\"}}");
+                return false;
+            }
+        });
+        //endregion
+        //region 设置反馈间隔
+        interval.setOnPreferenceChangeListener(new Preference.OnPreferenceChangeListener() {
+            @Override
+            public boolean onPreferenceChange(Preference preference, Object newValue) {
+
+                int val = Integer.parseInt((String) newValue);
+
+                if (val > 0 && val <= 255) {
+                    Send("{\"mac\":\"" + device.getMac() + "\",\"interval\":" + (String) newValue + "}");
+                } else {
+                    Toast.makeText(getActivity(), "输入有误!范围1-255", Toast.LENGTH_SHORT).show();
+                }
                 return false;
             }
         });
@@ -313,7 +330,7 @@ public class DC1SettingFragment extends SettingFragment {
                         String[] ota = uri.split("\r\n");
 
                         if (ota.length < 2
-                                || (ota.length >= 2 && (!ota[0].startsWith("http") || !ota[2].startsWith("http")))
+                                || (ota.length >= 2 && (!ota[0].startsWith("http") || !ota[1].startsWith("http")))
                         ) {
                             Toast.makeText(getActivity(), "填写链接错误!", Toast.LENGTH_SHORT).show();
                             return;
@@ -369,6 +386,14 @@ public class DC1SettingFragment extends SettingFragment {
                 Toast.makeText(getActivity(), "最新版本已经不需要激活,请点击设备版本号ota", Toast.LENGTH_SHORT).show();
             }
             //endregion
+            //region 获取间隔时间
+            if (jsonObject.has("interval")) {
+                int interval_time = jsonObject.getInt("interval");
+                interval.setSummary(String.valueOf(interval_time));
+                interval.setText(String.valueOf(interval_time));
+            }
+            //endregion
+
             //region ota结果/进度
             if (jsonObject.has("ota_progress")) {
                 int ota_progress = jsonObject.getInt("ota_progress");

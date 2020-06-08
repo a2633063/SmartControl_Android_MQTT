@@ -121,7 +121,7 @@ public class S7SettingFragment extends SettingFragment {
 
                             AlertDialog alertDialog = new AlertDialog.Builder(getActivity())
                                     .setTitle("获取到最新版本:" + otaInfo.tag_name)
-                                    .setMessage(otaInfo.title + "\n" + otaInfo.message)
+                                    .setMessage(otaInfo.title + "\n" + otaInfo.message+"\n\nota过程请保证设备屏幕一直点亮")
                                     .setPositiveButton("更新", new DialogInterface.OnClickListener() {
                                         @Override
                                         public void onClick(DialogInterface dialog, int which) {
