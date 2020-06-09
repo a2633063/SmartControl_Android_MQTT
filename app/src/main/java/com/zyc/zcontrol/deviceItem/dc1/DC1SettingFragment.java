@@ -327,7 +327,7 @@ public class DC1SettingFragment extends SettingFragment {
                     public void onClick(DialogInterface dialogInterface, int i) {
                         String uri = et.getText().toString();
                         //if (uri.length() < 1) return;
-                        String[] ota = uri.split("\r\n");
+                        String[] ota = uri.replace("\r\n","\n").split("\n");
 
                         if (ota.length < 2
                                 || (ota.length >= 2 && (!ota[0].startsWith("http") || !ota[1].startsWith("http")))
