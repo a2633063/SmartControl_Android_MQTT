@@ -378,7 +378,14 @@ public class A1SettingFragment extends SettingFragment {
                     @Override
                     public void onClick(DialogInterface dialogInterface, int i) {
                         String lockStr = et.getText().toString();
-                        lockStr = lockStr.replace("\r\n", "\n").replace("\n", "").trim();
+                        lockStr = lockStr.replace("\r\n", "\n").replace("\n", "").replace(" ", "").trim();
+
+                        if (lockStr.length() != 32) {
+                            new AlertDialog.Builder(getActivity()).setTitle("注意:")
+                                    .setMessage("激活码长度错误,请确认激活码格式!")
+                                    .setPositiveButton("确定", null).show();
+                            return;
+                        }
                         Send("{\"mac\":\"" + device.getMac() + "\",\"lock\":\"" + lockStr + "\"}");
                     }
                 }).setNegativeButton("取消", null).show();
