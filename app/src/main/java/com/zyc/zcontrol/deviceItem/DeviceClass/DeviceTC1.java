@@ -14,6 +14,9 @@ public class DeviceTC1 extends Device {
     }
 
     //region 必须重构的函数
+    public String getDocUri() {
+        return "https://github.com/a2633063/zTC1";
+    }
     public String[] getRecvMqttTopic() {
         String[] topic = new String[3];
         topic[0] = "device/ztc1/" + getMac() + "/state";

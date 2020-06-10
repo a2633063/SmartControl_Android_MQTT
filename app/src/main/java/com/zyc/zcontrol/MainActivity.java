@@ -658,17 +658,34 @@ public class MainActivity extends AppCompatActivity {
         // as you specify a parent activity in AndroidManifest.xml.
         int id = item.getItemId();
 
-        //noinspection SimplifiableIfStatement
-        if (id == R.id.action_device_settings) {
+        if (id == R.id.action_help) {
+            //region 设备帮助文档页面
+            Device d = mainDeviceListAdapter.getChoiceDevice();
+            if (d != null && d.getDocUri() != null && !d.getDocUri().isEmpty()) {
+                Uri uri = Uri.parse(d.getDocUri());
+                Intent intent = new Intent(Intent.ACTION_VIEW, uri);
+                startActivity(intent);
+            } else {
+                AlertDialog alertDialog = new AlertDialog.Builder(MainActivity.this)
+                        .setTitle("当前设备类型暂时无文档链接")
+                        .setMessage("请等待作者更新.")
+                        .setPositiveButton("确定",null)
+                        .create();
+                alertDialog.show();
+            }
+            //endregion
+            return true;
+        } else if (id == R.id.action_device_settings) {
+            //region 设备设置页面
             if (deviceData.size() > 0) {
                 Intent intent = new Intent(MainActivity.this, SettingActivity.class);
                 intent.putExtra("index", mainDeviceListAdapter.getChoice());
                 startActivity(intent);
             }
+            //endregion
             return true;
         } else if (id == R.id.action_mqtt_send) {
-
-
+            //region mqtt同步
             if (deviceData.size() < 1) {
                 AlertDialog alertDialog = new AlertDialog.Builder(MainActivity.this)
                         .setTitle("设备列表为空")
@@ -761,6 +778,7 @@ public class MainActivity extends AppCompatActivity {
             } catch (JSONException e) {
                 e.printStackTrace();
             }
+            //endregion
             return true;
         }
 

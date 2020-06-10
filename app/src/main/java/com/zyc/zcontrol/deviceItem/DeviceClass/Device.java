@@ -150,6 +150,11 @@ public class Device {
     }
 
     //region 子类必须重构函数
+    public String getDocUri() {
+        return null;
+    }
+
+
     public String[] getRecvMqttTopic() {
         return null;
     }
@@ -157,7 +162,6 @@ public class Device {
     public String getSendMqttTopic() {
         return null;
     }
-
 
     Fragment fragment;
 
