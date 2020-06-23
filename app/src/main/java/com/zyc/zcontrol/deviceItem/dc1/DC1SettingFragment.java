@@ -245,6 +245,24 @@ public class DC1SettingFragment extends SettingFragment {
                 if (!isGetVersion()) return false;
 
                 String version = fw_version.getSummary().toString();
+
+                if (version.startsWith("v0.") || version.startsWith("v1.0")) {
+                    AlertDialog alertDialog = new AlertDialog.Builder(getActivity())
+                            .setTitle("您的设备固件版本过旧")
+                            .setMessage("将ota到v1.3.2版本!\n"
+                            +"注意:若此次ota后版本号变为v1.0.1,请再次执行此ota操作即可")
+                            .setPositiveButton("更新", new DialogInterface.OnClickListener() {
+                                @Override
+                                public void onClick(DialogInterface dialog, int which) {
+                                    Send("{\"mac\":\"" + device.getMac()
+                                            + "\",\"setting\":{\"ota1\":\"http://zipzhang.top/zDC1/v1.3.2/user1.1024.new.2.bin\",\"ota2\":\"http://zipzhang.top/zDC1/v1.0.1/user2.1024.new.2.bin\"}}");
+                                }
+                            })
+                            .setNegativeButton("取消", null)
+                            .create();
+                    alertDialog.show();
+                    return false;
+                }
                 //region 获取最新版本
                 pd = new ProgressDialog(getActivity());
                 pd.setMessage("正在获取最新固件版本,请稍后....");
@@ -327,7 +345,7 @@ public class DC1SettingFragment extends SettingFragment {
                     public void onClick(DialogInterface dialogInterface, int i) {
                         String uri = et.getText().toString();
                         //if (uri.length() < 1) return;
-                        String[] ota = uri.replace("\r\n","\n").split("\n");
+                        String[] ota = uri.replace("\r\n", "\n").split("\n");
 
                         if (ota.length < 2
                                 || (ota.length >= 2 && (!ota[0].startsWith("http") || !ota[1].startsWith("http")))
