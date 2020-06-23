@@ -249,7 +249,7 @@ public class DC1SettingFragment extends SettingFragment {
                 if (version.startsWith("v0.") || version.startsWith("v1.0")) {
                     AlertDialog alertDialog = new AlertDialog.Builder(getActivity())
                             .setTitle("您的设备固件版本过旧")
-                            .setMessage("将ota到v1.3.2版本!\n"
+                            .setMessage("将ota到v1.3.2版本!(ota后设备需要web重新配网!)\n"
                             +"注意:若此次ota后版本号变为v1.0.1,请再次执行此ota操作即可")
                             .setPositiveButton("更新", new DialogInterface.OnClickListener() {
                                 @Override
