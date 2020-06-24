@@ -7,6 +7,8 @@ import android.content.ClipData;
 import android.content.ClipboardManager;
 import android.content.Context;
 import android.content.DialogInterface;
+import android.content.Intent;
+import android.net.Uri;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
@@ -371,9 +373,9 @@ public class A1SettingFragment extends SettingFragment {
     void unlock() {
 
         final EditText et = new EditText(getActivity());
-        new AlertDialog.Builder(getActivity()).setTitle("请输入激活码")
+        AlertDialog alertDialog=new AlertDialog.Builder(getActivity()).setTitle("请输入激活码")
                 .setView(et)
-                .setMessage("")
+//                .setMessage("a1激活码16元/个,请入群获取激活码(入群费用为激活码费用)")
                 .setPositiveButton("确定", new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialogInterface, int i) {
@@ -388,7 +390,16 @@ public class A1SettingFragment extends SettingFragment {
                         }
                         Send("{\"mac\":\"" + device.getMac() + "\",\"lock\":\"" + lockStr + "\"}");
                     }
-                }).setNegativeButton("取消", null).show();
+                }).setNegativeButton("取消", null).create();
+//        alertDialog.setButton(DialogInterface.BUTTON_NEUTRAL, "加群获取激活码", new DialogInterface.OnClickListener() {
+//            @Override
+//            public void onClick(DialogInterface dialog, int which) {
+//                Uri uri = Uri.parse("https://shang.qq.com/wpa/qunwpa?idkey=ea22ed67249c1c313922317efbde45629ab4a3908298a355ad832eba9045596b");
+//                Intent intent = new Intent(Intent.ACTION_VIEW, uri);
+//                startActivity(intent);
+//            }
+//        });
+        alertDialog.show();
 
     }
 

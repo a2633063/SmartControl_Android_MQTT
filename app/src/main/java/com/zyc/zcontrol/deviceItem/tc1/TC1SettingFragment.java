@@ -7,6 +7,8 @@ import android.content.ClipData;
 import android.content.ClipboardManager;
 import android.content.Context;
 import android.content.DialogInterface;
+import android.content.Intent;
+import android.net.Uri;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
@@ -393,7 +395,8 @@ public class TC1SettingFragment extends SettingFragment {
     void unlock() {
 
         final EditText et = new EditText(getActivity());
-        new AlertDialog.Builder(getActivity()).setTitle("请输入激活码")
+        AlertDialog alertDialog= new AlertDialog.Builder(getActivity())
+                .setTitle("请输入激活码")
                 .setView(et)
                 .setMessage("索要激活码请至项目主页中查看作者联系方式.(关于页面中有项目跳转按钮)")
                 .setPositiveButton("确定", new DialogInterface.OnClickListener() {
@@ -410,7 +413,17 @@ public class TC1SettingFragment extends SettingFragment {
                         }
                         Send("{\"mac\":\"" + device.getMac() + "\",\"lock\":\"" + lockStr + "\"}");
                     }
-                }).setNegativeButton("取消", null).show();
+                })
+                .setNegativeButton("取消", null).create();
+        alertDialog.setButton(DialogInterface.BUTTON_NEUTRAL, "激活帮助", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                Uri uri = Uri.parse("https://github.com/a2633063/SmartControl_Android_MQTT/wiki/%E6%BF%80%E6%B4%BB%E7%A0%81%E8%8E%B7%E5%8F%96");
+                Intent intent = new Intent(Intent.ACTION_VIEW, uri);
+                startActivity(intent);
+            }
+        });
+        alertDialog .show();
 
     }
 
