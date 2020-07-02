@@ -28,6 +28,9 @@
             android:key="lock"
             android:title="激活状态" />
         <Preference
+            android:key="filter_time"
+            android:title="滤芯启用日期" />
+        <Preference
             android:key="restart"
             android:title="重启设备" />
         <Preference

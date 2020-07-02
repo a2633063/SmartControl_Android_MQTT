@@ -2,13 +2,12 @@ package com.zyc.zcontrol.deviceItem.a1;
 
 
 import android.annotation.SuppressLint;
+import android.app.DatePickerDialog;
 import android.app.ProgressDialog;
 import android.content.ClipData;
 import android.content.ClipboardManager;
 import android.content.Context;
 import android.content.DialogInterface;
-import android.content.Intent;
-import android.net.Uri;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
@@ -17,10 +16,9 @@ import android.preference.Preference;
 import android.util.Log;
 import android.view.View;
 import android.widget.AdapterView;
+import android.widget.DatePicker;
 import android.widget.EditText;
 import android.widget.Toast;
-
-import androidx.appcompat.app.AlertDialog;
 
 import com.zyc.webservice.WebService;
 import com.zyc.zcontrol.R;
@@ -30,12 +28,17 @@ import com.zyc.zcontrol.deviceItem.DeviceClass.SettingFragment;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.util.Calendar;
+
+import androidx.appcompat.app.AlertDialog;
+
 @SuppressLint("ValidFragment")
 public class A1SettingFragment extends SettingFragment {
     final static String Tag = "A1SettingFragment";
 
     Preference ssid;
     Preference fw_version;
+    Preference filter_time;
     Preference lock;
     Preference restart;
     Preference regetdata;
@@ -148,7 +151,7 @@ public class A1SettingFragment extends SettingFragment {
                 //endregion
                 //region 发送请求数据
                 case 3:
-                    Send("{\"mac\":\"" + device.getMac() + "\",\"version\":null,\"lock\":null,\"ssid\":null}");
+                    Send("{\"mac\":\"" + device.getMac() + "\",\"version\":null,\"lock\":null,\"ssid\":null,\"filter_time\":null}");
                     break;
                 //endregion
             }
@@ -173,6 +176,7 @@ public class A1SettingFragment extends SettingFragment {
         ssid = findPreference("ssid");
         fw_version = findPreference("fw_version");
         lock = findPreference("lock");
+        filter_time = findPreference("filter_time");
         restart = findPreference("restart");
         regetdata = findPreference("regetdata");
         name_preference = (EditTextPreference) findPreference("name");
@@ -207,6 +211,32 @@ public class A1SettingFragment extends SettingFragment {
             }
         });
         //endregion
+        //region 滤芯日期
+        filter_time.setOnPreferenceClickListener(new Preference.OnPreferenceClickListener() {
+            @Override
+            public boolean onPreferenceClick(Preference preference) {
+                //region 未获取到当前激活信息
+                if (filter_time.getSummary() == null) {
+                    AlertDialog alertDialog = new AlertDialog.Builder(getActivity())
+                            .setTitle("未获取到当前设备信息")
+                            .setMessage("请获取到当前设备激活信息后重试.")
+                            .setNegativeButton("确定", new DialogInterface.OnClickListener() {
+                                @Override
+                                public void onClick(DialogInterface dialog, int which) {
+//                                    getActivity().finish();
+                                }
+                            })
+                            .create();
+                    alertDialog.show();
+                    return false;
+                }
+                //endregion
+
+                setFilterTime();
+                return false;
+            }
+        });
+        //endregion
         //region 激活
         lock.setOnPreferenceClickListener(new Preference.OnPreferenceClickListener() {
             @Override
@@ -233,7 +263,6 @@ public class A1SettingFragment extends SettingFragment {
             }
         });
         //endregion
-
         //region 版本
         fw_version.setOnPreferenceClickListener(new Preference.OnPreferenceClickListener() {
             @Override
@@ -404,6 +433,41 @@ public class A1SettingFragment extends SettingFragment {
     }
 
     //endregion
+    //region 设置滤芯日期
+    void setFilterTime() {
+       // 获取当前系统时间
+        Calendar calendar = Calendar.getInstance();
+        // 获取当前的年
+        int year = calendar.get(calendar.YEAR);
+        // 获取当前的月
+        int month = calendar.get(calendar.MONTH);
+        // 获取当前月的第几天
+        int day = calendar.get(calendar.DAY_OF_MONTH);
+        // 获取当前周的第几天
+        //    int day = calendar.get(calendar.DAY_OF_WEEK);
+        // 获取当前年的第几天
+        //    int day = calendar.get(calendar.DAY_OF_YEAR);
+
+        // 参数1：上下文    参数2：年    参数3：月    参数4：：日(ps:参数2、3、4是默认时间,月是从0开始的)
+        DatePickerDialog dialog = new DatePickerDialog(getActivity(), new DatePickerDialog.OnDateSetListener() {
+            @Override
+            public void onDateSet(DatePicker view, int year, int month, int dayOfMonth) {
+                Log.d(Tag,"dat:"+String.format ("%04d/%02d/%02d",year,month+1,dayOfMonth));
+                Send("{\"mac\":\"" + device.getMac() + "\",\"filter_time\":\"" + String.format ("%04d/%02d/%02d",year,month+1,dayOfMonth) + "\"}");
+            }
+        }, year, month, day);
+        dialog.setMessage("仅供用户记录滤芯开始使用时间,不做其他提示功能");
+//        dialog.setButton(DialogInterface.BUTTON_NEUTRAL, "今日", new DialogInterface.OnClickListener() {
+//            @Override
+//            public void onClick(DialogInterface dialog, int which) {
+//
+//            }
+//        });
+        dialog.show();
+
+    }
+
+    //endregion
     //endregion
 
     void Send(String message) {
@@ -441,6 +505,16 @@ public class A1SettingFragment extends SettingFragment {
                 fw_version.setSummary(version);
             }
             //endregion
+            //region 滤芯日期
+            if (jsonObject.has("filter_time")) {
+                String time_String=jsonObject.getString("filter_time");
+                if (time_String!=null && time_String.length()>0) {
+                    filter_time.setSummary(time_String);
+                } else {
+                    filter_time.setSummary("无数据");
+                }
+            }
+            //endregion
             //region 激活
             if (jsonObject.has("lock")) {
                 if (jsonObject.getBoolean("lock")) {
@@ -451,7 +525,7 @@ public class A1SettingFragment extends SettingFragment {
                 }
             }
             //endregion
-            //region ota结果/进度
+            // region ota结果/进度
             if (jsonObject.has("ota_progress")) {
                 int ota_progress = jsonObject.getInt("ota_progress");
 
