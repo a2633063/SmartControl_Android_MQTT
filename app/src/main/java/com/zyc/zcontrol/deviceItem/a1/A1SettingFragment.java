@@ -11,6 +11,7 @@ import android.content.DialogInterface;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
+import android.preference.CheckBoxPreference;
 import android.preference.EditTextPreference;
 import android.preference.Preference;
 import android.util.Log;
@@ -43,6 +44,7 @@ public class A1SettingFragment extends SettingFragment {
     Preference restart;
     Preference regetdata;
     EditTextPreference name_preference;
+    CheckBoxPreference led_state;
 
 
     DeviceA1 device;
@@ -151,7 +153,8 @@ public class A1SettingFragment extends SettingFragment {
                 //endregion
                 //region 发送请求数据
                 case 3:
-                    Send("{\"mac\":\"" + device.getMac() + "\",\"version\":null,\"lock\":null,\"ssid\":null,\"filter_time\":null}");
+                    Send("{\"mac\":\"" + device.getMac()
+                            + "\",\"version\":null,\"lock\":null,\"ssid\":null,\"led_state\":null,\"filter_time\":null}");
                     break;
                 //endregion
             }
@@ -180,6 +183,7 @@ public class A1SettingFragment extends SettingFragment {
         restart = findPreference("restart");
         regetdata = findPreference("regetdata");
         name_preference = (EditTextPreference) findPreference("name");
+        led_state = (CheckBoxPreference) findPreference("led_state");
 
 
         name_preference.setSummary(device.getName());
@@ -208,6 +212,23 @@ public class A1SettingFragment extends SettingFragment {
             public boolean onPreferenceChange(Preference preference, Object newValue) {
                 Send("{\"mac\":\"" + device.getMac() + "\",\"setting\":{\"name\":\"" + (String) newValue + "\"}}");
                 return false;
+            }
+        });
+        //endregion
+        //region led状态
+        led_state.setOnPreferenceClickListener(new Preference.OnPreferenceClickListener() {
+            @Override
+            public boolean onPreferenceClick(Preference preference) {
+                if (!isGetVersion()) return true;
+//                led_state.setChecked(!led_state.isChecked());
+                Send("{\"mac\":\"" + device.getMac() + "\",\"led_state\":" + (led_state.isChecked() ? "0" : "1") + "}");
+                return true;
+            }
+        });
+        led_state.setOnPreferenceChangeListener(new Preference.OnPreferenceChangeListener() {
+            @Override
+            public boolean onPreferenceChange(Preference preference, Object newValue) {
+                return false ;
             }
         });
         //endregion
@@ -402,7 +423,7 @@ public class A1SettingFragment extends SettingFragment {
     void unlock() {
 
         final EditText et = new EditText(getActivity());
-        AlertDialog alertDialog=new AlertDialog.Builder(getActivity()).setTitle("请输入激活码")
+        AlertDialog alertDialog = new AlertDialog.Builder(getActivity()).setTitle("请输入激活码")
                 .setView(et)
 //                .setMessage("a1激活码16元/个,请入群获取激活码(入群费用为激活码费用)")
                 .setPositiveButton("确定", new DialogInterface.OnClickListener() {
@@ -435,7 +456,7 @@ public class A1SettingFragment extends SettingFragment {
     //endregion
     //region 设置滤芯日期
     void setFilterTime() {
-       // 获取当前系统时间
+        // 获取当前系统时间
         Calendar calendar = Calendar.getInstance();
         // 获取当前的年
         int year = calendar.get(calendar.YEAR);
@@ -452,8 +473,8 @@ public class A1SettingFragment extends SettingFragment {
         DatePickerDialog dialog = new DatePickerDialog(getActivity(), new DatePickerDialog.OnDateSetListener() {
             @Override
             public void onDateSet(DatePicker view, int year, int month, int dayOfMonth) {
-                Log.d(Tag,"dat:"+String.format ("%04d/%02d/%02d",year,month+1,dayOfMonth));
-                Send("{\"mac\":\"" + device.getMac() + "\",\"filter_time\":\"" + String.format ("%04d/%02d/%02d",year,month+1,dayOfMonth) + "\"}");
+                Log.d(Tag, "dat:" + String.format("%04d/%02d/%02d", year, month + 1, dayOfMonth));
+                Send("{\"mac\":\"" + device.getMac() + "\",\"filter_time\":\"" + String.format("%04d/%02d/%02d", year, month + 1, dayOfMonth) + "\"}");
             }
         }, year, month, day);
         dialog.setMessage("仅供用户记录滤芯开始使用时间,不做其他提示功能");
@@ -472,7 +493,7 @@ public class A1SettingFragment extends SettingFragment {
 
     void Send(String message) {
         boolean b = getActivity().getSharedPreferences("Setting_" + device.getMac(), 0).getBoolean("always_UDP", false);
-        super.Send(b , device.getSendMqttTopic(), message);
+        super.Send(b, device.getSendMqttTopic(), message);
     }
 
     //数据接收处理函数
@@ -505,10 +526,16 @@ public class A1SettingFragment extends SettingFragment {
                 fw_version.setSummary(version);
             }
             //endregion
+            //region led状态
+            if (jsonObject.has("led_state")) {
+                int led = jsonObject.optInt("led_state");
+                led_state.setChecked(led==1);
+            }
+            //endregion
             //region 滤芯日期
             if (jsonObject.has("filter_time")) {
-                String time_String=jsonObject.getString("filter_time");
-                if (time_String!=null && time_String.length()>0) {
+                String time_String = jsonObject.getString("filter_time");
+                if (time_String != null && time_String.length() > 0) {
                     filter_time.setSummary(time_String);
                 } else {
                     filter_time.setSummary("无数据");

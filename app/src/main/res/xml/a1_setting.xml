@@ -27,6 +27,12 @@
         <Preference
             android:key="lock"
             android:title="激活状态" />
+        <CheckBoxPreference
+            android:defaultValue="false"
+            android:key="led_state"
+            android:title="风速指示灯常亮"
+            android:persistent="false"
+            android:summary="勾选后启动设备后led灯不会熄灭" />
         <Preference
             android:key="filter_time"
             android:title="滤芯启用日期" />
