@@ -6,6 +6,7 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -40,6 +41,7 @@ public class TC1Fragment extends DeviceFragment {
     Switch tbtn_plug[] = new Switch[6];
     TextView tv_plug_name[] = new TextView[6];
     TextView tv_total_time;
+    TextView tv_version;
     //endregion
 
     public TC1Fragment() {
@@ -60,6 +62,7 @@ public class TC1Fragment extends DeviceFragment {
             switch (msg.what) {
                 case 1:
                     Send("{\"mac\": \"" + device.getMac() + "\","
+                            + "\"version\":null,"
                             + "\"plug_0\" : {\"on\" : null,\"setting\":{\"name\":null}},"
                             + "\"plug_1\" : {\"on\" : null,\"setting\":{\"name\":null}},"
                             + "\"plug_2\" : {\"on\" : null,\"setting\":{\"name\":null}},"
@@ -80,6 +83,7 @@ public class TC1Fragment extends DeviceFragment {
         //region 控件初始化
 
         //region 控制按钮/功率/运行时间等
+        tv_version = view.findViewById(R.id.tv_version);
         tv_total_time = view.findViewById(R.id.tv_total_time);
         tbtn_all = view.findViewById(R.id.tbtn_all);
         tv_power = view.findViewById(R.id.tv_power);
@@ -104,6 +108,16 @@ public class TC1Fragment extends DeviceFragment {
             tbtn_plug[i].setOnCheckedChangeListener(MainButtonChangeListener);
             tv_plug_name[i].setOnClickListener(MainTextListener);
         }
+
+        //region 隐藏功能:长按功率实现hass mqtt自动发现功能
+        tv_power.setOnLongClickListener(new View.OnLongClickListener() {
+            @Override
+            public boolean onLongClick(View v) {
+                hassMqttDiscovery();
+                return false;
+            }
+        });
+        //endregion
         //endregion
 
         //region 下拉请求更新当前状态
@@ -180,9 +194,132 @@ public class TC1Fragment extends DeviceFragment {
             startActivity(intent);
         }
     };
+
     //endregion
+    //endregion
+    //region hass mqtt自动发现
+    void hassMqttDiscovery() {
+        hassHandler.sendEmptyMessage(0);
+    }
+
+    //region Handler
+    @SuppressLint("HandlerLeak")
+    Handler hassHandler = new Handler() {
+        @Override
+        public void handleMessage(Message msg) {// handler接收到消息后就会执行此方法
+            String json[];
+            switch (msg.what) {
+                case 0:
+                case 1:
+                case 2:
+                case 3:
+                case 4:
+                case 5:
+                case 6:
+                case 7:
+                    json = getHassMqttString(msg.what, null);
+                    Send(false, json[0], json[1]);
+                    hassHandler.sendEmptyMessageDelayed(msg.what + 1, 100);
+                    break;
+                case 8:
+                case 9:
+                case 10:
+                case 11:
+                case 12:
+                case 13:
+                    json = getHassMqttString(msg.what - 8, tv_plug_name[msg.what - 8].getText().toString());
+                    Send(false, json[0], json[1]);
+                    hassHandler.sendEmptyMessageDelayed(msg.what + 1, 100);
+                    break;
+                case 14:
+                case 15:
+                    json = getHassMqttString(msg.what - 8,"");
+                    Send(false, json[0], json[1]);
+                    hassHandler.sendEmptyMessageDelayed(msg.what + 1, 100);
+                    break;
+
+            }
+        }
+    };
+
     //endregion
 
+    String[] getHassMqttString(int plug, String plug_name) {
+        //plug:0-5 6个接口 7:功率 8:运行时间
+        String json[] = new String[2];
+        if (plug ==6) {
+            json[0] = "homeassistant/sensor/@MACMAC@/ztc1_power/config";
+            json[1] = "{" +
+                    "\"~\":\"device/ztc1/@MACMAC@\"," +
+                    "\"name\":\"" + (plug_name == null ? ("ztc1_power_@MACMAC@") : "功率") + "\"," +
+                    "\"uniq_id\":\"ztc1_power_@MACMAC@\"," +
+                    "\"state_topic\":\"~/sensor\"," +
+                    "\"value_template\": \"{{ value_json.power }}\"," +
+                    "\"icon\": \"mdi:gauge\","+
+                    "\"availability_topic\": \"~/availability\"," +
+                    "\"payload_available\": \"1\"," +
+                    "\"payload_not_available\": \"0\"," +
+                    "\"device\":{" +
+                    "\"identifiers\":\"ztc1_@MACMAC@\"," +
+                    "\"manufacturer\":\"Zip_zhang\"," +
+                    "\"model\":\"zTC1\"," +
+                    "\"name\":\"zTC1_@MACMAC@\"," +
+                    "\"sw_version\":\"" + tv_version.getText() + "\"," +
+                    "\"via_device\":\"ztc1_@MACMAC@\"" +
+                    "}" +
+                    "}";
+        }else if (plug ==7) {
+            json[0] = "homeassistant/sensor/@MACMAC@/ztc1_time/config";
+            json[1] = "{" +
+                    "\"~\":\"device/ztc1/@MACMAC@\"," +
+                    "\"name\":\"" + (plug_name == null ? ("ztc1_time_@MACMAC@") : "运行时间") + "\"," +
+                    "\"uniq_id\":\"ztc1_time_@MACMAC@\"," +
+                    "\"state_topic\":\"~/sensor\"," +
+                    "\"value_template\":\"{% set time = value_json.total_time %} {% set minutes = ((time % 3600) / 60) | int %} {% set hours = ((time % 86400) / 3600) | int %} {% set days = (time / 86400) | int %} {%- if time < 60 -%} <1 {%- else -%} {%- if days > 0 -%} {{ days }}天 {%- endif -%} {%- if hours > 0 -%} {{ hours }}小时 {%- endif -%} {%- if minutes > 0 -%} {{ minutes }}分钟 {%- endif -%} {%- endif -%}\"," +
+                    "\"icon\": \"mdi:gauge\","+
+                    "\"availability_topic\": \"~/availability\"," +
+                    "\"payload_available\": \"1\"," +
+                    "\"payload_not_available\": \"0\"," +
+                    "\"device\":{" +
+                    "\"identifiers\":\"ztc1_@MACMAC@\"," +
+                    "\"manufacturer\":\"Zip_zhang\"," +
+                    "\"model\":\"zTC1\"," +
+                    "\"name\":\"zTC1_@MACMAC@\"," +
+                    "\"sw_version\":\"" + tv_version.getText() + "\"," +
+                    "\"via_device\":\"ztc1_@MACMAC@\"" +
+                    "}" +
+                    "}";
+        }else /*if (plug >= 0 && plug <= 5)*/ {
+            json[0] = "homeassistant/switch/@MACMAC@/ztc1_plug_" + String.valueOf(plug) + "/config";
+            json[1] = "{" +
+                    "\"~\":\"device/ztc1/@MACMAC@\"," +
+                    "\"name\":\"" + (plug_name == null ? ("ztc1_" + String.valueOf(plug + 1) + "_@MACMAC@") : plug_name) + "\"," +
+                    "\"uniq_id\":\"ztc1_" + String.valueOf(plug + 1) + "_@MACMAC@\"," +
+                    "\"command_topic\":\"~/set\"," +
+                    "\"state_topic\":\"~/state\"," +
+                    "\"value_template\": \"{{ value_json.plug_" + String.valueOf(plug) + ".on }}\"," +
+                    "\"payload_on\": \"{\\\"mac\\\":\\\"@MACMAC@\\\",\\\"plug_" + String.valueOf(plug) + "\\\":{\\\"on\\\":1}}\"," +
+                    "\"payload_off\": \"{\\\"mac\\\":\\\"@MACMAC@\\\",\\\"plug_" + String.valueOf(plug) + "\\\":{\\\"on\\\":0}}\"," +
+                    "\"state_on\": \"1\"," +
+                    "\"state_off\": \"0\"," +
+                    "\"availability_topic\": \"~/availability\"," +
+                    "\"payload_available\": \"1\"," +
+                    "\"payload_not_available\": \"0\"," +
+                    "\"device\":{" +
+                    "\"identifiers\":\"ztc1_@MACMAC@\"," +
+                    "\"manufacturer\":\"Zip_zhang\"," +
+                    "\"model\":\"zTC1\"," +
+                    "\"name\":\"zTC1_@MACMAC@\"," +
+                    "\"sw_version\":\"" + tv_version.getText() + "\"," +
+                    "\"via_device\":\"ztc1_@MACMAC@\"" +
+                    "}" +
+                    "}";
+        }
+        json[0] = json[0].replace("@MACMAC@", device.getMac());
+        json[1] = json[1].replace("@MACMAC@", device.getMac());
+        return json;
+    }
+    //endregion
 
     void Send(String message) {
         boolean udp = getActivity().getSharedPreferences("Setting_" + device.getMac(), 0).getBoolean("always_UDP", false);
@@ -230,7 +367,7 @@ public class TC1Fragment extends DeviceFragment {
                 try {
 //                    device.setPower(jsonObject.getDouble("power"));
 //                    tv_power.setText(String.format("%.1fW", device.getPower()));
-                    tv_power.setText(jsonObject.getString("power")+"W");
+                    tv_power.setText(jsonObject.getString("power") + "W");
                 } catch (JSONException e) {
                     Log("功率数据出错");
                     e.printStackTrace();
@@ -268,6 +405,9 @@ public class TC1Fragment extends DeviceFragment {
                     Log("运行时间数据出错");
                     e.printStackTrace();
                 }
+            }
+            if (jsonObject.has("version") && jsonObject.get("version") instanceof String) {
+                tv_version.setText(jsonObject.getString("version"));
             }
             //endregion
 
