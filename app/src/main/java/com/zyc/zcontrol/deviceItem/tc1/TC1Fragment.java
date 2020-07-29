@@ -245,7 +245,7 @@ public class TC1Fragment extends DeviceFragment {
     //endregion
 
     String[] getHassMqttString(int plug, String plug_name) {
-        //plug:0-5 6个接口 7:功率 8:运行时间
+        //plug:0-5 6个接口 6:功率 7:运行时间
         String json[] = new String[2];
         if (plug ==6) {
             json[0] = "homeassistant/sensor/@MACMAC@/ztc1_power/config";
@@ -254,6 +254,7 @@ public class TC1Fragment extends DeviceFragment {
                     "\"name\":\"" + (plug_name == null ? ("ztc1_power_@MACMAC@") : "功率") + "\"," +
                     "\"uniq_id\":\"ztc1_power_@MACMAC@\"," +
                     "\"state_topic\":\"~/sensor\"," +
+                    "\"unit_of_measurement\":\"W\"," +
                     "\"value_template\": \"{{ value_json.power }}\"," +
                     "\"icon\": \"mdi:gauge\","+
                     "\"availability_topic\": \"~/availability\"," +
