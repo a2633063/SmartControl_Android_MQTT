@@ -64,7 +64,7 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
-        <activity android:name=".deviceItem.m1.M1LinkA1Activity"></activity>
+        <activity android:name=".deviceItem.m1.M1LinkA1Activity"/>
         <activity
             android:name=".deviceItem.m1.M1LinkActivity"
             android:label="zM1配网" />
@@ -127,6 +127,10 @@
         <activity
             android:name=".deviceItem.s7.S7LinkActivity"
             android:label="zS7配网"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name=".deviceItem.clock.ClockLinkActivity"
+            android:label="zClock配网"
             android:screenOrientation="portrait" />
         <activity
             android:name="com.easylink.EasylinkActivity"

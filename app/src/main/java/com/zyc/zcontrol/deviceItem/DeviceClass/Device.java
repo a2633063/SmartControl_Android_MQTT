@@ -8,6 +8,7 @@ import androidx.fragment.app.Fragment;
 import com.espressif.ESPtouchActivity;
 import com.zyc.zcontrol.R;
 import com.zyc.zcontrol.deviceItem.a1.A1LinkActivity;
+import com.zyc.zcontrol.deviceItem.clock.ClockLinkActivity;
 import com.zyc.zcontrol.deviceItem.dc1.DC1LinkActivity;
 import com.zyc.zcontrol.deviceItem.m1.M1LinkActivity;
 import com.zyc.zcontrol.deviceItem.s7.S7LinkActivity;
@@ -24,8 +25,8 @@ public class Device {
     public final static int TYPE_A1 = 3;
     public final static int TYPE_M1 = 4;
     public final static int TYPE_S7 = 5;
-    public final static int TYPE_RGBW = 6;
-    public final static int TYPE_CLOCK = 7;
+    public final static int TYPE_CLOCK = 6;
+    public final static int TYPE_RGBW = 7;
     public final static int TYPE_COUNT = 8;
 
 
@@ -36,8 +37,8 @@ public class Device {
             "空气净化器zA1", //3
             "空气检测仪zM1", //4
             "体重秤zS7/zS7pe",   //5
-            "zRGBW灯",   //6
-            "时钟",    //
+            "时钟",    //6
+            "zRGBW灯",   //7
     };
     public final static @DrawableRes
     int TYPE_ICON[] = {
@@ -47,7 +48,7 @@ public class Device {
             R.drawable.device_icon_za1,//3
             R.drawable.device_icon_zm1,//4
             R.drawable.device_icon_zs7,//5
-            R.drawable.device_icon_ongoing,//5
+            R.drawable.device_icon_ongoing,//6
             R.drawable.device_icon_ongoing,//4
     };
 
@@ -60,7 +61,7 @@ public class Device {
                     A1LinkActivity.class,
                     M1LinkActivity.class,
                     S7LinkActivity.class,
-                    null,
+                    ClockLinkActivity.class,
                     null,
             };
     //endregion

@@ -51,6 +51,7 @@ import com.zyc.webservice.WebService;
 import com.zyc.zcontrol.deviceItem.DeviceClass.Device;
 import com.zyc.zcontrol.deviceItem.DeviceClass.DeviceA1;
 import com.zyc.zcontrol.deviceItem.DeviceClass.DeviceButtonMate;
+import com.zyc.zcontrol.deviceItem.DeviceClass.DeviceClock;
 import com.zyc.zcontrol.deviceItem.DeviceClass.DeviceDC1;
 import com.zyc.zcontrol.deviceItem.DeviceClass.DeviceM1;
 import com.zyc.zcontrol.deviceItem.DeviceClass.DeviceRGBW;
@@ -286,11 +287,14 @@ public class MainActivity extends AppCompatActivity {
                 case Device.TYPE_RGBW:
                     deviceData.add(new DeviceRGBW(name, mac));
                     break;
+                case Device.TYPE_CLOCK:
+                    deviceData.add(new DeviceClock(name, mac));
+                    break;
             }
         }
 
         if (deviceData.size() < 1) {
-            deviceData.add(new DeviceS7("演示设备", "000000000000"));
+            deviceData.add(new DeviceClock("演示设备", "000000000000"));
         }
         //endregion
 
@@ -1030,6 +1034,9 @@ public class MainActivity extends AppCompatActivity {
                             break;
                         case Device.TYPE_RGBW:
                             mainDeviceLanUdpScanListAdapter.add(new DeviceRGBW(name, mac));
+                            break;
+                        case Device.TYPE_CLOCK:
+                            mainDeviceLanUdpScanListAdapter.add(new DeviceClock(name, mac));
                             break;
                     }
 
