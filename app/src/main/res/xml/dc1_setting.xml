@@ -18,6 +18,9 @@
             android:summary="即使连接MQTT服务器,也使用UDP发送数据"
             android:title="总是通过UDP发送数据" />
         <Preference
+            android:key="ssid"
+            android:title="连接的热点"/>
+        <Preference
             android:key="fw_version"
             android:title="当前版本(点击检查新版本)" />
         <EditTextPreference

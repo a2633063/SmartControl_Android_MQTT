@@ -35,6 +35,7 @@ public class DC1SettingFragment extends SettingFragment {
 
     Preference fw_version;
 
+    Preference ssid;
     Preference regetdata;
     EditTextPreference name_preference;
     EditTextPreference interval;
@@ -172,6 +173,7 @@ public class DC1SettingFragment extends SettingFragment {
         name_preference = (EditTextPreference) findPreference("name");
         interval = (EditTextPreference) findPreference("interval");
 
+        ssid = findPreference("ssid");
         name_preference.setSummary(device.getName());
 
         //region mac地址
@@ -392,7 +394,11 @@ public class DC1SettingFragment extends SettingFragment {
                 name_preference.setText(device.getName());
             }
             //endregion
-
+            //region ssid
+            if (jsonObject.has("ssid")) {
+                ssid.setSummary(jsonObject.getString("ssid"));
+            }
+            //endregion
             //region 获取版本号
             if (jsonObject.has("version")) {
                 String version = jsonObject.getString("version");
