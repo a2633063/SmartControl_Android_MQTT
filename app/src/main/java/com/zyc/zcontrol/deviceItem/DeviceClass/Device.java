@@ -48,7 +48,7 @@ public class Device {
             R.drawable.device_icon_za1,//3
             R.drawable.device_icon_zm1,//4
             R.drawable.device_icon_zs7,//5
-            R.drawable.device_icon_ongoing,//6
+            R.drawable.device_icon_zclock,//6
             R.drawable.device_icon_ongoing,//4
     };
 
