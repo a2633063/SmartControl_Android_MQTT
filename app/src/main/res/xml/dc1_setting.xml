@@ -31,7 +31,7 @@
         <Preference
             android:key="regetdata"
             android:title="重新获取数据"
-            android:summary="获取版本/激活状态失败时点此重试"/>
+            android:summary="获取版本状态失败时点此重试"/>
 
         <CheckBoxPreference
             android:defaultValue="false"
