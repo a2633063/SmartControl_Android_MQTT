@@ -133,6 +133,10 @@
             android:label="zClock配网"
             android:screenOrientation="portrait" />
         <activity
+            android:name=".deviceItem.mops.MOPSLinkActivity"
+            android:label="zMOPS配网"
+            android:screenOrientation="portrait" />
+        <activity
             android:name="com.easylink.EasylinkActivity"
             android:label="添加设备"
             android:screenOrientation="portrait" />

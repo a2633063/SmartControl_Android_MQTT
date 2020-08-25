@@ -54,6 +54,7 @@ import com.zyc.zcontrol.deviceItem.DeviceClass.DeviceButtonMate;
 import com.zyc.zcontrol.deviceItem.DeviceClass.DeviceClock;
 import com.zyc.zcontrol.deviceItem.DeviceClass.DeviceDC1;
 import com.zyc.zcontrol.deviceItem.DeviceClass.DeviceM1;
+import com.zyc.zcontrol.deviceItem.DeviceClass.DeviceMOPS;
 import com.zyc.zcontrol.deviceItem.DeviceClass.DeviceRGBW;
 import com.zyc.zcontrol.deviceItem.DeviceClass.DeviceS7;
 import com.zyc.zcontrol.deviceItem.DeviceClass.DeviceTC1;
@@ -289,6 +290,9 @@ public class MainActivity extends AppCompatActivity {
                     break;
                 case Device.TYPE_CLOCK:
                     deviceData.add(new DeviceClock(name, mac));
+                    break;
+                case Device.TYPE_MOPS:
+                    deviceData.add(new DeviceMOPS(name, mac));
                     break;
             }
         }
@@ -1037,6 +1041,9 @@ public class MainActivity extends AppCompatActivity {
                             break;
                         case Device.TYPE_CLOCK:
                             mainDeviceLanUdpScanListAdapter.add(new DeviceClock(name, mac));
+                            break;
+                        case Device.TYPE_MOPS:
+                            mainDeviceLanUdpScanListAdapter.add(new DeviceMOPS(name, mac));
                             break;
                     }
 

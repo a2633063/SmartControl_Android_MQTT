@@ -13,6 +13,7 @@ import com.zyc.zcontrol.deviceItem.dc1.DC1LinkActivity;
 import com.zyc.zcontrol.deviceItem.m1.M1LinkActivity;
 import com.zyc.zcontrol.deviceItem.s7.S7LinkActivity;
 import com.zyc.zcontrol.deviceItem.tc1.TC1LinkActivity;
+import com.zyc.zcontrol.deviceItem.mops.MOPSLinkActivity;
 
 
 public class Device {
@@ -26,8 +27,9 @@ public class Device {
     public final static int TYPE_M1 = 4;
     public final static int TYPE_S7 = 5;
     public final static int TYPE_CLOCK = 6;
-    public final static int TYPE_RGBW = 7;
-    public final static int TYPE_COUNT = 8;
+    public final static int TYPE_MOPS = 7;
+    public final static int TYPE_RGBW = 8;
+    public final static int TYPE_COUNT = 9;
 
 
     public final static String[] TypeName = new String[]{
@@ -38,7 +40,8 @@ public class Device {
             "空气检测仪zM1", //4
             "体重秤zS7/zS7pe",   //5
             "时钟",    //6
-            "zRGBW灯",   //7
+            "zMOPS插座",   //7
+            "zRGBW灯",   //8
     };
     public final static @DrawableRes
     int TYPE_ICON[] = {
@@ -49,6 +52,7 @@ public class Device {
             R.drawable.device_icon_zm1,//4
             R.drawable.device_icon_zs7,//5
             R.drawable.device_icon_zclock,//6
+            R.drawable.device_icon_zmops,//7
             R.drawable.device_icon_ongoing,//4
     };
 
@@ -62,6 +66,7 @@ public class Device {
                     M1LinkActivity.class,
                     S7LinkActivity.class,
                     ClockLinkActivity.class,
+                    MOPSLinkActivity.class,
                     null,
             };
     //endregion
