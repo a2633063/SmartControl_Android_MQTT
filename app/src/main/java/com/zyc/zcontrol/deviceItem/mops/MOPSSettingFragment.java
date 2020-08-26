@@ -293,11 +293,17 @@ public class MOPSSettingFragment extends SettingFragment {
                     @Override
                     public void onClick(DialogInterface dialogInterface, int i) {
                         String uri = et.getText().toString();
-                        if (uri.length() < 1) return;
-                        if (uri.startsWith("http")) {
-                            String[] ota = uri.split("\r\n");
-                            Send("{\"mac\":\"" + device.getMac() + "\",\"setting\":{\"ota1\":\"" + ota[0] + "\",\"ota2\":\"" + ota[1] + "\"}}");
+                        //if (uri.length() < 1) return;
+                        String[] ota = uri.replace("\r\n", "\n").split("\n");
+
+                        if (ota.length < 2
+                                || (ota.length >= 2 && (!ota[0].startsWith("http") || !ota[1].startsWith("http")))
+                        ) {
+                            Toast.makeText(getActivity(), "填写链接错误!", Toast.LENGTH_SHORT).show();
+                            return;
                         }
+                        Send("{\"mac\":\"" + device.getMac() + "\",\"setting\":{\"ota1\":\"" + ota[0] + "\",\"ota2\":\"" + ota[1] + "\"}}");
+
                     }
                 }).setNegativeButton("取消", null).show();
     }
