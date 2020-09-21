@@ -16,13 +16,13 @@ public class DeviceRGBW extends Device {
     //region 必须重构的函数
     public String[] getRecvMqttTopic() {
         String[] topic = new String[2];
-        topic[0] = "device/rgbw/" + getMac() + "/state";
-        topic[1] = "device/rgbw/" + getMac() + "/availability";
+        topic[0] = "device/zrgbw/" + getMac() + "/state";
+        topic[1] = "device/zrgbw/" + getMac() + "/availability";
         return topic;
     }
 
     public String getSendMqttTopic() {
-        return "device/rgbw/" + getMac() + "/set";
+        return "device/zrgbw/" + getMac() + "/set";
     }
 
 

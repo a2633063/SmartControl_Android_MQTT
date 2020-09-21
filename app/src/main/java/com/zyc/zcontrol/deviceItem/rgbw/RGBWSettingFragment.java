@@ -298,21 +298,27 @@ public class RGBWSettingFragment extends SettingFragment {
         //未获取到当前版本信息
         if (!isGetVersion()) return;
         final EditText et = new EditText(getActivity());
+        et.setMinLines(2);
         new AlertDialog.Builder(getActivity()).setTitle("请输入固件下载地址")
-                .setMessage("警告:输入错误的地址可能导致固件损坏!")
+                .setMessage("需要输入2个ota地址,以换行隔开\n警告:输入错误的地址可能导致固件损坏!\n请勿谨慎使用此功能!")
                 .setView(et)
                 .setPositiveButton("确定", new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialogInterface, int i) {
                         String uri = et.getText().toString();
-                        if (uri.length() < 1) return;
-                        if (uri.startsWith("http")) {
-                            Send("{\"mac\":\"" + device.getMac() + "\",\"setting\":{\"ota\":\"" + uri + "\"}}");
+                        //if (uri.length() < 1) return;
+                        String[] ota = uri.replace("\r\n", "\n").split("\n");
+                        if (ota.length < 2
+                                || (ota.length >= 2 && (!ota[0].startsWith("http") || !ota[1].startsWith("http")))
+                        ) {
+                            Toast.makeText(getActivity(), "填写链接错误!", Toast.LENGTH_SHORT).show();
+                            return;
                         }
+                        Send("{\"mac\":\"" + device.getMac() + "\",\"setting\":{\"ota1\":\"" + ota[0] + "\",\"ota2\":\"" + ota[1] + "\"}}");
+
                     }
                 }).setNegativeButton("取消", null).show();
     }
-
     //endregion
     //region 弹窗激活
     void unlock() {
