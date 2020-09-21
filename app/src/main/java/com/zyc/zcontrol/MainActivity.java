@@ -45,6 +45,7 @@ import androidx.localbroadcastmanager.content.LocalBroadcastManager;
 import androidx.viewpager.widget.ViewPager;
 
 import com.google.android.material.navigation.NavigationView;
+import com.google.android.material.snackbar.Snackbar;
 import com.google.android.material.tabs.TabLayout;
 import com.zyc.Function;
 import com.zyc.webservice.WebService;
@@ -173,10 +174,10 @@ public class MainActivity extends AppCompatActivity {
                                 || !obj.has("body")
                                 || !obj.has("created_at")) throw new JSONException("获取最新版本信息失败");
 
-                        String body = obj.getString("body");
-                        String name = obj.getString("name");
-                        String tag_name = obj.getString("tag_name");
-                        String created_at = obj.getString("created_at");
+                        final String body = obj.getString("body");
+                        final String name = obj.getString("name");
+                        final String tag_name = obj.getString("tag_name");
+                        final String created_at = obj.getString("created_at");
 
                         String tag_name_old = getLocalVersionName(MainActivity.this);
                         if (tag_name.equals(tag_name_old)) {
@@ -206,29 +207,19 @@ public class MainActivity extends AppCompatActivity {
                                 break;
                             }
 
-                            AlertDialog alertDialog = new AlertDialog.Builder(MainActivity.this)
-                                    .setTitle("请更新版本:" + tag_name)
-                                    .setMessage(name + "\r\n" + body + "\r\n更新日期:" + created_at)
-                                    .setPositiveButton("更新", new DialogInterface.OnClickListener() {
-                                        @Override
-                                        public void onClick(DialogInterface dialog, int which) {
-                                            Uri uri = Uri.parse("https://www.coolapk.com/apk/com.zyc.zcontrol");
-                                            Intent intent = new Intent(Intent.ACTION_VIEW, uri);
-                                            startActivity(intent);
-                                        }
-                                    })
-                                    .setNegativeButton("取消", null)
-                                    .create();
-                            alertDialog.show();
+                            String version_no_ask = mSharedPreferences.getString("version_no_ask", "");
 
-                            // 在dialog执行show之后才能来设置
-                            TextView tvMsg = (TextView) alertDialog.findViewById(android.R.id.message);
-                            String HtmlStr = String.format(getResources().getString(R.string.app_ota_message), name, body, created_at).replace("\n", "<br />");
-                            Log.d(Tag, HtmlStr);
-                            if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.N) {
-                                tvMsg.setText(Html.fromHtml(HtmlStr, Html.FROM_HTML_MODE_COMPACT));
+                            if (version_no_ask.equals(tag_name)) {
+                                Snackbar.make(findViewById(R.id.viewpager), "APP有更新版本:" + tag_name+"\r\n请更新", Snackbar.LENGTH_LONG)
+
+                                        .setAction("更新", new View.OnClickListener() {
+                                            @Override
+                                            public void onClick(View v) {
+                                                updateApp(  tag_name, name,body,created_at);
+                                            }
+                                        }).show();
                             } else {
-                                tvMsg.setText(Html.fromHtml(HtmlStr));
+                                updateApp(  tag_name, name,body,created_at);
                             }
 
                         }
@@ -252,6 +243,7 @@ public class MainActivity extends AppCompatActivity {
         setSupportActionBar(toolbar);
 
         mSharedPreferences = getSharedPreferences("Setting", 0);
+
         deviceData = ((MainApplication) getApplication()).getDeviceList();
         deviceData.clear();
         //region 数据库初始化
@@ -555,6 +547,7 @@ public class MainActivity extends AppCompatActivity {
 //            }
         }
         //endregion
+        super.onActivityResult(requestCode, resultCode, intent);
     }
 
     protected void onNewIntent(Intent intent) {
@@ -677,7 +670,7 @@ public class MainActivity extends AppCompatActivity {
                 AlertDialog alertDialog = new AlertDialog.Builder(MainActivity.this)
                         .setTitle("当前设备类型暂时无文档链接")
                         .setMessage("请等待作者更新.")
-                        .setPositiveButton("确定",null)
+                        .setPositiveButton("确定", null)
                         .create();
                 alertDialog.show();
             }
@@ -973,6 +966,44 @@ public class MainActivity extends AppCompatActivity {
 
     }
 
+    private void updateApp(final String tag_name,final String name,final String body,final String created_at) {
+
+        //region 显示APP更新弹窗
+        AlertDialog alertDialog = new AlertDialog.Builder(MainActivity.this)
+                .setTitle("请更新版本:" + tag_name)
+                .setMessage(name + "\r\n" + body + "\r\n更新日期:" + created_at)
+                .setPositiveButton("更新", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        Uri uri = Uri.parse("https://www.coolapk.com/apk/com.zyc.zcontrol");
+                        Intent intent = new Intent(Intent.ACTION_VIEW, uri);
+                        startActivity(intent);
+                    }
+                })
+                .setNegativeButton("取消", null)
+                .create();
+        alertDialog.setButton(DialogInterface.BUTTON_NEUTRAL, "不再提示此版本", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                mEditor = getSharedPreferences("Setting", 0).edit();
+                mEditor.putString("version_no_ask", tag_name);
+                mEditor.commit();
+            }
+        });
+        alertDialog.show();
+
+        // 在dialog执行show之后才能来设置
+        TextView tvMsg = (TextView) alertDialog.findViewById(android.R.id.message);
+        String HtmlStr = String.format(getResources().getString(R.string.app_ota_message), name, body, created_at).replace("\n", "<br />");
+        Log.d(Tag, HtmlStr);
+        if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.N) {
+            tvMsg.setText(Html.fromHtml(HtmlStr, Html.FROM_HTML_MODE_COMPACT));
+        } else {
+            tvMsg.setText(Html.fromHtml(HtmlStr));
+        }
+        //endregion
+
+    }
     //endregion
 
 
