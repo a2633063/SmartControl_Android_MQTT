@@ -20,6 +20,7 @@ import com.zyc.zcontrol.R;
 import com.zyc.zcontrol.deviceItem.DeviceClass.DeviceFragment;
 import com.zyc.zcontrol.deviceItem.DeviceClass.DeviceRGBW;
 
+import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -120,6 +121,7 @@ public class RGBWFragment extends DeviceFragment {
         SeekBar.OnSeekBarChangeListener seekBarSeekBarChangeListener = new SeekBar.OnSeekBarChangeListener() {
             @Override
             public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
+                Log.d(Tag, "fromUser:" + fromUser);
                 textViewR.setText(String.format(Locale.getDefault(), "R:%03d", seekBarR.getProgress()));
                 textViewG.setText(String.format(Locale.getDefault(), "G:%03d", seekBarG.getProgress()));
                 textViewB.setText(String.format(Locale.getDefault(), "B:%03d", seekBarB.getProgress()));
@@ -205,6 +207,16 @@ public class RGBWFragment extends DeviceFragment {
             }
             if (jsonObject.has("name")) device.setName(jsonObject.getString("name"));
 
+            if (jsonObject.has("rgb")) {
+                JSONArray rgb = jsonObject.getJSONArray("rgb");
+                if (rgb.length() == 4) {
+                    seekBarR.setProgress(rgb.getInt(0));
+                    seekBarG.setProgress(rgb.getInt(1));
+                    seekBarB.setProgress(rgb.getInt(2));
+                    seekBarW.setProgress(rgb.getInt(3));
+                }
+
+            }
 
         } catch (JSONException e) {
             e.printStackTrace();
