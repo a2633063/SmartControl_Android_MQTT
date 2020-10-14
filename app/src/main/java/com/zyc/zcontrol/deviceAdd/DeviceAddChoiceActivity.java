@@ -3,6 +3,7 @@ package com.zyc.zcontrol.deviceAdd;
 import android.annotation.SuppressLint;
 import android.content.Context;
 import android.content.Intent;
+import android.net.Uri;
 import android.net.nsd.NsdManager;
 import android.net.nsd.NsdServiceInfo;
 import android.os.Bundle;
@@ -25,6 +26,7 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.zyc.zcontrol.MainActivity;
 import com.zyc.zcontrol.MainApplication;
 import com.zyc.zcontrol.R;
 import com.zyc.zcontrol.deviceItem.DeviceClass.Device;
@@ -33,6 +35,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import static com.zyc.zcontrol.deviceItem.DeviceClass.Device.TYPE_COUNT;
+import static com.zyc.zcontrol.deviceItem.DeviceClass.Device.TypeUri;
 import static com.zyc.zcontrol.deviceItem.DeviceClass.Device.Type_Icon;
 import static com.zyc.zcontrol.deviceItem.DeviceClass.Device.TYPE_UNKNOWN;
 import static com.zyc.zcontrol.deviceItem.DeviceClass.Device.TypeName;
@@ -356,6 +359,7 @@ public class DeviceAddChoiceActivity extends AppCompatActivity {
 
                 holder.tv = convertView.findViewById(R.id.textView);
                 holder.im = convertView.findViewById(R.id.imageView);
+                holder.im_help = convertView.findViewById(R.id.iv_help);
 
 
                 convertView.setTag(holder);
@@ -366,6 +370,15 @@ public class DeviceAddChoiceActivity extends AppCompatActivity {
 
             holder.tv.setText(TypeName[position]);
             holder.im.setImageResource(Type_Icon[position]);
+            holder.im_help.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    //Toast.makeText(MainActivity.this, "打开文档:"+TypeUri, Toast.LENGTH_SHORT).show();
+                    Uri uri = Uri.parse(TypeUri[position]);
+                    Intent intent = new Intent(Intent.ACTION_VIEW, uri);
+                    startActivity(intent);
+                }
+            });
 
             return convertView;
         }
@@ -373,6 +386,7 @@ public class DeviceAddChoiceActivity extends AppCompatActivity {
         class ViewHolder {
             ImageView im;
             TextView tv;
+            ImageView im_help;
         }
     }
 }

@@ -30,6 +30,7 @@ import android.view.View;
 import android.widget.AdapterView;
 import android.widget.Button;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.PopupWindow;
 import android.widget.TextView;
@@ -846,46 +847,29 @@ public class MainActivity extends AppCompatActivity {
             }
         });
         //endregion
-        //region zTC1页面跳转
-        popupView.findViewById(R.id.btn_ztc1).setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Uri uri = Uri.parse("https://github.com/a2633063/zTC1/");
-                Intent intent = new Intent(Intent.ACTION_VIEW, uri);
-                startActivity(intent);
-            }
-        });
-        //endregion
-        //region zDC1页面跳转
-        popupView.findViewById(R.id.btn_zdc1).setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Uri uri = Uri.parse("https://github.com/a2633063/zDC1/");
-                Intent intent = new Intent(Intent.ACTION_VIEW, uri);
-                startActivity(intent);
-            }
-        });
-        //endregion
-        //region zA1页面跳转
-        popupView.findViewById(R.id.btn_za1).setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Uri uri = Uri.parse("https://github.com/a2633063/zA1/");
-                Intent intent = new Intent(Intent.ACTION_VIEW, uri);
-                startActivity(intent);
-            }
-        });
-        //endregion
-        //region zM1页面跳转
-        popupView.findViewById(R.id.btn_zm1).setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Uri uri = Uri.parse("https://github.com/a2633063/zM1/");
-                Intent intent = new Intent(Intent.ACTION_VIEW, uri);
-                startActivity(intent);
-            }
-        });
-        //endregion
+
+        LinearLayout ll=popupView.findViewById(R.id.ll);
+
+        for(int i=0;i<Device.TYPE_COUNT;i++) {
+            Button b = new Button(this);
+//        b.setBackground(null);
+//        b.setTextColor(0xa0ffffff);
+//        b.setBackgroundResource(R.drawable.background_gray_borders);
+            b.setAllCaps(false);
+            b.setText(Device.TypeName[i]+"文档");
+            final String TypeUri=Device.TypeUri[i];
+            b.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    Toast.makeText(MainActivity.this, "打开文档:"+TypeUri, Toast.LENGTH_SHORT).show();
+                    Uri uri = Uri.parse(TypeUri);
+                    Intent intent = new Intent(Intent.ACTION_VIEW, uri);
+                    startActivity(intent);
+                }
+            });
+            ll.addView(b);
+        }
+
         //region window初始化
         window.setBackgroundDrawable(new ColorDrawable(android.graphics.Color.alpha(0xffff0000)));
         window.setOutsideTouchable(true);

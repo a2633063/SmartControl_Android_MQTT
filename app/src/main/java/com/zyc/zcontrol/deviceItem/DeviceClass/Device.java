@@ -35,12 +35,12 @@ public class Device {
     //设备名称
     public final static String[] TypeName = new String[]{
             "按键伴侣",//0
-            "智能排插zTC1",//1
-            "智能排插zDC1",   //2
-            "空气净化器zA1", //3
-            "空气检测仪zM1", //4
-            "体重秤zS7/zS7pe",   //5
-            "时钟",    //6
+            "zTC1智能排插",//1
+            "zDC1智能排插",   //2
+            "zA1空气净化器", //3
+            "zM1空气检测仪", //4
+            "zS7/zS7pe体重秤",   //5
+            "zClock时钟",    //6
             "zMOPS插座",   //7
             "zRGBW灯",   //8
     };
@@ -67,7 +67,7 @@ public class Device {
             R.drawable.device_icon_zs7,//5
             R.drawable.device_icon_zclock,//6
             R.drawable.device_icon_zmops,//7
-            R.drawable.device_icon_ongoing,//4
+            R.drawable.device_icon_zrgbw,//4
     };
 
     //设备对应配对页面

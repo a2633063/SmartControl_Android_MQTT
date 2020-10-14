@@ -27,5 +27,15 @@
         android:text="test"
         android:layout_marginStart="10dp"
         android:gravity="center_vertical"
+        android:layout_weight="1"
         android:textSize="20dp" />
+
+    <ImageView
+        android:id="@+id/iv_help"
+        android:layout_width="wrap_content"
+        android:layout_height="match_parent"
+        android:paddingStart="16dp"
+        android:paddingEnd="32dp"
+        android:gravity="end"
+        app:srcCompat="@drawable/ic_help_outline_black_24dp" />
 </LinearLayout>

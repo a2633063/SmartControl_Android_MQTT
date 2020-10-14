@@ -13,15 +13,17 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:addStatesFromChildren="false"
-        android:scrollbars="none">
+        android:padding="16dp"
+        android:scrollbars="vertical">
 
         <LinearLayout
+            android:id="@+id/ll"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:background="#ff333333"
             android:gravity="center"
             android:orientation="vertical"
-            android:padding="16dp">
+            android:padding="8dp">
 
             <TextView
                 android:id="@+id/tv_title"
@@ -58,7 +60,7 @@
             <TextView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="当前APP支持的控制设备:\nzTC1(排插)|zDC1(排插)|zA1(空气净化器)|zM1(空气检测器)|按键伴侣\n\n本app开源地址:"
+                android:text="当前APP支持的控制设备:\nzTC1(排插)|zDC1(排插)|zA1(空气净化器)|zM1(空气检测器)|按键伴侣|zS7/zS7pe(体重秤)|zClock(数码管时钟)|zMOPS(插座)|zRGBW(灯泡)\n相关文档见下方按钮跳转\n本app开源地址:"
                 android:textSize="18dp" />
 
             <TextView
@@ -71,8 +73,8 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:gravity="start"
-                android:textColor="@android:color/white"
                 android:text="\n支付宝打赏:(点击图片可直接跳转支付宝)\n"
+                android:textColor="@android:color/white"
                 android:textSize="18dp" />
 
             <ImageView
@@ -101,38 +103,7 @@
                 android:layout_gravity="bottom"
                 android:text="app文档" />
 
-            <Button
-                android:id="@+id/btn_ztc1"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_gravity="bottom"
-                android:text="zTC1文档" />
 
-            <Button
-                android:id="@+id/btn_zdc1"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_gravity="bottom"
-                android:text="zDC1文档" />
-
-            <Button
-                android:id="@+id/btn_za1"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_gravity="bottom"
-                android:text="zA1文档" />
-            <Button
-                android:id="@+id/btn_zm1"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_gravity="bottom"
-                android:text="zM1文档" />
-            <Button
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_gravity="bottom"
-                android:enabled="false"
-                android:text="按键伴侣文档" />
         </LinearLayout>
     </ScrollView>
 </LinearLayout>
