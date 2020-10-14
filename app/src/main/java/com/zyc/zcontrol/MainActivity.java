@@ -664,6 +664,7 @@ public class MainActivity extends AppCompatActivity {
             //region 设备帮助文档页面
             Device d = mainDeviceListAdapter.getChoiceDevice();
             if (d != null && d.getDocUri() != null && !d.getDocUri().isEmpty()) {
+                Toast.makeText(this, "打开文档:"+d.getDocUri(), Toast.LENGTH_SHORT).show();
                 Uri uri = Uri.parse(d.getDocUri());
                 Intent intent = new Intent(Intent.ACTION_VIEW, uri);
                 startActivity(intent);

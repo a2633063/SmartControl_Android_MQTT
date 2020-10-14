@@ -18,6 +18,7 @@ import com.zyc.zcontrol.deviceItem.mops.MOPSLinkActivity;
 
 public class Device {
 
+
     //region 静态变量
     public final static int TYPE_UNKNOWN = -1;
     public final static int TYPE_BUTTON_MATE = 0;
@@ -31,7 +32,7 @@ public class Device {
     public final static int TYPE_RGBW = 8;
     public final static int TYPE_COUNT = 9;
 
-
+    //设备名称
     public final static String[] TypeName = new String[]{
             "按键伴侣",//0
             "智能排插zTC1",//1
@@ -43,8 +44,21 @@ public class Device {
             "zMOPS插座",   //7
             "zRGBW灯",   //8
     };
+    //设备链接地址
+    public final static String[] TypeUri = new String[]{
+            "https://github.com/a2633063/SmartControl_ButtonMate_ESP8266",//0
+            "https://github.com/a2633063/zTC1",//1
+            "https://github.com/a2633063/zDC1",   //2
+            "https://github.com/a2633063/zA1", //3
+            "https://github.com/a2633063/zM1", //4
+            "https://github.com/a2633063/zS7",   //5
+            "https://github.com/a2633063/zClock",    //6
+            "https://github.com/a2633063/zMOPS",   //7
+            "https://github.com/a2633063/zRGBW",   //8
+    };
+    //设备图标
     public final static @DrawableRes
-    int TYPE_ICON[] = {
+    int Type_Icon[] = {
             R.drawable.device_icon_diy,//0
             R.drawable.device_icon_ztc1,//1
             R.drawable.device_icon_zdc1,//2
@@ -56,7 +70,7 @@ public class Device {
             R.drawable.device_icon_ongoing,//4
     };
 
-
+    //设备对应配对页面
     public final static Class LinkActivity[] =
             {
                     ESPtouchActivity.class,
@@ -69,7 +83,7 @@ public class Device {
                     MOPSLinkActivity.class,
                     null,
             };
-    //endregion
+//endregion
 
     protected int type = TYPE_UNKNOWN;
     private String name;
@@ -138,7 +152,7 @@ public class Device {
 //        this.ssid = ssid;
 //    }
 
-    //endregion
+//endregion
 
 
     public Device(int type, String name, String mac) {
@@ -152,12 +166,12 @@ public class Device {
     }
 
     public int getIcon() {
-        return TYPE_ICON[type];
+        return Type_Icon[type];
     }
 
     //region 子类必须重构函数
     public String getDocUri() {
-        return null;
+        return TypeUri[type];
     }
 
 

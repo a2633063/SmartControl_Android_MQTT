@@ -33,7 +33,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import static com.zyc.zcontrol.deviceItem.DeviceClass.Device.TYPE_COUNT;
-import static com.zyc.zcontrol.deviceItem.DeviceClass.Device.TYPE_ICON;
+import static com.zyc.zcontrol.deviceItem.DeviceClass.Device.Type_Icon;
 import static com.zyc.zcontrol.deviceItem.DeviceClass.Device.TYPE_UNKNOWN;
 import static com.zyc.zcontrol.deviceItem.DeviceClass.Device.TypeName;
 
@@ -365,7 +365,7 @@ public class DeviceAddChoiceActivity extends AppCompatActivity {
             }
 
             holder.tv.setText(TypeName[position]);
-            holder.im.setImageResource(TYPE_ICON[position]);
+            holder.im.setImageResource(Type_Icon[position]);
 
             return convertView;
         }

@@ -14,9 +14,6 @@ public class DeviceClock extends Device {
     }
 
     //region 必须重构的函数
-    public String getDocUri() {
-        return "https://github.com/a2633063/zClock";
-    }
     public String[] getRecvMqttTopic() {
         String[] topic = new String[3];
         topic[0] = "device/zclock/" + getMac() + "/state";

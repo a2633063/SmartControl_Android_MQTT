@@ -14,9 +14,7 @@ public class DeviceButtonMate extends Device {
     }
 
     //region 必须重构的函数
-    public String getDocUri() {
-        return "https://github.com/a2633063/SmartControl_ButtonMate_ESP8266";
-    }
+
     public String[] getRecvMqttTopic() {
         String[] topic = new String[1];
         topic[0] = "domoticz/in";
