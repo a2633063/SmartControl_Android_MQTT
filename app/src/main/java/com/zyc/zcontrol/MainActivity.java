@@ -398,7 +398,6 @@ public class MainActivity extends AppCompatActivity {
         viewPager.setOffscreenPageLimit(deviceData.size() + 3);
         tabLayout.setupWithViewPager(viewPager);
 
-        if (page < mainDeviceFragmentAdapter.getCount()) viewPager.setCurrentItem(page);
         viewPager.addOnPageChangeListener(new ViewPager.OnPageChangeListener() {
             @Override
             public void onPageScrolled(int position, float positionOffset, int positionOffsetPixels) {
@@ -428,6 +427,8 @@ public class MainActivity extends AppCompatActivity {
 
             }
         });
+
+        if (page < mainDeviceFragmentAdapter.getCount()) viewPager.setCurrentItem(page);
         //endregion
         //region 打赏
         navigationView.getHeaderView(0).findViewById(R.id.tv_reward)
