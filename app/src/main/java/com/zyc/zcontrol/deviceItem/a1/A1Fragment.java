@@ -116,6 +116,16 @@ public class A1Fragment extends DeviceFragment {
                 startActivity(intent);
             }
         });
+
+        tv_task.setOnLongClickListener(new View.OnLongClickListener() {
+            @Override
+            public boolean onLongClick(View v) {
+                Intent intent = new Intent(getContext(), A1LedActivity.class);
+                intent.putExtra("mac", device.getMac());
+                startActivity(intent);
+                return false;
+            }
+        });
         //endregion
 
         //region 拖动条 处理viewpage/SwipeRefreshLayout滑动冲突事件

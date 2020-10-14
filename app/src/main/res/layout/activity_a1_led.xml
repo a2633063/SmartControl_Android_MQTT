@@ -1,0 +1,101 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:padding="32dp"
+    tools:context=".deviceItem.a1.A1LedActivity">
+
+    <TextView
+        android:id="@+id/textViewR"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="32dp"
+        android:text="R:000"
+        android:textSize="22sp"
+        app:layout_constraintEnd_toStartOf="@+id/seekBarR"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <SeekBar
+        android:id="@+id/seekBarR"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:max="255"
+        android:progress="0"
+        android:thumb="@drawable/seekbar_thumb"
+        app:layout_constraintBottom_toBottomOf="@+id/textViewR"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toEndOf="@+id/textViewR"
+        app:layout_constraintTop_toTopOf="@+id/textViewR" />
+
+
+    <TextView
+        android:id="@+id/textViewG"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="8dp"
+        android:text="G:000"
+        android:textSize="22sp"
+        app:layout_constraintEnd_toStartOf="@+id/seekBarG"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/textViewR" />
+
+    <SeekBar
+        android:id="@+id/seekBarG"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:max="255"
+        android:progress="0"
+        android:thumb="@drawable/seekbar_thumb"
+        app:layout_constraintBottom_toBottomOf="@+id/textViewG"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toEndOf="@+id/textViewG"
+        app:layout_constraintTop_toTopOf="@+id/textViewG" />
+
+    <TextView
+        android:id="@+id/textViewB"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="8dp"
+        android:text="B:000"
+        android:textSize="22sp"
+        app:layout_constraintEnd_toStartOf="@+id/seekBarB"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/textViewG" />
+
+    <SeekBar
+        android:id="@+id/seekBarB"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:max="255"
+        android:progress="0"
+        android:thumb="@drawable/seekbar_thumb"
+        app:layout_constraintBottom_toBottomOf="@+id/textViewB"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toEndOf="@+id/textViewB"
+        app:layout_constraintTop_toTopOf="@+id/textViewB" />
+
+    <ImageView
+        android:id="@+id/hsl"
+        android:layout_width="wrap_content"
+        android:scaleType="fitCenter"
+        android:layout_height="0dp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/textViewB"
+        app:srcCompat="@drawable/hsl" />
+
+    <ImageView
+        android:id="@+id/ok"
+        android:layout_width="120dp"
+
+        android:layout_height="120dp"
+        app:layout_constraintBottom_toBottomOf="@+id/hsl"
+        app:layout_constraintEnd_toEndOf="@+id/hsl"
+        app:layout_constraintStart_toStartOf="@+id/hsl"
+        app:layout_constraintTop_toTopOf="@+id/hsl"
+        app:srcCompat="@drawable/ok" />
+</androidx.constraintlayout.widget.ConstraintLayout>

@@ -64,7 +64,8 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
-        <activity android:name=".deviceItem.m1.M1LinkA1Activity"/>
+        <activity android:name=".deviceItem.a1.A1LedActivity"></activity>
+        <activity android:name=".deviceItem.m1.M1LinkA1Activity" />
         <activity
             android:name=".deviceItem.m1.M1LinkActivity"
             android:label="zM1配网" />
