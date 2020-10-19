@@ -48,7 +48,7 @@ public class MainDeviceListAdapter extends BaseAdapter {
 
             holder.tv = convertView.findViewById(R.id.textView);
             holder.im = convertView.findViewById(R.id.imageView);
-
+            holder.im_help = convertView.findViewById(R.id.iv_help);
 
             convertView.setTag(holder);
         } else {
@@ -61,7 +61,7 @@ public class MainDeviceListAdapter extends BaseAdapter {
         holder.tv.setText(mdata.get(position).getName());
         holder.im.setImageResource(mdata.get(position).getIcon());
         holder.im.setVisibility(View.VISIBLE);
-
+        holder.im_help.setVisibility(View.GONE);
 
 //        holder.tv.setText(((Map<String, Object>) mdata.get(position)).get("name").toString());
 
@@ -114,5 +114,6 @@ public class MainDeviceListAdapter extends BaseAdapter {
     class ViewHolder {
         ImageView im;
         TextView tv;
+        ImageView im_help;
     }
 }
