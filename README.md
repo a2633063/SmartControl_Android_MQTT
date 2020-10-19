@@ -17,8 +17,8 @@
 3. [zDC1](https://github.com/a2633063/zDC1_public)		       斐讯排插DC1重新开发固件.
 4. [zA1](https://github.com/a2633063/zA1)		          斐讯空气净化器悟净A1重新开发固件.
 5. [zM1](https://github.com/a2633063/zM1)		         斐讯空气检测仪悟空M1重新开发固件.
-6. RGB灯             开发中
-7. wifi校时时钟   开发中
+6. [RGBW灯](https://github.com/a2633063/zRGBW)             基于ESP8266的rgbw灯泡
+7. [zClock时钟](https://github.com/a2633063/zClock)   基于esp8266的数码管时钟
 
 
 
