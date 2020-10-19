@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:layout_gravity="center"
@@ -50,7 +51,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginBottom="8dp"
-            app:layout_constraintBottom_toTopOf="@+id/btn_ok"
+            app:layout_constraintBottom_toTopOf="@+id/btn_time_now"
             app:layout_constraintEnd_toStartOf="@+id/textView3"
             app:layout_constraintHorizontal_bias="0.5"
             app:layout_constraintHorizontal_chainStyle="packed"
@@ -112,13 +113,59 @@
             android:id="@+id/btn_ok"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
+            android:layout_marginTop="16dp"
             android:text="确认"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="@+id/on_picker"
             app:layout_constraintHorizontal_bias="0.5"
             app:layout_constraintStart_toStartOf="@+id/hour_picker"
-            app:layout_constraintTop_toBottomOf="@+id/hour_picker"
+            app:layout_constraintTop_toBottomOf="@+id/btn_time_now"
             app:layout_constraintVertical_bias="0.5" />
+
+        <Button
+            android:id="@+id/btn_time_now"
+            style="?android:attr/buttonStyleSmall"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="1小时"
+            app:layout_constraintBottom_toTopOf="@+id/btn_ok"
+            app:layout_constraintEnd_toStartOf="@id/btn_repeat_everyday"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/hour_picker" />
+
+        <Button
+            android:id="@+id/btn_repeat_everyday"
+            style="?android:attr/buttonStyleSmall"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="2小时"
+            app:layout_constraintBottom_toBottomOf="@+id/btn_time_now"
+            app:layout_constraintEnd_toStartOf="@id/btn_4_hour"
+            app:layout_constraintStart_toEndOf="@+id/btn_time_now"
+            app:layout_constraintTop_toTopOf="@+id/btn_time_now" />
+
+        <Button
+            android:id="@+id/btn_4_hour"
+            style="?android:attr/buttonStyleSmall"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="4小时"
+            app:layout_constraintBottom_toBottomOf="@+id/btn_time_now"
+            app:layout_constraintEnd_toStartOf="@id/btn_8_hour"
+            app:layout_constraintStart_toEndOf="@+id/btn_repeat_everyday"
+            app:layout_constraintTop_toTopOf="@+id/btn_time_now" />
+
+        <Button
+            android:id="@+id/btn_8_hour"
+            style="?android:attr/buttonStyleSmall"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="8小时"
+            app:layout_constraintBottom_toBottomOf="@+id/btn_time_now"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toEndOf="@+id/btn_4_hour"
+            app:layout_constraintTop_toTopOf="@+id/btn_time_now" />
+
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 </LinearLayout>

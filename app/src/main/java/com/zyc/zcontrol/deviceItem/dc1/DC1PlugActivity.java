@@ -289,7 +289,37 @@ public class DC1PlugActivity extends ServiceActivity {
         action_picker.setValue(task.action);
         //endregion
         //endregion
+        //region 快捷按钮
+        final Button btn_time_now = popupView.findViewById(R.id.btn_time_now);
+        final Button btn_repeat_everyday = popupView.findViewById(R.id.btn_repeat_everyday);
+        btn_time_now.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Calendar calendar = Calendar.getInstance();
+                hour_picker.setValue(calendar.get(Calendar.HOUR_OF_DAY));
+                minute_picker.setValue(calendar.get(Calendar.MINUTE));
+            }
+        });
 
+        btn_repeat_everyday.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+
+                if(tbtn_week[0].isChecked()&&tbtn_week[1].isChecked()&&
+                        tbtn_week[2].isChecked()&&tbtn_week[3].isChecked()&&
+                        tbtn_week[4].isChecked()&&tbtn_week[5].isChecked()&&
+                        tbtn_week[6].isChecked()){
+                    for (int i = 0; i < tbtn_week.length; i++)
+                        tbtn_week[i].setChecked(false);
+                }else{
+
+                    for (int i = 0; i < tbtn_week.length; i++)
+                        tbtn_week[i].setChecked(true);
+                }
+
+            }
+        });
+        //endregion
         //region 确认按钮初始化
         btn_ok.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -364,6 +394,40 @@ public class DC1PlugActivity extends ServiceActivity {
         action_picker.setMaxValue(action.length - 1);
         action_picker.setValue(1);
         //endregion
+        //endregion
+        //region 快捷时间按钮初始化
+        final Button btn_1_hour = popupView.findViewById(R.id.btn_time_now);
+        final Button btn_2_hour = popupView.findViewById(R.id.btn_repeat_everyday);
+        final Button btn_4_hour = popupView.findViewById(R.id.btn_4_hour);
+        final Button btn_8_hour = popupView.findViewById(R.id.btn_8_hour);
+        btn_1_hour.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                hour_picker.setValue(1);
+                minute_picker.setValue(0);
+            }
+        });
+        btn_2_hour.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                hour_picker.setValue(2);
+                minute_picker.setValue(0);
+            }
+        });
+        btn_4_hour.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                hour_picker.setValue(4);
+                minute_picker.setValue(0);
+            }
+        });
+        btn_8_hour.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                hour_picker.setValue(8);
+                minute_picker.setValue(0);
+            }
+        });
         //endregion
 
         //region 确认按钮初始化

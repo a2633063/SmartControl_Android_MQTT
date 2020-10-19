@@ -77,7 +77,7 @@
             android:label="排序" />
         <activity
             android:name=".deviceItem.a1.A1PlugActivity"
-            android:label="插口" />
+            android:label="定时" />
         <activity
             android:name=".deviceItem.m1.M1PlugActivity"
             android:label="定时" />
