@@ -15,6 +15,7 @@ import android.os.Message;
 import android.preference.CheckBoxPreference;
 import android.preference.EditTextPreference;
 import android.preference.Preference;
+import android.preference.SwitchPreference;
 import android.util.Log;
 import android.view.View;
 import android.widget.AdapterView;
@@ -43,6 +44,8 @@ public class TC1SettingFragment extends SettingFragment {
     EditTextPreference name_preference;
     EditTextPreference interval;
     CheckBoxPreference old_protocol;
+    SwitchPreference child_lock;
+    SwitchPreference led_lock;
     DeviceTC1 device;
 
     boolean ota_flag = false;
@@ -150,7 +153,7 @@ public class TC1SettingFragment extends SettingFragment {
                 //region 发送请求数据
                 case 3:
                     handler.removeMessages(3);
-                    Send("{\"mac\":\"" + device.getMac() + "\",\"version\":null,\"interval\":null,\"lock\":null,\"ssid\":null}");
+                    Send("{\"mac\":\"" + device.getMac() + "\",\"version\":null,\"led_lock\":null,\"child_lock\":null,\"interval\":null,\"lock\":null,\"ssid\":null}");
                     break;
                 //endregion
             }
@@ -179,7 +182,8 @@ public class TC1SettingFragment extends SettingFragment {
         name_preference = (EditTextPreference) findPreference("name");
         interval = (EditTextPreference) findPreference("interval");
         old_protocol = (CheckBoxPreference) findPreference("old_protocol");
-
+        child_lock = (SwitchPreference) findPreference("child_lock");
+        led_lock = (SwitchPreference) findPreference("led_lock");
 
         name_preference.setSummary(device.getName());
 
@@ -253,6 +257,35 @@ public class TC1SettingFragment extends SettingFragment {
         });
         //endregion
 
+        //region 夜间模式 led锁
+        led_lock.setOnPreferenceClickListener(new Preference.OnPreferenceClickListener() {
+            @Override
+            public boolean onPreferenceClick(Preference preference) {
+                led_lock.setChecked(!led_lock.isChecked());
+                if (!led_lock.isChecked()) {
+                    Send("{\"mac\":\"" + device.getMac() + "\",\"led_lock\":1}");
+                } else {
+                    Send("{\"mac\":\"" + device.getMac() + "\",\"led_lock\":0}");
+                }
+                return true;
+            }
+        });
+        //endregion
+
+        //region 童锁
+        child_lock.setOnPreferenceClickListener(new Preference.OnPreferenceClickListener() {
+            @Override
+            public boolean onPreferenceClick(Preference preference) {
+                child_lock.setChecked(!child_lock.isChecked());
+                if (!child_lock.isChecked()) {
+                    Send("{\"mac\":\"" + device.getMac() + "\",\"child_lock\":1}");
+                } else {
+                    Send("{\"mac\":\"" + device.getMac() + "\",\"child_lock\":0}");
+                }
+                return true;
+            }
+        });
+        //endregion
         //region 版本
         fw_version.setOnPreferenceClickListener(new Preference.OnPreferenceClickListener() {
             @Override
@@ -395,7 +428,7 @@ public class TC1SettingFragment extends SettingFragment {
     void unlock() {
 
         final EditText et = new EditText(getActivity());
-        AlertDialog alertDialog= new AlertDialog.Builder(getActivity())
+        AlertDialog alertDialog = new AlertDialog.Builder(getActivity())
                 .setTitle("请输入激活码")
                 .setView(et)
                 .setMessage("索要激活码请至项目主页中查看作者联系方式.(关于页面中有项目跳转按钮)")
@@ -423,7 +456,7 @@ public class TC1SettingFragment extends SettingFragment {
                 startActivity(intent);
             }
         });
-        alertDialog .show();
+        alertDialog.show();
 
     }
 
@@ -480,6 +513,18 @@ public class TC1SettingFragment extends SettingFragment {
                 int interval_time = jsonObject.getInt("interval");
                 interval.setSummary(String.valueOf(interval_time));
                 interval.setText(String.valueOf(interval_time));
+            }
+            //endregion
+            //region 夜间模式 led锁
+            if (jsonObject.has("led_lock")) {
+                int led_lock_val = jsonObject.getInt("led_lock");
+                led_lock.setChecked(led_lock_val != 0);
+            }
+            //endregion
+            //region 童锁
+            if (jsonObject.has("child_lock")) {
+                int child_lock_val = jsonObject.getInt("child_lock");
+                child_lock.setChecked(child_lock_val != 0);
             }
             //endregion
             //region 激活

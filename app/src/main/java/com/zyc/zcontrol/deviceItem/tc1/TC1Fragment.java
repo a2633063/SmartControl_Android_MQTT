@@ -2,6 +2,7 @@ package com.zyc.zcontrol.deviceItem.tc1;
 
 
 import android.annotation.SuppressLint;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
 import android.os.Handler;
@@ -14,6 +15,7 @@ import android.widget.CompoundButton;
 import android.widget.Switch;
 import android.widget.TextView;
 
+import androidx.appcompat.app.AlertDialog;
 import androidx.fragment.app.Fragment;
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 
@@ -109,6 +111,21 @@ public class TC1Fragment extends DeviceFragment {
             tv_plug_name[i].setOnClickListener(MainTextListener);
         }
 
+
+        tv_power.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if(tv_power.getText().equals("error")){
+                    AlertDialog alertDialog = new AlertDialog.Builder(getActivity())
+                            .setTitle("功率异常说明")
+                            .setMessage("长时间显示功率异常为硬件问题\r\n此问题通常在设备ota/重新启动后出现,也可能概率性恢复,主要为功率ic无输出信号.\r\n软件无解")
+
+                            .setNegativeButton("好的", null)
+                            .create();
+                    alertDialog.show();
+                }
+            }
+        });
         //region 隐藏功能:长按功率实现hass mqtt自动发现功能
         tv_power.setOnLongClickListener(new View.OnLongClickListener() {
             @Override
@@ -368,7 +385,11 @@ public class TC1Fragment extends DeviceFragment {
                 try {
 //                    device.setPower(jsonObject.getDouble("power"));
 //                    tv_power.setText(String.format("%.1fW", device.getPower()));
-                    tv_power.setText(jsonObject.getString("power") + "W");
+                    if(jsonObject.getString("power").equals("-1")){
+                        tv_power.setText("error");
+                    }else{
+                        tv_power.setText(jsonObject.getString("power") + "W");
+                    }
                 } catch (JSONException e) {
                     Log("功率数据出错");
                     e.printStackTrace();
