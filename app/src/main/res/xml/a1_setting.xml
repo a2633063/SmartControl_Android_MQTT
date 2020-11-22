@@ -20,7 +20,7 @@
             android:title="总是通过UDP发送数据" />
         <Preference
             android:key="ssid"
-            android:title="连接的热点"/>
+            android:title="连接的热点" />
         <Preference
             android:key="fw_version"
             android:title="当前版本(点击检查新版本)" />
@@ -30,9 +30,14 @@
         <CheckBoxPreference
             android:defaultValue="false"
             android:key="led_state"
-            android:title="风速指示灯常亮"
             android:persistent="false"
-            android:summary="勾选后启动设备后led灯不会熄灭" />
+            android:summary="勾选后启动设备后led灯不会熄灭"
+            android:title="风速指示灯常亮" />
+        <SwitchPreference
+            android:defaultValue="false"
+            android:key="child_lock"
+            android:summary="开启后按键无效.重启后自动关闭童锁."
+            android:title="按键锁定(童锁)" />
         <Preference
             android:key="filter_time"
             android:title="滤芯启用日期" />

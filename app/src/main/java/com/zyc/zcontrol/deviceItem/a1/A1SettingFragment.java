@@ -14,6 +14,7 @@ import android.os.Message;
 import android.preference.CheckBoxPreference;
 import android.preference.EditTextPreference;
 import android.preference.Preference;
+import android.preference.SwitchPreference;
 import android.util.Log;
 import android.view.View;
 import android.widget.AdapterView;
@@ -45,6 +46,7 @@ public class A1SettingFragment extends SettingFragment {
     Preference regetdata;
     EditTextPreference name_preference;
     CheckBoxPreference led_state;
+    SwitchPreference child_lock;
 
 
     DeviceA1 device;
@@ -154,7 +156,7 @@ public class A1SettingFragment extends SettingFragment {
                 //region 发送请求数据
                 case 3:
                     Send("{\"mac\":\"" + device.getMac()
-                            + "\",\"version\":null,\"lock\":null,\"ssid\":null,\"led_state\":null,\"filter_time\":null}");
+                            + "\",\"version\":null,\"lock\":null,\"child_lock\":null,\"ssid\":null,\"led_state\":null,\"filter_time\":null}");
                     break;
                 //endregion
             }
@@ -184,6 +186,7 @@ public class A1SettingFragment extends SettingFragment {
         regetdata = findPreference("regetdata");
         name_preference = (EditTextPreference) findPreference("name");
         led_state = (CheckBoxPreference) findPreference("led_state");
+        child_lock = (SwitchPreference) findPreference("child_lock");
 
 
         name_preference.setSummary(device.getName());
@@ -212,6 +215,20 @@ public class A1SettingFragment extends SettingFragment {
             public boolean onPreferenceChange(Preference preference, Object newValue) {
                 Send("{\"mac\":\"" + device.getMac() + "\",\"setting\":{\"name\":\"" + (String) newValue + "\"}}");
                 return false;
+            }
+        });
+        //endregion
+        //region 童锁
+        child_lock.setOnPreferenceClickListener(new Preference.OnPreferenceClickListener() {
+            @Override
+            public boolean onPreferenceClick(Preference preference) {
+                child_lock.setChecked(!child_lock.isChecked());
+                if (!child_lock.isChecked()) {
+                    Send("{\"mac\":\"" + device.getMac() + "\",\"child_lock\":1}");
+                } else {
+                    Send("{\"mac\":\"" + device.getMac() + "\",\"child_lock\":0}");
+                }
+                return true;
             }
         });
         //endregion
@@ -524,6 +541,12 @@ public class A1SettingFragment extends SettingFragment {
             if (jsonObject.has("version")) {
                 String version = jsonObject.getString("version");
                 fw_version.setSummary(version);
+            }
+            //endregion
+            //region 童锁
+            if (jsonObject.has("child_lock")) {
+                int child_lock_val = jsonObject.getInt("child_lock");
+                child_lock.setChecked(child_lock_val != 0);
             }
             //endregion
             //region led状态

@@ -20,11 +20,20 @@
         <Preference
             android:key="fw_version"
             android:title="当前版本(点击检查新版本)" />
-
+        <SwitchPreference
+            android:defaultValue="false"
+            android:key="led_lock"
+            android:summary="开启后led会熄灭.重启后自动关闭夜间模式."
+            android:title="夜间模式" />
+        <SwitchPreference
+            android:defaultValue="false"
+            android:key="child_lock"
+            android:summary="开启后按键无效.重启后自动关闭童锁."
+            android:title="按键锁定(童锁)" />
         <Preference
             android:key="regetdata"
-            android:title="重新获取数据"
-            android:summary="获取版本/激活状态失败时点此重试"/>
+            android:summary="获取版本/激活状态失败时点此重试"
+            android:title="重新获取数据" />
 
     </PreferenceCategory>
 

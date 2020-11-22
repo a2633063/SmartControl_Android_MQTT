@@ -38,8 +38,8 @@
         <SwitchPreference
             android:defaultValue="false"
             android:key="child_lock"
-            android:title="童锁"
-            android:summary="开启按键无效.重启后自动关闭童锁."/>
+            android:summary="开启后按键无效.重启后自动关闭童锁."
+            android:title="按键锁定(童锁)" />
         <Preference
             android:key="fw_version"
             android:title="当前版本(点击检查新版本)"/>
