@@ -87,18 +87,18 @@ public class MainActivity extends AppCompatActivity {
     private SharedPreferences mSharedPreferences;
     private SharedPreferences.Editor mEditor;
 
-
-    DrawerLayout drawerLayout;
-    ListView lv_device;
-    ArrayList<Device> deviceData;
-    MainDeviceListAdapter mainDeviceListAdapter;
-    MainDeviceLanUdpScanListAdapter mainDeviceLanUdpScanListAdapter = null;
-
     //region 使用本地广播与service通信
     LocalBroadcastManager localBroadcastManager;
     private MsgReceiver msgReceiver;
     WifiManager.MulticastLock wifiLock;
     //endregion
+
+    //region 控件
+    DrawerLayout drawerLayout;
+    ListView lv_device;
+    ArrayList<Device> deviceData;
+    MainDeviceListAdapter mainDeviceListAdapter;
+    MainDeviceLanUdpScanListAdapter mainDeviceLanUdpScanListAdapter = null;
 
     private TextView tvDeviceSort;
     private Toolbar toolbar;
@@ -107,9 +107,9 @@ public class MainActivity extends AppCompatActivity {
     private MainDeviceFragmentAdapter mainDeviceFragmentAdapter;
 
     ConnectService mConnectService;
+    //endregion
+
     boolean updateSqlFlag = false;
-
-
     int onPageScrolled = 0;   //viewpage滑动标志位,用于当viewpage滑到最左侧屏,依然继续向左侧滑动时打开侧边栏
 
     //region Handler
@@ -211,16 +211,16 @@ public class MainActivity extends AppCompatActivity {
                             String version_no_ask = mSharedPreferences.getString("version_no_ask", "");
 
                             if (version_no_ask.equals(tag_name)) {
-                                Snackbar.make(findViewById(R.id.viewpager), "APP有更新版本:" + tag_name+"\r\n请更新", Snackbar.LENGTH_LONG)
+                                Snackbar.make(findViewById(R.id.viewpager), "APP有更新版本:" + tag_name + "\r\n请更新", Snackbar.LENGTH_LONG)
 
                                         .setAction("更新", new View.OnClickListener() {
                                             @Override
                                             public void onClick(View v) {
-                                                updateApp(  tag_name, name,body,created_at);
+                                                updateApp(tag_name, name, body, created_at);
                                             }
                                         }).show();
                             } else {
-                                updateApp(  tag_name, name,body,created_at);
+                                updateApp(tag_name, name, body, created_at);
                             }
 
                         }
@@ -259,35 +259,10 @@ public class MainActivity extends AppCompatActivity {
             String mac = cursor.getString(cursor.getColumnIndex("mac"));
             Log.d(Tag, "query------->" + "id：" + id + " " + "name：" + name + " " + "type：" + type + " " + "mac：" + mac);
 
-            switch (type) {
-                case Device.TYPE_BUTTON_MATE:
-                    deviceData.add(new DeviceButtonMate(name, mac));
-                    break;
-                case Device.TYPE_TC1:
-                    deviceData.add(new DeviceTC1(name, mac));
-                    break;
-                case Device.TYPE_DC1:
-                    deviceData.add(new DeviceDC1(name, mac));
-                    break;
-                case Device.TYPE_S7:
-                    deviceData.add(new DeviceS7(name, mac));
-                    break;
-                case Device.TYPE_A1:
-                    deviceData.add(new DeviceA1(name, mac));
-                    break;
-                case Device.TYPE_M1:
-                    deviceData.add(new DeviceM1(name, mac));
-                    break;
-                case Device.TYPE_RGBW:
-                    deviceData.add(new DeviceRGBW(name, mac));
-                    break;
-                case Device.TYPE_CLOCK:
-                    deviceData.add(new DeviceClock(name, mac));
-                    break;
-                case Device.TYPE_MOPS:
-                    deviceData.add(new DeviceMOPS(name, mac));
-                    break;
-            }
+            Device device_temp = returnDeviceClass(name, mac, type);
+            if (device_temp != null)
+                deviceData.add(device_temp);
+
         }
 
         if (deviceData.size() < 1) {
@@ -665,7 +640,7 @@ public class MainActivity extends AppCompatActivity {
             //region 设备帮助文档页面
             Device d = mainDeviceListAdapter.getChoiceDevice();
             if (d != null && d.getDocUri() != null && !d.getDocUri().isEmpty()) {
-                Toast.makeText(this, "打开文档:"+d.getDocUri(), Toast.LENGTH_SHORT).show();
+                Toast.makeText(this, "打开文档:" + d.getDocUri(), Toast.LENGTH_SHORT).show();
                 Uri uri = Uri.parse(d.getDocUri());
                 Intent intent = new Intent(Intent.ACTION_VIEW, uri);
                 startActivity(intent);
@@ -848,20 +823,20 @@ public class MainActivity extends AppCompatActivity {
         });
         //endregion
 
-        LinearLayout ll=popupView.findViewById(R.id.ll);
+        LinearLayout ll = popupView.findViewById(R.id.ll);
 
-        for(int i=0;i<Device.TYPE_COUNT;i++) {
+        for (int i = 0; i < Device.TYPE_COUNT; i++) {
             Button b = new Button(this);
 //        b.setBackground(null);
 //        b.setTextColor(0xa0ffffff);
 //        b.setBackgroundResource(R.drawable.background_gray_borders);
             b.setAllCaps(false);
-            b.setText(Device.TypeName[i]+"文档");
-            final String TypeUri=Device.TypeUri[i];
+            b.setText(Device.TypeName[i] + "文档");
+            final String TypeUri = Device.TypeUri[i];
             b.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    Toast.makeText(MainActivity.this, "打开文档:"+TypeUri, Toast.LENGTH_SHORT).show();
+                    Toast.makeText(MainActivity.this, "打开文档:" + TypeUri, Toast.LENGTH_SHORT).show();
                     Uri uri = Uri.parse(TypeUri);
                     Intent intent = new Intent(Intent.ACTION_VIEW, uri);
                     startActivity(intent);
@@ -952,7 +927,7 @@ public class MainActivity extends AppCompatActivity {
 
     }
 
-    private void updateApp(final String tag_name,final String name,final String body,final String created_at) {
+    private void updateApp(final String tag_name, final String name, final String body, final String created_at) {
 
         //region 显示APP更新弹窗
         AlertDialog alertDialog = new AlertDialog.Builder(MainActivity.this)
@@ -1026,6 +1001,10 @@ public class MainActivity extends AppCompatActivity {
                     String mac = jsonObject.getString("mac");
                     int type = jsonObject.getInt("type");
 
+                    if (mainDeviceLanUdpScanListAdapter == null || mac == null) {
+                        return;
+                    }
+
                     if (mainDeviceListAdapter.contains(mac) > -1) { //设备之前就已添加
                         Log.d(Tag, "已添加的重复设备:" + mac);
                         return;
@@ -1034,37 +1013,12 @@ public class MainActivity extends AppCompatActivity {
                         Log.d(Tag, "已扫描的重复设备:" + mac);
                         return;
                     }
-                    switch (type) {
-                        case Device.TYPE_BUTTON_MATE:
-                            mainDeviceLanUdpScanListAdapter.add(new DeviceButtonMate(name, mac));
-                            break;
-                        case Device.TYPE_TC1:
-                            mainDeviceLanUdpScanListAdapter.add(new DeviceTC1(name, mac));
-                            break;
-                        case Device.TYPE_DC1:
-                            mainDeviceLanUdpScanListAdapter.add(new DeviceDC1(name, mac));
-                            break;
-                        case Device.TYPE_S7:
-                            mainDeviceLanUdpScanListAdapter.add(new DeviceS7(name, mac));
-                            break;
-                        case Device.TYPE_A1:
-                            mainDeviceLanUdpScanListAdapter.add(new DeviceA1(name, mac));
-                            break;
-                        case Device.TYPE_M1:
-                            mainDeviceLanUdpScanListAdapter.add(new DeviceM1(name, mac));
-                            break;
-                        case Device.TYPE_RGBW:
-                            mainDeviceLanUdpScanListAdapter.add(new DeviceRGBW(name, mac));
-                            break;
-                        case Device.TYPE_CLOCK:
-                            mainDeviceLanUdpScanListAdapter.add(new DeviceClock(name, mac));
-                            break;
-                        case Device.TYPE_MOPS:
-                            mainDeviceLanUdpScanListAdapter.add(new DeviceMOPS(name, mac));
-                            break;
-                    }
 
-                    mainDeviceLanUdpScanListAdapter.notifyDataSetChanged();
+                    Device device_temp = returnDeviceClass(name, mac, type);
+                    if (device_temp != null) {
+                        mainDeviceLanUdpScanListAdapter.add(returnDeviceClass(name, mac, type));
+                        mainDeviceLanUdpScanListAdapter.notifyDataSetChanged();
+                    }
                 }
                 //endregion
             } else {
@@ -1160,6 +1114,30 @@ public class MainActivity extends AppCompatActivity {
         intent.putExtra(ConnectService.EXTRA_DATA_TOPIC, topic);
         intent.putExtra(ConnectService.EXTRA_DATA_MESSAGE, message);
         localBroadcastManager.sendBroadcast(intent);
+    }
+
+    private Device returnDeviceClass(String name, String mac, int type) {
+        switch (type) {
+            case Device.TYPE_BUTTON_MATE:
+                return new DeviceButtonMate(name, mac);
+            case Device.TYPE_TC1:
+                return new DeviceTC1(name, mac);
+            case Device.TYPE_DC1:
+                return new DeviceDC1(name, mac);
+            case Device.TYPE_S7:
+                return new DeviceS7(name, mac);
+            case Device.TYPE_A1:
+                return new DeviceA1(name, mac);
+            case Device.TYPE_M1:
+                return new DeviceM1(name, mac);
+            case Device.TYPE_RGBW:
+                return new DeviceRGBW(name, mac);
+            case Device.TYPE_CLOCK:
+                return new DeviceClock(name, mac);
+            case Device.TYPE_MOPS:
+                return new DeviceMOPS(name, mac);
+        }
+        return null;
     }
 
 }

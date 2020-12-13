@@ -204,6 +204,7 @@ public class DeviceAddChoiceActivity extends AppCompatActivity {
             returnActivityDevice(ip, mac, device_type);
             Log.e(Tag, "get device result:" + ip + "," + mac + "," + device_type);
         }
+        super.onActivityResult(requestCode, resultCode, data);
     }
 
     @Override
@@ -268,6 +269,7 @@ public class DeviceAddChoiceActivity extends AppCompatActivity {
                         }
                         if (arg0.getAttributes().containsKey("mac")) {
                             mac = new String(arg0.getAttributes().get("mac"));
+                            mac=mac.toLowerCase().replaceAll("[^0123456789abcdef]","");
                         }
 
                         if (type > TYPE_UNKNOWN && type < TYPE_COUNT && mac != null) {
