@@ -162,7 +162,7 @@ public class ClockMatrixFragment extends DeviceFragment {
         });
         //endregion
 
-        edt_string=view.findViewById(R.id.edt_string);
+        edt_string = view.findViewById(R.id.edt_string);
         btn_string = view.findViewById(R.id.btn_string);
         btn_string.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -173,17 +173,15 @@ public class ClockMatrixFragment extends DeviceFragment {
                 str = str.replace("\r\n", "\n").replace("\n", " ");
                 if (str.length() > 0 && str.length() < 500) {
                     //json中 需要替换符号:  " => \"  \ => \\
-                    str= str.replace("\\","\\\\").replace("\"","\\\"");
+                    str = str.replace("\\", "\\\\").replace("\"", "\\\"");
                     Send("{\"mac\":\"" + device.getMac() + "\",\"string\":\"" + str + "\"}");
                     Log("发送滚动字符串");
                 } else if (str.length() < 1) {
                     Log("未输入有效的滚动字符串");
-//                            Toast.makeText(getContext(), "发送文本为空", Toast.LENGTH_SHORT).show();
-                }else  {
+                } else {
                     Log("滚动字符串长度过长");
-//                            Toast.makeText(getContext(), "滚动字符串长度过长", Toast.LENGTH_SHORT).show();
                 }
-                }
+            }
         });
 
         //region log 相关
