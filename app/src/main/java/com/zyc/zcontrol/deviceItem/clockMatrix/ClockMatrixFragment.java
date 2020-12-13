@@ -1,29 +1,36 @@
-package com.zyc.zcontrol.deviceItem.clock;
+package com.zyc.zcontrol.deviceItem.clockMatrix;
 
 
 import android.annotation.SuppressLint;
+import android.content.DialogInterface;
 import android.content.Intent;
+import android.net.Uri;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
+import android.text.Editable;
+import android.text.InputType;
+import android.text.method.KeyListener;
+import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
 import android.widget.CheckBox;
-import android.widget.CompoundButton;
-import android.widget.ImageView;
+import android.widget.EditText;
 import android.widget.SeekBar;
-import android.widget.Switch;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.zyc.zcontrol.R;
-import com.zyc.zcontrol.deviceItem.DeviceClass.DeviceClock;
+import com.zyc.zcontrol.deviceItem.DeviceClass.DeviceClockMatrix;
 import com.zyc.zcontrol.deviceItem.DeviceClass.DeviceFragment;
 
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.security.Key;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -34,28 +41,29 @@ import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 /**
  * A simple {@link Fragment} subclass.
  */
-public class ClockFragment extends DeviceFragment {
-    public final static String Tag = "ClockFragment";
+public class ClockMatrixFragment extends DeviceFragment {
+    public final static String Tag = "ClockMatrixFragment";
 
 
-    DeviceClock device;
+    DeviceClockMatrix device;
     //region 控件
     private SwipeRefreshLayout mSwipeLayout;
     private SeekBar seek_brightness;
-    private ImageView img_brightness_auto;
     private CheckBox chk_direction;
     private TextView txt_brightness;
+    private Button btn_string;
+    private EditText edt_string;
     //endregion
 
     private boolean brightness_auto = false;
 
-    public ClockFragment() {
+    public ClockMatrixFragment() {
 
         // Required empty public constructor
     }
 
     @SuppressLint("ValidFragment")
-    public ClockFragment(DeviceClock device) {
+    public ClockMatrixFragment(DeviceClockMatrix device) {
         super(device.getName(), device.getMac());
         this.device = device;
     }
@@ -89,7 +97,7 @@ public class ClockFragment extends DeviceFragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
-        final View view = inflater.inflate(R.layout.fragment_clock, container, false);
+        final View view = inflater.inflate(R.layout.fragment_clock_matrix, container, false);
 
         //region 控件初始化
         //region 拖动条 处理viewpage/SwipeRefreshLayout滑动冲突事件
@@ -108,7 +116,7 @@ public class ClockFragment extends DeviceFragment {
         seek_brightness.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
             @Override
             public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
-                txt_brightness.setText("亮度:"+progress);
+                txt_brightness.setText("亮度:" + progress);
             }
 
             @Override
@@ -137,25 +145,11 @@ public class ClockFragment extends DeviceFragment {
             }
         });
         //endregion
-        //region 自动亮度开关
-        img_brightness_auto = view.findViewById(R.id.img_brightness_auto);
-        img_brightness_auto.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                brightness_auto = !brightness_auto;
-                if (brightness_auto) {
-                    img_brightness_auto.setColorFilter(getResources().getColor(R.color.colorAccent));
-                    Send("{\"mac\": \"" + device.getMac() + "\",\"auto_brightness\":1}");
-                } else {
-                    img_brightness_auto.setColorFilter(0xffffffff);
-                    Send("{\"mac\": \"" + device.getMac() + "\",\"auto_brightness\" : 0,\"brightness\":"
-                            + seek_brightness.getProgress() + "}");
-                }
-            }
-        });
+
+        //region 亮度文本
+        txt_brightness = view.findViewById(R.id.txt_brightness);
+        txt_brightness.setText("亮度:" + seek_brightness.getProgress());
         //endregion
-        txt_brightness=view.findViewById(R.id.txt_brightness);
-        txt_brightness.setText("亮度:"+seek_brightness.getProgress());
         //region 更新当前状态
         mSwipeLayout = (SwipeRefreshLayout) view.findViewById(R.id.swipeRefreshLayout);
         mSwipeLayout.setColorSchemeResources(R.color.colorAccent, R.color.colorPrimaryDark, R.color.colorAccent, R.color.colorPrimary);
@@ -168,6 +162,29 @@ public class ClockFragment extends DeviceFragment {
         });
         //endregion
 
+        edt_string=view.findViewById(R.id.edt_string);
+        btn_string = view.findViewById(R.id.btn_string);
+        btn_string.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+//                dialogString();
+                String str = edt_string.getText().toString();
+
+                str = str.replace("\r\n", "\n").replace("\n", " ");
+                if (str.length() > 0 && str.length() < 500) {
+                    //json中 需要替换符号:  " => \"  \ => \\
+                    str= str.replace("\\","\\\\").replace("\"","\\\"");
+                    Send("{\"mac\":\"" + device.getMac() + "\",\"string\":\"" + str + "\"}");
+                    Log("发送滚动字符串");
+                } else if (str.length() < 1) {
+                    Log("未输入有效的滚动字符串");
+//                            Toast.makeText(getContext(), "发送文本为空", Toast.LENGTH_SHORT).show();
+                }else  {
+                    Log("滚动字符串长度过长");
+//                            Toast.makeText(getContext(), "滚动字符串长度过长", Toast.LENGTH_SHORT).show();
+                }
+                }
+        });
 
         //region log 相关
         setLogTextView((TextView) view.findViewById(R.id.tv_log));
@@ -179,11 +196,9 @@ public class ClockFragment extends DeviceFragment {
         return view;
     }
 
-
-
-
     void Send(String message) {
         boolean udp = getActivity().getSharedPreferences("Setting_" + device.getMac(), 0).getBoolean("always_UDP", false);
+        boolean oldProtocol = getActivity().getSharedPreferences("Setting_" + device.getMac(), 0).getBoolean("old_protocol", false);
 
         super.Send(udp, device.getSendMqttTopic(), message);
     }
@@ -219,18 +234,7 @@ public class ClockFragment extends DeviceFragment {
                 seek_brightness.setProgress(brightness);
             }
             //endregion
-            //region 解析自动亮度
-            if (jsonObject.has("auto_brightness")) {
-                int auto_brightness = jsonObject.getInt("auto_brightness");
-                if (auto_brightness == 1) {
-                    brightness_auto = true;
-                    img_brightness_auto.setColorFilter(getResources().getColor(R.color.colorAccent));
-                } else {
-                    brightness_auto = false;
-                    img_brightness_auto.setColorFilter(0xffffffff);
-                }
-            }
-            //endregion
+
             //region 解析显示方向
             if (jsonObject.has("direction")) {
                 chk_direction.setChecked(jsonObject.getInt("direction") == 1);

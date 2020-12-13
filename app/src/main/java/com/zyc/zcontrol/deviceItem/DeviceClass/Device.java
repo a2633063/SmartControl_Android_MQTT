@@ -30,7 +30,8 @@ public class Device {
     public final static int TYPE_CLOCK = 6;
     public final static int TYPE_MOPS = 7;
     public final static int TYPE_RGBW = 8;
-    public final static int TYPE_COUNT = 9;
+    public final static int TYPE_CLOCK_MATRIX = 9;
+    public final static int TYPE_COUNT = 10;
 
     //设备名称
     public final static String[] TypeName = new String[]{
@@ -43,6 +44,7 @@ public class Device {
             "zClock时钟",    //6
             "zMOPS插座",   //7
             "zRGBW灯",   //8
+            "zClock点阵时钟",   //9
     };
     //设备链接地址
     public final static String[] TypeUri = new String[]{
@@ -55,6 +57,7 @@ public class Device {
             "https://github.com/a2633063/zClock",    //6
             "https://github.com/a2633063/zMOPS",   //7
             "https://github.com/a2633063/zRGBW",   //8
+            "https://github.com/a2633063/zClock_Matrix",   //9
     };
     //设备图标
     public final static @DrawableRes
@@ -67,7 +70,8 @@ public class Device {
             R.drawable.device_icon_zs7,//5
             R.drawable.device_icon_zclock,//6
             R.drawable.device_icon_zmops,//7
-            R.drawable.device_icon_zrgbw,//4
+            R.drawable.device_icon_zrgbw,//8
+            R.drawable.device_icon_ongoing,//9
     };
 
     //设备对应配对页面
@@ -81,6 +85,7 @@ public class Device {
                     S7LinkActivity.class,
                     ClockLinkActivity.class,
                     MOPSLinkActivity.class,
+                    null,
                     null,
             };
 //endregion
