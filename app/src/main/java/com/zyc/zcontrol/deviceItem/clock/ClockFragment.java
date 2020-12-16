@@ -200,7 +200,7 @@ public class ClockFragment extends DeviceFragment {
                 String device_mac = matcher.group(2);
                 if (device_mac.equals(device.getMac())) {
                     device.setOnline(message.equals("1"));
-                    Log(device.isOnline() ? "设备在线" : "设备离线" + "(功能调试中)");
+                    Log(device.isOnline() ? "设备在线" : "设备离线" + "(请确认设备是否有连接mqtt服务器)");
                 }
                 return;
             }
@@ -245,7 +245,7 @@ public class ClockFragment extends DeviceFragment {
     //region 事件监听调用函数,主要为在子类中重写此函数实现在service建立成功/mqtt连接成功/失败时执行功能
     //Service建立成功时调用    此函数需要时在子类中重写
     public void ServiceConnected() {
-        handler.sendEmptyMessageDelayed(1, 0);
+        handler.sendEmptyMessageDelayed(1, 300);
     }
 
     //mqtt连接成功时调用    此函数需要时在子类中重写

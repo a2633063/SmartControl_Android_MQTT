@@ -302,7 +302,7 @@ public class S7Fragment extends DeviceFragment {
     //region 事件监听调用函数,主要为在子类中重写此函数实现在service建立成功/mqtt连接成功/失败时执行功能
     //Service建立成功时调用    此函数需要时在子类中重写
     public void ServiceConnected() {
-        handler.sendEmptyMessageDelayed(1, 0);
+        handler.sendEmptyMessageDelayed(1, 300);
     }
 
     //mqtt连接成功时调用    此函数需要时在子类中重写

@@ -28,6 +28,8 @@ import org.json.JSONObject;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.TimeZone;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 /**
  * A simple {@link Fragment} subclass.
@@ -183,7 +185,21 @@ public class M1Fragment extends DeviceFragment {
     //数据接收处理更新函数
     public void Receive(String ip, int port, String topic, String message) {
         super.Receive(ip, port, topic, message);
-
+        //region 接收availability数据,非Json,单独处理
+        if (topic != null && topic.endsWith("availability")) {
+            String regexp = "device/(.*?)/([0123456789abcdef]{12})/(.*)";
+            Pattern pattern = Pattern.compile(regexp);
+            Matcher matcher = pattern.matcher(topic);
+            if (matcher.find() && matcher.groupCount() == 3) {
+                String device_mac = matcher.group(2);
+                if (device_mac.equals(device.getMac())) {
+                    device.setOnline(message.equals("1"));
+                    Log(device.isOnline() ? "设备在线" : "设备离线" + "(请确认设备是否有连接mqtt服务器)");
+                }
+                return;
+            }
+        }
+        //endregion
         try {
             JSONObject jsonObject = new JSONObject(message);
             if (!jsonObject.has("mac") || !jsonObject.getString("mac").equals(device.getMac())) {
@@ -248,7 +264,7 @@ public class M1Fragment extends DeviceFragment {
     //region 事件监听调用函数,主要为在子类中重写此函数实现在service建立成功/mqtt连接成功/失败时执行功能
     //Service建立成功时调用    此函数需要时在子类中重写
     public void ServiceConnected() {
-        handler.sendEmptyMessageDelayed(1, 0);
+        handler.sendEmptyMessageDelayed(1, 300);
     }
 
     //mqtt连接成功时调用    此函数需要时在子类中重写

@@ -199,7 +199,7 @@ public class ButtonMateFragment extends DeviceFragment {
                 String device_mac = matcher.group(2);
                 if (device_mac.equals(device.getMac())) {
                     device.setOnline(message.equals("1"));
-                    Log(device.isOnline() ? "设备在线" : "设备离线" + "(功能调试中)");
+                    Log(device.isOnline() ? "设备在线" : "设备离线" + "(请确认设备是否有连接mqtt服务器)");
                 }
                 return;
             }
