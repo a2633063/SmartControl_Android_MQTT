@@ -17,8 +17,11 @@
 3. [zDC1](https://github.com/a2633063/zDC1_public)		       斐讯排插DC1重新开发固件.
 4. [zA1](https://github.com/a2633063/zA1)		          斐讯空气净化器悟净A1重新开发固件.
 5. [zM1](https://github.com/a2633063/zM1)		         斐讯空气检测仪悟空M1重新开发固件.
-6. [RGBW灯](https://github.com/a2633063/zRGBW)             基于ESP8266的rgbw灯泡
-7. [zClock时钟](https://github.com/a2633063/zClock)   基于esp8266的数码管时钟
+6. [zS7](https://github.com/a2633063/zS7)		         斐讯体重秤S7重新开发固件.(仅支持体重,不支持体脂)
+7. [zClock时钟](https://github.com/a2633063/zClock)     基于esp8266的数码管时钟
+8. [zMOPS插座](https://github.com/a2633063/zMOPS)         基于MOPS插座开发固件
+9. [RGBW灯](https://github.com/a2633063/zRGBW)         基于ESP8266的rgbw灯泡
+10. [zClock点阵时钟](https://github.com/a2633063/zClock_Matrix)         基于ESP8266的点阵时钟
 
 
 
