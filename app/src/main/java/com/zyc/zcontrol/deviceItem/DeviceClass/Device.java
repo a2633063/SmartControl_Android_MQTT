@@ -71,7 +71,7 @@ public class Device {
             R.drawable.device_icon_zclock,//6
             R.drawable.device_icon_zmops,//7
             R.drawable.device_icon_zrgbw,//8
-            R.drawable.device_icon_ongoing,//9
+            R.drawable.device_icon_zclock_matrix,//9
     };
 
     //设备对应配对页面
