@@ -30,7 +30,7 @@
                 android:elevation="3dp"
                 android:gravity="center"
                 android:outlineProvider="bounds"
-                android:paddingStart="0dp"
+                android:paddingStart="16dp"
                 android:paddingTop="16dp"
                 android:paddingEnd="16dp"
                 android:paddingBottom="20dp"
@@ -38,17 +38,17 @@
 
                 <TextView
                     android:id="@+id/textViewR"
-                    android:layout_width="wrap_content"
+                    android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:layout_marginTop="16dp"
-                    android:ems="3"
                     android:gravity="end"
                     android:maxLines="1"
                     android:singleLine="true"
                     android:text="R:000"
                     android:textSize="26dp"
                     app:layout_constraintBottom_toTopOf="@id/textViewG"
-                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintEnd_toEndOf="@+id/textViewW"
+                    app:layout_constraintStart_toStartOf="@+id/textViewW"
                     app:layout_constraintTop_toTopOf="parent" />
 
                 <SeekBar
@@ -64,16 +64,16 @@
 
                 <TextView
                     android:id="@+id/textViewG"
-                    android:layout_width="wrap_content"
+                    android:layout_width="0dp"
                     android:layout_height="wrap_content"
-                    android:ems="3"
                     android:gravity="end"
                     android:maxLines="1"
                     android:singleLine="true"
                     android:text="G:000"
                     android:textSize="26dp"
                     app:layout_constraintBottom_toTopOf="@id/textViewB"
-                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintEnd_toEndOf="@+id/textViewW"
+                    app:layout_constraintStart_toStartOf="@+id/textViewW"
                     app:layout_constraintTop_toBottomOf="@id/textViewR" />
 
                 <SeekBar
@@ -89,16 +89,16 @@
 
                 <TextView
                     android:id="@+id/textViewB"
-                    android:layout_width="wrap_content"
+                    android:layout_width="0dp"
                     android:layout_height="wrap_content"
-                    android:ems="3"
                     android:gravity="end"
                     android:maxLines="1"
                     android:singleLine="true"
                     android:text="B:000"
                     android:textSize="26dp"
                     app:layout_constraintBottom_toTopOf="@id/textViewW"
-                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintEnd_toEndOf="@+id/textViewW"
+                    app:layout_constraintStart_toStartOf="@+id/textViewW"
                     app:layout_constraintTop_toBottomOf="@id/textViewG" />
 
                 <SeekBar
@@ -116,13 +116,11 @@
                     android:id="@+id/textViewW"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:ems="3"
                     android:gravity="end"
                     android:maxLines="1"
                     android:singleLine="true"
                     android:text="W:000"
                     android:textSize="26dp"
-                    app:layout_constraintBottom_toBottomOf="parent"
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toBottomOf="@id/textViewB" />
 
@@ -136,6 +134,17 @@
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintStart_toEndOf="@id/textViewW"
                     app:layout_constraintTop_toTopOf="@id/textViewW" />
+
+                <Button
+                    android:id="@+id/btn_close"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="16dp"
+                    android:text="关闭"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@+id/textViewW" />
 
             </androidx.constraintlayout.widget.ConstraintLayout>
 

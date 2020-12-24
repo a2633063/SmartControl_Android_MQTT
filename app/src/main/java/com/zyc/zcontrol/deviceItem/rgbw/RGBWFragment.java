@@ -10,6 +10,7 @@ import android.view.LayoutInflater;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
 import android.widget.SeekBar;
 import android.widget.TextView;
 
@@ -47,6 +48,7 @@ public class RGBWFragment extends DeviceFragment {
     SeekBar seekBarG;
     SeekBar seekBarB;
     SeekBar seekBarW;
+    Button btn_close;
 
     //endregion
 
@@ -147,6 +149,14 @@ public class RGBWFragment extends DeviceFragment {
         seekBarW.setOnSeekBarChangeListener(seekBarSeekBarChangeListener);
         //endregion
         //endregion
+
+        btn_close=view.findViewById(R.id.btn_close);
+        btn_close.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Send("{\"mac\":\"" + device.getMac() + "\",\"on\":0}");
+            }
+        });
 
         //region SwipeLayout更新当前状态
         mSwipeLayout = view.findViewById(R.id.swipeRefreshLayout);
