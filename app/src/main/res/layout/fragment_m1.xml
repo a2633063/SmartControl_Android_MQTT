@@ -5,7 +5,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
-    tools:context="com.zyc.zcontrol.controlItem.tc1.TC1Fragment">
+    tools:context="com.zyc.zcontrol.deviceItem.m1.M1Fragment">
 
     <androidx.swiperefreshlayout.widget.SwipeRefreshLayout
         android:id="@+id/swipeRefreshLayout"
@@ -61,7 +61,7 @@
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="ug/m3"
+                    android:text="ug/m\u00B3"
                     app:layout_constraintBottom_toBottomOf="@id/tv_pm25_value"
                     app:layout_constraintStart_toEndOf="@id/tv_pm25_value" />
 
@@ -89,7 +89,7 @@
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="mg/m3"
+                    android:text="mg/m\u00B3"
                     app:layout_constraintBottom_toBottomOf="@id/tv_formaldehyde_value"
                     app:layout_constraintStart_toEndOf="@id/tv_formaldehyde_value" />
 
