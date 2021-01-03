@@ -49,6 +49,7 @@ public class RGBWFragment extends DeviceFragment {
     SeekBar seekBarB;
     SeekBar seekBarW;
     Button btn_close;
+    Button btn_open;
 
     //endregion
 
@@ -149,7 +150,13 @@ public class RGBWFragment extends DeviceFragment {
         seekBarW.setOnSeekBarChangeListener(seekBarSeekBarChangeListener);
         //endregion
         //endregion
-
+        btn_open=view.findViewById(R.id.btn_open);
+        btn_open.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Send("{\"mac\":\"" + device.getMac() + "\",\"on\":1}");
+            }
+        });
         btn_close=view.findViewById(R.id.btn_close);
         btn_close.setOnClickListener(new View.OnClickListener() {
             @Override

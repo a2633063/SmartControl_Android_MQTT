@@ -136,15 +136,26 @@
                     app:layout_constraintTop_toTopOf="@id/textViewW" />
 
                 <Button
-                    android:id="@+id/btn_close"
+                    android:id="@+id/btn_open"
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:layout_marginTop="16dp"
-                    android:text="关闭"
+                    android:text="开灯"
                     app:layout_constraintBottom_toBottomOf="parent"
-                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintEnd_toStartOf="@+id/btn_close"
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toBottomOf="@+id/textViewW" />
+
+                <Button
+                    android:id="@+id/btn_close"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:text="关灯"
+
+                    app:layout_constraintBottom_toBottomOf="@+id/btn_open"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toEndOf="@+id/btn_open"
+                    app:layout_constraintTop_toTopOf="@+id/btn_open" />
 
             </androidx.constraintlayout.widget.ConstraintLayout>
 
