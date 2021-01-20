@@ -268,7 +268,7 @@ public class MainActivity extends AppCompatActivity {
         }
 
         if (deviceData.size() < 1) {
-            deviceData.add(new DeviceTC1("演示设备", "000000000000"));
+            deviceData.add(new DeviceKey51("演示设备", "000000000000"));
         }
         //endregion
 

@@ -12,13 +12,18 @@ import android.view.LayoutInflater;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.WindowManager;
 import android.widget.AdapterView;
 import android.widget.Button;
+import android.widget.CheckBox;
 import android.widget.CompoundButton;
+import android.widget.EditText;
+import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.NumberPicker;
 import android.widget.PopupWindow;
 import android.widget.SeekBar;
+import android.widget.Spinner;
 import android.widget.Switch;
 import android.widget.TextView;
 import android.widget.ToggleButton;
@@ -37,6 +42,7 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import androidx.appcompat.app.AlertDialog;
+import androidx.constraintlayout.widget.Group;
 import androidx.fragment.app.Fragment;
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 
@@ -248,6 +254,8 @@ public class Key51Fragment extends DeviceFragment {
         return view;
     }
 
+    TaskItem task_backup = null;
+
     //region 弹窗
     private void popupwindowTask(final int task_id) {
 
@@ -258,27 +266,252 @@ public class Key51Fragment extends DeviceFragment {
 
         //region 控件初始化
         //region 控件定义
-        final NumberPicker hour_picker = popupView.findViewById(R.id.hour_picker);
-        final NumberPicker minute_picker = popupView.findViewById(R.id.minute_picker);
-        final NumberPicker action_picker = popupView.findViewById(R.id.on_picker);
-        final TextView tv_repeat = popupView.findViewById(R.id.tv_repeat);
+        TextView tv_id = popupView.findViewById(R.id.tv_id);
+        tv_id.setText("任务" + task_id);
         final Button btn_ok = popupView.findViewById(R.id.btn_ok);
-        final ToggleButton tbtn_week[] = {popupView.findViewById(R.id.tbtn_week_1),
-                popupView.findViewById(R.id.tbtn_week_2), popupView.findViewById(R.id.tbtn_week_3),
-                popupView.findViewById(R.id.tbtn_week_4), popupView.findViewById(R.id.tbtn_week_5),
-                popupView.findViewById(R.id.tbtn_week_6), popupView.findViewById(R.id.tbtn_week_7),
-        };
+        final EditText edt_name = popupView.findViewById(R.id.edt_name);
+        final EditText edt_key = popupView.findViewById(R.id.edt_key);
+        final Spinner spinner_type = popupView.findViewById(R.id.spinner_type);
+        final EditText edt_topic = popupView.findViewById(R.id.edt_topic);
+        final EditText edt_payload = popupView.findViewById(R.id.edt_payload);
+        final Spinner spinner_qos = popupView.findViewById(R.id.spinner_qos);
+        final CheckBox chk_retained = popupView.findViewById(R.id.chk_retained);
+        final CheckBox chk_udp = popupView.findViewById(R.id.chk_udp);
+        final ImageView img_udp_help = popupView.findViewById(R.id.img_udp_help);
+        final EditText edt_mac = popupView.findViewById(R.id.edt_mac);
+        final EditText edt_ip = popupView.findViewById(R.id.edt_ip);
+        final EditText edt_port = popupView.findViewById(R.id.edt_port);
+        final EditText edt_secure = popupView.findViewById(R.id.edt_secure);
+        final EditText edt_max = popupView.findViewById(R.id.edt_max);
+        final EditText edt_min = popupView.findViewById(R.id.edt_min);
+        final EditText edt_step = popupView.findViewById(R.id.edt_step);
+        final EditText edt_val = popupView.findViewById(R.id.edt_val);
+
+        final Group group_custom = popupView.findViewById(R.id.group_custom);
+        final Group group_wol = popupView.findViewById(R.id.group_wol);
+        final Group group_encoder = popupView.findViewById(R.id.group_encoder);
         //endregion
 
 
+        spinner_type.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+            @Override
+            public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+                switch (position) {
+                    case 0:
+                        group_custom.setVisibility(View.VISIBLE);
+                        group_encoder.setVisibility(View.GONE);
+                        group_wol.setVisibility(View.GONE);
+                        break;
+                    case 1:
+                        group_custom.setVisibility(View.GONE);
+                        group_encoder.setVisibility(View.GONE);
+                        group_wol.setVisibility(View.VISIBLE);
+                        break;
+                    case 2:
+                        group_custom.setVisibility(View.VISIBLE);
+                        group_encoder.setVisibility(View.VISIBLE);
+                        group_wol.setVisibility(View.GONE);
+                        break;
+                }
+            }
+
+            @Override
+            public void onNothingSelected(AdapterView<?> parent) {
+            }
+        });
         //region 确认按钮初始化
         btn_ok.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
 
+                try {
+                    //region 确认name
+                    if (edt_name.length() < 1) edt_name.setText("任务" + task_id);
+                    //endregion
 
-//                Send("{\"mac\": \"" + device.getMac() + "\",\"task_" + task_id + "\":{\"hour\":" + hour + ",\"minute\":" + minute + ",\"repeat\":" + repeat + ",\"action\":" + action + ",\"on\":" + on + "}}");
-                window.dismiss();
+
+                    //region 确认ip
+                    if (edt_ip.length() < 1) {
+                        edt_ip.setText("255.255.255.255");
+                    }
+                    String ip_str = edt_ip.getText().toString().replaceAll("[^0123456789.]", ".");
+                    String[] s = ip_str.split("\\.");
+                    if (s.length != 4) throw new Exception("ip地址格式填写错误!");
+
+                    int[] ip;
+                    try {
+                        ip = new int[]{
+                                Integer.parseInt(s[0]),
+                                Integer.parseInt(s[1]),
+                                Integer.parseInt(s[2]),
+                                Integer.parseInt(s[3])
+                        };
+                    } catch (NumberFormatException e) {
+//                        e.printStackTrace();
+                        throw new Exception("ip地址格式填写错误!");
+                    }
+                    if (ip[0] == 0 || ip[0] > 255 || ip[1] > 255 || ip[2] > 255 || ip[3] > 255)
+                        throw new Exception("ip地址格式填写错误!");
+                    //endregion
+
+                    //region 端口确认
+                    if (edt_port.length() < 1) edt_port.setText("0");
+                    int port = 0;
+                    try {
+                        port = Integer.parseInt(edt_port.getText().toString());
+                    } catch (NumberFormatException e) {
+//                        e.printStackTrace();
+                        throw new Exception("端口填写错误!");
+                    }
+                    if (port > 65535)
+                        throw new Exception("端口填写错误!");
+                    //endregion
+
+                    //region 按键组合键值判断
+                    if (edt_key.length() < 1) edt_port.setText("0");
+                    int key = 0;
+                    try {
+                        key = Integer.parseInt(edt_key.getText().toString());
+                    } catch (NumberFormatException e) {
+//                        e.printStackTrace();
+                        throw new Exception("按键顺序填写错误!");
+                    }
+                    for (int key_temp = key; key_temp != 0; key_temp = key_temp / 10) {
+                        int c = key_temp % 10;
+                        if (c == 0 || c > 6) throw new Exception("按键顺序填写错误!");
+                    }
+                    //endregion
+
+                    switch (spinner_type.getSelectedItemPosition()) {
+                        case 0:
+                            task_backup = new TaskItem();
+                            task_backup.setBase(edt_name.getText().toString(), 1, key, 0);
+                            task_backup.setMqtt(
+                                    edt_topic.getText().toString(),
+                                    edt_payload.getText().toString(),
+                                    spinner_qos.getSelectedItemPosition(),
+                                    chk_retained.isChecked() ? 1 : 0,
+                                    chk_udp.isChecked() ? 1 : 0,
+                                    ip, port);
+                            break;
+                        case 1:
+                            //region 确认mac
+
+                            if (edt_mac.length() != 17) {
+                                throw new Exception("mac格式填写错误!");
+                            }
+                            String mac_str = edt_mac.getText().toString().replaceAll("[^0123456789abcdefABCEDF:]", ":");
+                            String[] mac_str_arr = mac_str.split(":");
+                            if (mac_str_arr.length != 6) throw new Exception("mac格式填写错误!");
+
+                            int[] mac;
+                            try {
+                                mac = new int[]{
+                                        Integer.parseInt(mac_str_arr[0], 16),
+                                        Integer.parseInt(mac_str_arr[1], 16),
+                                        Integer.parseInt(mac_str_arr[2], 16),
+                                        Integer.parseInt(mac_str_arr[3], 16),
+                                        Integer.parseInt(mac_str_arr[4], 16),
+                                        Integer.parseInt(mac_str_arr[5], 16)
+                                };
+                            } catch (NumberFormatException e) {
+//                        e.printStackTrace();
+                                throw new Exception("mac格式填写错误!");
+                            }
+                            if (mac[0] > 255 || mac[1] > 255 || mac[2] > 255 || mac[3] > 255 || mac[4] > 255 || mac[5] > 255)
+                                throw new Exception("mac格式填写错误!");
+                            //endregion
+                            //region 确认secure
+
+                            int[] secure;
+                            if (edt_secure.length() < 1) {
+                                secure = new int[]{0, 0, 0, 0, 0, 0};
+                            } else {
+                                if (edt_secure.length() != 17) {
+                                    throw new Exception("secure格式填写错误!");
+                                }
+                                String secure_str = edt_secure.getText().toString().replaceAll("[^0123456789abcdefABCEDF:]", ":");
+                                String[] secure_str_arr = secure_str.split(":");
+                                if (secure_str_arr.length != 6)
+                                    throw new Exception("secure格式填写错误!");
+
+                                try {
+                                    secure = new int[]{
+                                            Integer.parseInt(secure_str_arr[0], 16),
+                                            Integer.parseInt(secure_str_arr[1], 16),
+                                            Integer.parseInt(secure_str_arr[2], 16),
+                                            Integer.parseInt(secure_str_arr[3], 16),
+                                            Integer.parseInt(secure_str_arr[4], 16),
+                                            Integer.parseInt(secure_str_arr[5], 16)
+                                    };
+                                } catch (NumberFormatException e) {
+//                                    e.printStackTrace();
+                                    throw new Exception("secure格式填写错误!");
+                                }
+                                if (secure[0] > 255 || secure[1] > 255 || secure[2] > 255 || secure[3] > 255 || secure[4] > 255 || secure[5] > 255)
+                                    throw new Exception("secure格式填写错误!");
+                            }
+                            //endregion
+
+                            task_backup = new TaskItem();
+                            task_backup.setBase(edt_name.getText().toString(), 1, key, 1);
+                            task_backup.setWol(mac, ip, port, secure);
+                            break;
+                        //region 编码器部分
+                        case 2:
+
+                            //region 最大值/最小值/步进值/默认值确认
+                            int max = -1, min = -1, step = -1, val = -1;
+                            try {
+                                if (edt_max.length() < 1) edt_max.setText(edt_max.getHint());
+                                if (edt_min.length() < 1) edt_min.setText(edt_min.getHint());
+                                if (edt_step.length() < 1) edt_step.setText(edt_step.getHint());
+                                if (edt_val.length() < 1) edt_val.setText(edt_val.getHint());
+
+                                max = Integer.parseInt(edt_max.getText().toString());
+                                min = Integer.parseInt(edt_min.getText().toString());
+                                step = Integer.parseInt(edt_step.getText().toString());
+                                val = Integer.parseInt(edt_val.getText().toString());
+
+                            } catch (NumberFormatException e) {
+//                                e.printStackTrace();
+                                if (max < 0) throw new Exception("最大值填写错误!");
+                                if (min < 0) throw new Exception("最小值填写错误!");
+                                if (step < 0) throw new Exception("步进值填写错误!");
+                                if (val < 0) throw new Exception("默认值填写错误!");
+                            }
+
+                            if (max < min || step > max - min || val > max || val < min) {
+                                throw new Exception("最大值/最小值填写错误!");
+                            }
+                            //endregion
+
+                            task_backup = new TaskItem();
+                            task_backup.setBase(edt_name.getText().toString(), 1, key, 2);
+                            task_backup.setEncoder(
+                                    edt_topic.getText().toString(),
+                                    edt_payload.getText().toString(),
+                                    spinner_qos.getSelectedItemPosition(),
+                                    chk_retained.isChecked() ? 1 : 0,
+                                    chk_udp.isChecked() ? 1 : 0,
+                                    ip, port, max, min, step, val);
+
+                            break;
+                        //endregion
+                    }
+
+                    Send("{\"mac\": \"" + device.getMac() + "\",\"task_" + task_id + "\":" + task_backup.getJson() + "}");
+                    window.dismiss();
+
+                } catch (Exception e) {
+//                    e.printStackTrace();
+                    AlertDialog alertDialog = new AlertDialog.Builder(getActivity())
+                            .setTitle("错误!")
+                            .setMessage(e.getMessage())
+                            .setPositiveButton("确认", null)
+                            .create();
+                    alertDialog.show();
+                }
             }
         });
         //endregion
@@ -286,6 +519,47 @@ public class Key51Fragment extends DeviceFragment {
         window.setBackgroundDrawable(new ColorDrawable(android.graphics.Color.alpha(0xffff0000)));
         //endregion
         //endregion
+
+
+        //region 数据初始化
+
+        edt_name.setText(task.name);
+        edt_key.setText(String.valueOf(task.key));
+        spinner_type.setSelection(task.type);
+
+        switch (task.type) {
+            case 0:
+                group_custom.setVisibility(View.VISIBLE);
+                group_encoder.setVisibility(View.GONE);
+                group_wol.setVisibility(View.GONE);
+                edt_topic.setText(task.topic);
+                edt_payload.setText(task.payload);
+                spinner_qos.setSelection(task.qos);
+                chk_retained.setChecked(task.retained == 1);
+                chk_udp.setChecked(task.udp == 1);
+                break;
+            case 1:
+                group_custom.setVisibility(View.GONE);
+                group_encoder.setVisibility(View.GONE);
+                group_wol.setVisibility(View.VISIBLE);
+                edt_mac.setText(task.getMacString());
+                edt_secure.setText(task.getSecureString());
+                break;
+            case 2:
+                group_custom.setVisibility(View.VISIBLE);
+                group_encoder.setVisibility(View.VISIBLE);
+                group_wol.setVisibility(View.GONE);
+                edt_max.setText(String.valueOf(task.max));
+                edt_min.setText(String.valueOf(task.min));
+                edt_step.setText(String.valueOf(task.step));
+                edt_val.setText(String.valueOf(task.val));
+                break;
+        }
+        edt_ip.setText(task.getIPString());
+        edt_port.setText(String.valueOf(task.port));
+        //endregion
+
+
         window.update();
         window.showAtLocation(popupView, Gravity.CENTER, 0, 0);
 
@@ -329,7 +603,7 @@ public class Key51Fragment extends DeviceFragment {
             }
 
             if (jsonObject.has("light")) {
-                int light=jsonObject.getInt("light");
+                int light = jsonObject.getInt("light");
                 seekBar.setProgress(light);
             }
             //region 识别5组定时任务

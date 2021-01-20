@@ -1,11 +1,19 @@
 package com.zyc.zcontrol.deviceItem.key51;
 
 import android.content.Context;
+import android.util.Log;
 
 import com.zyc.Function;
 
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
+
 
 public class TaskItem {
+
+    public TaskItem() {
+    }
 
     public TaskItem(Context context) {
         this.context = context;
@@ -35,13 +43,19 @@ public class TaskItem {
 
 
     public boolean getOn() {
-        return !(on==0);
+        return !(on == 0);
     }
 
     public void setOn(int on) {
         this.on = on;
     }
 
+    public void setBase(String name, int on, int key, int type) {
+        this.name = name;
+        this.type = type;
+        this.on = on;
+        this.key = key;
+    }
 
     public void setMqtt(String topic, String payload, int qos, int retained, int udp, int[] ip, int port) {
         this.topic = topic;
@@ -55,10 +69,12 @@ public class TaskItem {
         this.ip[2] = ip[2];
         this.ip[3] = ip[3];
     }
-    public void setWol(int[] mac,int[] ip, int port) {
-        setWol(mac, ip,  port,new int[]{0,0,0,0,0,0});
+
+    public void setWol(int[] mac, int[] ip, int port) {
+        setWol(mac, ip, port, new int[]{0, 0, 0, 0, 0, 0});
     }
-    public void setWol(int[] mac,int[] ip, int port,int[] secure) {
+
+    public void setWol(int[] mac, int[] ip, int port, int[] secure) {
 
         this.port = port;
         for (int i = 0; i < 4; i++) {
@@ -88,4 +104,86 @@ public class TaskItem {
         this.step = step;
         this.val = val;
     }
+
+    public String getMacString() {
+        return Integer.toHexString(mac[0]) + ":"
+                + Integer.toHexString(mac[1]) + ":"
+                + Integer.toHexString(mac[2]) + ":"
+                + Integer.toHexString(mac[3]) + ":"
+                + Integer.toHexString(mac[4]) + ":"
+                + Integer.toHexString(mac[5]);
+
+    }
+
+    public String getIPString() {
+        return ip[0] + "." + ip[1] + "." + ip[2] + "." + ip[3];
+    }
+
+    public String getSecureString() {
+        return Integer.toHexString(secure[0]) + ":"
+                + Integer.toHexString(secure[1]) + ":"
+                + Integer.toHexString(secure[2]) + ":"
+                + Integer.toHexString(secure[3]) + ":"
+                + Integer.toHexString(secure[4]) + ":"
+                + Integer.toHexString(secure[5]);
+    }
+
+    public String getJson() {
+        JSONObject jsonObject = new JSONObject();
+        try {
+            jsonObject.put("name", name);
+            jsonObject.put("type", type);
+            jsonObject.put("on", on);
+            jsonObject.put("key", key);
+
+            JSONArray jsonArray_mac = new JSONArray();
+            for (int i = 0; i < mac.length; i++)
+                jsonArray_mac.put(mac[i]);
+            JSONArray jsonArray_ip = new JSONArray();
+            for (int i = 0; i < ip.length; i++)
+                jsonArray_ip.put(ip[i]);
+
+            JSONArray jsonArray_secure = new JSONArray();
+            for (int i = 0; i < secure.length; i++)
+                jsonArray_secure.put(secure[i]);
+            switch (type) {
+                case 0:
+                    jsonObject.put("topic", topic);
+                    jsonObject.put("payload", payload);
+                    jsonObject.put("qos", qos);
+                    jsonObject.put("retained", retained);
+                    jsonObject.put("udp", udp);
+                    jsonObject.put("ip", jsonArray_ip);
+                    jsonObject.put("port", port);
+                    break;
+                case 1:
+                    jsonObject.put("mac", jsonArray_mac);
+                    jsonObject.put("ip", jsonArray_ip);
+                    jsonObject.put("port", port);
+                    jsonObject.put("secure", jsonArray_secure);
+                    break;
+                case 2:
+                    jsonObject.put("topic", topic);
+                    jsonObject.put("payload", payload);
+                    jsonObject.put("qos", qos);
+                    jsonObject.put("retained", retained);
+                    jsonObject.put("udp", udp);
+                    jsonObject.put("ip", jsonArray_ip);
+                    jsonObject.put("port", port);
+                    jsonObject.put("max", max);
+                    jsonObject.put("min", min);
+                    jsonObject.put("step", step);
+                    jsonObject.put("val", val);
+                    break;
+            }
+
+            Log.d("tag", jsonObject.toString());
+            return jsonObject.toString();
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+
+        return null;
+    }
+
 }
