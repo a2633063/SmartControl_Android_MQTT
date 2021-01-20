@@ -56,6 +56,7 @@ import com.zyc.zcontrol.deviceItem.DeviceClass.DeviceButtonMate;
 import com.zyc.zcontrol.deviceItem.DeviceClass.DeviceClock;
 import com.zyc.zcontrol.deviceItem.DeviceClass.DeviceClockMatrix;
 import com.zyc.zcontrol.deviceItem.DeviceClass.DeviceDC1;
+import com.zyc.zcontrol.deviceItem.DeviceClass.DeviceKey51;
 import com.zyc.zcontrol.deviceItem.DeviceClass.DeviceM1;
 import com.zyc.zcontrol.deviceItem.DeviceClass.DeviceMOPS;
 import com.zyc.zcontrol.deviceItem.DeviceClass.DeviceRGBW;
@@ -1139,6 +1140,8 @@ public class MainActivity extends AppCompatActivity {
                 return new DeviceMOPS(name, mac);
             case Device.TYPE_CLOCK_MATRIX:
                 return new DeviceClockMatrix(name, mac);
+            case Device.TYPE_KEY51:
+                return new DeviceKey51(name, mac);
         }
         return null;
     }

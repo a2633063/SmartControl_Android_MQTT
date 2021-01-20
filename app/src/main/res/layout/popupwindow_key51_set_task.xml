@@ -1,0 +1,200 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:layout_gravity="center"
+    android:background="#80000000"
+    android:gravity="center">
+
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:background="#ff333333"
+        android:gravity="center"
+        android:padding="16dp">
+
+        <TextView
+            android:id="@+id/tv_id"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:gravity="center"
+            android:paddingTop="-16dp"
+            android:text="任务1"
+            android:textSize="12dp"
+            android:visibility="gone"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+
+
+        <EditText
+            android:id="@+id/edt_name"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="16dp"
+            android:ems="10"
+            android:gravity="center"
+            android:hint="任务名称(任务1)"
+            android:text="任务1"
+            android:textSize="25dp"
+            app:layout_constraintBottom_toTopOf="@+id/sw_on"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+
+        <TextView
+            android:id="@+id/tv_spinner_type"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:gravity="center"
+            android:text="任务类型:"
+            android:textSize="15dp"
+            app:layout_constraintBottom_toBottomOf="@+id/spinner_type"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="@+id/spinner_type" />
+
+        <TextView
+            android:id="@+id/tv_edt_key"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:gravity="center"
+            android:text="按键顺序:"
+            android:textSize="15dp"
+            app:layout_constraintBottom_toBottomOf="@+id/edt_key"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="@+id/edt_key" />
+
+        <EditText
+            android:id="@+id/edt_key"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:gravity="center"
+            android:hint="按键顺序"
+            android:text=""
+            app:layout_constraintBottom_toTopOf="@+id/spinner_type"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toEndOf="@+id/tv_edt_key"
+            app:layout_constraintTop_toBottomOf="@+id/sw_on" />
+
+        <Switch
+            android:id="@+id/sw_on"
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:gravity="center"
+            android:text=""
+            app:layout_constraintBottom_toTopOf="@+id/edt_key"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/edt_name" />
+
+        <Spinner
+            android:id="@+id/spinner_type"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:entries="@array/key51_type"
+            app:layout_constraintBottom_toTopOf="@+id/type_custom_layout"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toEndOf="@+id/tv_spinner_type"
+            app:layout_constraintTop_toBottomOf="@+id/edt_key" />
+
+        <Button
+            android:id="@+id/btn_ok"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:text="确认"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/type_custom_layout" />
+
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:id="@+id/type_custom_layout"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            app:layout_constraintBottom_toTopOf="@+id/btn_ok"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/spinner_type">
+
+            <TextView
+                android:id="@+id/tv_topic"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:gravity="center"
+                android:text="topic: "
+                android:textSize="15dp"
+                app:layout_constraintBottom_toBottomOf="@+id/edt_topic"
+                app:layout_constraintEnd_toStartOf="@+id/edt_topic"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="@+id/edt_topic" />
+
+            <EditText
+                android:id="@+id/edt_topic"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:hint="mqtt topic"
+                android:text=""
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toEndOf="@+id/tv_payload"
+                app:layout_constraintTop_toTopOf="parent" />
+
+
+            <TextView
+                android:id="@+id/tv_payload"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:gravity="center"
+                android:text="payload: "
+                android:textSize="15dp"
+                app:layout_constraintBottom_toBottomOf="@+id/edt_payload"
+                app:layout_constraintEnd_toStartOf="@+id/edt_payload"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="@+id/edt_payload" />
+
+            <TextView
+                android:id="@+id/tv_spinner_qos"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:gravity="center"
+                android:text="qos: "
+                android:textSize="15dp"
+                app:layout_constraintBottom_toBottomOf="@+id/spinner_qos"
+                app:layout_constraintEnd_toStartOf="@+id/spinner_qos"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="@+id/spinner_qos" />
+
+            <EditText
+                android:id="@+id/edt_payload"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:hint="mqtt payload"
+                android:text=""
+                app:layout_constraintBottom_toTopOf="@+id/chk_retained"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toEndOf="@+id/tv_payload"
+                app:layout_constraintTop_toBottomOf="@+id/edt_topic" />
+
+            <Spinner
+                android:id="@+id/spinner_qos"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:entries="@array/key51_mqtt_qos"
+                android:gravity="center"
+                app:layout_constraintBottom_toBottomOf="@+id/chk_retained"
+                app:layout_constraintStart_toEndOf="@+id/tv_spinner_qos"
+                app:layout_constraintTop_toTopOf="@+id/chk_retained" />
+
+            <CheckBox
+                android:id="@+id/chk_retained"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Retained"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/edt_payload" />
+
+        </androidx.constraintlayout.widget.ConstraintLayout>
+    </androidx.constraintlayout.widget.ConstraintLayout>
+</LinearLayout>

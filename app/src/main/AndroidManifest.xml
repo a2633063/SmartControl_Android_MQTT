@@ -142,6 +142,10 @@
             android:label="zMOPS配网"
             android:screenOrientation="portrait" />
         <activity
+            android:name=".deviceItem.key51.Key51LinkActivity"
+            android:label="zKey51配网"
+            android:screenOrientation="portrait" />
+        <activity
             android:name="com.easylink.EasylinkActivity"
             android:label="添加设备"
             android:screenOrientation="portrait" />

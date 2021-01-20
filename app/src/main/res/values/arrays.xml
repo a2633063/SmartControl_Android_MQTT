@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string-array name="key51_type">
+        <item>mqtt/udp数据</item>
+        <item>WoL局域网唤醒</item>
+        <item>旋转编码器 mqtt/udp数据</item>
+    </string-array>
+
+
+    <string-array name="key51_mqtt_qos">
+        <item>0</item>
+        <item>1</item>
+        <item>2</item>
+    </string-array>
+</resources>
