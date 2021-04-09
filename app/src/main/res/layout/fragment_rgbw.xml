@@ -141,7 +141,7 @@
                     android:layout_height="wrap_content"
                     android:layout_marginTop="16dp"
                     android:text="开灯"
-                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintBottom_toTopOf="@+id/checkBox"
                     app:layout_constraintEnd_toStartOf="@+id/btn_close"
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toBottomOf="@+id/textViewW" />
@@ -156,6 +156,15 @@
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintStart_toEndOf="@+id/btn_open"
                     app:layout_constraintTop_toTopOf="@+id/btn_open" />
+
+                <CheckBox
+                    android:id="@+id/chkGradient"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="渐变"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintTop_toBottomOf="@+id/btn_open"
+                    app:layout_constraintStart_toStartOf="parent" />
 
             </androidx.constraintlayout.widget.ConstraintLayout>
 

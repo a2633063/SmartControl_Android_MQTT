@@ -87,9 +87,20 @@
                 android:layout_height="wrap_content"
                 android:entries="@array/key51_type"
                 app:layout_constraintBottom_toTopOf="@+id/edt_topic"
-                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintEnd_toStartOf="@+id/img_help"
                 app:layout_constraintStart_toEndOf="@+id/barrier"
                 app:layout_constraintTop_toBottomOf="@+id/edt_key" />
+
+            <ImageView
+                android:id="@+id/img_help"
+                android:layout_width="wrap_content"
+                android:layout_height="0dp"
+                android:paddingStart="4dp"
+                android:paddingEnd="4dp"
+                app:layout_constraintBottom_toBottomOf="@+id/spinner_type"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/edt_key"
+                app:srcCompat="@drawable/ic_help_outline_black_24dp" />
 
             <TextView
                 android:id="@+id/tv_topic"
@@ -173,7 +184,7 @@
             <ImageView
                 android:id="@+id/img_udp_help"
                 android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
+                android:layout_height="0dp"
                 android:paddingStart="4dp"
                 android:paddingEnd="4dp"
                 app:layout_constraintBottom_toBottomOf="@+id/chk_udp"
@@ -197,7 +208,7 @@
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:digits="0123456789abcdefABCDEF:"
-                android:hint="mac"
+                android:hint="00:00:00:00:00:00"
                 android:inputType="number"
                 android:text=""
                 app:layout_constraintBottom_toTopOf="@+id/edt_ip"
@@ -380,10 +391,20 @@
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:text="确认"
-                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintBottom_toTopOf="@+id/btn_cancel"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@+id/edt_step" />
+
+            <Button
+                android:id="@+id/btn_cancel"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:text="取消"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/btn_ok" />
 
             <androidx.constraintlayout.widget.Barrier
                 android:id="@+id/barrier"

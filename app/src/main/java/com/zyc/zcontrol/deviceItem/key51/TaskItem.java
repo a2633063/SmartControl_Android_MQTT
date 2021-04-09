@@ -106,12 +106,18 @@ public class TaskItem {
     }
 
     public String getMacString() {
-        return Integer.toHexString(mac[0]) + ":"
-                + Integer.toHexString(mac[1]) + ":"
-                + Integer.toHexString(mac[2]) + ":"
-                + Integer.toHexString(mac[3]) + ":"
-                + Integer.toHexString(mac[4]) + ":"
-                + Integer.toHexString(mac[5]);
+        return String.format("%02x",mac[0]) + ":"
+                + String.format("%02x",mac[1]) + ":"
+                + String.format("%02x",mac[2]) + ":"
+                + String.format("%02x",mac[3]) + ":"
+                + String.format("%02x",mac[4]) + ":"
+                + String.format("%02x",mac[5]);
+//        return Integer.toHexString(mac[0]) + ":"
+//                + Integer.toHexString(mac[1]) + ":"
+//                + Integer.toHexString(mac[2]) + ":"
+//                + Integer.toHexString(mac[3]) + ":"
+//                + Integer.toHexString(mac[4]) + ":"
+//                + Integer.toHexString(mac[5]);
 
     }
 
@@ -120,6 +126,8 @@ public class TaskItem {
     }
 
     public String getSecureString() {
+        if (secure[0] == 0 && secure[1] == 0 && secure[2] == 0 && secure[3] == 0 && secure[4] == 0 && secure[5] == 0)
+            return "";
         return Integer.toHexString(secure[0]) + ":"
                 + Integer.toHexString(secure[1]) + ":"
                 + Integer.toHexString(secure[2]) + ":"

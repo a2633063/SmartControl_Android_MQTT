@@ -11,6 +11,7 @@ import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.CheckBox;
 import android.widget.SeekBar;
 import android.widget.TextView;
 
@@ -50,6 +51,7 @@ public class RGBWFragment extends DeviceFragment {
     SeekBar seekBarW;
     Button btn_close;
     Button btn_open;
+    CheckBox chkGradient;
 
     //endregion
 
@@ -77,7 +79,7 @@ public class RGBWFragment extends DeviceFragment {
                 case 2:
                     Log.d(Tag, "send color:" + msg.obj);
 
-                    Send("{\"mac\":\"" + device.getMac() + "\",\"rgb\":" + msg.obj + "}");
+                    Send("{\"mac\":\"" + device.getMac() + "\",\"rgb\":" + msg.obj + ",\"gradient\":"+(chkGradient.isChecked()?"1":"0")+"}");
                     break;
             }
         }
@@ -154,17 +156,17 @@ public class RGBWFragment extends DeviceFragment {
         btn_open.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Send("{\"mac\":\"" + device.getMac() + "\",\"on\":1}");
+                Send("{\"mac\":\"" + device.getMac() + "\",\"on\":1,\"gradient\":"+(chkGradient.isChecked()?"1":"0")+"}");
             }
         });
         btn_close=view.findViewById(R.id.btn_close);
         btn_close.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Send("{\"mac\":\"" + device.getMac() + "\",\"on\":0}");
+                Send("{\"mac\":\"" + device.getMac() + "\",\"on\":0,\"gradient\":"+(chkGradient.isChecked()?"1":"0")+"}");
             }
         });
-
+        chkGradient=view.findViewById(R.id.chkGradient);
         //region SwipeLayout更新当前状态
         mSwipeLayout = view.findViewById(R.id.swipeRefreshLayout);
         mSwipeLayout.setColorSchemeResources(R.color.colorAccent, R.color.colorPrimaryDark, R.color.colorAccent, R.color.colorPrimary);

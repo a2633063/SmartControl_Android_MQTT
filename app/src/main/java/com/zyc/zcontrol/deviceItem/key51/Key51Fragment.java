@@ -203,16 +203,12 @@ public class Key51Fragment extends DeviceFragment {
 
 
         //region listview及adapter
-        data.add(new TaskItem(getActivity()));
-        data.add(new TaskItem(getActivity()));
-        data.add(new TaskItem(getActivity()));
-        data.add(new TaskItem(getActivity()));
-        data.add(new TaskItem(getActivity()));
-        data.add(new TaskItem(getActivity()));
-        data.add(new TaskItem(getActivity()));
-        data.add(new TaskItem(getActivity()));
-        data.add(new TaskItem(getActivity()));
-        data.add(new TaskItem(getActivity()));
+        for (int i = 0; i < 10; i++) {
+            TaskItem t = new TaskItem();
+            t.setBase("任务"+i,0,0,0);
+            //t.setMqtt("");
+            data.add(t);
+        }
         lv_task = view.findViewById(R.id.lv);
         lv_task.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
@@ -269,6 +265,7 @@ public class Key51Fragment extends DeviceFragment {
         TextView tv_id = popupView.findViewById(R.id.tv_id);
         tv_id.setText("任务" + task_id);
         final Button btn_ok = popupView.findViewById(R.id.btn_ok);
+        final Button btn_cancel = popupView.findViewById(R.id.btn_cancel);
         final EditText edt_name = popupView.findViewById(R.id.edt_name);
         final EditText edt_key = popupView.findViewById(R.id.edt_key);
         final Spinner spinner_type = popupView.findViewById(R.id.spinner_type);
@@ -452,7 +449,10 @@ public class Key51Fragment extends DeviceFragment {
                                     throw new Exception("secure格式填写错误!");
                             }
                             //endregion
-
+                            if (port == 0) {
+                                edt_port.setText("9");
+                                port = 9;
+                            }
                             task_backup = new TaskItem();
                             task_backup.setBase(edt_name.getText().toString(), 1, key, 1);
                             task_backup.setWol(mac, ip, port, secure);
@@ -515,6 +515,62 @@ public class Key51Fragment extends DeviceFragment {
             }
         });
         //endregion
+
+        //region 取消按钮
+        btn_cancel.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                window.dismiss();
+            }
+        });
+        btn_cancel.setOnLongClickListener(new View.OnLongClickListener() {
+            @Override
+            public boolean onLongClick(View v) {
+                if (task_backup != null) {
+                    edt_name.setText(task_backup.name);
+                    edt_key.setText(String.valueOf(task_backup.key));
+                    spinner_type.setSelection(task_backup.type);
+
+                    switch (task_backup.type) {
+                        case 0:
+                            group_custom.setVisibility(View.VISIBLE);
+                            group_encoder.setVisibility(View.GONE);
+                            group_wol.setVisibility(View.GONE);
+                            edt_topic.setText(task_backup.topic);
+                            edt_payload.setText(task_backup.payload.replaceAll("%%d", "%%d").replaceAll("%d", "%%d"));
+                            spinner_qos.setSelection(task_backup.qos);
+                            chk_retained.setChecked(task_backup.retained == 1);
+                            chk_udp.setChecked(task_backup.udp == 1);
+                            break;
+                        case 1:
+                            group_custom.setVisibility(View.GONE);
+                            group_encoder.setVisibility(View.GONE);
+                            group_wol.setVisibility(View.VISIBLE);
+                            edt_mac.setText(task_backup.getMacString());
+                            edt_secure.setText(task_backup.getSecureString());
+                            break;
+                        case 2:
+                            group_custom.setVisibility(View.VISIBLE);
+                            group_encoder.setVisibility(View.VISIBLE);
+                            group_wol.setVisibility(View.GONE);
+                            edt_topic.setText(task_backup.topic);
+                            edt_payload.setText(task_backup.payload.replaceAll("%%d", "%%d").replaceAll("%d", "%%d"));
+                            spinner_qos.setSelection(task_backup.qos);
+                            chk_retained.setChecked(task_backup.retained == 1);
+                            chk_udp.setChecked(task_backup.udp == 1);
+                            edt_max.setText(String.valueOf(task_backup.max));
+                            edt_min.setText(String.valueOf(task_backup.min));
+                            edt_step.setText(String.valueOf(task_backup.step));
+                            edt_val.setText(String.valueOf(task_backup.val));
+                            break;
+                    }
+                    edt_ip.setText(task_backup.getIPString());
+                    edt_port.setText(String.valueOf(task_backup.port));
+                }
+                return true;
+            }
+        });
+        //endregion
         //region window初始化
         window.setBackgroundDrawable(new ColorDrawable(android.graphics.Color.alpha(0xffff0000)));
         //endregion
@@ -533,7 +589,7 @@ public class Key51Fragment extends DeviceFragment {
                 group_encoder.setVisibility(View.GONE);
                 group_wol.setVisibility(View.GONE);
                 edt_topic.setText(task.topic);
-                edt_payload.setText(task.payload);
+                edt_payload.setText(task.payload.replaceAll("%%d", "%%d").replaceAll("%d", "%%d"));
                 spinner_qos.setSelection(task.qos);
                 chk_retained.setChecked(task.retained == 1);
                 chk_udp.setChecked(task.udp == 1);
@@ -549,6 +605,11 @@ public class Key51Fragment extends DeviceFragment {
                 group_custom.setVisibility(View.VISIBLE);
                 group_encoder.setVisibility(View.VISIBLE);
                 group_wol.setVisibility(View.GONE);
+                edt_topic.setText(task.topic);
+                edt_payload.setText(task.payload.replaceAll("%%d", "%%d").replaceAll("%d", "%%d"));
+                spinner_qos.setSelection(task.qos);
+                chk_retained.setChecked(task.retained == 1);
+                chk_udp.setChecked(task.udp == 1);
                 edt_max.setText(String.valueOf(task.max));
                 edt_min.setText(String.valueOf(task.min));
                 edt_step.setText(String.valueOf(task.step));
