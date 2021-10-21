@@ -46,7 +46,7 @@ public class Device {
             "zMOPS插座",   //7
             "zRGBW灯",   //8
             "zClock点阵时钟",   //9
-            "zKey51按键",   //9
+            "zKey51按键",   //10
     };
     //设备链接地址
     public final static String[] TypeUri = new String[]{

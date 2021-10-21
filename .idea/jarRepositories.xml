@@ -21,5 +21,30 @@
       <option name="name" value="Google" />
       <option name="url" value="https://dl.google.com/dl/android/maven2/" />
     </remote-repository>
+    <remote-repository>
+      <option name="id" value="injected_offline_androidx" />
+      <option name="name" value="injected_offline_androidx" />
+      <option name="url" value="file:/$USER_HOME$/.android/manual-offline-m2/androidx/" />
+    </remote-repository>
+    <remote-repository>
+      <option name="id" value="injected_offline_com" />
+      <option name="name" value="injected_offline_com" />
+      <option name="url" value="file:/$USER_HOME$/.android/manual-offline-m2/com/" />
+    </remote-repository>
+    <remote-repository>
+      <option name="id" value="injected_offline_org" />
+      <option name="name" value="injected_offline_org" />
+      <option name="url" value="file:/$USER_HOME$/.android/manual-offline-m2/org/" />
+    </remote-repository>
+    <remote-repository>
+      <option name="id" value="injected_offline_android" />
+      <option name="name" value="injected_offline_android" />
+      <option name="url" value="file:/$USER_HOME$/.android/manual-offline-m2/android/" />
+    </remote-repository>
+    <remote-repository>
+      <option name="id" value="injected_offline_io" />
+      <option name="name" value="injected_offline_io" />
+      <option name="url" value="file:/$USER_HOME$/.android/manual-offline-m2/io/" />
+    </remote-repository>
   </component>
 </project>

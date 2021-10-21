@@ -26,8 +26,8 @@ public class TaskItem {
     public int on = 0;    //开关
     public int key;
 
-    public String topic;
-    public String payload;
+    public String topic="";
+    public String payload="";
     public int qos;
     public int retained;
     public int udp;
