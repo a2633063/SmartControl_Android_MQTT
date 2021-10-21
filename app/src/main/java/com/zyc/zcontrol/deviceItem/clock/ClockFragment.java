@@ -2,7 +2,6 @@ package com.zyc.zcontrol.deviceItem.clock;
 
 
 import android.annotation.SuppressLint;
-import android.content.Intent;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
@@ -11,10 +10,8 @@ import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.CheckBox;
-import android.widget.CompoundButton;
 import android.widget.ImageView;
 import android.widget.SeekBar;
-import android.widget.Switch;
 import android.widget.TextView;
 
 import com.zyc.zcontrol.R;
@@ -89,7 +86,7 @@ public class ClockFragment extends DeviceFragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
-        final View view = inflater.inflate(R.layout.fragment_clock, container, false);
+        final View view = inflater.inflate(R.layout.clock_fragment, container, false);
 
         //region 控件初始化
         //region 拖动条 处理viewpage/SwipeRefreshLayout滑动冲突事件

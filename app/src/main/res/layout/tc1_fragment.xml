@@ -227,7 +227,7 @@
 
 
     <include
-        layout="@layout/view_log_textview"
+        layout="@layout/app_view_log_textview"
         android:layout_width="match_parent"
         android:layout_height="66sp" />
 

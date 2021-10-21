@@ -43,7 +43,7 @@ public class MainDeviceListAdapter extends BaseAdapter {
         View view = null;
         final int position = position1;
         if (convertView == null) {
-            convertView = inflater.inflate(R.layout.list_item_main_device_list, null);
+            convertView = inflater.inflate(R.layout.app_list_item_main_device_list, null);
             holder = new ViewHolder();
 
             holder.tv = convertView.findViewById(R.id.textView);

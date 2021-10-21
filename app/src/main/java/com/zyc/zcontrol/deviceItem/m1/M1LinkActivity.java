@@ -13,7 +13,7 @@ public class M1LinkActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_m1_link);
+        setContentView(R.layout.m1_activity_link);
 
         //region 顶部返回按钮
         ActionBar actionBar = getSupportActionBar();

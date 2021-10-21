@@ -127,7 +127,7 @@ public class DC1LinkActivity extends AppCompatActivity implements View.OnClickLi
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_dc1_link);
+        setContentView(R.layout.dc1_activity_link);
 
 
         //region 顶部返回按钮

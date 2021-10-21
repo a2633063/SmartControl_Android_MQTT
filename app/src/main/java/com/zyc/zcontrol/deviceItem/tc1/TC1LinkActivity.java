@@ -101,7 +101,7 @@ public class TC1LinkActivity extends AppCompatActivity implements View.OnClickLi
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_tc1_link);
+        setContentView(R.layout.tc1_activity_link);
 
         elp2p = new EasylinkP2P(this);
 

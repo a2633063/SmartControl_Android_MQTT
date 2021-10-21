@@ -14,7 +14,7 @@ public class S7LinkActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_s7_link);
+        setContentView(R.layout.s7_activity_link);
         //region 顶部返回按钮
         ActionBar actionBar = getSupportActionBar();
         if (actionBar != null) {

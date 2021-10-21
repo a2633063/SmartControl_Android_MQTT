@@ -58,7 +58,7 @@ class M1TaskListAdapter extends BaseAdapter {
         View view = null;
         final int position = position1;
         if (convertView == null) {
-            convertView = inflater.inflate(R.layout.list_item_m1_task_list, null);
+            convertView = inflater.inflate(R.layout.m1_list_item_task_list, null);
             holder = new ViewHolder();
             holder.tv_time = convertView.findViewById(R.id.tv_time);
             holder.tv_action = convertView.findViewById(R.id.tv_action);

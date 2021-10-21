@@ -12,23 +12,17 @@ import android.view.LayoutInflater;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
-import android.view.WindowManager;
 import android.widget.AdapterView;
 import android.widget.Button;
 import android.widget.CheckBox;
-import android.widget.CompoundButton;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.ListView;
-import android.widget.NumberPicker;
 import android.widget.PopupWindow;
 import android.widget.SeekBar;
 import android.widget.Spinner;
-import android.widget.Switch;
 import android.widget.TextView;
-import android.widget.ToggleButton;
 
-import com.zyc.Function;
 import com.zyc.zcontrol.R;
 import com.zyc.zcontrol.deviceItem.DeviceClass.DeviceFragment;
 import com.zyc.zcontrol.deviceItem.DeviceClass.DeviceKey51;
@@ -37,7 +31,6 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.util.ArrayList;
-import java.util.Calendar;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -155,7 +148,7 @@ public class Key51Fragment extends DeviceFragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
-        final View view = inflater.inflate(R.layout.fragment_key51, container, false);
+        final View view = inflater.inflate(R.layout.key51_fragment, container, false);
 
         //region 控件初始化
         //region 拖动条 处理viewpage/SwipeRefreshLayout滑动冲突事件
@@ -255,7 +248,7 @@ public class Key51Fragment extends DeviceFragment {
     //region 弹窗
     private void popupwindowTask(final int task_id) {
 
-        final View popupView = getLayoutInflater().inflate(R.layout.popupwindow_key51_set_task, null);
+        final View popupView = getLayoutInflater().inflate(R.layout.key51_popupwindow_set_task, null);
         final PopupWindow window = new PopupWindow(popupView, MATCH_PARENT, MATCH_PARENT, true);//wrap_content,wrap_content
 
         final TaskItem task = adapter.getItem(task_id);

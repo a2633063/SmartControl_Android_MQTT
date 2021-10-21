@@ -7,7 +7,6 @@ import android.annotation.SuppressLint;
 import android.app.TimePickerDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
-import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
 import android.os.Handler;
@@ -15,7 +14,6 @@ import android.os.Message;
 import android.view.Gravity;
 import android.view.MenuItem;
 import android.view.View;
-import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
@@ -26,7 +24,6 @@ import android.widget.TextView;
 import android.widget.TimePicker;
 import android.widget.Toast;
 
-import com.google.android.material.snackbar.Snackbar;
 import com.zyc.zcontrol.MainApplication;
 import com.zyc.zcontrol.ServiceActivity;
 import com.zyc.zcontrol.R;
@@ -86,7 +83,7 @@ public class M1LinkA1Activity extends ServiceActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_m1_link_a1);
+        setContentView(R.layout.m1_activity_link_a1);
 
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);//左侧添加一个默认的返回图标
         getSupportActionBar().setHomeButtonEnabled(true); //设置返回键可用
@@ -204,7 +201,7 @@ public class M1LinkA1Activity extends ServiceActivity {
         //endregion
 
 
-        final View popupView = getLayoutInflater().inflate(R.layout.popupwindow_m1_a1_link_set, null);
+        final View popupView = getLayoutInflater().inflate(R.layout.m1_popupwindow_a1_link_set, null);
         final PopupWindow window = new PopupWindow(popupView, MATCH_PARENT, MATCH_PARENT, true);//wrap_content,wrap_content
 
         //region 控件初始化

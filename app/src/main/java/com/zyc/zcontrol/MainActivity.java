@@ -241,7 +241,7 @@ public class MainActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_main);
+        setContentView(R.layout.app_activity_main);
         toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
@@ -322,7 +322,7 @@ public class MainActivity extends AppCompatActivity {
 
             }
         });
-        View footView = (View) LayoutInflater.from(this).inflate(R.layout.nav_header_main, null);
+        View footView = (View) LayoutInflater.from(this).inflate(R.layout.app_nav_header_main, null);
         lv_device.addFooterView(b);
         lv_device.setAdapter(mainDeviceListAdapter);
         if (page < mainDeviceListAdapter.getCount()) mainDeviceListAdapter.setChoice(page);
@@ -770,7 +770,7 @@ public class MainActivity extends AppCompatActivity {
     //region 弹窗
     private void popupwindowInfo() {
 
-        final View popupView = getLayoutInflater().inflate(R.layout.popupwindow_main_info, null);
+        final View popupView = getLayoutInflater().inflate(R.layout.app_popupwindow_main_info, null);
         final PopupWindow window = new PopupWindow(popupView, MATCH_PARENT, MATCH_PARENT, true);//wrap_content,wrap_content
 
 
@@ -866,7 +866,7 @@ public class MainActivity extends AppCompatActivity {
 
     private void popupwindowLanUdpScan() {
 
-        final View popupView = getLayoutInflater().inflate(R.layout.popupwindow_main_lan_udp_scan, null);
+        final View popupView = getLayoutInflater().inflate(R.layout.app_popupwindow_main_lan_udp_scan, null);
         final PopupWindow window = new PopupWindow(popupView, MATCH_PARENT, MATCH_PARENT, true);//wrap_content,wrap_content
 
         //region 控件初始化

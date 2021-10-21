@@ -61,7 +61,7 @@ public class ButtonMateFragment extends DeviceFragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
-        View view = inflater.inflate(R.layout.fragment_button_mate, container, false);
+        View view = inflater.inflate(R.layout.button_mate_fragment, container, false);
 
         //region 控件初始化
 

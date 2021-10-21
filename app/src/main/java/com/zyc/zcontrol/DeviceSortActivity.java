@@ -1,32 +1,22 @@
 package com.zyc.zcontrol;
 
-import android.content.ContentValues;
-import android.content.Intent;
-import android.database.Cursor;
-
 import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.app.AppCompatActivity;
 
 import android.os.Bundle;
 
-import androidx.localbroadcastmanager.content.LocalBroadcastManager;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 import androidx.recyclerview.widget.ItemTouchHelper;
 
-import android.util.Log;
 import android.view.MenuItem;
-import android.widget.Toast;
 
 import com.zyc.devicesort.SortRecyclerAdapter;
 import com.zyc.devicesort.SortRecyclerItemTouchHelper;
 import com.zyc.devicesort.SortRecyclerViewSpacesItemDecoration;
 import com.zyc.zcontrol.deviceItem.DeviceClass.Device;
 
-import java.util.ArrayList;
 import java.util.List;
-
-import static com.zyc.zcontrol.ConnectService.ACTION_MAINACTIVITY_DEVICELISTUPDATE;
 
 public class DeviceSortActivity extends AppCompatActivity {
     public final static String Tag = "DeviceSortActivity";
@@ -37,7 +27,7 @@ public class DeviceSortActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_device_sort);
+        setContentView(R.layout.app_activity_device_sort);
 
         ActionBar actionBar = getSupportActionBar();
         if (actionBar != null) {

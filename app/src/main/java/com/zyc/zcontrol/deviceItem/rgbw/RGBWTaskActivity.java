@@ -1,24 +1,14 @@
 package com.zyc.zcontrol.deviceItem.rgbw;
 
 import android.annotation.SuppressLint;
-import android.content.BroadcastReceiver;
-import android.content.ComponentName;
-import android.content.Context;
 import android.content.Intent;
-import android.content.IntentFilter;
-import android.content.ServiceConnection;
-import android.content.SharedPreferences;
 import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
 import android.os.Handler;
-import android.os.IBinder;
 import android.os.Message;
 
-import androidx.localbroadcastmanager.content.LocalBroadcastManager;
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
-import androidx.appcompat.app.AppCompatActivity;
 
-import android.util.Log;
 import android.view.Gravity;
 import android.view.MenuItem;
 import android.view.View;
@@ -32,7 +22,6 @@ import android.widget.TextView;
 import android.widget.Toast;
 import android.widget.ToggleButton;
 
-import com.zyc.zcontrol.ConnectService;
 import com.zyc.zcontrol.MainApplication;
 import com.zyc.zcontrol.R;
 import com.zyc.zcontrol.ServiceActivity;
@@ -77,7 +66,7 @@ public class RGBWTaskActivity extends ServiceActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_rgbw_plug);
+        setContentView(R.layout.rgbw_activity_plug);
 
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);//左侧添加一个默认的返回图标
         getSupportActionBar().setHomeButtonEnabled(true); //设置返回键可用
@@ -168,7 +157,7 @@ public class RGBWTaskActivity extends ServiceActivity {
     //region 弹窗
     private void popupwindowTask(final int task_id) {
 
-        final View popupView = getLayoutInflater().inflate(R.layout.popupwindow_rgbw_set_time, null);
+        final View popupView = getLayoutInflater().inflate(R.layout.rgbw_popupwindow_set_time, null);
         final PopupWindow window = new PopupWindow(popupView, MATCH_PARENT, MATCH_PARENT, true);//wrap_content,wrap_content
 
         final TaskItem task = adapter.getItem(task_id);
@@ -245,7 +234,7 @@ public class RGBWTaskActivity extends ServiceActivity {
 
     private void popupwindowCountDown() {
 
-        final View popupView = getLayoutInflater().inflate(R.layout.popupwindow_rgbw_set_time_count_down, null);
+        final View popupView = getLayoutInflater().inflate(R.layout.rgbw_popupwindow_set_time_count_down, null);
         final PopupWindow window = new PopupWindow(popupView, MATCH_PARENT, MATCH_PARENT, true);//wrap_content,wrap_content
 
         final int task_id = 4;

@@ -26,7 +26,6 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
-import com.zyc.zcontrol.MainActivity;
 import com.zyc.zcontrol.MainApplication;
 import com.zyc.zcontrol.R;
 import com.zyc.zcontrol.deviceItem.DeviceClass.Device;
@@ -81,7 +80,7 @@ public class DeviceAddChoiceActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_device_add_choice);
+        setContentView(R.layout.app_activity_device_add_choice);
 
         ActionBar actionBar = getSupportActionBar();
         if (actionBar != null) {
@@ -356,7 +355,7 @@ public class DeviceAddChoiceActivity extends AppCompatActivity {
             View view = null;
             final int position = position1;
             if (convertView == null) {
-                convertView = inflater.inflate(R.layout.list_item_main_device_list, null);
+                convertView = inflater.inflate(R.layout.app_list_item_main_device_list, null);
                 holder = new ViewHolder();
 
                 holder.tv = convertView.findViewById(R.id.textView);

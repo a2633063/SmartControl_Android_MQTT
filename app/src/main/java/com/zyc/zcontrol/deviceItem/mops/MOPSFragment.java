@@ -2,7 +2,6 @@ package com.zyc.zcontrol.deviceItem.mops;
 
 
 import android.annotation.SuppressLint;
-import android.content.Intent;
 import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
 import android.os.Handler;
@@ -14,7 +13,6 @@ import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.Button;
 import android.widget.CompoundButton;
-import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.NumberPicker;
 import android.widget.PopupWindow;
@@ -23,28 +21,19 @@ import android.widget.TextView;
 import android.widget.ToggleButton;
 
 import com.zyc.Function;
-import com.zyc.linetable.LineTableView;
-import com.zyc.linetable.WeightHistoryData;
-import com.zyc.zcontrol.MainActivity;
 import com.zyc.zcontrol.R;
-import com.zyc.zcontrol.deviceAdd.DeviceAddChoiceActivity;
 import com.zyc.zcontrol.deviceItem.DeviceClass.DeviceFragment;
 import com.zyc.zcontrol.deviceItem.DeviceClass.DeviceMOPS;
 
-import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
-import java.util.Date;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import androidx.annotation.DrawableRes;
 import androidx.appcompat.app.AlertDialog;
-import androidx.core.view.GravityCompat;
 import androidx.fragment.app.Fragment;
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 
@@ -114,7 +103,7 @@ public class MOPSFragment extends DeviceFragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
-        View view = inflater.inflate(R.layout.fragment_mops, container, false);
+        View view = inflater.inflate(R.layout.mops_fragment, container, false);
 
         //region 控件初始化
         sw_on = view.findViewById(R.id.sw_on);
@@ -203,7 +192,7 @@ public class MOPSFragment extends DeviceFragment {
     //region 弹窗
     private void popupwindowTask(final int task_id) {
 
-        final View popupView = getLayoutInflater().inflate(R.layout.popupwindow_mops_set_time, null);
+        final View popupView = getLayoutInflater().inflate(R.layout.mops_popupwindow_set_time, null);
         final PopupWindow window = new PopupWindow(popupView, MATCH_PARENT, MATCH_PARENT, true);//wrap_content,wrap_content
 
         final TaskItem task = adapter.getItem(task_id);
@@ -336,7 +325,7 @@ public class MOPSFragment extends DeviceFragment {
 
     private void popupwindowCountDown() {
 
-        final View popupView = getLayoutInflater().inflate(R.layout.popupwindow_mops_set_time_count_down, null);
+        final View popupView = getLayoutInflater().inflate(R.layout.mops_popupwindow_set_time_count_down, null);
         final PopupWindow window = new PopupWindow(popupView, MATCH_PARENT, MATCH_PARENT, true);//wrap_content,wrap_content
 
         final int task_id = 4;

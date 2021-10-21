@@ -46,7 +46,7 @@ public class MainDeviceLanUdpScanListAdapter extends BaseAdapter {
         View view = null;
         final int position = position1;
         if (convertView == null) {
-            convertView = inflater.inflate(R.layout.list_item_main_device_udp_scan_list, null);
+            convertView = inflater.inflate(R.layout.app_list_item_main_device_udp_scan_list, null);
             holder = new ViewHolder();
 
             holder.name = convertView.findViewById(R.id.textView);

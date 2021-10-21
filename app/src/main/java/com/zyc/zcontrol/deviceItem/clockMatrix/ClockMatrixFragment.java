@@ -2,16 +2,9 @@ package com.zyc.zcontrol.deviceItem.clockMatrix;
 
 
 import android.annotation.SuppressLint;
-import android.content.DialogInterface;
-import android.content.Intent;
-import android.net.Uri;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
-import android.text.Editable;
-import android.text.InputType;
-import android.text.method.KeyListener;
-import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
 import android.view.View;
@@ -21,7 +14,6 @@ import android.widget.CheckBox;
 import android.widget.EditText;
 import android.widget.SeekBar;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.zyc.zcontrol.R;
 import com.zyc.zcontrol.deviceItem.DeviceClass.DeviceClockMatrix;
@@ -30,7 +22,6 @@ import com.zyc.zcontrol.deviceItem.DeviceClass.DeviceFragment;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import java.security.Key;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -97,7 +88,7 @@ public class ClockMatrixFragment extends DeviceFragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
-        final View view = inflater.inflate(R.layout.fragment_clock_matrix, container, false);
+        final View view = inflater.inflate(R.layout.clock_matrix_fragment, container, false);
 
         //region 控件初始化
         //region 拖动条 处理viewpage/SwipeRefreshLayout滑动冲突事件

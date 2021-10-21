@@ -37,7 +37,6 @@ import org.json.JSONObject;
 
 import java.util.ArrayList;
 import java.util.Calendar;
-import java.util.Date;
 
 import static android.view.ViewGroup.LayoutParams.MATCH_PARENT;
 
@@ -74,7 +73,7 @@ public class TC1PlugActivity extends ServiceActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_tc1_plug);
+        setContentView(R.layout.tc1_activity_plug);
 
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);//左侧添加一个默认的返回图标
         getSupportActionBar().setHomeButtonEnabled(true); //设置返回键可用
@@ -225,7 +224,7 @@ public class TC1PlugActivity extends ServiceActivity {
     //region 弹窗
     private void popupwindowTask(final int task_id) {
 
-        final View popupView = getLayoutInflater().inflate(R.layout.popupwindow_tc1_set_time, null);
+        final View popupView = getLayoutInflater().inflate(R.layout.tc1_popupwindow_set_time, null);
         final PopupWindow window = new PopupWindow(popupView, MATCH_PARENT, MATCH_PARENT, true);//wrap_content,wrap_content
 
         final TaskItem task = adapter.getItem(task_id);
@@ -360,7 +359,7 @@ public class TC1PlugActivity extends ServiceActivity {
 
     private void popupwindowCountDown() {
 
-        final View popupView = getLayoutInflater().inflate(R.layout.popupwindow_tc1_set_time_count_down, null);
+        final View popupView = getLayoutInflater().inflate(R.layout.tc1_popupwindow_set_time_count_down, null);
         final PopupWindow window = new PopupWindow(popupView, MATCH_PARENT, MATCH_PARENT, true);//wrap_content,wrap_content
 
         final int task_id = 4;

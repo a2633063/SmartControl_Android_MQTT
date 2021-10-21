@@ -21,7 +21,7 @@ public class SettingActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_setting);
+        setContentView(R.layout.app_activity_setting);
         int type = TYPE_UNKNOWN;
         String name = null;
         String mac = null;

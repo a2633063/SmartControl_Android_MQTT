@@ -9,7 +9,7 @@
     tools:openDrawer="start">
 
     <include
-        layout="@layout/content_main"
+        layout="@layout/app_content_main"
         android:layout_width="match_parent"
         android:layout_height="match_parent" />
 
@@ -19,7 +19,7 @@
         android:layout_height="match_parent"
         android:layout_gravity="start"
         android:fitsSystemWindows="false"
-        app:headerLayout="@layout/nav_header_main">
+        app:headerLayout="@layout/app_nav_header_main">
 
         <LinearLayout
             android:layout_width="match_parent"

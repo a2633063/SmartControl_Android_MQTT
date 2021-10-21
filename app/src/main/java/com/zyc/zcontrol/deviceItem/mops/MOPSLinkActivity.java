@@ -14,7 +14,7 @@ public class MOPSLinkActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_mops_link);
+        setContentView(R.layout.mops_activity_link);
         //region 顶部返回按钮
         ActionBar actionBar = getSupportActionBar();
         if (actionBar != null) {

@@ -14,7 +14,7 @@ public class Key51LinkActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_key51_link);
+        setContentView(R.layout.key51_activity_link);
         //region 顶部返回按钮
         ActionBar actionBar = getSupportActionBar();
         if (actionBar != null) {

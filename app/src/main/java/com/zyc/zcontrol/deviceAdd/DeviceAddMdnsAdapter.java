@@ -76,7 +76,7 @@ public class DeviceAddMdnsAdapter extends RecyclerView.Adapter<DeviceAddMdnsAdap
     @Override
     public ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
         View view = LayoutInflater.from(parent.getContext())
-                .inflate(R.layout.list_item_device_add_mdns_list, parent, false);
+                .inflate(R.layout.app_list_item_device_add_mdns_list, parent, false);
         ViewHolder holder = new ViewHolder(view);
         return holder;
     }
