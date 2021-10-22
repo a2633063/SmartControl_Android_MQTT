@@ -38,6 +38,8 @@ public class ConnectService extends Service {
     public final static String ACTION_DATA_AVAILABLE = "com.zyc.zcontrol.mqtt.ACTION_DATA_AVAILABLE";
     public final static String EXTRA_DATA_TOPIC = "com.zyc.zcontrol.mqtt.EXTRA_DATA_TOPIC";
     public final static String EXTRA_DATA_MESSAGE = "com.zyc.zcontrol.mqtt.EXTRA_DATA_MESSAGE";
+    public final static String EXTRA_ERROR_CODE = "com.zyc.zcontrol.mqtt.EXTRA_ERROR_CODE";
+    public final static String EXTRA_ERROR_MESSAGE = "com.zyc.zcontrol.mqtt.EXTRA_ERROR_MESSAGE";
     //endregion
 
     //region UDP相关
@@ -167,6 +169,14 @@ public class ConnectService extends Service {
         localBroadcastManager.sendBroadcast(intent);
     }
 
+    void broadcastUpdate(String action,int error_code, String message) {
+        final Intent intent = new Intent(action);
+        intent.putExtra(EXTRA_ERROR_CODE, error_code);
+        if (message != null && !message.isEmpty())
+            intent.putExtra(EXTRA_ERROR_MESSAGE, message);
+        localBroadcastManager.sendBroadcast(intent);
+    }
+
     void broadcastUpdate(String action, String ip, int port, String message) {
         final Intent intent = new Intent(action);
 
@@ -222,7 +232,15 @@ public class ConnectService extends Service {
                 @Override
                 public void connectionLost(Throwable cause) {
                     Log.d("MQTTThread", "connectionLost");
-                    broadcastUpdate(ACTION_MQTT_DISCONNECTED);
+                    String message = null;
+                    int error_code = -1;
+                    if (cause != null && cause instanceof MqttException) {
+                        error_code=((MqttException)cause).getReasonCode();
+                    }
+                    if (cause != null && cause.getCause() != null)
+                        message = cause.getCause().getMessage();
+                    else message = cause.getMessage();
+                    broadcastUpdate(ACTION_MQTT_DISCONNECTED,error_code, message);
                 }
 
                 @Override
@@ -260,7 +278,18 @@ public class ConnectService extends Service {
                 @Override
                 public void onFailure(IMqttToken asyncActionToken, Throwable exception) {
                     Log.e("ConnectService", "onFailure:" + exception.getMessage());
-                    broadcastUpdate(ACTION_MQTT_DISCONNECTED); //连接失败
+
+                    String message = null;
+                    int error_code = -1;
+                    if (exception != null && exception instanceof MqttException) {
+                        error_code=((MqttException)exception).getReasonCode();
+                    }
+
+                    if (exception != null && exception.getCause() != null)
+                        message = exception.getCause().getMessage();
+                    else message = exception.getMessage();
+
+                    broadcastUpdate(ACTION_MQTT_DISCONNECTED,error_code, message); //连接失败
                 }
             });
 
@@ -277,7 +306,7 @@ public class ConnectService extends Service {
             Log.e("ConnectService", "cause " + e.getCause());
             Log.e("ConnectService", "excep " + e);
             e.printStackTrace();
-            broadcastUpdate(ACTION_MQTT_DISCONNECTED); //连接失败
+            broadcastUpdate(ACTION_MQTT_DISCONNECTED,e.getReasonCode(), e.getMessage()); //连接失败
         }
     }
 

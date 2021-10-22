@@ -53,6 +53,7 @@ import com.zyc.webservice.WebService;
 import com.zyc.zcontrol.deviceItem.DeviceClass.Device;
 import com.zyc.zcontrol.deviceItem.DeviceClass.DeviceA1;
 import com.zyc.zcontrol.deviceItem.DeviceClass.DeviceButtonMate;
+import com.zyc.zcontrol.deviceItem.DeviceClass.DeviceC1;
 import com.zyc.zcontrol.deviceItem.DeviceClass.DeviceClock;
 import com.zyc.zcontrol.deviceItem.DeviceClass.DeviceClockMatrix;
 import com.zyc.zcontrol.deviceItem.DeviceClass.DeviceDC1;
@@ -62,6 +63,7 @@ import com.zyc.zcontrol.deviceItem.DeviceClass.DeviceMOPS;
 import com.zyc.zcontrol.deviceItem.DeviceClass.DeviceRGBW;
 import com.zyc.zcontrol.deviceItem.DeviceClass.DeviceS7;
 import com.zyc.zcontrol.deviceItem.DeviceClass.DeviceTC1;
+import com.zyc.zcontrol.deviceItem.DeviceClass.DeviceUartToMqtt;
 import com.zyc.zcontrol.deviceItem.SettingActivity;
 import com.zyc.zcontrol.deviceAdd.DeviceAddChoiceActivity;
 import com.zyc.zcontrol.mainActivity.MainDeviceFragmentAdapter;
@@ -160,9 +162,15 @@ public class MainActivity extends AppCompatActivity {
                 //endregion
                 //region 当获取局域网设备时,每隔2秒发送{"cmd":"device report"}
                 case 3:
+                    String ip=(String)msg.obj;
+                    if(ip!=null) mConnectService.UDPsend(ip, "{\"cmd\":\"device report\"}");
                     mConnectService.UDPsend("255.255.255.255", "{\"cmd\":\"device report\"}");
                     if (mainDeviceLanUdpScanListAdapter != null) {
-                        handler.sendEmptyMessageDelayed(3, 1000);
+                        Message new_msg=new Message();
+                        new_msg.what=3;
+                        new_msg.obj=ip;
+                        handler.sendMessageDelayed(new_msg,2500);
+                        //handler.sendEmptyMessageDelayed(3, 1000);
                     }
                     break;
                 //endregion
@@ -518,7 +526,7 @@ public class MainActivity extends AppCompatActivity {
             String ip = intent.getExtras().getString("ip");
             String mac = intent.getExtras().getString("mac");
             Log.e(Tag, "get device result:" + ip + "," + mac + "," + type);
-            popupwindowLanUdpScan();
+            popupwindowLanUdpScan(ip);
 //            if (ip != null && ip.equals("255.255.255.255")) {
 //                popupwindowLanUdpScan();
 //            } else {
@@ -864,7 +872,7 @@ public class MainActivity extends AppCompatActivity {
 
     }
 
-    private void popupwindowLanUdpScan() {
+    private void popupwindowLanUdpScan(String ip) {
 
         final View popupView = getLayoutInflater().inflate(R.layout.app_popupwindow_main_lan_udp_scan, null);
         final PopupWindow window = new PopupWindow(popupView, MATCH_PARENT, MATCH_PARENT, true);//wrap_content,wrap_content
@@ -925,7 +933,12 @@ public class MainActivity extends AppCompatActivity {
         //endregion
         window.update();
         window.showAtLocation(popupView, Gravity.CENTER, 0, 0);
-        handler.sendEmptyMessageDelayed(3, 0);
+
+        Message msg=new Message();
+        msg.what=3;
+        msg.obj=ip;
+        handler.sendMessageDelayed(msg,0);
+        //handler.sendEmptyMessageDelayed(3, 0);
 
     }
 
@@ -1142,6 +1155,10 @@ public class MainActivity extends AppCompatActivity {
                 return new DeviceClockMatrix(name, mac);
             case Device.TYPE_KEY51:
                 return new DeviceKey51(name, mac);
+            case Device.TYPE_C1:
+                return new DeviceC1(name, mac);
+            case Device.TYPE_UARTTOMQTT:
+                return new DeviceUartToMqtt(name, mac);
         }
         return null;
     }

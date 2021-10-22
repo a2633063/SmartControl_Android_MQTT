@@ -32,7 +32,9 @@ public class Device {
     public final static int TYPE_RGBW = 8;
     public final static int TYPE_CLOCK_MATRIX = 9;
     public final static int TYPE_KEY51 = 10;
-    public final static int TYPE_COUNT = 11;
+    public final static int TYPE_C1 = 11;
+    public final static int TYPE_UARTTOMQTT = 12;
+    public final static int TYPE_COUNT = 13;
 
     //设备名称
     public final static String[] TypeName = new String[]{
@@ -47,6 +49,8 @@ public class Device {
             "zRGBW灯",   //8
             "zClock点阵时钟",   //9
             "zKey51按键",   //10
+            "zC1门窗传感器",   //11
+            "z485toMqtt",   //12
     };
     //设备链接地址
     public final static String[] TypeUri = new String[]{
@@ -61,6 +65,8 @@ public class Device {
             "https://github.com/a2633063/zRGBW",   //8
             "https://github.com/a2633063/zClock_Matrix",   //9
             "https://github.com/a2633063/zKey51",   //10
+            "https://github.com/a2633063/zC1",   //11
+            "https://github.com/a2633063/z485toMqtt",   //12
     };
     //设备图标
     public final static @DrawableRes
@@ -76,21 +82,26 @@ public class Device {
             R.drawable.device_icon_zrgbw,//8
             R.drawable.device_icon_zclock_matrix,//9
             R.drawable.device_icon_diy,//10
+            R.drawable.device_icon_diy,//11
+            R.drawable.device_icon_diy,//12
     };
 
     //设备对应配对页面
     public final static Class LinkActivity[] =
             {
-                    ESPtouchActivity.class,
-                    TC1LinkActivity.class,
-                    DC1LinkActivity.class,
-                    A1LinkActivity.class,
-                    M1LinkActivity.class,
-                    S7LinkActivity.class,
-                    ClockLinkActivity.class,
-                    MOPSLinkActivity.class,
-                    null,
-                    null,
+                    ESPtouchActivity.class,//0
+                    TC1LinkActivity.class,//1
+                    DC1LinkActivity.class,//2
+                    A1LinkActivity.class,//3
+                    M1LinkActivity.class,//4
+                    S7LinkActivity.class,//5
+                    ClockLinkActivity.class,//6
+                    MOPSLinkActivity.class,//7
+                    null,//8
+                    null,//9
+                    null,//10
+                    null,//11
+                    null,//12
             };
 //endregion
 

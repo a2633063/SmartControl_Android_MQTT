@@ -191,7 +191,9 @@ public class DeviceFragment extends Fragment implements View.OnLongClickListener
                 MqttConnected();
             } else if (ConnectService.ACTION_MQTT_DISCONNECTED.equals(action)) {  //连接失败/断开
                 Log.w(Tag, "ACTION_MQTT_DISCONNECTED");
-                Log("app已断开mqtt服务器");
+                String message = intent.getStringExtra(ConnectService.EXTRA_ERROR_MESSAGE);
+                int code=intent.getIntExtra(ConnectService.EXTRA_ERROR_CODE,-1);
+                Log("app已断开mqtt服务器["+code+"]:"+message);
                 MqttDisconnected();
             } else if (action.equals(device_mac)) {//接收到设备独立数据
                 String ip = intent.getStringExtra(ConnectService.EXTRA_UDP_DATA_IP);

@@ -1,0 +1,12 @@
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:padding="16dp">
+
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="1. 长按复位按键5秒后松开按键.屏幕显示上下\n2. 手机连接设备热点zS7_XXXX,打开网址:192.168.0.1,输入wifi名称(必须为2.4G)及密码点击下一步,提示配置成功.\n 3. 在路由器管理中确认设备连上wifi,zS7在设备中名称为zS7_XXXX(XXXX为MAC后四位).\n4. 搜寻局域网设备添加设备至app.\n更多详细内容见使用文档说明\n文档在帮助/关于页面跳转" />
+
+</LinearLayout>
