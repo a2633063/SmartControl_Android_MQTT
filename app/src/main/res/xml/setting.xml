@@ -43,5 +43,15 @@
 
     </PreferenceCategory>
 
+    <PreferenceCategory android:title="导入导出设备">
+        <Preference
+            android:key="device_import"
+            android:title="导入设备"
+            android:summary="从剪贴板导入设备"/>
 
+        <Preference
+            android:key="device_export"
+            android:title="导出设备"
+            android:summary="导出设备到剪贴板"/>
+    </PreferenceCategory>
 </PreferenceScreen>

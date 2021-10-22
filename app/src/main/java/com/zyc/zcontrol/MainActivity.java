@@ -1,5 +1,10 @@
 package com.zyc.zcontrol;
 
+import static android.view.ViewGroup.LayoutParams.MATCH_PARENT;
+import static com.zyc.Function.getLocalVersionName;
+import static com.zyc.Function.returnDeviceClass;
+import static java.lang.Integer.parseInt;
+
 import android.annotation.SuppressLint;
 import android.content.BroadcastReceiver;
 import android.content.ComponentName;
@@ -50,22 +55,10 @@ import com.google.android.material.snackbar.Snackbar;
 import com.google.android.material.tabs.TabLayout;
 import com.zyc.Function;
 import com.zyc.webservice.WebService;
-import com.zyc.zcontrol.deviceItem.DeviceClass.Device;
-import com.zyc.zcontrol.deviceItem.DeviceClass.DeviceA1;
-import com.zyc.zcontrol.deviceItem.DeviceClass.DeviceButtonMate;
-import com.zyc.zcontrol.deviceItem.DeviceClass.DeviceC1;
-import com.zyc.zcontrol.deviceItem.DeviceClass.DeviceClock;
-import com.zyc.zcontrol.deviceItem.DeviceClass.DeviceClockMatrix;
-import com.zyc.zcontrol.deviceItem.DeviceClass.DeviceDC1;
-import com.zyc.zcontrol.deviceItem.DeviceClass.DeviceKey51;
-import com.zyc.zcontrol.deviceItem.DeviceClass.DeviceM1;
-import com.zyc.zcontrol.deviceItem.DeviceClass.DeviceMOPS;
-import com.zyc.zcontrol.deviceItem.DeviceClass.DeviceRGBW;
-import com.zyc.zcontrol.deviceItem.DeviceClass.DeviceS7;
-import com.zyc.zcontrol.deviceItem.DeviceClass.DeviceTC1;
-import com.zyc.zcontrol.deviceItem.DeviceClass.DeviceUartToMqtt;
-import com.zyc.zcontrol.deviceItem.SettingActivity;
 import com.zyc.zcontrol.deviceAdd.DeviceAddChoiceActivity;
+import com.zyc.zcontrol.deviceItem.DeviceClass.Device;
+import com.zyc.zcontrol.deviceItem.DeviceClass.DeviceTC1;
+import com.zyc.zcontrol.deviceItem.SettingActivity;
 import com.zyc.zcontrol.mainActivity.MainDeviceFragmentAdapter;
 import com.zyc.zcontrol.mainActivity.MainDeviceLanUdpScanListAdapter;
 import com.zyc.zcontrol.mainActivity.MainDeviceListAdapter;
@@ -79,11 +72,6 @@ import java.util.List;
 import java.util.Random;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
-
-import static android.view.ViewGroup.LayoutParams.MATCH_PARENT;
-import static com.zyc.Function.getLocalVersionName;
-
-import static java.lang.Integer.parseInt;
 
 public class MainActivity extends AppCompatActivity {
     public final static String Tag = "MainActivity";
@@ -276,7 +264,7 @@ public class MainActivity extends AppCompatActivity {
         }
 
         if (deviceData.size() < 1) {
-            deviceData.add(new DeviceKey51("演示设备", "000000000000"));
+            deviceData.add(new DeviceTC1("演示设备", "000000000000"));
         }
         //endregion
 
@@ -1131,36 +1119,5 @@ public class MainActivity extends AppCompatActivity {
         localBroadcastManager.sendBroadcast(intent);
     }
 
-    private Device returnDeviceClass(String name, String mac, int type) {
-        switch (type) {
-            case Device.TYPE_BUTTON_MATE:
-                return new DeviceButtonMate(name, mac);
-            case Device.TYPE_TC1:
-                return new DeviceTC1(name, mac);
-            case Device.TYPE_DC1:
-                return new DeviceDC1(name, mac);
-            case Device.TYPE_S7:
-                return new DeviceS7(name, mac);
-            case Device.TYPE_A1:
-                return new DeviceA1(name, mac);
-            case Device.TYPE_M1:
-                return new DeviceM1(name, mac);
-            case Device.TYPE_RGBW:
-                return new DeviceRGBW(name, mac);
-            case Device.TYPE_CLOCK:
-                return new DeviceClock(name, mac);
-            case Device.TYPE_MOPS:
-                return new DeviceMOPS(name, mac);
-            case Device.TYPE_CLOCK_MATRIX:
-                return new DeviceClockMatrix(name, mac);
-            case Device.TYPE_KEY51:
-                return new DeviceKey51(name, mac);
-            case Device.TYPE_C1:
-                return new DeviceC1(name, mac);
-            case Device.TYPE_UARTTOMQTT:
-                return new DeviceUartToMqtt(name, mac);
-        }
-        return null;
-    }
 
 }

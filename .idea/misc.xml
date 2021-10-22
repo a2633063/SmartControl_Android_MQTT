@@ -19,6 +19,7 @@
         <entry key="..\:/Program/Android/SmartControl_Android_MQTT/app/src/main/res/layout/list_item_main_device_udp_scan_list.xml" value="0.21979166666666666" />
         <entry key="..\:/Program/Android/SmartControl_Android_MQTT/app/src/main/res/layout/rgbw_popupwindow_set_time_count_down.xml" value="0.21979166666666666" />
         <entry key="..\:/Program/Android/SmartControl_Android_MQTT/app/src/main/res/xml/c1_setting.xml" value="0.3390625" />
+        <entry key="..\:/Program/Android/SmartControl_Android_MQTT/app/src/main/res/xml/setting.xml" value="0.33" />
         <entry key="..\:/Program/Android/SmartControl_Android_MQTT/app/src/main/res/xml/tc1_setting.xml" value="0.1" />
         <entry key="..\:/Program/Android/SmartControl_Android_MQTT/app/src/main/res/xml/uarttomqtt_setting.xml" value="0.16489361702127658" />
       </map>

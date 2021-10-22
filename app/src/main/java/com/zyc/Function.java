@@ -19,6 +19,20 @@ import android.util.Log;
 
 import com.zyc.zcontrol.MainActivity;
 import com.zyc.zcontrol.R;
+import com.zyc.zcontrol.deviceItem.DeviceClass.Device;
+import com.zyc.zcontrol.deviceItem.DeviceClass.DeviceA1;
+import com.zyc.zcontrol.deviceItem.DeviceClass.DeviceButtonMate;
+import com.zyc.zcontrol.deviceItem.DeviceClass.DeviceC1;
+import com.zyc.zcontrol.deviceItem.DeviceClass.DeviceClock;
+import com.zyc.zcontrol.deviceItem.DeviceClass.DeviceClockMatrix;
+import com.zyc.zcontrol.deviceItem.DeviceClass.DeviceDC1;
+import com.zyc.zcontrol.deviceItem.DeviceClass.DeviceKey51;
+import com.zyc.zcontrol.deviceItem.DeviceClass.DeviceM1;
+import com.zyc.zcontrol.deviceItem.DeviceClass.DeviceMOPS;
+import com.zyc.zcontrol.deviceItem.DeviceClass.DeviceRGBW;
+import com.zyc.zcontrol.deviceItem.DeviceClass.DeviceS7;
+import com.zyc.zcontrol.deviceItem.DeviceClass.DeviceTC1;
+import com.zyc.zcontrol.deviceItem.DeviceClass.DeviceUartToMqtt;
 
 public class Function {
 
@@ -124,5 +138,39 @@ public class Function {
         public void onReceive(Context context, Intent intent) {
             Log.i("test", "onReceive: 固定快捷方式的回调");
         }
+    }
+
+
+
+    public static Device returnDeviceClass(String name, String mac, int type) {
+        switch (type) {
+            case Device.TYPE_BUTTON_MATE:
+                return new DeviceButtonMate(name, mac);
+            case Device.TYPE_TC1:
+                return new DeviceTC1(name, mac);
+            case Device.TYPE_DC1:
+                return new DeviceDC1(name, mac);
+            case Device.TYPE_S7:
+                return new DeviceS7(name, mac);
+            case Device.TYPE_A1:
+                return new DeviceA1(name, mac);
+            case Device.TYPE_M1:
+                return new DeviceM1(name, mac);
+            case Device.TYPE_RGBW:
+                return new DeviceRGBW(name, mac);
+            case Device.TYPE_CLOCK:
+                return new DeviceClock(name, mac);
+            case Device.TYPE_MOPS:
+                return new DeviceMOPS(name, mac);
+            case Device.TYPE_CLOCK_MATRIX:
+                return new DeviceClockMatrix(name, mac);
+            case Device.TYPE_KEY51:
+                return new DeviceKey51(name, mac);
+            case Device.TYPE_C1:
+                return new DeviceC1(name, mac);
+            case Device.TYPE_UARTTOMQTT:
+                return new DeviceUartToMqtt(name, mac);
+        }
+        return null;
     }
 }
