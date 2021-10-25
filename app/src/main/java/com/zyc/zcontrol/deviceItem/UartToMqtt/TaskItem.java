@@ -7,6 +7,8 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.util.List;
+
 
 public class TaskItem {
 
@@ -17,27 +19,68 @@ public class TaskItem {
         this.context = context;
     }
 
+
+    public final static int TASK_TYPE_MQTT = 0;
+    public final static int TASK_TYPE_WOL = 1;
+    public final static int TASK_TYPE_UART = 2;
+    public final static int TASK_TYPE_HTTP = 3;
+    public final static int TASK_TYPE_TIME_MQTT = 4;
+    public final static int TASK_TYPE_TIME_UART = 5;
+    public final static int TASK_TYPE_MAX = 6;
+
+
     private Context context;
 
     public String name;
     public int type;
-    public int on = 0;    //开关
-    public int key;
+    public int on = 0;    //开关(
 
-    public String topic="";
-    public String payload="";
-    public int qos;
-    public int retained;
-    public int udp;
-    public int max;
-    public int min;
-    public int step;
-    public int val;
+    //触发
+    //串口接收触发
+    public String condition_dat;
+    public int reserved;
+    public int mqtt_send;
 
-    public int[] mac = new int[6];
-    public int[] ip = new int[4];
-    public int port;
-    public int[] secure = new int[6];
+    //定时触发
+    public int hour;
+    public int minute;
+    public int repeat;
+
+
+    //region 自动化类定义
+    class MQTT_C {
+        public String topic = "";
+        public String payload = "";
+        public int qos;
+        public int retained;
+        public int udp;
+        public int reserved = 0;
+        public int[] ip = new int[4];
+        public int port;
+    }
+
+    public class WOL_C {
+        public int[] mac = new int[6];
+        public int[] ip = new int[4];
+        public int port;
+        public int[] secure = new int[6];
+    }
+
+    public class UART_C {
+        //public int dat_length;                      //满足条件时,是否将接收到的数据发至mqtt
+        public int reserved_rec;   //将接收到的数据中第reserved_rec个值
+        public int reserved_send;  //填入要发送的第reserved_send个字段
+        String dat;  //要发送是数据
+    }
+
+    /*class HTTP_C {   //http
+        public String dat;
+    }*/
+    //endregion
+
+    public MQTT_C mqtt=new MQTT_C();
+    public WOL_C wol=new WOL_C();
+    public UART_C uart=new UART_C();
 
 
     public boolean getOn() {
@@ -45,145 +88,197 @@ public class TaskItem {
     }
 
     public void setOn(int on) {
+        if (on != 0) on = 1;
         this.on = on;
     }
 
-    public void setBase(String name, int on, int key, int type) {
+    public void setBase(String name, int on, int type) {
         this.name = name;
         this.type = type;
         this.on = on;
-        this.key = key;
+    }
+
+
+    //region 设置触发部分
+    //region 设置串口触发
+    public void setTriggerUart(String dat) {
+        setTriggerUart(dat, 0);
+    }
+
+    public void setTriggerUart(String dat, int reserved) {
+        setTriggerUart(dat, reserved, 0);
+    }
+
+    public void setTriggerUart(String dat, int reserved, int mqtt_send) {
+        this.condition_dat = dat;
+        this.reserved = reserved;
+        this.mqtt_send = mqtt_send;
+    }
+
+    //endregion
+    //region 设置定时触发
+    public void setTriggerTime(int hour, int minute) {
+        setTriggerTime(hour, minute, 255);
+    }
+
+    public void setTriggerTime(int hour, int minute, int repeat) {
+        this.hour = hour;
+        this.minute = minute;
+        this.repeat = repeat;
+    }
+    //endregion
+    //endregion
+
+    //region 设置自动化任务
+
+    //region mqtt任务部分
+    public void setMqtt(String topic, String payload, int qos, int retained) {
+        setMqtt(topic, payload, qos, retained, 0, null, 0);
     }
 
     public void setMqtt(String topic, String payload, int qos, int retained, int udp, int[] ip, int port) {
-        this.topic = topic;
-        this.payload = payload;
-        this.qos = qos;
-        this.retained = retained;
-        this.udp = udp;
-        this.port = port;
-        this.ip[0] = ip[0];
-        this.ip[1] = ip[1];
-        this.ip[2] = ip[2];
-        this.ip[3] = ip[3];
+        setMqtt(topic, payload, qos, retained, 0, udp, ip, port);
     }
 
+    public void setMqtt(String topic, String payload, int qos, int retained, int reserved, int udp, int[] ip, int port) {
+        this.mqtt.topic = topic;
+        this.mqtt.payload = payload;
+        this.mqtt.qos = qos;
+        this.mqtt.retained = retained;
+        this.mqtt.reserved = reserved;
+        this.mqtt.udp = udp;
+        this.mqtt.port = port;
+        if (ip != null) {
+            this.mqtt.ip[0] = ip[0];
+            this.mqtt.ip[1] = ip[1];
+            this.mqtt.ip[2] = ip[2];
+            this.mqtt.ip[3] = ip[3];
+        } else {
+            this.mqtt.ip[0] = 255;
+            this.mqtt.ip[1] = 255;
+            this.mqtt.ip[2] = 255;
+            this.mqtt.ip[3] = 255;
+        }
+    }
+    //endregion
+
+    //region Wol局域网唤醒部分
     public void setWol(int[] mac, int[] ip, int port) {
         setWol(mac, ip, port, new int[]{0, 0, 0, 0, 0, 0});
     }
 
     public void setWol(int[] mac, int[] ip, int port, int[] secure) {
-
-        this.port = port;
+        this.wol.port = port;
         for (int i = 0; i < 4; i++) {
-            this.ip[i] = ip[i];
+            this.wol.ip[i] = ip[i];
         }
         for (int i = 0; i < 6; i++) {
-            this.mac[i] = mac[i];
-            this.secure[i] = secure[i];
+            this.wol.mac[i] = mac[i];
+            this.wol.secure[i] = secure[i];
         }
     }
+    //endregion
 
-    public void setEncoder(String topic, String payload, int qos, int retained,
-                           int udp, int[] ip, int port,
-                           int max, int min, int step, int val) {
-        this.topic = topic;
-        this.payload = payload;
-        this.qos = qos;
-        this.retained = retained;
-        this.udp = udp;
-        this.port = port;
-        this.ip[0] = ip[0];
-        this.ip[1] = ip[1];
-        this.ip[2] = ip[2];
-        this.ip[3] = ip[3];
-        this.max = max;
-        this.min = min;
-        this.step = step;
-        this.val = val;
+    //region uart部分
+    public void setUart(String dat) {
+        setUart(dat, 0, 0);
     }
 
-    public String getMacString() {
-        return String.format("%02x",mac[0]) + ":"
-                + String.format("%02x",mac[1]) + ":"
-                + String.format("%02x",mac[2]) + ":"
-                + String.format("%02x",mac[3]) + ":"
-                + String.format("%02x",mac[4]) + ":"
-                + String.format("%02x",mac[5]);
-//        return Integer.toHexString(mac[0]) + ":"
-//                + Integer.toHexString(mac[1]) + ":"
-//                + Integer.toHexString(mac[2]) + ":"
-//                + Integer.toHexString(mac[3]) + ":"
-//                + Integer.toHexString(mac[4]) + ":"
-//                + Integer.toHexString(mac[5]);
+    public void setUart(String dat, int reserved_rec, int reserved_send) {
+        this.uart.dat = dat;
+        this.uart.reserved_rec = reserved_rec;
+        this.uart.reserved_send = reserved_send;
 
     }
+    //endregion
+    //endregion
 
-    public String getIPString() {
-        return ip[0] + "." + ip[1] + "." + ip[2] + "." + ip[3];
-    }
-
-    public String getSecureString() {
-        if (secure[0] == 0 && secure[1] == 0 && secure[2] == 0 && secure[3] == 0 && secure[4] == 0 && secure[5] == 0)
-            return "";
-        return Integer.toHexString(secure[0]) + ":"
-                + Integer.toHexString(secure[1]) + ":"
-                + Integer.toHexString(secure[2]) + ":"
-                + Integer.toHexString(secure[3]) + ":"
-                + Integer.toHexString(secure[4]) + ":"
-                + Integer.toHexString(secure[5]);
-    }
-
-    public String getJson() {
-        JSONObject jsonObject = new JSONObject();
+    public String getJsonString() {
+        JSONObject jsonRoot = new JSONObject();
         try {
-            jsonObject.put("name", name);
-            jsonObject.put("type", type);
-            jsonObject.put("on", on);
-            jsonObject.put("key", key);
+            jsonRoot.put("name", name);
+            jsonRoot.put("type", type);
+            jsonRoot.put("on", on);
 
-            JSONArray jsonArray_mac = new JSONArray();
-            for (int i = 0; i < mac.length; i++)
-                jsonArray_mac.put(mac[i]);
-            JSONArray jsonArray_ip = new JSONArray();
-            for (int i = 0; i < ip.length; i++)
-                jsonArray_ip.put(ip[i]);
-
-            JSONArray jsonArray_secure = new JSONArray();
-            for (int i = 0; i < secure.length; i++)
-                jsonArray_secure.put(secure[i]);
+            //region 触发部分
             switch (type) {
-                case 0:
-                    jsonObject.put("topic", topic);
-                    jsonObject.put("payload", payload);
-                    jsonObject.put("qos", qos);
-                    jsonObject.put("retained", retained);
-                    jsonObject.put("udp", udp);
-                    jsonObject.put("ip", jsonArray_ip);
-                    jsonObject.put("port", port);
+                case TASK_TYPE_MQTT:
+                case TASK_TYPE_WOL:
+                case TASK_TYPE_UART:
+                    //case TASK_TYPE_HTTP:
+                    //串口触发
+                    jsonRoot.put("uart_dat", this.condition_dat);
+                    jsonRoot.put("reserved", this.reserved);
+                    jsonRoot.put("mqtt_send", this.mqtt_send);
                     break;
-                case 1:
-                    jsonObject.put("mac", jsonArray_mac);
-                    jsonObject.put("ip", jsonArray_ip);
-                    jsonObject.put("port", port);
-                    jsonObject.put("secure", jsonArray_secure);
-                    break;
-                case 2:
-                    jsonObject.put("topic", topic);
-                    jsonObject.put("payload", payload);
-                    jsonObject.put("qos", qos);
-                    jsonObject.put("retained", retained);
-                    jsonObject.put("udp", udp);
-                    jsonObject.put("ip", jsonArray_ip);
-                    jsonObject.put("port", port);
-                    jsonObject.put("max", max);
-                    jsonObject.put("min", min);
-                    jsonObject.put("step", step);
-                    jsonObject.put("val", val);
+                case TASK_TYPE_TIME_MQTT:
+                case TASK_TYPE_TIME_UART:
+                    //定时触发
+                    jsonRoot.put("hour", this.hour);
+                    jsonRoot.put("minute", this.minute);
+                    jsonRoot.put("repeat", this.repeat);
                     break;
             }
+            //endregion
+            //region 执行部分
+            JSONArray jsonArray;
+            JSONObject jsonObject = new JSONObject();
+            switch (type) {
+                case TASK_TYPE_MQTT:
+                case TASK_TYPE_TIME_MQTT: {
+                    jsonArray = new JSONArray();
+                    for (int i = 0; i < this.mqtt.ip.length; i++)
+                        jsonArray.put(this.mqtt.ip[i]);
 
-            Log.d("tag", jsonObject.toString());
+                    jsonObject.put("topic", this.mqtt.topic);
+                    jsonObject.put("payload", this.mqtt.payload);
+                    jsonObject.put("qos", this.mqtt.qos);
+                    jsonObject.put("retained", this.mqtt.retained);
+                    if (this.mqtt.reserved > 0)
+                        jsonObject.put("reserved", this.mqtt.reserved);
+                    jsonObject.put("udp", this.mqtt.udp);
+                    jsonObject.put("ip", jsonArray);
+                    jsonObject.put("port", this.mqtt.port);
+
+                    jsonRoot.put("mqtt", jsonObject);
+                    break;
+                }
+                case TASK_TYPE_WOL: {
+                    jsonArray = new JSONArray();
+                    for (int i = 0; i < this.wol.mac.length; i++)
+                        jsonArray.put(this.wol.mac[i]);
+                    jsonObject.put("mac", jsonArray);
+                    jsonArray = new JSONArray();
+                    for (int i = 0; i < this.wol.ip.length; i++)
+                        jsonArray.put(this.wol.ip[i]);
+                    jsonObject.put("ip", jsonArray);
+                    if (this.wol.port == 0) this.wol.port = 9;
+                    jsonObject.put("port", this.wol.port);
+                    if (this.wol.secure[0] != 0 && this.wol.secure[1] != 0 && this.wol.secure[2] != 0
+                            && this.wol.secure[3] != 0 && this.wol.secure[4] != 0 && this.wol.secure[5] != 0) {
+                        jsonArray = new JSONArray();
+                        for (int i = 0; i < this.wol.secure.length; i++)
+                            jsonArray.put(this.wol.secure[i]);
+                        jsonObject.put("secure", jsonArray);
+                    }
+                    jsonRoot.put("wol", jsonObject);
+                    break;
+                }
+                case TASK_TYPE_UART:
+                case TASK_TYPE_TIME_UART: {
+                    jsonObject.put("uart", this.uart.dat);
+                    if (this.uart.reserved_rec > 0 && this.uart.reserved_send > 0) {
+                        jsonObject.put("reserved_rec", this.uart.reserved_rec);
+                        jsonObject.put("reserved_send", this.uart.reserved_send);
+                    }
+                    jsonRoot.put("uart", jsonObject);
+                    break;
+                }
+                //case TASK_TYPE_HTTP:
+            }
+            //endregion
+
+            Log.d("uartToMqtt task json", jsonObject.toString());
             return jsonObject.toString();
         } catch (JSONException e) {
             e.printStackTrace();

@@ -63,6 +63,7 @@
         android:label="@string/app_name"
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
+        android:screenOrientation="portrait"
         android:theme="@style/AppTheme">
         <activity android:name=".deviceItem.a1.A1LedActivity"></activity>
         <activity android:name=".deviceItem.m1.M1LinkA1Activity" />
@@ -90,6 +91,9 @@
         <activity
             android:name=".deviceItem.dc1.DC1PlugActivity"
             android:label="插口" />
+        <activity
+            android:name=".deviceItem.UartToMqtt.UartToMqttTaskActivity"
+            android:label="自动化任务" />
         <activity
             android:name=".MainActivity"
             android:exported="true"
@@ -144,6 +148,10 @@
         <activity
             android:name=".deviceItem.key51.Key51LinkActivity"
             android:label="zKey51配网"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name=".deviceItem.UartToMqtt.UartToMqttLinkActivity"
+            android:label="z485toMqtt配网"
             android:screenOrientation="portrait" />
         <activity
             android:name="com.easylink.EasylinkActivity"

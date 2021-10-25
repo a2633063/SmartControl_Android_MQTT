@@ -72,7 +72,7 @@ class UartToMqttTaskListAdapter extends BaseAdapter {
 //            convertView.setBackgroundColor(0x20ffffff);
 //        else convertView.setBackgroundColor(0x00000000);
         holder.tv_name.setText(mdata.get(position).name);
-        holder.tv_key.setText(mdata.get(position).key+"");
+        //holder.tv_key.setText(mdata.get(position).key+"");
 
         holder.on.setChecked(mdata.get(position).getOn());
 

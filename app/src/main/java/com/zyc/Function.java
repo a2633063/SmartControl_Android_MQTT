@@ -141,7 +141,6 @@ public class Function {
     }
 
 
-
     public static Device returnDeviceClass(String name, String mac, int type) {
         switch (type) {
             case Device.TYPE_BUTTON_MATE:
@@ -172,5 +171,15 @@ public class Function {
                 return new DeviceUartToMqtt(name, mac);
         }
         return null;
+    }
+
+    public static String getMacString(int[] mac) {
+        if (mac.length != 6) return null;
+        return Integer.toHexString(mac[0]) + ":"
+                + Integer.toHexString(mac[1]) + ":"
+                + Integer.toHexString(mac[2]) + ":"
+                + Integer.toHexString(mac[3]) + ":"
+                + Integer.toHexString(mac[4]) + ":"
+                + Integer.toHexString(mac[5]);
     }
 }
