@@ -38,9 +38,6 @@ public class C1SettingFragment extends SettingFragment {
 
     Preference regetdata;
     EditTextPreference name_preference;
-    SwitchPreference child_lock;
-    SwitchPreference led_lock;
-
     DeviceC1 device;
 
     boolean ota_flag = false;
@@ -172,8 +169,7 @@ public class C1SettingFragment extends SettingFragment {
 
         regetdata = findPreference("regetdata");
         name_preference = (EditTextPreference) findPreference("name");
-        child_lock = (SwitchPreference) findPreference("child_lock");
-        led_lock = (SwitchPreference) findPreference("led_lock");
+
 
 
         name_preference.setSummary(device.getName());
@@ -202,36 +198,6 @@ public class C1SettingFragment extends SettingFragment {
             public boolean onPreferenceChange(Preference preference, Object newValue) {
                 Send("{\"mac\":\"" + device.getMac() + "\",\"setting\":{\"name\":\"" + (String) newValue + "\"}}");
                 return false;
-            }
-        });
-        //endregion
-
-        //region 夜间模式 led锁
-        led_lock.setOnPreferenceClickListener(new Preference.OnPreferenceClickListener() {
-            @Override
-            public boolean onPreferenceClick(Preference preference) {
-                led_lock.setChecked(!led_lock.isChecked());
-                if (!led_lock.isChecked()) {
-                    Send("{\"mac\":\"" + device.getMac() + "\",\"led_lock\":1}");
-                } else {
-                    Send("{\"mac\":\"" + device.getMac() + "\",\"led_lock\":0}");
-                }
-                return true;
-            }
-        });
-        //endregion
-
-        //region 童锁
-        child_lock.setOnPreferenceClickListener(new Preference.OnPreferenceClickListener() {
-            @Override
-            public boolean onPreferenceClick(Preference preference) {
-                child_lock.setChecked(!child_lock.isChecked());
-                if (!child_lock.isChecked()) {
-                    Send("{\"mac\":\"" + device.getMac() + "\",\"child_lock\":1}");
-                } else {
-                    Send("{\"mac\":\"" + device.getMac() + "\",\"child_lock\":0}");
-                }
-                return true;
             }
         });
         //endregion
@@ -368,18 +334,6 @@ public class C1SettingFragment extends SettingFragment {
                 device.setName(jsonObject.getString("name"));
                 name_preference.setSummary(device.getName());
                 name_preference.setText(device.getName());
-            }
-            //endregion
-            //region 夜间模式 led锁
-            if (jsonObject.has("led_lock")) {
-                int led_lock_val = jsonObject.getInt("led_lock");
-                led_lock.setChecked(led_lock_val != 0);
-            }
-            //endregion
-            //region 童锁
-            if (jsonObject.has("child_lock")) {
-                int child_lock_val = jsonObject.getInt("child_lock");
-                child_lock.setChecked(child_lock_val != 0);
             }
             //endregion
             //region 获取版本号

@@ -40,8 +40,6 @@ public class UartToMqttSettingFragment extends SettingFragment {
     Preference restart;
     Preference regetdata;
     EditTextPreference name_preference;
-    SwitchPreference child_lock;
-    SwitchPreference led_lock;
 
     DeviceUartToMqtt device;
 
@@ -126,7 +124,7 @@ public class UartToMqttSettingFragment extends SettingFragment {
 
                             AlertDialog alertDialog = new AlertDialog.Builder(getActivity())
                                     .setTitle("获取到最新版本:" + otaInfo.tag_name)
-                                    .setMessage(otaInfo.title + "\n" + otaInfo.message + "\n\nota过程请保证设备屏幕一直点亮")
+                                    .setMessage(otaInfo.title + "\n" + otaInfo.message + "")
                                     .setPositiveButton("更新", new DialogInterface.OnClickListener() {
                                         @Override
                                         public void onClick(DialogInterface dialog, int which) {
@@ -149,7 +147,7 @@ public class UartToMqttSettingFragment extends SettingFragment {
                 //endregion
                 //region 发送请求数据
                 case 3:
-                    Send("{\"mac\":\"" + device.getMac() + "\",\"version\":null,\"lock\":null,\"ssid\":null}");
+                    Send("{\"mac\":\"" + device.getMac() + "\",\"version\":null,\"ssid\":null}");
                     break;
                 //endregion
             }
@@ -176,8 +174,7 @@ public class UartToMqttSettingFragment extends SettingFragment {
         restart = findPreference("restart");
         regetdata = findPreference("regetdata");
         name_preference = (EditTextPreference) findPreference("name");
-        child_lock = (SwitchPreference) findPreference("child_lock");
-        led_lock = (SwitchPreference) findPreference("led_lock");
+
 
 
         name_preference.setSummary(device.getName());
@@ -210,20 +207,7 @@ public class UartToMqttSettingFragment extends SettingFragment {
         });
         //endregion
 
-        //region 夜间模式 led锁
-        led_lock.setOnPreferenceClickListener(new Preference.OnPreferenceClickListener() {
-            @Override
-            public boolean onPreferenceClick(Preference preference) {
-                led_lock.setChecked(!led_lock.isChecked());
-                if (!led_lock.isChecked()) {
-                    Send("{\"mac\":\"" + device.getMac() + "\",\"led_lock\":1}");
-                } else {
-                    Send("{\"mac\":\"" + device.getMac() + "\",\"led_lock\":0}");
-                }
-                return true;
-            }
-        });
-        //endregion
+
         //region 更新ssid及rssi
         ssid.setOnPreferenceClickListener(new Preference.OnPreferenceClickListener() {
             @Override
@@ -233,20 +217,7 @@ public class UartToMqttSettingFragment extends SettingFragment {
             }
         });
         //endregion
-        //region 童锁
-        child_lock.setOnPreferenceClickListener(new Preference.OnPreferenceClickListener() {
-            @Override
-            public boolean onPreferenceClick(Preference preference) {
-                child_lock.setChecked(!child_lock.isChecked());
-                if (!child_lock.isChecked()) {
-                    Send("{\"mac\":\"" + device.getMac() + "\",\"child_lock\":1}");
-                } else {
-                    Send("{\"mac\":\"" + device.getMac() + "\",\"child_lock\":0}");
-                }
-                return true;
-            }
-        });
-        //endregion
+
         //region 版本
         fw_version.setOnPreferenceClickListener(new Preference.OnPreferenceClickListener() {
             @Override
@@ -412,18 +383,6 @@ public class UartToMqttSettingFragment extends SettingFragment {
                     ssid.setSummary(ssid.getSummary() + " (" + rssi + "dBm)");
 
                 }
-            }
-            //endregion
-            //region 夜间模式 led锁
-            if (jsonObject.has("led_lock")) {
-                int led_lock_val = jsonObject.getInt("led_lock");
-                led_lock.setChecked(led_lock_val != 0);
-            }
-            //endregion
-            //region 童锁
-            if (jsonObject.has("child_lock")) {
-                int child_lock_val = jsonObject.getInt("child_lock");
-                child_lock.setChecked(child_lock_val != 0);
             }
             //endregion
             //region 获取版本号
