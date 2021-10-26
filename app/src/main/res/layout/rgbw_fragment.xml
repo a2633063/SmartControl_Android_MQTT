@@ -141,7 +141,7 @@
                     android:layout_height="wrap_content"
                     android:layout_marginTop="16dp"
                     android:text="开灯"
-                    app:layout_constraintBottom_toTopOf="@+id/checkBox"
+                    app:layout_constraintBottom_toTopOf="@+id/chkGradient"
                     app:layout_constraintEnd_toStartOf="@+id/btn_close"
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toBottomOf="@+id/textViewW" />
