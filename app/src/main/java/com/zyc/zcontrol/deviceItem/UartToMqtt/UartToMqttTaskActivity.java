@@ -3,6 +3,7 @@ package com.zyc.zcontrol.deviceItem.UartToMqtt;
 import static android.view.ViewGroup.LayoutParams.MATCH_PARENT;
 
 import android.annotation.SuppressLint;
+import android.app.TimePickerDialog;
 import android.content.Intent;
 import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
@@ -21,6 +22,7 @@ import android.widget.ListView;
 import android.widget.PopupWindow;
 import android.widget.Spinner;
 import android.widget.TextView;
+import android.widget.TimePicker;
 import android.widget.Toast;
 import android.widget.ToggleButton;
 
@@ -39,7 +41,9 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.Locale;
 
 public class UartToMqttTaskActivity extends ServiceActivity {
@@ -313,6 +317,42 @@ public class UartToMqttTaskActivity extends ServiceActivity {
         for (int i = 0; i < tbtn_trigger_time_week.length; i++) {
             tbtn_trigger_time_week[i].setOnCheckedChangeListener(weekCheckedChangeListener);
         }
+        //endregion
+        //region 定时触发部分 时间设置
+        tv_trigger_time.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                int hour = 12;
+                int minute = 0;
+                String[] time = tv_trigger_time.getText().toString().split(":");
+                hour = Integer.parseInt(time[0]);
+                minute = Integer.parseInt(time[1]);
+                TimePickerDialog timePickerDialog = new TimePickerDialog(UartToMqttTaskActivity.this, new TimePickerDialog.OnTimeSetListener() {
+                    @Override
+                    public void onTimeSet(TimePicker view, int hourOfDay, int minute) {
+                        tv_trigger_time.setText(String.format("%02d:%02d", hourOfDay, minute));
+                    }
+                }, hour, minute, true);
+                timePickerDialog.show();
+            }
+        });
+        //endregion
+        //region 定时触发部分 当前时间/选择每天 快捷按钮
+        btn_trigger_time_now.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                tv_trigger_time.setText(new SimpleDateFormat("HH:mm").format(new Date()));
+            }
+        });
+
+        btn_trigger_time_repeat_everyday.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                for (int i = 0; i < tbtn_trigger_time_week.length; i++) {
+                    tbtn_trigger_time_week[i].setChecked(true);
+                }
+            }
+        });
         //endregion
         //region 自动化部分 本地功能初始化
 
