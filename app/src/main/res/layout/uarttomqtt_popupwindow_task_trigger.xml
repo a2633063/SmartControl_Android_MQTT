@@ -111,7 +111,7 @@
         android:id="@+id/group_trigger_uart"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
-        app:constraint_referenced_ids="btn_trigger_uart_get_last,tv_trigger_uart_title,chk_trigger_uart_advanced,tv_trigger_uart_reserved_2,edit_trigger_uart_reserved_rec,tv_trigger_uart_payload,tv_trigger_uart_reserved_1,chk_trigger_uart_mqtt_send,edt_trigger_uart_payload"
+        app:constraint_referenced_ids="btn_trigger_uart_get_last,tv_trigger_uart_title,chk_trigger_uart_advanced,tv_trigger_uart_reserved_2,edit_trigger_uart_reserved_rec,tv_trigger_uart_payload,tv_trigger_uart_reserved_1,edt_trigger_uart_payload,chk_trigger_uart_mqtt_send"
         app:layout_constraintBottom_toTopOf="@+id/edt_trigger_uart_payload"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"

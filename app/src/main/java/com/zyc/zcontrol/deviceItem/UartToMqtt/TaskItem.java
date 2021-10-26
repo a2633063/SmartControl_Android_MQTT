@@ -7,8 +7,6 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import java.util.List;
-
 
 public class TaskItem {
 
@@ -78,9 +76,9 @@ public class TaskItem {
     }*/
     //endregion
 
-    public MQTT_C mqtt=new MQTT_C();
-    public WOL_C wol=new WOL_C();
-    public UART_C uart=new UART_C();
+    public MQTT_C mqtt = new MQTT_C();
+    public WOL_C wol = new WOL_C();
+    public UART_C uart = new UART_C();
 
 
     public boolean getOn() {
@@ -193,7 +191,7 @@ public class TaskItem {
     //endregion
     //endregion
 
-    public String getJsonString() {
+    public JSONObject getJson() {
         JSONObject jsonRoot = new JSONObject();
         try {
             jsonRoot.put("name", name);
@@ -278,13 +276,35 @@ public class TaskItem {
             }
             //endregion
 
-            Log.d("uartToMqtt task json", jsonObject.toString());
-            return jsonObject.toString();
+            Log.d("uartToMqtt task json", jsonRoot.toString());
+            return jsonRoot;
         } catch (JSONException e) {
             e.printStackTrace();
         }
 
         return null;
+    }
+
+
+    public TaskItem clone() {
+        TaskItem newTask = new TaskItem();
+        newTask.setBase(this.name, this.on, this.type);
+        newTask.setTriggerUart(this.condition_dat, this.reserved, this.mqtt_send);
+        newTask.setTriggerTime(this.hour, this.minute, this.repeat);
+        newTask.setMqtt(this.mqtt.topic, this.mqtt.payload, this.mqtt.qos, this.mqtt.retained, this.mqtt.reserved, this.mqtt.udp, this.mqtt.ip, this.mqtt.port);
+        newTask.setWol(this.wol.mac, this.wol.ip, this.wol.port, this.wol.secure);
+        newTask.setUart(this.uart.dat, this.uart.reserved_rec, this.uart.reserved_send);
+        return newTask;
+    }
+
+    public void Copy(TaskItem oldTask) {
+        if (oldTask == null) return;
+        this.setBase(oldTask.name, oldTask.on, oldTask.type);
+        this.setTriggerUart(oldTask.condition_dat, oldTask.reserved, oldTask.mqtt_send);
+        this.setTriggerTime(oldTask.hour, oldTask.minute, oldTask.repeat);
+        this.setMqtt(oldTask.mqtt.topic, oldTask.mqtt.payload, oldTask.mqtt.qos, oldTask.mqtt.retained, oldTask.mqtt.reserved, oldTask.mqtt.udp, oldTask.mqtt.ip, oldTask.mqtt.port);
+        this.setWol(oldTask.wol.mac, oldTask.wol.ip, oldTask.wol.port, oldTask.wol.secure);
+        this.setUart(oldTask.uart.dat, oldTask.uart.reserved_rec, oldTask.uart.reserved_send);
     }
 
 }

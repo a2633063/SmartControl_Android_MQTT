@@ -183,6 +183,7 @@
         android:ems="2"
         android:gravity="center"
         android:hint="0"
+        android:inputType="number"
         android:maxEms="2"
         android:maxLength="2"
         android:maxLines="1"

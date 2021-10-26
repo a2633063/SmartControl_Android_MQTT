@@ -9,9 +9,11 @@ import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
+import android.util.Log;
 import android.view.Gravity;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.WindowManager;
 import android.widget.AdapterView;
 import android.widget.Button;
 import android.widget.CheckBox;
@@ -245,20 +247,24 @@ public class UartToMqttTaskActivity extends ServiceActivity {
 
                 group_trigger_uart.setVisibility(View.GONE);
                 group_trigger_time.setVisibility(View.GONE);
+                group_trigger_uart_advanced.setVisibility(View.GONE);
                 layout_mqtt.setVisibility(View.GONE);
                 layout_wol.setVisibility(View.GONE);
                 layout_uart.setVisibility(View.GONE);
                 switch (position) {
                     case 0: //TASK_TYPE_MQTT
                         group_trigger_uart.setVisibility(View.VISIBLE);
+                        group_trigger_uart_advanced.setVisibility(chk_trigger_uart_advanced.isChecked() ? View.VISIBLE : View.GONE);
                         layout_mqtt.setVisibility(View.VISIBLE);
                         break;
                     case 1: //TASK_TYPE_WOL
                         group_trigger_uart.setVisibility(View.VISIBLE);
+                        group_trigger_uart_advanced.setVisibility(chk_trigger_uart_advanced.isChecked() ? View.VISIBLE : View.GONE);
                         layout_wol.setVisibility(View.VISIBLE);
                         break;
                     case 2: //TASK_TYPE_UART
                         group_trigger_uart.setVisibility(View.VISIBLE);
+                        group_trigger_uart_advanced.setVisibility(chk_trigger_uart_advanced.isChecked() ? View.VISIBLE : View.GONE);
                         layout_uart.setVisibility(View.VISIBLE);
                         break;
                     case 3: //TASK_TYPE_TIME_MQTT
@@ -325,8 +331,14 @@ public class UartToMqttTaskActivity extends ServiceActivity {
                 int hour = 12;
                 int minute = 0;
                 String[] time = tv_trigger_time.getText().toString().split(":");
-                hour = Integer.parseInt(time[0]);
-                minute = Integer.parseInt(time[1]);
+                try {
+                    hour = Integer.parseInt(time[0]);
+                    minute = Integer.parseInt(time[1]);
+                } catch (NumberFormatException e) {
+                    e.printStackTrace();
+                    hour = 12;
+                    minute = 0;
+                }
                 TimePickerDialog timePickerDialog = new TimePickerDialog(UartToMqttTaskActivity.this, new TimePickerDialog.OnTimeSetListener() {
                     @Override
                     public void onTimeSet(TimePicker view, int hourOfDay, int minute) {
@@ -402,7 +414,14 @@ public class UartToMqttTaskActivity extends ServiceActivity {
             @Override
             public void onClick(View v) {
                 //Send("{\"mac\": \"" + device.getMac() + "\",\"plug_" + plug_id + "\" : {\"setting\":{\"task_" + task_id + "\":{\"hour\":" + hour + ",\"minute\":" + minute + ",\"repeat\":" + repeat + ",\"action\":" + action + ",\"on\":" + on + "}}}}");
-                window.dismiss();
+
+                TaskItem t = popupwindowTask_analyse_to_task(popupView);
+                if (t != null) {
+                    Log.d(Tag, "task json:" + t.getJson().toString());
+                    //window.dismiss();
+                }
+
+                //window.dismiss();
             }
         });
         //endregion
@@ -563,7 +582,11 @@ public class UartToMqttTaskActivity extends ServiceActivity {
             case TaskItem.TASK_TYPE_WOL:
                 edt_wol_mac.setText(String.format("%02X:%02X:%02X:%02X:%02X:%02X", task.wol.mac[0], task.wol.mac[1], task.wol.mac[2], task.wol.mac[3], task.wol.mac[4], task.wol.mac[5]));
                 edt_wol_ip.setText(String.format(Locale.getDefault(), "%d.%d.%d.%d", task.wol.ip[0], task.wol.ip[1], task.wol.ip[2], task.wol.ip[3]));
-                edt_wol_secure.setText(String.format("%02X:%02X:%02X:%02X:%02X:%02X", task.wol.secure[0], task.wol.secure[1], task.wol.secure[2], task.wol.secure[3], task.wol.secure[4], task.wol.secure[5]));
+                if (task.wol.secure[0] == 0 && task.wol.secure[1] == 0 && task.wol.secure[2] == 0 && task.wol.secure[3] == 0 && task.wol.secure[4] == 0 && task.wol.secure[5] == 0) {
+                    edt_wol_secure.setText("");
+                } else {
+                    edt_wol_secure.setText(String.format("%02X:%02X:%02X:%02X:%02X:%02X", task.wol.secure[0], task.wol.secure[1], task.wol.secure[2], task.wol.secure[3], task.wol.secure[4], task.wol.secure[5]));
+                }
                 edt_wol_port.setText(String.valueOf(task.wol.port));
                 break;
             case TaskItem.TASK_TYPE_UART:
@@ -581,6 +604,296 @@ public class UartToMqttTaskActivity extends ServiceActivity {
         //endregion
 
     }
+
+    private TaskItem popupwindowTask_analyse_to_task(View popupView) {
+        if (popupView == null) return null;
+
+        TaskItem task = new TaskItem();
+
+        //region 获取各控件
+        final EditText edt_name = popupView.findViewById(R.id.edt_name);
+        final Spinner spinner_type = popupView.findViewById(R.id.spinner_type);
+
+        //region 触发页面
+        final EditText edt_trigger_uart_payload = popupView.findViewById(R.id.edt_trigger_uart_payload);
+        final EditText edit_trigger_uart_reserved_rec = popupView.findViewById(R.id.edit_trigger_uart_reserved_rec);
+        final CheckBox chk_trigger_uart_mqtt_send = popupView.findViewById(R.id.chk_trigger_uart_mqtt_send);
+
+        final TextView tv_trigger_time = popupView.findViewById(R.id.tv_trigger_time);
+        final ToggleButton tbtn_trigger_time_week[] = {popupView.findViewById(R.id.tbtn_trigger_time_week_1),
+                popupView.findViewById(R.id.tbtn_trigger_time_week_2), popupView.findViewById(R.id.tbtn_trigger_time_week_3),
+                popupView.findViewById(R.id.tbtn_trigger_time_week_4), popupView.findViewById(R.id.tbtn_trigger_time_week_5),
+                popupView.findViewById(R.id.tbtn_trigger_time_week_6), popupView.findViewById(R.id.tbtn_trigger_time_week_7),
+        };
+        //endregion
+
+        //region 自动化mqtt部分
+        final EditText edt_mqtt_topic = popupView.findViewById(R.id.edt_mqtt_topic);
+        final EditText edt_mqtt_payload = popupView.findViewById(R.id.edt_mqtt_payload);
+        final Spinner spinner_mqtt_qos = popupView.findViewById(R.id.spinner_mqtt_qos);
+        final CheckBox chk_mqtt_retained = popupView.findViewById(R.id.chk_mqtt_retained);
+        final EditText edt_mqtt_udp_ip = popupView.findViewById(R.id.edt_mqtt_udp_ip);
+        final EditText edt_mqtt_udp_port = popupView.findViewById(R.id.edt_mqtt_udp_port);
+        final EditText edit_mqtt_reserved_rec = popupView.findViewById(R.id.edit_mqtt_reserved_rec);
+        final CheckBox chk_mqtt_udp = popupView.findViewById(R.id.chk_mqtt_udp);
+        //endregion
+        //region 自动化Wol部分
+        final EditText edt_wol_mac = popupView.findViewById(R.id.edt_wol_mac);
+        final EditText edt_wol_ip = popupView.findViewById(R.id.edt_wol_ip);
+        final EditText edt_wol_port = popupView.findViewById(R.id.edt_wol_port);
+        final EditText edt_wol_secure = popupView.findViewById(R.id.edt_wol_secure);
+        //endregion
+
+        //region 自动化uart部分
+        final EditText edt_uart_payload = popupView.findViewById(R.id.edt_uart_payload);
+        final EditText edit_uart_reserved_rec = popupView.findViewById(R.id.edit_uart_reserved_rec);
+        final EditText edit_mqtt_reserved_send = popupView.findViewById(R.id.edit_mqtt_reserved_send);
+
+        //endregion
+
+
+        //endregion
+        task.name = edt_name.getText().toString();
+        task.on = 1;
+        switch (spinner_type.getSelectedItemPosition()) {    //切换spinner_type的选择项会自动切换ui界面,不需要手动处理
+            case 0:
+                task.type = TaskItem.TASK_TYPE_MQTT;
+                break;
+            case 1:
+                task.type = TaskItem.TASK_TYPE_WOL;
+                break;
+            case 2:
+                task.type = TaskItem.TASK_TYPE_UART;
+                break;
+            case 3:
+                task.type = TaskItem.TASK_TYPE_TIME_MQTT;
+                break;
+            case 4:
+                task.type = TaskItem.TASK_TYPE_TIME_UART;
+                break;
+            default:
+                return null;
+        }
+
+        //region 更新显示布局
+
+        //region 触发部分更新显示
+        switch (task.type) {
+            case TaskItem.TASK_TYPE_MQTT:
+            case TaskItem.TASK_TYPE_WOL:
+            case TaskItem.TASK_TYPE_UART: {
+                task.condition_dat = edt_trigger_uart_payload.getText().toString();
+                task.mqtt_send = chk_trigger_uart_mqtt_send.isChecked() ? 1 : 0;
+
+                String str = edit_trigger_uart_reserved_rec.getText().toString();
+                if (str.isEmpty()) task.reserved = 0;
+                else {
+                    try {
+                        task.reserved = Integer.parseInt(str);
+                    } catch (NumberFormatException e) {
+                        e.printStackTrace();
+                        task.reserved = 0;
+                    }
+                }
+
+                break;
+            }
+            case TaskItem.TASK_TYPE_TIME_MQTT:
+            case TaskItem.TASK_TYPE_TIME_UART: {
+                String[] time = tv_trigger_time.getText().toString().split(":");
+                try {
+                    task.hour = Integer.parseInt(time[0]);
+                    task.minute = Integer.parseInt(time[1]);
+                } catch (NumberFormatException e) {
+                    e.printStackTrace();
+                    Snackbar.make(popupView, "触发时间设置错误!!", Snackbar.LENGTH_LONG).show();
+                    return null;
+                }
+
+                task.repeat = 0;
+                for (int i = tbtn_trigger_time_week.length; i > 0; i--) {
+                    task.repeat = task.repeat << 1;
+                    if (tbtn_trigger_time_week[i - 1].isChecked()) task.repeat |= 1;
+                }
+                if (task.repeat == 0) {
+                    Snackbar.make(popupView, "触发时间重复设置错误!!", Snackbar.LENGTH_LONG).show();
+                    return null;
+                }
+
+
+                break;
+            }
+        }
+        //endregion
+        //region 自动化部分更新显示
+        switch (task.type) {
+            case TaskItem.TASK_TYPE_MQTT:
+            case TaskItem.TASK_TYPE_TIME_MQTT: {
+                task.mqtt.topic = edt_mqtt_topic.getText().toString();
+                task.mqtt.payload = edt_mqtt_payload.getText().toString();
+                task.mqtt.qos = spinner_mqtt_qos.getSelectedItemPosition();
+                task.mqtt.retained = chk_mqtt_retained.isChecked() ? 1 : 0;
+
+
+                task.mqtt.ip[0] = 255;
+                task.mqtt.ip[1] = 255;
+                task.mqtt.ip[2] = 255;
+                task.mqtt.ip[3] = 255;
+                String str = edt_mqtt_udp_ip.getText().toString();
+                if (!str.isEmpty()) {
+                    try {
+                        String[] ip_str = str.split("\\.");
+                        if (ip_str.length != 4) throw new NumberFormatException("ip格数错误!");
+
+                        for (int i = 0; i < 4; i++) {
+                            task.mqtt.ip[i] = Integer.parseInt(ip_str[i]);
+                            if (task.mqtt.ip[i] > 255) throw new NumberFormatException("ip值大于255!");
+                        }
+                    } catch (NumberFormatException e) {
+                        e.printStackTrace();
+                        Snackbar.make(popupView, "ip填写错误!!", Snackbar.LENGTH_LONG).show();
+                        return null;
+                    }
+                }
+
+                str = edt_mqtt_udp_port.getText().toString();
+                if (str.isEmpty()) {
+                    task.mqtt.port = 0;
+                } else {
+                    try {
+                        task.mqtt.port = Integer.parseInt(str);
+                        if (task.mqtt.port > 65535)
+                            throw new NumberFormatException("port值大于65535!");
+                    } catch (NumberFormatException e) {
+                        e.printStackTrace();
+                        Snackbar.make(popupView, "port填写错误!!", Snackbar.LENGTH_LONG).show();
+                        return null;
+                    }
+                }
+
+                task.mqtt.udp = chk_mqtt_udp.isChecked() ? 1 : 0;
+
+                if (task.mqtt.udp != 0 && task.mqtt.port == 0) {
+                    Snackbar.make(popupView, "始终是使用udp时,端口不可为0!!", Snackbar.LENGTH_LONG).show();
+                    return null;
+                }
+
+                break;
+            }
+            case TaskItem.TASK_TYPE_WOL: {
+                String str;
+                str = edt_wol_mac.getText().toString();
+                try {
+                    String[] mac_str = str.split(":");
+                    if (mac_str.length != 6) throw new NumberFormatException("mac格数错误!");
+
+                    for (int i = 0; i < 6; i++) {
+                        task.wol.mac[i] = Integer.parseInt(mac_str[i], 16);
+                        if (task.wol.mac[i] > 255) throw new NumberFormatException("ip值大于255!");
+                    }
+                } catch (NumberFormatException e) {
+                    e.printStackTrace();
+                    Snackbar.make(popupView, "mac填写错误!!", Snackbar.LENGTH_LONG).show();
+                    return null;
+                }
+
+
+                task.wol.ip[0] = 255;
+                task.wol.ip[1] = 255;
+                task.wol.ip[2] = 255;
+                task.wol.ip[3] = 255;
+                str = edt_wol_ip.getText().toString();
+                if (!str.isEmpty()) {
+                    try {
+                        String[] ip_str = str.split("\\.");
+                        if (ip_str.length != 4) throw new NumberFormatException("ip格数错误!");
+
+                        for (int i = 0; i < 4; i++) {
+                            task.wol.ip[i] = Integer.parseInt(ip_str[i]);
+                            if (task.wol.ip[i] > 255) throw new NumberFormatException("ip值大于255!");
+                        }
+                    } catch (NumberFormatException e) {
+                        e.printStackTrace();
+                        Snackbar.make(popupView, "ip填写错误!!", Snackbar.LENGTH_LONG).show();
+                        return null;
+                    }
+                }
+
+                str = edt_wol_port.getText().toString();
+                if (str.isEmpty()) {
+                    task.wol.port = 9;
+                } else {
+                    try {
+                        task.wol.port = Integer.parseInt(str);
+                        if (task.wol.port > 65535 || task.wol.port == 0)
+                            throw new NumberFormatException("port值大于65535!");
+                    } catch (NumberFormatException e) {
+                        e.printStackTrace();
+                        Snackbar.make(popupView, "port填写错误!!", Snackbar.LENGTH_LONG).show();
+                        return null;
+                    }
+                }
+
+                task.wol.secure[0] = 0;
+                task.wol.secure[1] = 0;
+                task.wol.secure[2] = 0;
+                task.wol.secure[3] = 0;
+                task.wol.secure[4] = 0;
+                task.wol.secure[5] = 0;
+                str = edt_wol_secure.getText().toString();
+                if (!str.isEmpty()) {
+                    try {
+                        String[] mac_str = str.split(":");
+                        if (mac_str.length != 6) throw new NumberFormatException("secureOn密码格数错误!");
+
+                        for (int i = 0; i < 6; i++) {
+                            task.wol.mac[i] = Integer.parseInt(mac_str[i], 16);
+                            if (task.wol.mac[i] > 255)
+                                throw new NumberFormatException("secureOn密码值大于255!");
+                        }
+                    } catch (NumberFormatException e) {
+                        e.printStackTrace();
+                        Snackbar.make(popupView, "secureOn密码填写错误!!", Snackbar.LENGTH_LONG).show();
+                        return null;
+                    }
+                }
+                break;
+            }
+            case TaskItem.TASK_TYPE_UART:
+            case TaskItem.TASK_TYPE_TIME_UART: {
+                task.uart.dat = edt_uart_payload.getText().toString();
+
+                if (edit_uart_reserved_rec.length() == 0 && edit_mqtt_reserved_send.length() == 0) {
+                    task.uart.reserved_send = 0;
+                    task.uart.reserved_rec = 0;
+                } else {
+                    try {
+                        task.uart.reserved_send = Integer.parseInt(edit_uart_reserved_rec.getText().toString());
+                        task.uart.reserved_rec = Integer.parseInt(edit_uart_reserved_rec.getText().toString());
+                        if ((task.uart.reserved_send == 0 && task.uart.reserved_rec != 0)
+                                || (task.uart.reserved_send != 0 && task.uart.reserved_rec == 0)) {
+                            throw new NumberFormatException("");
+                        }
+                    } catch (NumberFormatException e) {
+                        e.printStackTrace();
+                        Snackbar.make(popupView, "接收/发送字节替换值填写错误!!", Snackbar.LENGTH_LONG).show();
+                        return null;
+                    }
+                }
+
+                if (task.uart.reserved_rec > 0 && task.uart.reserved_rec < 255
+                        && task.uart.reserved_send > 0 && task.uart.reserved_send < 255) {
+                    edit_uart_reserved_rec.setText(String.valueOf(task.uart.reserved_rec));
+                    edit_mqtt_reserved_send.setText(String.valueOf(task.uart.reserved_send));
+                }
+                break;
+            }
+        }
+        //endregion
+        //endregion
+        return task;
+    }
+
     //endregion
 
     //region 数据接收发送处理函数

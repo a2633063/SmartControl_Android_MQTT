@@ -1,145 +1,158 @@
 <?xml version="1.0" encoding="utf-8"?>
-<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:layout_gravity="center"
     android:background="#80000000"
-    android:scrollbars="none">
+    android:gravity="center"
+    android:orientation="vertical">
 
-    <LinearLayout
-        android:id="@+id/test"
+    <ScrollView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_gravity="center"
-        android:orientation="vertical">
+        android:scrollbars="none">
 
-        <androidx.constraintlayout.widget.ConstraintLayout
-            android:layout_width="wrap_content"
+        <LinearLayout
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_gravity="center"
-            android:background="#ff333333"
-            android:gravity="center"
-            android:padding="12dp">
+            android:orientation="vertical">
 
-            <TextView
-                android:id="@+id/tv_id"
+            <androidx.constraintlayout.widget.ConstraintLayout
                 android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
+                android:layout_height="match_parent"
+                android:layout_gravity="center"
+                android:background="#ff333333"
                 android:gravity="center"
-                android:text="任务1"
-                android:textSize="12dp"
-                android:visibility="visible"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toTopOf="parent" />
+                android:padding="12dp">
+
+                <TextView
+                    android:id="@+id/tv_id"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:gravity="center"
+                    android:text="任务1"
+                    android:textSize="12dp"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toTopOf="parent" />
 
 
-            <EditText
-                android:id="@+id/edt_name"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:ems="10"
-                android:gravity="center"
-                android:hint="任务名称(任务1)"
-                android:text="任务1"
-                android:textSize="25dp"
-                app:layout_constraintBottom_toTopOf="@+id/spinner_type"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/tv_id" />
+                <EditText
+                    android:id="@+id/edt_name"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:ems="10"
+                    android:gravity="center"
+                    android:hint="任务名称(任务1)"
+                    android:text="任务1"
 
-            <TextView
-                android:id="@+id/tv_spinner_type"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:gravity="center"
-                android:text="任务类型:"
-                android:textSize="15dp"
-                app:layout_constraintBaseline_toBaselineOf="@+id/spinner_type"
-                app:layout_constraintStart_toStartOf="parent" />
+                    android:textSize="25dp"
+                    app:layout_constraintBottom_toTopOf="@+id/spinner_type"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@+id/tv_id" />
 
-            <Spinner
-                android:id="@+id/spinner_type"
-                android:layout_width="193dp"
-                android:layout_height="wrap_content"
-                android:entries="@array/uarttomqtt_type"
-                app:layout_constraintBottom_toTopOf="@+id/layout_trigger"
-                app:layout_constraintStart_toEndOf="@+id/tv_spinner_type"
+                <TextView
+                    android:id="@+id/tv_spinner_type"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:gravity="center"
+                    android:text="任务类型:"
+                    android:textSize="15dp"
+                    app:layout_constraintBaseline_toBaselineOf="@+id/spinner_type"
+                    app:layout_constraintStart_toStartOf="parent" />
 
-                app:layout_constraintTop_toBottomOf="@+id/edt_name" />
+                <Spinner
+                    android:id="@+id/spinner_type"
+                    android:layout_width="193dp"
+                    android:layout_height="wrap_content"
+                    android:entries="@array/uarttomqtt_type"
+                    app:layout_constraintBottom_toTopOf="@+id/layout_trigger"
+                    app:layout_constraintStart_toEndOf="@+id/tv_spinner_type"
 
-            <ImageView
-                android:id="@+id/img_help"
-                android:layout_width="wrap_content"
+                    app:layout_constraintTop_toBottomOf="@+id/edt_name" />
+
+                <ImageView
+                    android:id="@+id/img_help"
+                    android:layout_width="wrap_content"
+                    android:layout_height="0dp"
+                    android:paddingStart="4dp"
+                    android:paddingEnd="4dp"
+                    app:layout_constraintBottom_toBottomOf="@+id/spinner_type"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:srcCompat="@drawable/ic_help_outline_black_24dp" />
+
+                <include
+                    android:id="@+id/layout_trigger"
+                    layout="@layout/uarttomqtt_popupwindow_task_trigger"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="8dp"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@+id/spinner_type" />
+
+                <include
+                    android:id="@+id/layout_mqtt"
+                    layout="@layout/uarttomqtt_popupwindow_task_auto_mqtt"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="8dp"
+                    app:layout_constraintBottom_toTopOf="@+id/layout_wol"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@+id/layout_trigger" />
+
+                <include
+                    android:id="@+id/layout_wol"
+                    layout="@layout/uarttomqtt_popupwindow_task_auto_wol"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="8dp"
+                    app:layout_constraintBottom_toTopOf="@+id/layout_uart"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@+id/layout_mqtt" />
+
+                <include
+                    android:id="@+id/layout_uart"
+                    layout="@layout/uarttomqtt_popupwindow_task_auto_uart"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="8dp"
+                    app:layout_constraintBottom_toTopOf="@+id/btn_ok"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@+id/layout_wol" />
+
+                <Button
+                    android:id="@+id/btn_ok"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:text="确认"
+                    app:layout_constraintBottom_toTopOf="@+id/btn_cancel"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@+id/layout_uart" />
+
+                <Button
+                    android:id="@+id/btn_cancel"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:text="取消"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@+id/btn_ok" />
+            </androidx.constraintlayout.widget.ConstraintLayout>
+
+            <View
+                android:layout_width="match_parent"
                 android:layout_height="0dp"
-                android:paddingStart="4dp"
-                android:paddingEnd="4dp"
-                app:layout_constraintBottom_toBottomOf="@+id/spinner_type"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:srcCompat="@drawable/ic_help_outline_black_24dp" />
-
-            <include
-                android:id="@+id/layout_trigger"
-                layout="@layout/uarttomqtt_popupwindow_task_trigger"
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="8dp"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/spinner_type" />
-
-            <include
-                android:id="@+id/layout_mqtt"
-                layout="@layout/uarttomqtt_popupwindow_task_auto_mqtt"
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="8dp"
-                app:layout_constraintBottom_toTopOf="@+id/layout_wol"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/layout_trigger" />
-
-            <include
-                android:id="@+id/layout_wol"
-                layout="@layout/uarttomqtt_popupwindow_task_auto_wol"
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="8dp"
-                app:layout_constraintBottom_toTopOf="@+id/layout_uart"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/layout_mqtt" />
-
-            <include
-                android:id="@+id/layout_uart"
-                layout="@layout/uarttomqtt_popupwindow_task_auto_uart"
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="8dp"
-                app:layout_constraintBottom_toTopOf="@+id/btn_ok"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/layout_wol" />
-
-            <Button
-                android:id="@+id/btn_ok"
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:text="确认"
-                app:layout_constraintBottom_toTopOf="@+id/btn_cancel"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/layout_uart" />
-
-            <Button
-                android:id="@+id/btn_cancel"
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:text="取消"
-                app:layout_constraintBottom_toBottomOf="parent"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/btn_ok" />
-        </androidx.constraintlayout.widget.ConstraintLayout>
-    </LinearLayout>
-</ScrollView>
+                android:layout_weight="1" />
+        </LinearLayout>
+    </ScrollView>
+</LinearLayout>
