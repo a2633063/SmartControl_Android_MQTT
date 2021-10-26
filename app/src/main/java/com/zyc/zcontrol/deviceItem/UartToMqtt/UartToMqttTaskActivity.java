@@ -13,7 +13,7 @@ import android.util.Log;
 import android.view.Gravity;
 import android.view.MenuItem;
 import android.view.View;
-import android.view.WindowManager;
+import android.widget.AbsListView;
 import android.widget.AdapterView;
 import android.widget.Button;
 import android.widget.CheckBox;
@@ -58,7 +58,7 @@ public class UartToMqttTaskActivity extends ServiceActivity {
 
     DeviceUartToMqtt device;
 
-
+    TaskItem task_last = null;
     //region Handler
     @SuppressLint("HandlerLeak")
     Handler handler = new Handler() {
@@ -66,6 +66,8 @@ public class UartToMqttTaskActivity extends ServiceActivity {
         public void handleMessage(Message msg) {// handler接收到消息后就会执行此方法
             switch (msg.what) {
                 case 1: {
+                    lv_task.setEnabled(false);
+                    mSwipeLayout.setRefreshing(true);
                     if (msg.arg1 < 20) {
                         Send("{\"mac\": \"" + device.getMac() + "\",\"task_" + msg.arg1 + "\":null}");
                         // Send("{\"mac\": \"" + device.getMac() + "\",\"task_" + msg.arg1 + "\":null,\"task_" + (msg.arg1 + 1) + "\":null}");
@@ -78,6 +80,7 @@ public class UartToMqttTaskActivity extends ServiceActivity {
                         } else {
                             if (mSwipeLayout.isRefreshing())
                                 mSwipeLayout.setRefreshing(false);
+                            lv_task.setEnabled(true);
                         }
                     }
                     break;
@@ -122,12 +125,36 @@ public class UartToMqttTaskActivity extends ServiceActivity {
 
 
         //region 控件初始化
-        //region listview及adapter
+        mSwipeLayout = findViewById(R.id.swipeRefreshLayout);
         lv_task = findViewById(R.id.lv);
+        //region 初始化下滑刷新功能
+        mSwipeLayout.setColorSchemeResources(R.color.colorAccent, R.color.colorPrimaryDark, R.color.colorAccent, R.color.colorPrimary);
+        mSwipeLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
+            @Override
+            public void onRefresh() {
+                handler.sendEmptyMessageDelayed(1, 0);
+            }
+        });
+        //endregion
+        //region listview及adapter
         lv_task.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
                 popupwindowTask(position);
+            }
+        });
+        lv_task.setOnScrollListener(new AbsListView.OnScrollListener() {
+            @Override
+            public void onScrollStateChanged(AbsListView view, int scrollState) {
+            }
+
+            @Override
+            public void onScroll(AbsListView view, int firstVisibleItem, int visibleItemCount, int totalItemCount) {
+                View firstView = view.getChildAt(firstVisibleItem);
+                if (firstVisibleItem == 0 && (firstView == null || firstView.getTop() == 0)) {
+                    mSwipeLayout.setEnabled(true);
+                } else
+                    mSwipeLayout.setEnabled(false);
             }
         });
         adapter = new UartToMqttTaskListAdapter(UartToMqttTaskActivity.this, data, new UartToMqttTaskListAdapter.Callback() {
@@ -138,22 +165,10 @@ public class UartToMqttTaskActivity extends ServiceActivity {
             }
         });
         lv_task.setAdapter(adapter);
-
+        //endregion
         //endregion
 
-        //endregion
 
-
-        //region 初始化下滑刷新功能
-        mSwipeLayout = findViewById(R.id.swipeRefreshLayout);
-        mSwipeLayout.setColorSchemeResources(R.color.colorAccent, R.color.colorPrimaryDark, R.color.colorAccent, R.color.colorPrimary);
-        mSwipeLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
-            @Override
-            public void onRefresh() {
-                handler.sendEmptyMessageDelayed(1, 0);
-            }
-        });
-        //endregion
     }
 
     public boolean onOptionsItemSelected(MenuItem item) {
@@ -178,6 +193,7 @@ public class UartToMqttTaskActivity extends ServiceActivity {
 
         //region 控件初始化
         //region 获取各控件
+        final TextView tv_task_import = popupView.findViewById(R.id.tv_task_import);
         final TextView tv_id = popupView.findViewById(R.id.tv_id);
         final EditText edt_name = popupView.findViewById(R.id.edt_name);
         final Spinner spinner_type = popupView.findViewById(R.id.spinner_type);
@@ -216,26 +232,26 @@ public class UartToMqttTaskActivity extends ServiceActivity {
         final Button btn_trigger_time_repeat_everyday = popupView.findViewById(R.id.btn_trigger_time_repeat_everyday);
         //endregion
 
-        //region 自动化mqtt部分
-        final EditText edt_mqtt_topic = popupView.findViewById(R.id.edt_mqtt_topic);
-        final EditText edt_mqtt_payload = popupView.findViewById(R.id.edt_mqtt_payload);
-        final Spinner spinner_mqtt_qos = popupView.findViewById(R.id.spinner_mqtt_qos);
-        final CheckBox chk_mqtt_retained = popupView.findViewById(R.id.chk_mqtt_retained);
-        final EditText edt_mqtt_udp_ip = popupView.findViewById(R.id.edt_mqtt_udp_ip);
-        final EditText edt_mqtt_udp_port = popupView.findViewById(R.id.edt_mqtt_udp_port);
-        final EditText edit_mqtt_reserved_rec = popupView.findViewById(R.id.edit_mqtt_reserved_rec);
-        final CheckBox chk_mqtt_udp = popupView.findViewById(R.id.chk_mqtt_udp);
-        //endregion
-        //region 自动化Wol部分
-        final EditText edt_wol_mac = popupView.findViewById(R.id.edt_wol_mac);
-        final EditText edt_wol_ip = popupView.findViewById(R.id.edt_wol_ip);
-        final EditText edt_wol_port = popupView.findViewById(R.id.edt_wol_port);
-        final EditText edt_wol_secure = popupView.findViewById(R.id.edt_wol_secure);
-        //endregion
+//        //region 自动化mqtt部分
+//        final EditText edt_mqtt_topic = popupView.findViewById(R.id.edt_mqtt_topic);
+//        final EditText edt_mqtt_payload = popupView.findViewById(R.id.edt_mqtt_payload);
+//        final Spinner spinner_mqtt_qos = popupView.findViewById(R.id.spinner_mqtt_qos);
+//        final CheckBox chk_mqtt_retained = popupView.findViewById(R.id.chk_mqtt_retained);
+//        final EditText edt_mqtt_udp_ip = popupView.findViewById(R.id.edt_mqtt_udp_ip);
+//        final EditText edt_mqtt_udp_port = popupView.findViewById(R.id.edt_mqtt_udp_port);
+//        final EditText edit_mqtt_reserved_rec = popupView.findViewById(R.id.edit_mqtt_reserved_rec);
+//        final CheckBox chk_mqtt_udp = popupView.findViewById(R.id.chk_mqtt_udp);
+//        //endregion
+//        //region 自动化Wol部分
+//        final EditText edt_wol_mac = popupView.findViewById(R.id.edt_wol_mac);
+//        final EditText edt_wol_ip = popupView.findViewById(R.id.edt_wol_ip);
+//        final EditText edt_wol_port = popupView.findViewById(R.id.edt_wol_port);
+//        final EditText edt_wol_secure = popupView.findViewById(R.id.edt_wol_secure);
+//        //endregion
         //region 自动化uart部分
         final EditText edt_uart_payload = popupView.findViewById(R.id.edt_uart_payload);
-        final EditText edit_uart_reserved_rec = popupView.findViewById(R.id.edit_uart_reserved_rec);
-        final EditText edit_mqtt_reserved_send = popupView.findViewById(R.id.edit_mqtt_reserved_send);
+//        final EditText edit_uart_reserved_rec = popupView.findViewById(R.id.edit_uart_reserved_rec);
+//        final EditText edit_mqtt_reserved_send = popupView.findViewById(R.id.edit_mqtt_reserved_send);
         final Button btn_uart_get_last = popupView.findViewById(R.id.btn_uart_get_last);
         //endregion
         //endregion
@@ -389,6 +405,7 @@ public class UartToMqttTaskActivity extends ServiceActivity {
         //endregion
         //endregion
 
+        //region 获取上次接收到的串口数据
         btn_uart_get_last.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -404,6 +421,17 @@ public class UartToMqttTaskActivity extends ServiceActivity {
                 handler.sendEmptyMessage(2);
             }
         });
+        //endregion
+
+        //region 导入上次设置的任务按钮
+        if (task_last == null) tv_task_import.setVisibility(View.GONE);
+        tv_task_import.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                popupwindowTask_show_task(popupView, task_last);
+            }
+        });
+        //endregion
 
         tv_id.setText("任务" + (task_id + 1));
         edt_name.setText(task.name);
@@ -417,8 +445,14 @@ public class UartToMqttTaskActivity extends ServiceActivity {
 
                 TaskItem t = popupwindowTask_analyse_to_task(popupView);
                 if (t != null) {
+                    if (task_last == null) task_last = new TaskItem();
+                    task_last.Copy(t);
                     Log.d(Tag, "task json:" + t.getJson().toString());
-                    //window.dismiss();
+                    String s = t.getJson().toString();
+                    s = s.replace("%%d", "%d").replace("%d", "%%d");
+                    Send("{\"mac\": \"" + device.getMac() + "\",\"task_" + task_id + "\" : " + s + "}");
+
+                    window.dismiss();
                 }
 
                 //window.dismiss();
@@ -445,12 +479,7 @@ public class UartToMqttTaskActivity extends ServiceActivity {
     private void popupwindowTask_show_task(View popupView, TaskItem task) {
         if (popupView == null || task == null) return;
         //region 获取各控件
-        final TextView tv_id = popupView.findViewById(R.id.tv_id);
-        final EditText edt_name = popupView.findViewById(R.id.edt_name);
         final Spinner spinner_type = popupView.findViewById(R.id.spinner_type);
-        final ImageView img_help = popupView.findViewById(R.id.img_help);
-        final Button btn_ok = popupView.findViewById(R.id.btn_ok);
-        final Button btn_cancel = popupView.findViewById(R.id.btn_cancel);
 
 
         //region 触发页面
@@ -510,11 +539,12 @@ public class UartToMqttTaskActivity extends ServiceActivity {
 
         //endregion
 
-        group_trigger_uart.setVisibility(View.GONE);
-        group_trigger_time.setVisibility(View.GONE);
-        layout_mqtt.setVisibility(View.GONE);
-        layout_wol.setVisibility(View.GONE);
-        layout_uart.setVisibility(View.GONE);
+        spinner_type.setSelection(-1);
+//        group_trigger_uart.setVisibility(View.GONE);
+//        group_trigger_time.setVisibility(View.GONE);
+//        layout_mqtt.setVisibility(View.GONE);
+//        layout_wol.setVisibility(View.GONE);
+//        layout_uart.setVisibility(View.GONE);
         switch (task.type) {    //切换spinner_type的选择项会自动切换ui界面,不需要手动处理
             case TaskItem.TASK_TYPE_MQTT:
                 spinner_type.setSelection(0);

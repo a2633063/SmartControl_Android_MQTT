@@ -40,6 +40,15 @@
                     app:layout_constraintTop_toTopOf="parent" />
 
 
+                <TextView
+                    android:id="@+id/tv_task_import"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:gravity="center"
+                    android:text="导入上次设置的任务"
+                    android:textSize="14dp"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintTop_toTopOf="parent" />
                 <EditText
                     android:id="@+id/edt_name"
                     android:layout_width="wrap_content"
@@ -79,6 +88,7 @@
                     android:id="@+id/img_help"
                     android:layout_width="wrap_content"
                     android:layout_height="0dp"
+                    android:visibility="invisible"
                     android:paddingStart="4dp"
                     android:paddingEnd="4dp"
                     app:layout_constraintBottom_toBottomOf="@+id/spinner_type"

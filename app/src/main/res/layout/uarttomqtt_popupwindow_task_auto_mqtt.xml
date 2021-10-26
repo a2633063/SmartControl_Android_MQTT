@@ -114,6 +114,7 @@
         android:layout_height="0dp"
         android:paddingStart="4dp"
         android:paddingEnd="4dp"
+        android:visibility="invisible"
         app:layout_constraintBottom_toBottomOf="@+id/chk_mqtt_udp"
         app:layout_constraintStart_toEndOf="@+id/chk_mqtt_udp"
         app:layout_constraintTop_toTopOf="@+id/chk_mqtt_udp"
@@ -198,7 +199,7 @@
         android:id="@+id/tv_mqtt_reserved_2"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="个字符替换到payload中"
+        android:text="个字符替换到payload中的%d"
         app:layout_constraintBaseline_toBaselineOf="@+id/edit_mqtt_reserved_rec"
         app:layout_constraintStart_toEndOf="@+id/edit_mqtt_reserved_rec" />
 
