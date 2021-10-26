@@ -1,0 +1,138 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    android:layout_gravity="center"
+    android:background="#ff3f3f3f"
+    android:gravity="center">
+
+
+    <TextView
+        android:id="@+id/tv_uart_payload"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:gravity="center"
+        android:text="发送内容: "
+        android:textSize="15dp"
+        app:layout_constraintBaseline_toBaselineOf="@+id/edt_uart_payload"
+        app:layout_constraintStart_toStartOf="parent" />
+
+    <EditText
+        android:id="@+id/edt_uart_payload"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:digits="0123456789abcdefABCDEF"
+        android:hint="16进制字符串,如a0b1c2d3e4"
+        android:maxLength="40"
+        android:maxLines="1"
+        android:singleLine="true"
+        android:text=""
+        android:textSize="14dp"
+        app:layout_constraintStart_toEndOf="@+id/barrier"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <CheckBox
+        android:id="@+id/chk_uart_advanced"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="高级设置"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/edt_uart_payload" />
+
+    <Button
+        android:id="@+id/btn_uart_get_last"
+        style="?android:attr/buttonStyleSmall"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="获取上次串口数据"
+        app:layout_constraintBottom_toBottomOf="@+id/chk_uart_advanced"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="@+id/chk_uart_advanced" />
+
+    <TextView
+        android:id="@+id/tv_uart_reserved_1"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="将接收的第"
+        app:layout_constraintBaseline_toBaselineOf="@+id/edit_uart_reserved_rec"
+        app:layout_constraintStart_toStartOf="parent" />
+
+    <EditText
+        android:id="@+id/edit_uart_reserved_rec"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:digits="0123456789"
+        android:ems="2"
+        android:gravity="center"
+        android:hint="0"
+        android:maxEms="2"
+        android:maxLength="2"
+        android:maxLines="1"
+        android:minEms="2"
+        android:singleLine="true"
+        android:text=""
+        android:textSize="14dp"
+        app:layout_constraintStart_toEndOf="@+id/tv_uart_reserved_1"
+        app:layout_constraintTop_toBottomOf="@+id/chk_uart_advanced" />
+
+    <TextView
+        android:id="@+id/tv_uart_reserved_2"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="个字节替换"
+        app:layout_constraintBaseline_toBaselineOf="@+id/edit_uart_reserved_rec"
+        app:layout_constraintStart_toEndOf="@+id/edit_uart_reserved_rec" />
+    <TextView
+        android:id="@+id/tv_mqtt_reserved_3"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="到发送的第"
+        app:layout_constraintBaseline_toBaselineOf="@+id/edit_mqtt_reserved_send"
+        app:layout_constraintStart_toStartOf="@+id/tv_uart_reserved_1" />
+    <EditText
+        android:id="@+id/edit_mqtt_reserved_send"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:digits="0123456789"
+        android:ems="2"
+        android:gravity="center"
+        android:hint="0"
+        android:maxEms="2"
+        android:maxLength="2"
+        android:maxLines="1"
+        android:minEms="2"
+        android:singleLine="true"
+        android:text=""
+        android:textSize="14dp"
+        app:layout_constraintStart_toEndOf="@+id/tv_mqtt_reserved_3"
+        app:layout_constraintTop_toBottomOf="@+id/edit_uart_reserved_rec"
+/>
+
+    <TextView
+        android:id="@+id/tv_mqtt_reserved_4"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="个字节(定时触发时无效)"
+        app:layout_constraintBaseline_toBaselineOf="@+id/edit_mqtt_reserved_send"
+        app:layout_constraintStart_toEndOf="@+id/edit_mqtt_reserved_send" />
+
+    <androidx.constraintlayout.widget.Barrier
+        android:id="@+id/barrier"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        app:barrierDirection="right"
+        app:constraint_referenced_ids="tv_uart_payload"
+        tools:layout_editor_absoluteX="69dp" />
+
+    <androidx.constraintlayout.widget.Group
+        android:id="@+id/group_uart_advanced"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        app:constraint_referenced_ids="tv_mqtt_reserved_3,edit_uart_reserved_rec,tv_uart_reserved_1,tv_uart_reserved_2,tv_mqtt_reserved_4,edit_mqtt_reserved_send" />
+
+
+</androidx.constraintlayout.widget.ConstraintLayout>

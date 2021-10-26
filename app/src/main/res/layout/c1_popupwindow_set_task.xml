@@ -158,7 +158,7 @@
                 android:id="@+id/spinner_qos"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:entries="@array/key51_mqtt_qos"
+                android:entries="@array/mqtt_qos"
                 android:gravity="center"
                 app:layout_constraintBottom_toTopOf="@+id/chk_udp"
                 app:layout_constraintStart_toEndOf="@+id/barrier"

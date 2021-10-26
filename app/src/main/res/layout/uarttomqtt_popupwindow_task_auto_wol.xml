@@ -1,0 +1,114 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    android:layout_gravity="center"
+    android:background="#ff3f3f3f"
+    android:gravity="center">
+
+
+    <TextView
+        android:id="@+id/tv_wol_mac"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:gravity="center"
+        android:text="mac: "
+        android:textSize="15dp"
+        app:layout_constraintBaseline_toBaselineOf="@+id/edt_wol_mac"
+        app:layout_constraintStart_toStartOf="parent"
+        tools:layout_editor_absoluteX="16dp" />
+
+    <EditText
+        android:id="@+id/edt_wol_mac"
+        android:layout_width="226dp"
+        android:layout_height="wrap_content"
+        android:digits="0123456789abcdefABCDEF:"
+        android:hint="00:00:00:00:00:00"
+        android:inputType="number"
+        android:text=""
+        app:layout_constraintBottom_toTopOf="@+id/edt_wol_ip"
+        app:layout_constraintStart_toEndOf="@+id/barrier"
+
+        app:layout_constraintTop_toBottomOf="parent" />
+
+    <TextView
+        android:id="@+id/tv_wol_ip"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="ip:port"
+        app:layout_constraintBaseline_toBaselineOf="@+id/edt_wol_ip"
+        app:layout_constraintStart_toStartOf="parent" />
+
+    <EditText
+        android:id="@+id/edt_wol_ip"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:digits="0123456789."
+        android:ems="7"
+        android:inputType="number"
+        android:hint="255.255.255.255"
+        app:layout_constraintBottom_toTopOf="@+id/edt_wol_secure"
+        app:layout_constraintStart_toEndOf="@+id/barrier"
+
+        app:layout_constraintTop_toBottomOf="@+id/edt_wol_mac" />
+
+    <TextView
+        android:id="@+id/tv_wol_port"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text=":"
+        android:textSize="24dp"
+        android:textStyle="bold"
+        app:layout_constraintBaseline_toBaselineOf="@+id/edt_wol_port"
+        app:layout_constraintStart_toEndOf="@+id/edt_wol_ip" />
+
+    <EditText
+        android:id="@+id/edt_wol_port"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:digits="1234567890"
+        android:inputType="number"
+        android:hint="10181"
+        android:text=""
+        app:layout_constraintBottom_toBottomOf="@+id/edt_wol_ip"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toEndOf="@+id/tv_wol_port"
+        app:layout_constraintTop_toTopOf="@+id/edt_wol_ip" />
+
+    <TextView
+        android:id="@+id/tv_wol_secure"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:gravity="center"
+        android:text="secureOn\n密码 "
+        android:textSize="15dp"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="@+id/edt_wol_secure" />
+
+    <EditText
+        android:id="@+id/edt_wol_secure"
+        android:layout_width="226dp"
+        android:layout_height="wrap_content"
+        android:digits="0123456789abcdefABCDEF:"
+        android:hint="不使用请为空"
+        android:inputType="number"
+        android:text=""
+        app:layout_constraintBottom_toBottomOf="parent"
+
+        app:layout_constraintStart_toEndOf="@+id/barrier"
+        app:layout_constraintTop_toBottomOf="@+id/edt_wol_ip" />
+
+    <androidx.constraintlayout.widget.Barrier
+        android:id="@+id/barrier"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        app:barrierDirection="end"
+        app:constraint_referenced_ids="tv_wol_mac,tv_wol_port,tv_wol_ip,tv_wol_secure"
+        tools:layout_editor_absoluteX="81dp"
+        tools:layout_editor_absoluteY="12dp" />
+
+
+</androidx.constraintlayout.widget.ConstraintLayout>
+

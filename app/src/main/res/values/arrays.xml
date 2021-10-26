@@ -7,9 +7,20 @@
     </string-array>
 
 
-    <string-array name="key51_mqtt_qos">
+    <string-array name="mqtt_qos">
         <item>0</item>
         <item>1</item>
         <item>2</item>
+    </string-array>
+
+
+
+    <string-array name="uarttomqtt_type">
+        <item>串口触发mqtt/udp</item>
+        <item>串口触发Wol局域网唤醒</item>
+        <item>串口触发串口</item>
+<!--        <item>串口触发http(不支持)</item>-->
+        <item>定时触发mqtt/udp</item>
+        <item>定时触发串口</item>
     </string-array>
 </resources>

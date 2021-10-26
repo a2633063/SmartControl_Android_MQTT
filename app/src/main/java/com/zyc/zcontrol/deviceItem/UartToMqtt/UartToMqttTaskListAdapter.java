@@ -61,7 +61,7 @@ class UartToMqttTaskListAdapter extends BaseAdapter {
             convertView = inflater.inflate(R.layout.uarttomqtt_list_item_task_list, null);
             holder = new ViewHolder();
             holder.tv_name = convertView.findViewById(R.id.tv_name);
-            holder.tv_key = convertView.findViewById(R.id.tv_key);
+            holder.tv_type = convertView.findViewById(R.id.tv_type);
             holder.on = convertView.findViewById(R.id.sw_on);
             convertView.setTag(holder);
         } else {
@@ -72,7 +72,26 @@ class UartToMqttTaskListAdapter extends BaseAdapter {
 //            convertView.setBackgroundColor(0x20ffffff);
 //        else convertView.setBackgroundColor(0x00000000);
         holder.tv_name.setText(mdata.get(position).name);
-        //holder.tv_key.setText(mdata.get(position).key+"");
+
+        switch(mdata.get(position).type)
+        {
+            case TaskItem.TASK_TYPE_MQTT:
+                holder.tv_type.setText("串口触发mqtt/udp");
+                break;
+            case TaskItem.TASK_TYPE_WOL:
+                holder.tv_type.setText("串口触发Wol局域网唤醒");
+                break;
+            case TaskItem.TASK_TYPE_UART:
+                holder.tv_type.setText("串口触发串口");
+                break;
+            case TaskItem.TASK_TYPE_TIME_MQTT:
+                holder.tv_type.setText("定时触发mqtt/udp");
+                break;
+            case TaskItem.TASK_TYPE_TIME_UART:
+                holder.tv_type.setText("定时触发串口");
+                break;
+
+        }
 
         holder.on.setChecked(mdata.get(position).getOn());
 
@@ -89,7 +108,7 @@ class UartToMqttTaskListAdapter extends BaseAdapter {
 
     class ViewHolder {
         TextView tv_name;
-        TextView tv_key;
+        TextView tv_type;
         Switch on;
     }
 }

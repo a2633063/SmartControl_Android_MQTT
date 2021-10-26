@@ -1,0 +1,316 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    android:layout_gravity="center"
+    android:background="#ff3f3f3f"
+    android:gravity="center">
+
+    <TextView
+        android:id="@+id/tv_trigger_uart_title"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:gravity="center"
+        android:text="串口接收触发:"
+        android:textSize="15dp"
+        android:visibility="visible"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+
+    <TextView
+        android:id="@+id/tv_trigger_uart_payload"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:gravity="center"
+        android:text="接收内容: "
+        android:textSize="15dp"
+        app:layout_constraintBaseline_toBaselineOf="@+id/edt_trigger_uart_payload"
+
+        app:layout_constraintStart_toStartOf="parent" />
+
+    <EditText
+        android:id="@+id/edt_trigger_uart_payload"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:digits="0123456789abcdefABCDEF"
+        android:hint="16进制字符串,如a0b1c2d3e4"
+        android:maxLength="40"
+        android:maxLines="1"
+        android:singleLine="true"
+        android:text=""
+        android:textSize="14dp"
+        app:layout_constraintBottom_toTopOf="@+id/group_trigger_time"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toEndOf="@+id/barrier"
+        app:layout_constraintTop_toBottomOf="@+id/group_trigger_uart" />
+
+    <CheckBox
+        android:id="@+id/chk_trigger_uart_advanced"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="高级设置"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/edt_trigger_uart_payload" />
+
+    <Button
+        android:id="@+id/btn_trigger_uart_get_last"
+        style="?android:attr/buttonStyleSmall"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="获取上次串口数据"
+        app:layout_constraintBottom_toBottomOf="@+id/chk_trigger_uart_advanced"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="@+id/chk_trigger_uart_advanced" />
+
+    <TextView
+        android:id="@+id/tv_trigger_uart_reserved_1"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="忽略第"
+        app:layout_constraintBaseline_toBaselineOf="@+id/edit_trigger_uart_reserved_rec"
+        app:layout_constraintStart_toStartOf="parent" />
+
+    <EditText
+        android:id="@+id/edit_trigger_uart_reserved_rec"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:digits="0123456789"
+        android:ems="2"
+        android:gravity="center"
+        android:hint="0"
+        android:maxEms="2"
+        android:maxLength="2"
+        android:maxLines="1"
+        android:minEms="2"
+        android:singleLine="true"
+        android:text=""
+        android:textSize="14dp"
+        app:layout_constraintStart_toEndOf="@+id/tv_trigger_uart_reserved_1"
+        app:layout_constraintTop_toBottomOf="@+id/chk_trigger_uart_advanced" />
+
+    <TextView
+        android:id="@+id/tv_trigger_uart_reserved_2"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="个字符"
+        app:layout_constraintBaseline_toBaselineOf="@+id/edit_trigger_uart_reserved_rec"
+        app:layout_constraintStart_toEndOf="@+id/edit_trigger_uart_reserved_rec" />
+
+    <CheckBox
+        android:id="@+id/tv_trigger_uart_mqtt_send"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="串口转发mqtt"
+        app:layout_constraintBaseline_toBaselineOf="@+id/edit_trigger_uart_reserved_rec"
+        app:layout_constraintEnd_toEndOf="parent" />
+
+    <androidx.constraintlayout.widget.Barrier
+        android:id="@+id/barrier"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        app:barrierDirection="right"
+        app:constraint_referenced_ids="tv_trigger_uart_payload" />
+
+    <androidx.constraintlayout.widget.Group
+        android:id="@+id/group_trigger_uart"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        app:constraint_referenced_ids="btn_trigger_uart_get_last,tv_trigger_uart_title,chk_trigger_uart_advanced,tv_trigger_uart_reserved_2,edit_trigger_uart_reserved_rec,tv_trigger_uart_payload,tv_trigger_uart_reserved_1,tv_trigger_uart_mqtt_send,edt_trigger_uart_payload"
+        app:layout_constraintBottom_toTopOf="@+id/edt_trigger_uart_payload"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/tv_trigger_uart_title" />
+
+    <androidx.constraintlayout.widget.Group
+        android:id="@+id/group_trigger_uart_advanced"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        app:constraint_referenced_ids="tv_trigger_uart_reserved_2,edit_trigger_uart_reserved_rec,tv_trigger_uart_reserved_1,tv_trigger_uart_mqtt_send" />
+
+    <TextView
+        android:id="@+id/tv_trigger_time_title"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:gravity="center"
+        android:text="时间定时触发:"
+        android:textSize="15dp"
+        android:visibility="visible"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/tv_trigger_uart_mqtt_send" />
+
+    <TextView
+        android:id="@+id/tv_trigger_time"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:gravity="center"
+        android:text="12:00"
+        android:textSize="25dp"
+        android:visibility="visible"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/tv_trigger_time_title" />
+
+
+    <TextView
+        android:id="@+id/tv_trigger_time_repeat"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="8dp"
+        android:layout_marginTop="4dp"
+        android:layout_marginBottom="8dp"
+        android:text="重复:每天"
+        app:layout_constraintBottom_toTopOf="@+id/tbtn_trigger_time_week_1"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/tv_trigger_time"
+        app:layout_constraintVertical_bias="0.5" />
+
+    <ToggleButton
+        android:id="@+id/tbtn_trigger_time_week_1"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="4dp"
+        android:checked="true"
+        android:minWidth="0dp"
+        android:text="一"
+        android:textOff="@null"
+        android:textOn="@null"
+        app:layout_constraintEnd_toStartOf="@+id/tbtn_trigger_time_week_2"
+        app:layout_constraintHorizontal_bias="0.5"
+        app:layout_constraintHorizontal_chainStyle="packed"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/tv_trigger_time_repeat"
+        app:layout_constraintVertical_chainStyle="packed" />
+
+    <ToggleButton
+        android:id="@+id/tbtn_trigger_time_week_2"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:checked="true"
+        android:minWidth="0dp"
+        android:text="二"
+        android:textOff="@null"
+        android:textOn="@null"
+        app:layout_constraintBottom_toBottomOf="@id/tbtn_trigger_time_week_1"
+        app:layout_constraintEnd_toStartOf="@id/tbtn_trigger_time_week_3"
+        app:layout_constraintHorizontal_bias="0.5"
+        app:layout_constraintStart_toEndOf="@id/tbtn_trigger_time_week_1"
+        app:layout_constraintTop_toTopOf="@+id/tbtn_trigger_time_week_1"
+        app:layout_constraintVertical_bias="0.5" />
+
+    <ToggleButton
+        android:id="@+id/tbtn_trigger_time_week_3"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:checked="true"
+        android:minWidth="0dp"
+        android:text="三"
+        android:textOff="@null"
+        android:textOn="@null"
+        app:layout_constraintBottom_toBottomOf="@id/tbtn_trigger_time_week_1"
+        app:layout_constraintEnd_toStartOf="@id/tbtn_trigger_time_week_4"
+        app:layout_constraintHorizontal_bias="0.5"
+        app:layout_constraintStart_toEndOf="@id/tbtn_trigger_time_week_2"
+        app:layout_constraintTop_toTopOf="@+id/tbtn_trigger_time_week_1"
+        app:layout_constraintVertical_bias="0.5" />
+
+    <ToggleButton
+        android:id="@+id/tbtn_trigger_time_week_4"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:checked="true"
+        android:minWidth="0dp"
+        android:text="四"
+        android:textOff="@null"
+        android:textOn="@null"
+        app:layout_constraintBottom_toBottomOf="@id/tbtn_trigger_time_week_1"
+        app:layout_constraintEnd_toStartOf="@id/tbtn_trigger_time_week_5"
+        app:layout_constraintHorizontal_bias="0.5"
+        app:layout_constraintStart_toEndOf="@id/tbtn_trigger_time_week_3"
+        app:layout_constraintTop_toTopOf="@+id/tbtn_trigger_time_week_1"
+        app:layout_constraintVertical_bias="0.5" />
+
+    <ToggleButton
+        android:id="@+id/tbtn_trigger_time_week_5"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:checked="true"
+        android:minWidth="0dp"
+        android:text="五"
+        android:textOff="@null"
+        android:textOn="@null"
+        app:layout_constraintBottom_toBottomOf="@id/tbtn_trigger_time_week_1"
+        app:layout_constraintEnd_toStartOf="@id/tbtn_trigger_time_week_6"
+        app:layout_constraintHorizontal_bias="0.5"
+        app:layout_constraintStart_toEndOf="@id/tbtn_trigger_time_week_4"
+        app:layout_constraintTop_toTopOf="@+id/tbtn_trigger_time_week_1"
+        app:layout_constraintVertical_bias="0.5" />
+
+    <ToggleButton
+        android:id="@+id/tbtn_trigger_time_week_6"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:checked="true"
+        android:minWidth="0dp"
+        android:text="六"
+        android:textOff="@null"
+        android:textOn="@null"
+        app:layout_constraintBottom_toBottomOf="@id/tbtn_trigger_time_week_1"
+        app:layout_constraintEnd_toStartOf="@id/tbtn_trigger_time_week_7"
+        app:layout_constraintHorizontal_bias="0.5"
+        app:layout_constraintStart_toEndOf="@id/tbtn_trigger_time_week_5"
+        app:layout_constraintTop_toTopOf="@+id/tbtn_trigger_time_week_1"
+        app:layout_constraintVertical_bias="0.5" />
+
+    <ToggleButton
+        android:id="@+id/tbtn_trigger_time_week_7"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:checked="true"
+        android:minWidth="0dp"
+        android:text="日"
+        android:textOff="@null"
+        android:textOn="@null"
+        app:layout_constraintBottom_toBottomOf="@id/tbtn_trigger_time_week_1"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.5"
+        app:layout_constraintStart_toEndOf="@id/tbtn_trigger_time_week_6"
+        app:layout_constraintTop_toTopOf="@+id/tbtn_trigger_time_week_1"
+        app:layout_constraintVertical_bias="0.5" />
+
+
+    <Button
+        android:id="@+id/btn_trigger_time_now"
+        style="?android:attr/buttonStyleSmall"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="4dp"
+        android:text="当前时间"
+        app:layout_constraintEnd_toStartOf="@id/btn_trigger_time_repeat_everyday"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/tbtn_trigger_time_week_1" />
+
+    <Button
+        android:id="@+id/btn_trigger_time_repeat_everyday"
+        style="?android:attr/buttonStyleSmall"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="选择每天"
+        app:layout_constraintBottom_toBottomOf="@+id/btn_trigger_time_now"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toEndOf="@+id/btn_trigger_time_now"
+        app:layout_constraintTop_toTopOf="@+id/btn_trigger_time_now" />
+
+
+    <androidx.constraintlayout.widget.Group
+        android:id="@+id/group_trigger_time"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        app:constraint_referenced_ids="tv_trigger_time_title,tv_trigger_time,btn_trigger_time_repeat_everyday,tv_trigger_time,tbtn_trigger_time_week_2,tbtn_trigger_time_week_5,tbtn_trigger_time_week_1,btn_trigger_time_now,tbtn_trigger_time_week_4,tbtn_trigger_time_week_6,tbtn_trigger_time_week_3,tbtn_trigger_time_week_7,tv_trigger_time_repeat"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/edt_trigger_uart_payload" />
+
+</androidx.constraintlayout.widget.ConstraintLayout>

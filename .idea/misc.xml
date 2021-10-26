@@ -10,20 +10,30 @@
         <entry key="..\:/Program/Android/SmartControl_Android_MQTT/app/src/main/res/layout/activity_setting.xml" value="0.21979166666666666" />
         <entry key="..\:/Program/Android/SmartControl_Android_MQTT/app/src/main/res/layout/app_activity_setting.xml" value="0.18645833333333334" />
         <entry key="..\:/Program/Android/SmartControl_Android_MQTT/app/src/main/res/layout/app_list_item_device_sort_list.xml" value="0.18645833333333334" />
+        <entry key="..\:/Program/Android/SmartControl_Android_MQTT/app/src/main/res/layout/c1_popupwindow_set_task.xml" value="0.12094594594594595" />
         <entry key="..\:/Program/Android/SmartControl_Android_MQTT/app/src/main/res/layout/clock_fragment.xml" value="0.2048054919908467" />
         <entry key="..\:/Program/Android/SmartControl_Android_MQTT/app/src/main/res/layout/content_main.xml" value="0.21979166666666666" />
         <entry key="..\:/Program/Android/SmartControl_Android_MQTT/app/src/main/res/layout/key51_fragment.xml" value="0.18645833333333334" />
+        <entry key="..\:/Program/Android/SmartControl_Android_MQTT/app/src/main/res/layout/key51_popupwindow_set_task.xml" value="0.12094594594594595" />
         <entry key="..\:/Program/Android/SmartControl_Android_MQTT/app/src/main/res/layout/list_item_device_add_mdns_list.xml" value="0.21979166666666666" />
         <entry key="..\:/Program/Android/SmartControl_Android_MQTT/app/src/main/res/layout/list_item_device_sort_list.xml" value="0.21979166666666666" />
         <entry key="..\:/Program/Android/SmartControl_Android_MQTT/app/src/main/res/layout/list_item_main_device_list.xml" value="0.21979166666666666" />
         <entry key="..\:/Program/Android/SmartControl_Android_MQTT/app/src/main/res/layout/list_item_main_device_udp_scan_list.xml" value="0.21979166666666666" />
         <entry key="..\:/Program/Android/SmartControl_Android_MQTT/app/src/main/res/layout/rgbw_popupwindow_set_time_count_down.xml" value="0.21979166666666666" />
+        <entry key="..\:/Program/Android/SmartControl_Android_MQTT/app/src/main/res/layout/s7_fragment.xml" value="0.3390625" />
         <entry key="..\:/Program/Android/SmartControl_Android_MQTT/app/src/main/res/layout/tc1_activity_plug.xml" value="0.1322463768115942" />
+        <entry key="..\:/Program/Android/SmartControl_Android_MQTT/app/src/main/res/layout/tc1_popupwindow_set_time.xml" value="0.18645833333333334" />
         <entry key="..\:/Program/Android/SmartControl_Android_MQTT/app/src/main/res/layout/uarttomqtt_activity_task.xml" value="0.1" />
         <entry key="..\:/Program/Android/SmartControl_Android_MQTT/app/src/main/res/layout/uarttomqtt_fragment.xml" value="0.5" />
         <entry key="..\:/Program/Android/SmartControl_Android_MQTT/app/src/main/res/layout/uarttomqtt_list_item_task_list.xml" value="0.3390625" />
-        <entry key="..\:/Program/Android/SmartControl_Android_MQTT/app/src/main/res/layout/uarttomqtt_popupwindow_set_task.xml" value="0.18645833333333334" />
+        <entry key="..\:/Program/Android/SmartControl_Android_MQTT/app/src/main/res/layout/uarttomqtt_popupwindow_auto_wol.xml" value="0.25" />
+        <entry key="..\:/Program/Android/SmartControl_Android_MQTT/app/src/main/res/layout/uarttomqtt_popupwindow_set_task.xml" value="0.1" />
         <entry key="..\:/Program/Android/SmartControl_Android_MQTT/app/src/main/res/layout/uarttomqtt_popupwindow_set_time_count_down.xml" value="0.18645833333333334" />
+        <entry key="..\:/Program/Android/SmartControl_Android_MQTT/app/src/main/res/layout/uarttomqtt_popupwindow_task_auto.xml" value="0.33" />
+        <entry key="..\:/Program/Android/SmartControl_Android_MQTT/app/src/main/res/layout/uarttomqtt_popupwindow_task_auto_mqtt.xml" value="0.25" />
+        <entry key="..\:/Program/Android/SmartControl_Android_MQTT/app/src/main/res/layout/uarttomqtt_popupwindow_task_auto_uart.xml" value="0.33" />
+        <entry key="..\:/Program/Android/SmartControl_Android_MQTT/app/src/main/res/layout/uarttomqtt_popupwindow_task_auto_wol.xml" value="0.3524804177545692" />
+        <entry key="..\:/Program/Android/SmartControl_Android_MQTT/app/src/main/res/layout/uarttomqtt_popupwindow_task_trigger.xml" value="0.33" />
         <entry key="..\:/Program/Android/SmartControl_Android_MQTT/app/src/main/res/xml/c1_setting.xml" value="0.3390625" />
         <entry key="..\:/Program/Android/SmartControl_Android_MQTT/app/src/main/res/xml/setting.xml" value="0.33" />
         <entry key="..\:/Program/Android/SmartControl_Android_MQTT/app/src/main/res/xml/tc1_setting.xml" value="0.1" />
