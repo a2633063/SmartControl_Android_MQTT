@@ -28,6 +28,8 @@ import androidx.constraintlayout.widget.ConstraintLayout;
 import androidx.constraintlayout.widget.Group;
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 
+import com.google.android.material.snackbar.Snackbar;
+import com.zyc.Function;
 import com.zyc.zcontrol.MainApplication;
 import com.zyc.zcontrol.R;
 import com.zyc.zcontrol.ServiceActivity;
@@ -38,6 +40,7 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.util.ArrayList;
+import java.util.Locale;
 
 public class UartToMqttTaskActivity extends ServiceActivity {
     public final static String Tag = "UartToMqttTaskActivity";
@@ -56,8 +59,7 @@ public class UartToMqttTaskActivity extends ServiceActivity {
         @Override
         public void handleMessage(Message msg) {// handler接收到消息后就会执行此方法
             switch (msg.what) {
-                case 1:
-
+                case 1: {
                     if (msg.arg1 < 20) {
                         Send("{\"mac\": \"" + device.getMac() + "\",\"task_" + msg.arg1 + "\":null}");
                         // Send("{\"mac\": \"" + device.getMac() + "\",\"task_" + msg.arg1 + "\":null,\"task_" + (msg.arg1 + 1) + "\":null}");
@@ -73,6 +75,11 @@ public class UartToMqttTaskActivity extends ServiceActivity {
                         }
                     }
                     break;
+                }
+                case 2: {
+                    Send("{\"mac\": \"" + device.getMac() + "\",\"uart_last\":null}");
+                    break;
+                }
             }
         }
     };
@@ -152,11 +159,13 @@ public class UartToMqttTaskActivity extends ServiceActivity {
         return super.onOptionsItemSelected(item);
     }
 
+    //获取上次串口数据时记录需要显示在哪个EditText中
+    EditText editLast = null;
 
     //region 弹窗
     private void popupwindowTask(final int task_id) {
 
-        View popupView = getLayoutInflater().inflate(R.layout.uarttomqtt_popupwindow_set_task, null);
+        final View popupView = getLayoutInflater().inflate(R.layout.uarttomqtt_popupwindow_set_task, null);
         final PopupWindow window = new PopupWindow(popupView, MATCH_PARENT, MATCH_PARENT, true);//wrap_content,wrap_content
 
         final TaskItem task = adapter.getItem(task_id);
@@ -175,6 +184,12 @@ public class UartToMqttTaskActivity extends ServiceActivity {
         final Group group_trigger_uart = popupView.findViewById(R.id.group_trigger_uart);
         final Group group_trigger_uart_advanced = popupView.findViewById(R.id.group_trigger_uart_advanced);
 
+        final Button btn_trigger_uart_get_last = popupView.findViewById(R.id.btn_trigger_uart_get_last);
+        final EditText edt_trigger_uart_payload = popupView.findViewById(R.id.edt_trigger_uart_payload);
+        final EditText edit_trigger_uart_reserved_rec = popupView.findViewById(R.id.edit_trigger_uart_reserved_rec);
+        final CheckBox chk_trigger_uart_mqtt_send = popupView.findViewById(R.id.chk_trigger_uart_mqtt_send);
+        final CheckBox chk_trigger_uart_advanced = popupView.findViewById(R.id.chk_trigger_uart_advanced);
+
         final ConstraintLayout layout_mqtt = popupView.findViewById(R.id.layout_mqtt);
         final ConstraintLayout layout_wol = popupView.findViewById(R.id.layout_wol);
         final ConstraintLayout layout_uart = popupView.findViewById(R.id.layout_uart);
@@ -183,10 +198,6 @@ public class UartToMqttTaskActivity extends ServiceActivity {
         final Group group_uart_advanced = popupView.findViewById(R.id.group_uart_advanced);
         final CheckBox chk_uart_advanced = popupView.findViewById(R.id.chk_uart_advanced);
 
-
-        final EditText edt_trigger_uart_payload = popupView.findViewById(R.id.edt_trigger_uart_payload);
-        final EditText edit_trigger_uart_reserved_rec = popupView.findViewById(R.id.edit_trigger_uart_reserved_rec);
-        final CheckBox tv_trigger_uart_mqtt_send = popupView.findViewById(R.id.tv_trigger_uart_mqtt_send);
 
         final TextView tv_trigger_time = popupView.findViewById(R.id.tv_trigger_time);
         final TextView tv_trigger_time_repeat = popupView.findViewById(R.id.tv_trigger_time_repeat);
@@ -223,6 +234,7 @@ public class UartToMqttTaskActivity extends ServiceActivity {
         //endregion
         //endregion
 
+        //region 根据任务类型切换显示页面
         spinner_type.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
             public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
@@ -265,22 +277,46 @@ public class UartToMqttTaskActivity extends ServiceActivity {
                 layout_uart.setVisibility(View.GONE);
             }
         });
+        //endregion
 
-        //region 触发部分 本地功能初始化
+        //region 串口触发部分 高级设置开关
         group_trigger_uart_advanced.setVisibility(View.GONE);
-        final CheckBox chk_trigger_uart_advanced = popupView.findViewById(R.id.chk_trigger_uart_advanced);
         chk_trigger_uart_advanced.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
             @Override
             public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
                 group_trigger_uart_advanced.setVisibility(isChecked ? View.VISIBLE : View.GONE);
             }
         });
-
         //endregion
-
+        //region 定时触发部分 周一-周日重复设置
+        CompoundButton.OnCheckedChangeListener weekCheckedChangeListener = new CompoundButton.OnCheckedChangeListener() {
+            @Override
+            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+                int repeat = 0;
+                for (int i = tbtn_trigger_time_week.length; i > 0; i--) {
+                    repeat = repeat << 1;
+                    if (tbtn_trigger_time_week[i - 1].isChecked()) repeat |= 1;
+                }
+                if (repeat == 0) {
+                    buttonView.setChecked(true);
+                    //Toast.makeText(getApplicationContext(), "至少要有一天重复日期!", Toast.LENGTH_SHORT).show();
+                    Snackbar.make(popupView, "至少要有一天重复日期!", Snackbar.LENGTH_LONG)
+                            .show();
+                    for (int i = tbtn_trigger_time_week.length; i > 0; i--) {
+                        repeat = repeat << 1;
+                        if (tbtn_trigger_time_week[i - 1].isChecked()) repeat |= 1;
+                    }
+                }
+                tv_trigger_time_repeat.setText("重复:" + Function.getWeek(repeat));
+            }
+        };
+        for (int i = 0; i < tbtn_trigger_time_week.length; i++) {
+            tbtn_trigger_time_week[i].setOnCheckedChangeListener(weekCheckedChangeListener);
+        }
+        //endregion
         //region 自动化部分 本地功能初始化
 
-        //region mqtt部分本地功能初始化
+        //region mqtt部分 高级设置开关
         group_mqtt_advanced.setVisibility(View.GONE);
         chk_mqtt_advanced.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
             @Override
@@ -290,7 +326,7 @@ public class UartToMqttTaskActivity extends ServiceActivity {
         });
         //endregion
 
-        //region uart部分本地功能初始化
+        //region uart部分 高级设置开关
         group_uart_advanced.setVisibility(View.GONE);
         chk_uart_advanced.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
             @Override
@@ -301,8 +337,23 @@ public class UartToMqttTaskActivity extends ServiceActivity {
         //endregion
         //endregion
 
+        btn_uart_get_last.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                editLast = edt_uart_payload;
+                handler.sendEmptyMessage(2);
+            }
+        });
 
-        tv_id.setText("任务"+(task_id+1));
+        btn_trigger_uart_get_last.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                editLast = edt_trigger_uart_payload;
+                handler.sendEmptyMessage(2);
+            }
+        });
+
+        tv_id.setText("任务" + (task_id + 1));
         edt_name.setText(task.name);
         popupwindowTask_show_task(popupView, task);
 
@@ -359,7 +410,8 @@ public class UartToMqttTaskActivity extends ServiceActivity {
 
         final EditText edt_trigger_uart_payload = popupView.findViewById(R.id.edt_trigger_uart_payload);
         final EditText edit_trigger_uart_reserved_rec = popupView.findViewById(R.id.edit_trigger_uart_reserved_rec);
-        final CheckBox tv_trigger_uart_mqtt_send = popupView.findViewById(R.id.tv_trigger_uart_mqtt_send);
+        final CheckBox chk_trigger_uart_mqtt_send = popupView.findViewById(R.id.chk_trigger_uart_mqtt_send);
+        final CheckBox chk_trigger_uart_advanced = popupView.findViewById(R.id.chk_trigger_uart_advanced);
 
         final TextView tv_trigger_time = popupView.findViewById(R.id.tv_trigger_time);
         final TextView tv_trigger_time_repeat = popupView.findViewById(R.id.tv_trigger_time_repeat);
@@ -407,28 +459,18 @@ public class UartToMqttTaskActivity extends ServiceActivity {
         switch (task.type) {    //切换spinner_type的选择项会自动切换ui界面,不需要手动处理
             case TaskItem.TASK_TYPE_MQTT:
                 spinner_type.setSelection(0);
-//                group_trigger_uart.setVisibility(View.VISIBLE);
-//                layout_mqtt.setVisibility(View.VISIBLE);
                 break;
             case TaskItem.TASK_TYPE_WOL:
                 spinner_type.setSelection(1);
-//                group_trigger_uart.setVisibility(View.VISIBLE);
-//                layout_wol.setVisibility(View.VISIBLE);
                 break;
             case TaskItem.TASK_TYPE_UART:
                 spinner_type.setSelection(2);
-//                group_trigger_uart.setVisibility(View.VISIBLE);
-//                layout_uart.setVisibility(View.VISIBLE);
                 break;
             case TaskItem.TASK_TYPE_TIME_MQTT:
                 spinner_type.setSelection(3);
-//                group_trigger_time.setVisibility(View.VISIBLE);
-//                layout_mqtt.setVisibility(View.VISIBLE);
                 break;
             case TaskItem.TASK_TYPE_TIME_UART:
                 spinner_type.setSelection(4);
-//                group_trigger_time.setVisibility(View.VISIBLE);
-//                layout_uart.setVisibility(View.VISIBLE);
                 break;
             default:
                 spinner_type.setSelection(-1);
@@ -440,11 +482,21 @@ public class UartToMqttTaskActivity extends ServiceActivity {
         //region 触发部分更新显示
         switch (task.type) {
             case TaskItem.TASK_TYPE_MQTT:
-            case TaskItem.TASK_TYPE_TIME_MQTT:
             case TaskItem.TASK_TYPE_WOL:
-                break;
             case TaskItem.TASK_TYPE_UART:
+                edt_trigger_uart_payload.setText(task.condition_dat);
+                chk_trigger_uart_mqtt_send.setChecked(task.mqtt_send != 0);
+                if (task.reserved > 0 && task.reserved < 255) {
+                    chk_trigger_uart_advanced.setChecked(true);
+                    edit_trigger_uart_reserved_rec.setText(String.valueOf(task.reserved));
+                }
+                break;
+            case TaskItem.TASK_TYPE_TIME_MQTT:
             case TaskItem.TASK_TYPE_TIME_UART:
+                tv_trigger_time.setText(String.format("%02d:%02d", task.hour, task.minute));
+                for (int i = 0; i < 7; i++) {
+                    tbtn_trigger_time_week[i].setChecked((task.repeat & (1 << i)) != 0);
+                }
                 break;
         }
         //endregion
@@ -452,11 +504,37 @@ public class UartToMqttTaskActivity extends ServiceActivity {
         switch (task.type) {
             case TaskItem.TASK_TYPE_MQTT:
             case TaskItem.TASK_TYPE_TIME_MQTT:
+                edt_mqtt_topic.setText(task.mqtt.topic);
+                edt_mqtt_payload.setText(task.mqtt.payload);
+                spinner_mqtt_qos.setSelection(task.mqtt.qos);
+                chk_mqtt_retained.setChecked(task.mqtt.retained != 0);
+                edt_mqtt_udp_ip.setText(String.format(Locale.getDefault(), "%d.%d.%d.%d", task.mqtt.ip[0], task.mqtt.ip[1], task.mqtt.ip[2], task.mqtt.ip[3]));
+                edt_mqtt_udp_port.setText(String.valueOf(task.mqtt.port));
+                chk_mqtt_udp.setChecked(task.mqtt.udp != 0);
+                if (task.mqtt.reserved > 0 && task.mqtt.reserved < 255) {
+                    edit_mqtt_reserved_rec.setText(String.valueOf(task.mqtt.reserved));
+                }
+
+                if ((task.mqtt.reserved > 0 && task.mqtt.reserved < 255)
+                        || task.mqtt.retained != 0 || task.mqtt.udp != 0) {
+                    chk_mqtt_advanced.setChecked(true);
+                }
                 break;
             case TaskItem.TASK_TYPE_WOL:
+                edt_wol_mac.setText(String.format("%02X:%02X:%02X:%02X:%02X:%02X", task.wol.mac[0], task.wol.mac[1], task.wol.mac[2], task.wol.mac[3], task.wol.mac[4], task.wol.mac[5]));
+                edt_wol_ip.setText(String.format(Locale.getDefault(), "%d.%d.%d.%d", task.wol.ip[0], task.wol.ip[1], task.wol.ip[2], task.wol.ip[3]));
+                edt_wol_secure.setText(String.format("%02X:%02X:%02X:%02X:%02X:%02X", task.wol.secure[0], task.wol.secure[1], task.wol.secure[2], task.wol.secure[3], task.wol.secure[4], task.wol.secure[5]));
+                edt_wol_port.setText(String.valueOf(task.wol.port));
                 break;
             case TaskItem.TASK_TYPE_UART:
             case TaskItem.TASK_TYPE_TIME_UART:
+                edt_uart_payload.setText(task.uart.dat);
+                if (task.uart.reserved_rec > 0 && task.uart.reserved_rec < 255
+                        && task.uart.reserved_send > 0 && task.uart.reserved_send < 255) {
+                    edit_uart_reserved_rec.setText(String.valueOf(task.uart.reserved_rec));
+                    edit_mqtt_reserved_send.setText(String.valueOf(task.uart.reserved_send));
+                    chk_uart_advanced.setChecked(true);
+                }
                 break;
         }
         //endregion
@@ -484,6 +562,13 @@ public class UartToMqttTaskActivity extends ServiceActivity {
 
             if (!jsonObject.has("mac") || !jsonObject.optString("mac").equals(device.getMac())) {
                 return;
+            }
+
+            if (jsonObject.has("uart_last") && jsonObject.optString("uart_last").length() > 0) {
+                if (editLast != null) {
+                    editLast.setText(jsonObject.optString("uart_last"));
+                }
+                editLast = null;
             }
 
             //region 解析自动化任务

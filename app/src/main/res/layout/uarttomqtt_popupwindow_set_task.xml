@@ -83,6 +83,7 @@
                 layout="@layout/uarttomqtt_popupwindow_task_trigger"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
+                android:layout_marginTop="8dp"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@+id/spinner_type" />
@@ -93,10 +94,10 @@
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="8dp"
+                app:layout_constraintBottom_toTopOf="@+id/layout_wol"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/layout_trigger"
-                app:layout_constraintBottom_toTopOf="@+id/layout_wol"/>
+                app:layout_constraintTop_toBottomOf="@+id/layout_trigger" />
 
             <include
                 android:id="@+id/layout_wol"
@@ -104,10 +105,10 @@
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="8dp"
+                app:layout_constraintBottom_toTopOf="@+id/layout_uart"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/layout_mqtt"
-                app:layout_constraintBottom_toTopOf="@+id/layout_uart" />
+                app:layout_constraintTop_toBottomOf="@+id/layout_mqtt" />
 
             <include
                 android:id="@+id/layout_uart"
@@ -115,10 +116,11 @@
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="8dp"
+                app:layout_constraintBottom_toTopOf="@+id/btn_ok"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/layout_wol"
-                app:layout_constraintBottom_toTopOf="@+id/btn_ok" />
+                app:layout_constraintTop_toBottomOf="@+id/layout_wol" />
+
             <Button
                 android:id="@+id/btn_ok"
                 android:layout_width="0dp"

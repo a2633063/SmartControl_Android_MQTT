@@ -44,7 +44,7 @@
         android:textSize="14dp"
         app:layout_constraintBottom_toTopOf="@+id/group_trigger_time"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toEndOf="@+id/barrier"
+        app:layout_constraintStart_toEndOf="@+id/tv_trigger_uart_payload"
         app:layout_constraintTop_toBottomOf="@+id/group_trigger_uart" />
 
     <CheckBox
@@ -100,25 +100,18 @@
         app:layout_constraintStart_toEndOf="@+id/edit_trigger_uart_reserved_rec" />
 
     <CheckBox
-        android:id="@+id/tv_trigger_uart_mqtt_send"
+        android:id="@+id/chk_trigger_uart_mqtt_send"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="串口转发mqtt"
         app:layout_constraintBaseline_toBaselineOf="@+id/edit_trigger_uart_reserved_rec"
         app:layout_constraintEnd_toEndOf="parent" />
 
-    <androidx.constraintlayout.widget.Barrier
-        android:id="@+id/barrier"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        app:barrierDirection="right"
-        app:constraint_referenced_ids="tv_trigger_uart_payload" />
-
     <androidx.constraintlayout.widget.Group
         android:id="@+id/group_trigger_uart"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
-        app:constraint_referenced_ids="btn_trigger_uart_get_last,tv_trigger_uart_title,chk_trigger_uart_advanced,tv_trigger_uart_reserved_2,edit_trigger_uart_reserved_rec,tv_trigger_uart_payload,tv_trigger_uart_reserved_1,tv_trigger_uart_mqtt_send,edt_trigger_uart_payload"
+        app:constraint_referenced_ids="btn_trigger_uart_get_last,tv_trigger_uart_title,chk_trigger_uart_advanced,tv_trigger_uart_reserved_2,edit_trigger_uart_reserved_rec,tv_trigger_uart_payload,tv_trigger_uart_reserved_1,chk_trigger_uart_mqtt_send,edt_trigger_uart_payload"
         app:layout_constraintBottom_toTopOf="@+id/edt_trigger_uart_payload"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
@@ -128,7 +121,7 @@
         android:id="@+id/group_trigger_uart_advanced"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
-        app:constraint_referenced_ids="tv_trigger_uart_reserved_2,edit_trigger_uart_reserved_rec,tv_trigger_uart_reserved_1,tv_trigger_uart_mqtt_send" />
+        app:constraint_referenced_ids="tv_trigger_uart_reserved_2,edit_trigger_uart_reserved_rec,tv_trigger_uart_reserved_1,chk_trigger_uart_mqtt_send" />
 
     <TextView
         android:id="@+id/tv_trigger_time_title"
@@ -139,7 +132,7 @@
         android:textSize="15dp"
         android:visibility="visible"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/tv_trigger_uart_mqtt_send" />
+        app:layout_constraintTop_toBottomOf="@+id/chk_trigger_uart_mqtt_send" />
 
     <TextView
         android:id="@+id/tv_trigger_time"

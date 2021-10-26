@@ -31,13 +31,13 @@
 
     <EditText
         android:id="@+id/edt_mqtt_topic"
-        android:layout_width="226dp"
+        android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:hint="mqtt topic"
         android:text=""
         app:layout_constraintBottom_toTopOf="@+id/edt_mqtt_payload"
+        app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toEndOf="@+id/barrier"
-
         app:layout_constraintTop_toBottomOf="@+id/tv_mqtt" />
 
     <TextView
@@ -46,19 +46,19 @@
         android:layout_height="wrap_content"
         android:gravity="center"
         android:text="payload: "
-        android:textSize="15dp"
+        android:textSize="13dp"
         app:layout_constraintBaseline_toBaselineOf="@+id/edt_mqtt_payload"
         app:layout_constraintStart_toStartOf="parent" />
 
     <EditText
         android:id="@+id/edt_mqtt_payload"
-        android:layout_width="226dp"
+        android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:hint="mqtt payload"
         android:text=""
         app:layout_constraintBottom_toTopOf="@+id/chk_mqtt_advanced"
+        app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toEndOf="@+id/barrier"
-
         app:layout_constraintTop_toBottomOf="@+id/edt_mqtt_topic" />
 
     <CheckBox

@@ -8,6 +8,17 @@
     android:background="#ff3f3f3f"
     android:gravity="center">
 
+    <TextView
+        android:id="@+id/tv_wol"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:gravity="center"
+        android:text="触发Wol局域网唤醒:"
+        android:textSize="15dp"
+        app:layout_constraintBottom_toTopOf="@+id/edt_wol_mac"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
 
     <TextView
         android:id="@+id/tv_wol_mac"
@@ -31,7 +42,7 @@
         app:layout_constraintBottom_toTopOf="@+id/edt_wol_ip"
         app:layout_constraintStart_toEndOf="@+id/barrier"
 
-        app:layout_constraintTop_toBottomOf="parent" />
+        app:layout_constraintTop_toBottomOf="@+id/tv_wol" />
 
     <TextView
         android:id="@+id/tv_wol_ip"
@@ -47,8 +58,8 @@
         android:layout_height="wrap_content"
         android:digits="0123456789."
         android:ems="7"
-        android:inputType="number"
         android:hint="255.255.255.255"
+        android:inputType="number"
         app:layout_constraintBottom_toTopOf="@+id/edt_wol_secure"
         app:layout_constraintStart_toEndOf="@+id/barrier"
 
@@ -69,8 +80,9 @@
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:digits="1234567890"
-        android:inputType="number"
+        android:gravity="center"
         android:hint="10181"
+        android:inputType="number"
         android:text=""
         app:layout_constraintBottom_toBottomOf="@+id/edt_wol_ip"
         app:layout_constraintEnd_toEndOf="parent"
