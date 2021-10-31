@@ -104,7 +104,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="始终使用udp发送"
-        app:layout_constraintBottom_toTopOf="@+id/edit_mqtt_reserved_rec"
+        app:layout_constraintBottom_toTopOf="@+id/edit_mqtt_reserved"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/edt_mqtt_udp_ip" />
 
@@ -173,11 +173,11 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="将接收到的第"
-        app:layout_constraintBaseline_toBaselineOf="@+id/edit_mqtt_reserved_rec"
+        app:layout_constraintBaseline_toBaselineOf="@+id/edit_mqtt_reserved"
         app:layout_constraintStart_toStartOf="parent" />
 
     <EditText
-        android:id="@+id/edit_mqtt_reserved_rec"
+        android:id="@+id/edit_mqtt_reserved"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:digits="0123456789"
@@ -200,8 +200,8 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="个字符替换到payload中的%d"
-        app:layout_constraintBaseline_toBaselineOf="@+id/edit_mqtt_reserved_rec"
-        app:layout_constraintStart_toEndOf="@+id/edit_mqtt_reserved_rec" />
+        app:layout_constraintBaseline_toBaselineOf="@+id/edit_mqtt_reserved"
+        app:layout_constraintStart_toEndOf="@+id/edit_mqtt_reserved" />
 
     <androidx.constraintlayout.widget.Barrier
         android:id="@+id/barrier"
@@ -216,7 +216,7 @@
         android:id="@+id/group_mqtt_advanced"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        app:constraint_referenced_ids="edt_mqtt_udp_port,img_mqtt_udp_help,tv_mqtt_spinner_qos,tv_mqtt_reserved_1,tv_mqtt_udp_ip,tv_mqtt_reserved_2,edt_mqtt_udp_ip,chk_mqtt_retained,tv_mqtt_udp_port,edit_mqtt_reserved_rec,spinner_mqtt_qos,chk_mqtt_udp"
+        app:constraint_referenced_ids="edt_mqtt_udp_port,img_mqtt_udp_help,tv_mqtt_spinner_qos,tv_mqtt_reserved_1,tv_mqtt_udp_ip,tv_mqtt_reserved_2,edt_mqtt_udp_ip,chk_mqtt_retained,tv_mqtt_udp_port,edit_mqtt_reserved,spinner_mqtt_qos,chk_mqtt_udp"
         tools:layout_editor_absoluteX="12dp"
         tools:layout_editor_absoluteY="12dp" />
 

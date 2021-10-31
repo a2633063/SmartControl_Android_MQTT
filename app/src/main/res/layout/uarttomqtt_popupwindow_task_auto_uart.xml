@@ -103,11 +103,11 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="到发送的第"
-        app:layout_constraintBaseline_toBaselineOf="@+id/edit_mqtt_reserved_send"
+        app:layout_constraintBaseline_toBaselineOf="@+id/edit_uart_reserved_send"
         app:layout_constraintStart_toStartOf="@+id/tv_uart_reserved_1" />
 
     <EditText
-        android:id="@+id/edit_mqtt_reserved_send"
+        android:id="@+id/edit_uart_reserved_send"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:digits="0123456789"
@@ -130,14 +130,14 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="个字节(定时触发时无效)"
-        app:layout_constraintBaseline_toBaselineOf="@+id/edit_mqtt_reserved_send"
-        app:layout_constraintStart_toEndOf="@+id/edit_mqtt_reserved_send" />
+        app:layout_constraintBaseline_toBaselineOf="@+id/edit_uart_reserved_send"
+        app:layout_constraintStart_toEndOf="@+id/edit_uart_reserved_send" />
 
     <androidx.constraintlayout.widget.Group
         android:id="@+id/group_uart_advanced"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
-        app:constraint_referenced_ids="tv_mqtt_reserved_3,edit_uart_reserved_rec,tv_uart_reserved_1,tv_uart_reserved_2,tv_mqtt_reserved_4,edit_mqtt_reserved_send" />
+        app:constraint_referenced_ids="tv_mqtt_reserved_3,edit_uart_reserved_rec,tv_uart_reserved_1,tv_uart_reserved_2,tv_mqtt_reserved_4,edit_uart_reserved_send" />
 
 
 </androidx.constraintlayout.widget.ConstraintLayout>

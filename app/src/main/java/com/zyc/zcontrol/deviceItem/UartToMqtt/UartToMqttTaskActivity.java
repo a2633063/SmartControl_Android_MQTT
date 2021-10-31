@@ -519,7 +519,7 @@ public class UartToMqttTaskActivity extends ServiceActivity {
         final CheckBox chk_mqtt_retained = popupView.findViewById(R.id.chk_mqtt_retained);
         final EditText edt_mqtt_udp_ip = popupView.findViewById(R.id.edt_mqtt_udp_ip);
         final EditText edt_mqtt_udp_port = popupView.findViewById(R.id.edt_mqtt_udp_port);
-        final EditText edit_mqtt_reserved_rec = popupView.findViewById(R.id.edit_mqtt_reserved_rec);
+        final EditText edit_mqtt_reserved = popupView.findViewById(R.id.edit_mqtt_reserved);
         final CheckBox chk_mqtt_udp = popupView.findViewById(R.id.chk_mqtt_udp);
         //endregion
         //region 自动化Wol部分
@@ -532,7 +532,7 @@ public class UartToMqttTaskActivity extends ServiceActivity {
         //region 自动化uart部分
         final EditText edt_uart_payload = popupView.findViewById(R.id.edt_uart_payload);
         final EditText edit_uart_reserved_rec = popupView.findViewById(R.id.edit_uart_reserved_rec);
-        final EditText edit_mqtt_reserved_send = popupView.findViewById(R.id.edit_mqtt_reserved_send);
+        final EditText edit_uart_reserved_send = popupView.findViewById(R.id.edit_uart_reserved_send);
         final Button btn_uart_get_last = popupView.findViewById(R.id.btn_uart_get_last);
         //endregion
 
@@ -601,7 +601,7 @@ public class UartToMqttTaskActivity extends ServiceActivity {
                 edt_mqtt_udp_port.setText(String.valueOf(task.mqtt.port));
                 chk_mqtt_udp.setChecked(task.mqtt.udp != 0);
                 if (task.mqtt.reserved > 0 && task.mqtt.reserved < 255) {
-                    edit_mqtt_reserved_rec.setText(String.valueOf(task.mqtt.reserved));
+                    edit_mqtt_reserved.setText(String.valueOf(task.mqtt.reserved));
                 }
 
                 if ((task.mqtt.reserved > 0 && task.mqtt.reserved < 255)
@@ -625,7 +625,7 @@ public class UartToMqttTaskActivity extends ServiceActivity {
                 if (task.uart.reserved_rec > 0 && task.uart.reserved_rec < 255
                         && task.uart.reserved_send > 0 && task.uart.reserved_send < 255) {
                     edit_uart_reserved_rec.setText(String.valueOf(task.uart.reserved_rec));
-                    edit_mqtt_reserved_send.setText(String.valueOf(task.uart.reserved_send));
+                    edit_uart_reserved_send.setText(String.valueOf(task.uart.reserved_send));
                     chk_uart_advanced.setChecked(true);
                 }
                 break;
@@ -664,7 +664,7 @@ public class UartToMqttTaskActivity extends ServiceActivity {
         final CheckBox chk_mqtt_retained = popupView.findViewById(R.id.chk_mqtt_retained);
         final EditText edt_mqtt_udp_ip = popupView.findViewById(R.id.edt_mqtt_udp_ip);
         final EditText edt_mqtt_udp_port = popupView.findViewById(R.id.edt_mqtt_udp_port);
-        final EditText edit_mqtt_reserved_rec = popupView.findViewById(R.id.edit_mqtt_reserved_rec);
+        final EditText edit_mqtt_reserved = popupView.findViewById(R.id.edit_mqtt_reserved);
         final CheckBox chk_mqtt_udp = popupView.findViewById(R.id.chk_mqtt_udp);
         //endregion
         //region 自动化Wol部分
@@ -677,7 +677,7 @@ public class UartToMqttTaskActivity extends ServiceActivity {
         //region 自动化uart部分
         final EditText edt_uart_payload = popupView.findViewById(R.id.edt_uart_payload);
         final EditText edit_uart_reserved_rec = popupView.findViewById(R.id.edit_uart_reserved_rec);
-        final EditText edit_mqtt_reserved_send = popupView.findViewById(R.id.edit_mqtt_reserved_send);
+        final EditText edit_uart_reserved_send = popupView.findViewById(R.id.edit_uart_reserved_send);
 
         //endregion
 
@@ -808,6 +808,19 @@ public class UartToMqttTaskActivity extends ServiceActivity {
                     return null;
                 }
 
+                str = edit_mqtt_reserved.getText().toString();
+                if (str.isEmpty()) {
+                    task.mqtt.reserved = 0;
+                } else {
+                    try {
+                        task.mqtt.reserved = Integer.parseInt(str);
+                        if (task.mqtt.reserved > 254)
+                            throw new NumberFormatException("");
+                    } catch (NumberFormatException e) {
+                        e.printStackTrace();
+                        task.mqtt.reserved = 0;
+                    }
+                }
                 break;
             }
             case TaskItem.TASK_TYPE_WOL: {
@@ -893,7 +906,7 @@ public class UartToMqttTaskActivity extends ServiceActivity {
             case TaskItem.TASK_TYPE_TIME_UART: {
                 task.uart.dat = edt_uart_payload.getText().toString();
 
-                if (edit_uart_reserved_rec.length() == 0 && edit_mqtt_reserved_send.length() == 0) {
+                if (edit_uart_reserved_rec.length() == 0 && edit_uart_reserved_send.length() == 0) {
                     task.uart.reserved_send = 0;
                     task.uart.reserved_rec = 0;
                 } else {
@@ -914,7 +927,7 @@ public class UartToMqttTaskActivity extends ServiceActivity {
                 if (task.uart.reserved_rec > 0 && task.uart.reserved_rec < 255
                         && task.uart.reserved_send > 0 && task.uart.reserved_send < 255) {
                     edit_uart_reserved_rec.setText(String.valueOf(task.uart.reserved_rec));
-                    edit_mqtt_reserved_send.setText(String.valueOf(task.uart.reserved_send));
+                    edit_uart_reserved_send.setText(String.valueOf(task.uart.reserved_send));
                 }
                 break;
             }
