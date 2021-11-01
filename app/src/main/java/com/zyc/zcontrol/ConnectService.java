@@ -22,6 +22,7 @@ import java.io.IOException;
 import java.net.DatagramPacket;
 import java.net.DatagramSocket;
 import java.net.InetAddress;
+import java.net.InetSocketAddress;
 import java.net.SocketException;
 import java.net.UnknownHostException;
 
@@ -392,7 +393,12 @@ public class ConnectService extends Service {
         if (ip == null) ip = "255.255.255.255";
         try {
             if (datagramSocket == null)
-                datagramSocket = new DatagramSocket(PHONE_UDP_PORT);
+                //datagramSocket = new DatagramSocket(PHONE_UDP_PORT);
+            {
+                datagramSocket = new DatagramSocket(null);
+                datagramSocket.setReuseAddress(true);
+                datagramSocket.bind(new InetSocketAddress(PHONE_UDP_PORT));
+            }
         } catch (SocketException e) {
             e.printStackTrace();
         }
