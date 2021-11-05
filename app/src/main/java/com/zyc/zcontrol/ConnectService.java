@@ -222,6 +222,7 @@ public class ConnectService extends Service {
             connectOptions.setConnectionTimeout(30);  //超时时间
             connectOptions.setKeepAliveInterval(60); //心跳时间,单位秒
             connectOptions.setAutomaticReconnect(true);//自动重连
+            connectOptions.setMaxInflight(100);
             //setWill方法，如果项目中需要知道客户端是否掉线可以调用该方法。设置最终端口的通知消息
             //connectOptions.setWill(topic, "close".getBytes(), 2, true);
             Log.d("ConnectService", "read to connecting to MQTT server");

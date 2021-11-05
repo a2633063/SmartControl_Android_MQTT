@@ -8,6 +8,7 @@ import android.content.ClipData;
 import android.content.ClipboardManager;
 import android.content.Context;
 import android.content.DialogInterface;
+import android.content.Intent;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
@@ -42,6 +43,7 @@ public class A1SettingFragment extends SettingFragment {
     Preference fw_version;
     Preference filter_time;
     Preference lock;
+    Preference color;
     Preference restart;
     Preference regetdata;
     EditTextPreference name_preference;
@@ -182,6 +184,7 @@ public class A1SettingFragment extends SettingFragment {
         fw_version = findPreference("fw_version");
         lock = findPreference("lock");
         filter_time = findPreference("filter_time");
+        color = findPreference("color");
         restart = findPreference("restart");
         regetdata = findPreference("regetdata");
         name_preference = (EditTextPreference) findPreference("name");
@@ -271,6 +274,17 @@ public class A1SettingFragment extends SettingFragment {
                 //endregion
 
                 setFilterTime();
+                return false;
+            }
+        });
+        //endregion
+        //region 设置颜色
+        color.setOnPreferenceClickListener(new Preference.OnPreferenceClickListener() {
+            @Override
+            public boolean onPreferenceClick(Preference preference) {
+                Intent intent = new Intent(getActivity(), A1LedActivity.class);
+                intent.putExtra("mac", device.getMac());
+                startActivity(intent);
                 return false;
             }
         });

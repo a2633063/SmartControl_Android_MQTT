@@ -4,10 +4,10 @@ import android.annotation.SuppressLint;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.Color;
-import android.graphics.drawable.BitmapDrawable;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
+import android.util.Log;
 import android.view.MenuItem;
 import android.view.MotionEvent;
 import android.view.View;
@@ -15,6 +15,8 @@ import android.widget.ImageView;
 import android.widget.SeekBar;
 import android.widget.TextView;
 import android.widget.Toast;
+
+import androidx.cardview.widget.CardView;
 
 import com.zyc.zcontrol.MainApplication;
 import com.zyc.zcontrol.R;
@@ -35,6 +37,7 @@ public class A1LedActivity extends ServiceActivity {
     private ArrayList<SeekBar> seekBar = new ArrayList<SeekBar>();
     private ArrayList<TextView> textView = new ArrayList<TextView>();
     ImageView imageView;
+    CardView color_now;
     Bitmap bitmap;
 
     DeviceA1 device;
@@ -49,13 +52,21 @@ public class A1LedActivity extends ServiceActivity {
                     Send("{\"mac\": \"" + device.getMac() + "\",\"color\":null}");
                     break;
                 case 2:
+                    handler.removeMessages(2);
                     if (Sflag) {
-                        Sflag=false;
-                        int a = seekBar.get(0).getProgress() * 255
-                                + seekBar.get(1).getProgress()
-                                + seekBar.get(2).getProgress() * 255 * 255;
+                        handler.removeMessages(3);
+                        color_now.setVisibility(View.VISIBLE);
+                        Sflag = false;
+                        int a = seekBar.get(0).getProgress() * 0x10000
+                                + seekBar.get(1).getProgress() * 0x100
+                                + seekBar.get(2).getProgress();
+                        color_now.setCardBackgroundColor(a | 0xff000000);
                         Send("{\"mac\": \"" + device.getMac() + "\",\"color\":" + a + "}");
+                        handler.sendEmptyMessageDelayed(3,1500);
                     }
+                    break;
+                case 3:
+                    color_now.setVisibility(View.INVISIBLE);
                     break;
             }
         }
@@ -83,7 +94,7 @@ public class A1LedActivity extends ServiceActivity {
         }
         //endregion
 
-        this.setTitle(device.getName());
+        this.setTitle("设置led颜色 "+device.getName());
 
         //region 控件初始化
         seekBar.add((SeekBar) findViewById(R.id.seekBarR));
@@ -96,24 +107,34 @@ public class A1LedActivity extends ServiceActivity {
         textView.add((TextView) findViewById(R.id.textViewR));
         textView.add((TextView) findViewById(R.id.textViewG));
         textView.add((TextView) findViewById(R.id.textViewB));
-
+        color_now=findViewById(R.id.color_now);
+        color_now.setVisibility(View.INVISIBLE);
         imageView = findViewById(R.id.hsl);
-        bitmap = ((BitmapDrawable) imageView.getDrawable()).getBitmap();
+        //bitmap = ((BitmapDrawable) imageView.getDrawable()).getBitmap();
+        imageView.post(new Runnable() {
+            @Override
+            public void run() {
+                imageView.setDrawingCacheEnabled(true);
+                bitmap = Bitmap.createBitmap(imageView.getDrawingCache());
+                imageView.setDrawingCacheEnabled(false);
+            }
+        });
+
 
         imageView.setOnTouchListener(InamgeViewListener);
         findViewById(R.id.ok).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if(seekBar.get(0).getProgress()==0 && seekBar.get(1).getProgress()==0 &&seekBar.get(2).getProgress()==0){
+                if (seekBar.get(0).getProgress() == 0 && seekBar.get(1).getProgress() == 0 && seekBar.get(2).getProgress() == 0) {
                     seekBar.get(0).setProgress(255);
                     seekBar.get(1).setProgress(255);
                     seekBar.get(2).setProgress(255);
-                }else{
+                } else {
                     seekBar.get(0).setProgress(0);
                     seekBar.get(1).setProgress(0);
                     seekBar.get(2).setProgress(0);
                 }
-                Sflag=true;
+                Sflag = true;
             }
         });
         //endregion
@@ -149,8 +170,8 @@ public class A1LedActivity extends ServiceActivity {
             textView.get(1).setText("G:" + String.format("%03d", seekBar.get(1).getProgress()));
             textView.get(2).setText("B:" + String.format("%03d", seekBar.get(2).getProgress()));
 
-            if(fromUser)
-            Sflag = true;//sendRGB();
+            if (fromUser)
+                Sflag = true;//sendRGB();
 
         }
 
@@ -172,11 +193,14 @@ public class A1LedActivity extends ServiceActivity {
         @Override
         public boolean onTouch(View arg0, MotionEvent arg1) {
 
+            if (bitmap == null) return true;
             imageView.getParent().requestDisallowInterceptTouchEvent(true);
 
             int x = (int) arg1.getX();
             int y = (int) arg1.getY();
 
+            if (y > bitmap.getHeight()) return true;
+            if (x > bitmap.getHeight()) return true;
 
             try {
                 int pixel = bitmap.getPixel(x, y);//获取颜色
@@ -184,9 +208,10 @@ public class A1LedActivity extends ServiceActivity {
                 int greenValue = Color.green(pixel);
                 int blueValue = Color.blue(pixel);
 
-                if (redValue != 255 && greenValue != 255 && blueValue != 255) return true;
+                if (redValue != 255 && greenValue != 255 && blueValue != 255)
+                    return true;
                 if (pixel == 0 || (redValue == 0 && greenValue == 0 && blueValue == 0))
-                    return true; //仅判断pixel会偶尔无法跳出
+                    return true; //仅判断pixel会偶尔无法跳出w
                 seekBar.get(0).setProgress(redValue);
                 seekBar.get(1).setProgress(greenValue);
                 seekBar.get(2).setProgress(blueValue);
@@ -206,6 +231,7 @@ public class A1LedActivity extends ServiceActivity {
 
     //region 数据接收发送处理函数
     void Send(String message) {
+        Log.d(Tag, "Send:" + message);
         boolean b = getSharedPreferences("Setting_" + device.getMac(), 0).getBoolean("always_UDP", false);
         super.Send(b, device.getSendMqttTopic(), message);
     }
@@ -217,6 +243,13 @@ public class A1LedActivity extends ServiceActivity {
             if (!jsonObject.has("mac") || !jsonObject.getString("mac").equals(device.getMac())) {
                 return;
             }
+
+//            if (jsonObject.has("color")){
+//                int color=jsonObject.optInt("color",0);
+//                seekBar.get(0).setProgress((color>>16)&0xff);
+//                seekBar.get(1).setProgress((color>>8)&0xff);
+//                seekBar.get(2).setProgress((color>>0)&0xff);
+//            }
 
         } catch (JSONException e) {
             e.printStackTrace();

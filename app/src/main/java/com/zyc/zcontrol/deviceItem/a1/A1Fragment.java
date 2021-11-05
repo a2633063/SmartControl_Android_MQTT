@@ -3,7 +3,9 @@ package com.zyc.zcontrol.deviceItem.a1;
 
 import android.animation.ObjectAnimator;
 import android.annotation.SuppressLint;
+import android.content.DialogInterface;
 import android.content.Intent;
+import android.net.Uri;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
@@ -18,9 +20,11 @@ import android.widget.SeekBar;
 import android.widget.Switch;
 import android.widget.TextView;
 
+import androidx.appcompat.app.AlertDialog;
 import androidx.fragment.app.Fragment;
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 
+import com.zyc.zcontrol.MainActivity;
 import com.zyc.zcontrol.R;
 import com.zyc.zcontrol.deviceItem.DeviceClass.DeviceA1;
 import com.zyc.zcontrol.deviceItem.DeviceClass.DeviceFragment;
@@ -120,9 +124,16 @@ public class A1Fragment extends DeviceFragment {
         tv_task.setOnLongClickListener(new View.OnLongClickListener() {
             @Override
             public boolean onLongClick(View v) {
-                Intent intent = new Intent(getContext(), A1LedActivity.class);
-                intent.putExtra("mac", device.getMac());
-                startActivity(intent);
+//                Intent intent = new Intent(getContext(), A1LedActivity.class);
+//                intent.putExtra("mac", device.getMac());
+//                startActivity(intent);
+                AlertDialog alertDialog = new AlertDialog.Builder(getActivity())
+                        .setTitle("请到设备设置页面")
+                        .setMessage("颜色设置功能入口调整至设备设置页面,\r\n请点击右上角笔图标进入设备设置页面修改led颜色")
+                        .setPositiveButton("知道了", null)
+
+                        .create();
+                alertDialog.show();
                 return false;
             }
         });

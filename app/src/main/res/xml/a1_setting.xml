@@ -27,6 +27,10 @@
         <Preference
             android:key="lock"
             android:title="激活状态" />
+        <Preference
+            android:key="color"
+            android:title="设置LED颜色"
+            android:summary="设置启动时风速led颜色" />
         <CheckBoxPreference
             android:defaultValue="false"
             android:key="led_state"

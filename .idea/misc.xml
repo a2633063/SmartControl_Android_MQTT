@@ -6,6 +6,9 @@
         <entry key="..\:/Program/Android-AS/SmartControl_Android_MQTT/app/src/main/res/layout/popupwindow_key51_set_task.xml" value="0.335" />
         <entry key="..\:/Program/Android-AS/SmartControl_Android_MQTT/app/src/main/res/layout/uarttomqtt_popupwindow_task_auto_mqtt.xml" value="0.1875" />
         <entry key="..\:/Program/Android-AS/SmartControl_Android_MQTT/app/src/main/res/layout/uarttomqtt_popupwindow_task_auto_uart.xml" value="0.1875" />
+        <entry key="..\:/Program/Android/SmartControl_Android_MQTT/app/src/main/res/layout/a1_activity_led.xml" value="0.5" />
+        <entry key="..\:/Program/Android/SmartControl_Android_MQTT/app/src/main/res/layout/a1_fragment.xml" value="0.14070891514500536" />
+        <entry key="..\:/Program/Android/SmartControl_Android_MQTT/app/src/main/res/xml/a1_setting.xml" value="0.18645833333333334" />
       </map>
     </option>
   </component>
