@@ -3,9 +3,8 @@ package com.zyc.zcontrol.deviceItem.a1;
 
 import android.animation.ObjectAnimator;
 import android.annotation.SuppressLint;
-import android.content.DialogInterface;
 import android.content.Intent;
-import android.net.Uri;
+import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
@@ -21,10 +20,10 @@ import android.widget.Switch;
 import android.widget.TextView;
 
 import androidx.appcompat.app.AlertDialog;
+import androidx.constraintlayout.widget.ConstraintLayout;
 import androidx.fragment.app.Fragment;
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 
-import com.zyc.zcontrol.MainActivity;
 import com.zyc.zcontrol.R;
 import com.zyc.zcontrol.deviceItem.DeviceClass.DeviceA1;
 import com.zyc.zcontrol.deviceItem.DeviceClass.DeviceFragment;
@@ -47,6 +46,7 @@ public class A1Fragment extends DeviceFragment {
     Switch tbtn_switch;
     TextView tv_task;
     TextView tv_speed;
+    TextView tv_seekbar_tooltip;
     SeekBar seekBar;
     //region imageview及动画效果
     ImageView iv_fan;
@@ -110,6 +110,7 @@ public class A1Fragment extends DeviceFragment {
         tbtn_switch = view.findViewById(R.id.tbtn_button);
         tbtn_switch.setOnClickListener(MainButtonListener);
 
+        tv_seekbar_tooltip = view.findViewById(R.id.tv_seekbar_tooltip);
         tv_speed = view.findViewById(R.id.tv_speed);
         tv_task = view.findViewById(R.id.tv_task);
         tv_task.setOnClickListener(new View.OnClickListener() {
@@ -155,6 +156,26 @@ public class A1Fragment extends DeviceFragment {
         seekBar.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
             @Override
             public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
+                if (fromUser) {
+
+                    tv_seekbar_tooltip.setVisibility(View.VISIBLE);
+                    tv_seekbar_tooltip.setText(seekBar.getProgress() + "");
+                    tv_seekbar_tooltip.setText(progress + "");
+
+                    int padding = seekBar.getPaddingStart();
+
+                    int min = 1;
+
+                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+                        min = seekBar.getMin();
+                    }
+
+                    ConstraintLayout.LayoutParams lp = (ConstraintLayout.LayoutParams) tv_seekbar_tooltip.getLayoutParams();
+                    lp.leftMargin = padding + (seekBar.getWidth() - padding * 2) * (progress - min) / (seekBar.getMax() - min); //计算偏移量
+                    lp.leftMargin *= 2; //布局结果导致textview居中显示,leftMargin显示只有一半显示效果
+                    tv_seekbar_tooltip.setLayoutParams(lp);
+                }
+
             }
 
             @Override
@@ -167,6 +188,7 @@ public class A1Fragment extends DeviceFragment {
                 msg.arg1 = seekBar.getProgress();
                 msg.what = 2;
                 handler.sendMessageDelayed(msg, 1);
+                tv_seekbar_tooltip.setVisibility(View.INVISIBLE);
             }
         });
 

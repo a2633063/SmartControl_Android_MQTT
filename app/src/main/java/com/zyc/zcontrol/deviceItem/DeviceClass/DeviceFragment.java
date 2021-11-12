@@ -251,7 +251,7 @@ public class DeviceFragment extends Fragment implements View.OnLongClickListener
         DateFormat df = new SimpleDateFormat("[HH:mm:ss.sss]");
         log.setText(log.getText() + "\n" + df.format(new Date()) + "" + str);
 //        log.setText(log.getText() + "\n" + str);
-        Log.w("log", "log:" + log.getText());
+        Log.v("log", "log:" + log.getText());
 //        log.append();
     }
 

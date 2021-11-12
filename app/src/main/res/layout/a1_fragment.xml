@@ -32,10 +32,10 @@
                 android:elevation="3dp"
                 android:gravity="center"
                 android:outlineProvider="bounds"
-                android:paddingBottom="20dp"
-                android:paddingTop="32dp"
                 android:paddingStart="16dp"
+                android:paddingTop="32dp"
                 android:paddingEnd="8dp"
+                android:paddingBottom="20dp"
                 android:translationZ="3dp">
 
                 <ImageView
@@ -46,13 +46,30 @@
                     app:layout_constraintTop_toTopOf="parent"
                     app:srcCompat="@drawable/fan" />
 
+                <TextView
+                    android:id="@+id/tv_seekbar_tooltip"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginLeft="32dp"
+                    android:background="@drawable/ic_baseline_location_24"
+                    android:gravity="center_horizontal"
+                    android:paddingTop="7dp"
+                    android:text="12"
+                    android:textColor="@android:color/black"
+                    android:textSize="12dp"
+                    android:visibility="invisible"
+                    app:layout_constraintBottom_toTopOf="@+id/seekBarR"
+                    app:layout_constraintEnd_toStartOf="@+id/seekBarR"
+                    app:layout_constraintStart_toEndOf="@+id/iv_fan" />
+
                 <SeekBar
                     android:id="@+id/seekBarR"
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:max="100"
                     android:min="1"
-                    android:progress="60"
+                    android:paddingStart="15dp"
+                    android:progress="50"
                     android:thumb="@drawable/seekbar_thumb"
                     app:layout_constraintBottom_toTopOf="@id/tbtn_button"
                     app:layout_constraintLeft_toRightOf="@id/iv_fan"
