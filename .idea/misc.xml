@@ -8,6 +8,10 @@
         <entry key="..\:/Program/Android-AS/SmartControl_Android_MQTT/app/src/main/res/layout/uarttomqtt_popupwindow_task_auto_uart.xml" value="0.1875" />
         <entry key="..\:/Program/Android/SmartControl_Android_MQTT/app/src/main/res/layout/a1_activity_led.xml" value="0.5" />
         <entry key="..\:/Program/Android/SmartControl_Android_MQTT/app/src/main/res/layout/a1_fragment.xml" value="0.14070891514500536" />
+        <entry key="..\:/Program/Android/SmartControl_Android_MQTT/app/src/main/res/layout/app_activity_device_add_choice.xml" value="0.25" />
+        <entry key="..\:/Program/Android/SmartControl_Android_MQTT/app/src/main/res/layout/app_list_item_main_device_list.xml" value="0.18645833333333334" />
+        <entry key="..\:/Program/Android/SmartControl_Android_MQTT/app/src/main/res/layout/clock_activity_plug.xml" value="0.1" />
+        <entry key="..\:/Program/Android/SmartControl_Android_MQTT/app/src/main/res/layout/rgbw_activity_plug.xml" value="0.1" />
         <entry key="..\:/Program/Android/SmartControl_Android_MQTT/app/src/main/res/xml/a1_setting.xml" value="0.18645833333333334" />
       </map>
     </option>

@@ -5,7 +5,7 @@
     android:id="@+id/swipeRefreshLayout"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".controlItem.dc1.DC1PlugActivity">
+    tools:context=".deviceItem.clock.ClockPlugActivity">
 
     <LinearLayout
         android:layout_width="match_parent"

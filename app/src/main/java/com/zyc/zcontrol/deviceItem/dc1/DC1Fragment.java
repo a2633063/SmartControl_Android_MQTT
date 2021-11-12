@@ -42,8 +42,8 @@ public class DC1Fragment extends DeviceFragment {
     TextView tv_power;
     TextView tv_voltage;
     TextView tv_current;
-    Switch tbtn_main_button[] = new Switch[4];
-    TextView tv_main_button[] = new TextView[4];
+    Switch[] tbtn_main_button = new Switch[4];
+    TextView[] tv_main_button = new TextView[4];
     //endregion
 
 

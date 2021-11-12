@@ -11,9 +11,9 @@ import com.zyc.zcontrol.deviceItem.a1.A1LinkActivity;
 import com.zyc.zcontrol.deviceItem.clock.ClockLinkActivity;
 import com.zyc.zcontrol.deviceItem.dc1.DC1LinkActivity;
 import com.zyc.zcontrol.deviceItem.m1.M1LinkActivity;
+import com.zyc.zcontrol.deviceItem.mops.MOPSLinkActivity;
 import com.zyc.zcontrol.deviceItem.s7.S7LinkActivity;
 import com.zyc.zcontrol.deviceItem.tc1.TC1LinkActivity;
-import com.zyc.zcontrol.deviceItem.mops.MOPSLinkActivity;
 
 
 public class Device {

@@ -231,7 +231,7 @@ public class DC1PlugActivity extends ServiceActivity {
         final NumberPicker action_picker = popupView.findViewById(R.id.on_picker);
         final TextView tv_repeat = popupView.findViewById(R.id.tv_repeat);
         final Button btn_ok = popupView.findViewById(R.id.btn_ok);
-        final ToggleButton tbtn_week[] = {popupView.findViewById(R.id.tbtn_week_1),
+        final ToggleButton[] tbtn_week = {popupView.findViewById(R.id.tbtn_week_1),
                 popupView.findViewById(R.id.tbtn_week_2), popupView.findViewById(R.id.tbtn_week_3),
                 popupView.findViewById(R.id.tbtn_week_4), popupView.findViewById(R.id.tbtn_week_5),
                 popupView.findViewById(R.id.tbtn_week_6), popupView.findViewById(R.id.tbtn_week_7),
