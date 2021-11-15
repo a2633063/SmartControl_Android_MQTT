@@ -17,6 +17,8 @@ import android.net.wifi.WifiManager;
 import android.os.Build;
 import android.util.Log;
 
+import androidx.annotation.DrawableRes;
+
 import com.zyc.zcontrol.MainActivity;
 import com.zyc.zcontrol.R;
 import com.zyc.zcontrol.deviceItem.DeviceClass.Device;
@@ -93,7 +95,7 @@ public class Function {
 
     }
 
-    public static void createShortCut(Context context, String mac, String name) {
+    public static void createShortCut(Context context, String mac, String name,@DrawableRes int resId) {
         //创建Intent对象
 
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
@@ -104,7 +106,7 @@ public class Function {
                 //intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK);
                 intent.putExtra("mac", mac);
                 ShortcutInfo info = new ShortcutInfo.Builder(context, mac)
-                        .setIcon(Icon.createWithResource(context, R.mipmap.ic_launcher_round))
+                        .setIcon(Icon.createWithResource(context,resId))
                         .setShortLabel(name)
                         .setIntent(intent)
                         .build();

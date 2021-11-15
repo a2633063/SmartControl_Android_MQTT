@@ -150,14 +150,14 @@ public class MainActivity extends AppCompatActivity {
                 //endregion
                 //region 当获取局域网设备时,每隔2秒发送{"cmd":"device report"}
                 case 3:
-                    String ip=(String)msg.obj;
-                    if(ip!=null) mConnectService.UDPsend(ip, "{\"cmd\":\"device report\"}");
+                    String ip = (String) msg.obj;
+                    if (ip != null) mConnectService.UDPsend(ip, "{\"cmd\":\"device report\"}");
                     mConnectService.UDPsend("255.255.255.255", "{\"cmd\":\"device report\"}");
                     if (mainDeviceLanUdpScanListAdapter != null) {
-                        Message new_msg=new Message();
-                        new_msg.what=3;
-                        new_msg.obj=ip;
-                        handler.sendMessageDelayed(new_msg,2500);
+                        Message new_msg = new Message();
+                        new_msg.what = 3;
+                        new_msg.obj = ip;
+                        handler.sendMessageDelayed(new_msg, 2500);
                         //handler.sendEmptyMessageDelayed(3, 1000);
                     }
                     break;
@@ -353,7 +353,7 @@ public class MainActivity extends AppCompatActivity {
                 alertDialog.setButton(DialogInterface.BUTTON_NEUTRAL, "创建快捷方式", new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
-                        Function.createShortCut(MainActivity.this, deviceData.get(position).getMac(), deviceData.get(position).getName());
+                        Function.createShortCut(MainActivity.this, deviceData.get(position).getMac(), deviceData.get(position).getName(), deviceData.get(position).getIcon());
                     }
                 });
                 alertDialog.show();
@@ -922,10 +922,10 @@ public class MainActivity extends AppCompatActivity {
         window.update();
         window.showAtLocation(popupView, Gravity.CENTER, 0, 0);
 
-        Message msg=new Message();
-        msg.what=3;
-        msg.obj=ip;
-        handler.sendMessageDelayed(msg,0);
+        Message msg = new Message();
+        msg.what = 3;
+        msg.obj = ip;
+        handler.sendMessageDelayed(msg, 0);
         //handler.sendEmptyMessageDelayed(3, 0);
 
     }
