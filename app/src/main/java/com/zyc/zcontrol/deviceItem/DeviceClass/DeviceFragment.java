@@ -1,6 +1,8 @@
 package com.zyc.zcontrol.deviceItem.DeviceClass;
 
 
+import static android.content.Context.BIND_AUTO_CREATE;
+
 import android.annotation.SuppressLint;
 import android.content.BroadcastReceiver;
 import android.content.ComponentName;
@@ -35,8 +37,6 @@ import org.json.JSONObject;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.Date;
-
-import static android.content.Context.BIND_AUTO_CREATE;
 
 /**
  * A simple {@link Fragment} subclass.
@@ -125,7 +125,7 @@ public class DeviceFragment extends Fragment implements View.OnLongClickListener
             Log("当前接收消息为:mqtt");
         } else if (topic == null && rece_net_flag != 1) {  //当前消息为udp消息
             rece_net_flag = 1;
-            Log("当前接收消息为:udp" );
+            Log("当前接收消息为:udp");
             if (mConnectService.isConnected()) {
                 Log("必须同步过mqtt数据,设备才能连接上mqtt服务器");
             }
@@ -192,8 +192,8 @@ public class DeviceFragment extends Fragment implements View.OnLongClickListener
             } else if (ConnectService.ACTION_MQTT_DISCONNECTED.equals(action)) {  //连接失败/断开
                 Log.w(Tag, "ACTION_MQTT_DISCONNECTED");
                 String message = intent.getStringExtra(ConnectService.EXTRA_ERROR_MESSAGE);
-                int code=intent.getIntExtra(ConnectService.EXTRA_ERROR_CODE,-1);
-                Log("app已断开mqtt服务器["+code+"]:"+message);
+                int code = intent.getIntExtra(ConnectService.EXTRA_ERROR_CODE, -1);
+                Log("app已断开mqtt服务器[" + code + "]:" + message);
                 MqttDisconnected();
             } else if (action.equals(device_mac)) {//接收到设备独立数据
                 String ip = intent.getStringExtra(ConnectService.EXTRA_UDP_DATA_IP);
@@ -245,9 +245,12 @@ public class DeviceFragment extends Fragment implements View.OnLongClickListener
 //        });
     }
 
-    protected void Log(String str) {
-        if (log == null) return;
+    private String str_last = "";
 
+    protected void Log(String str) {
+        if (log == null || str == null) return;
+        if (str.equals(str_last)) return;
+        str_last = str;
         DateFormat df = new SimpleDateFormat("[HH:mm:ss.sss]");
         log.setText(log.getText() + "\n" + df.format(new Date()) + "" + str);
 //        log.setText(log.getText() + "\n" + str);
