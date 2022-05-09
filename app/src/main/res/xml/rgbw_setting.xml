@@ -23,12 +23,32 @@
             android:title="连接的热点"/>
         <Preference
             android:key="fw_version"
-            android:title="当前版本(点击检查新版本)" />
+            android:title="当前版本(点击获取新版本)" />
 
+        <EditTextPreference
+            android:dialogMessage="每次开灯一定时间后自动关闭灯,单位:秒\n设置为0关闭此功能"
+            android:dialogTitle="自动关闭"
+            android:inputType="number"
+            android:key="auto_off"
+            android:negativeButtonText="取消"
+            android:positiveButtonText="保存"
+            android:summary="开灯后延时自动关灯"
+            android:title="自动关闭"  />
+        <Preference
+            android:key="gpio"
+            android:summary="设置控制RGBW的IO口"
+            android:title="IO口控制设置" />
+        <Preference
+            android:key="restart"
+            android:title="重启设备" />
         <Preference
             android:key="regetdata"
             android:summary="获取版本/激活状态失败时点此重试"
             android:title="重新获取数据" />
     </PreferenceCategory>
+
+
+
+
 
 </PreferenceScreen>

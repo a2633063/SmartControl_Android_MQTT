@@ -14,7 +14,14 @@
         <entry key="..\:/Program/Android/SmartControl_Android_MQTT/app/src/main/res/layout/app_list_item_main_device_list.xml" value="0.18645833333333334" />
         <entry key="..\:/Program/Android/SmartControl_Android_MQTT/app/src/main/res/layout/clock_activity_plug.xml" value="0.1" />
         <entry key="..\:/Program/Android/SmartControl_Android_MQTT/app/src/main/res/layout/rgbw_activity_plug.xml" value="0.1" />
+        <entry key="..\:/Program/Android/SmartControl_Android_MQTT/app/src/main/res/layout/rgbw_popupwindow_set_gpio.xml" value="0.5" />
+        <entry key="..\:/Program/Android/SmartControl_Android_MQTT/app/src/main/res/layout/rgbw_popupwindow_set_gpio_spinner.xml" value="0.19739583333333333" />
+        <entry key="..\:/Program/Android/SmartControl_Android_MQTT/app/src/main/res/layout/uarttomqtt_popupwindow_set_task.xml" value="0.35520833333333335" />
+        <entry key="..\:/Program/Android/SmartControl_Android_MQTT/app/src/main/res/layout/uarttomqtt_popupwindow_task_trigger.xml" value="0.19739583333333333" />
         <entry key="..\:/Program/Android/SmartControl_Android_MQTT/app/src/main/res/xml/a1_setting.xml" value="0.18645833333333334" />
+        <entry key="..\:/Program/Android/SmartControl_Android_MQTT/app/src/main/res/xml/m1_setting.xml" value="0.19739583333333333" />
+        <entry key="..\:/Program/Android/SmartControl_Android_MQTT/app/src/main/res/xml/rgbw_setting.xml" value="0.25" />
+        <entry key="..\:/Program/Android/SmartControl_Android_MQTT/app/src/main/res/xml/tc1_setting.xml" value="0.19739583333333333" />
       </map>
     </option>
   </component>
@@ -64,7 +71,7 @@
       </value>
     </option>
   </component>
-  <component name="ProjectRootManager" version="2" languageLevel="JDK_11" default="true" project-jdk-name="1.8" project-jdk-type="JavaSDK">
+  <component name="ProjectRootManager" version="2" languageLevel="JDK_11" default="true" project-jdk-name="11" project-jdk-type="JavaSDK">
     <output url="file://$PROJECT_DIR$/build/classes" />
   </component>
   <component name="ProjectType">

@@ -434,7 +434,7 @@ public class MOPSSettingFragment extends SettingFragment {
                     if (ota_uri1.endsWith(".bin") && ota_uri2.endsWith(".bin")) {
                         ota_flag = true;
                         pd = new ProgressDialog(getActivity());
-                        pd.setButton(DialogInterface.BUTTON_POSITIVE, "取消", new DialogInterface.OnClickListener() {
+                        pd.setButton(DialogInterface.BUTTON_POSITIVE, "关闭窗口", new DialogInterface.OnClickListener() {
                             @Override
                             public void onClick(DialogInterface dialog, int which) {
                                 pd.dismiss();// 关闭ProgressDialog

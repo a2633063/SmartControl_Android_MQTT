@@ -431,13 +431,13 @@ public class UartToMqttSettingFragment extends SettingFragment {
             if (jsonObject.has("setting")) jsonSetting = jsonObject.getJSONObject("setting");
             if (jsonSetting != null) {
                 //region ota
-                if (jsonSetting.has("ota1") && jsonSetting.has("ota2")) {
-                    String ota_uri1 = jsonSetting.getString("ota1");
-                    String ota_uri2 = jsonSetting.getString("ota2");
-                    if (ota_uri1.endsWith(".bin") && ota_uri2.endsWith(".bin")) {
+                if (jsonSetting.has("ota1") ||jsonSetting.has("ota2")) {
+                    String ota_uri1 = jsonSetting.optString("ota1","http");
+                    String ota_uri2 = jsonSetting.optString("ota2","http");
+                    if (ota_uri1.startsWith("http") || ota_uri2.startsWith("http") ) {
                         ota_flag = true;
                         pd = new ProgressDialog(getActivity());
-                        pd.setButton(DialogInterface.BUTTON_POSITIVE, "取消", new DialogInterface.OnClickListener() {
+                        pd.setButton(DialogInterface.BUTTON_POSITIVE, "关闭窗口", new DialogInterface.OnClickListener() {
                             @Override
                             public void onClick(DialogInterface dialog, int which) {
                                 pd.dismiss();// 关闭ProgressDialog
@@ -445,7 +445,7 @@ public class UartToMqttSettingFragment extends SettingFragment {
                             }
                         });
                         pd.setCanceledOnTouchOutside(false);
-                        pd.setMessage("正在更新固件,请勿断开设备电源!\n此窗口可直接取消,不影响更新.\n大约1分钟左右,请稍后.... 时间过长可直接取消查看版本号确认是否更新成功");
+                        pd.setMessage("正在更新固件,请勿断开设备电源!\n大约15秒左右,请稍后....\n若时间过长,请手动关闭此窗口\n此弹窗可以直接关闭,不影响ota结果");
                         pd.show();
 //                        handler.sendEmptyMessageDelayed(0,5000);
 

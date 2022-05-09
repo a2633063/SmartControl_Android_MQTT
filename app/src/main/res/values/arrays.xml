@@ -14,6 +14,16 @@
     </string-array>
 
 
+    <string-array name="rgbw_gpio">
+        <item>IO0</item>
+        <item>IO2</item>
+        <item>IO4</item>
+        <item>IO5</item>
+        <item>IO12</item>
+        <item>IO13</item>
+        <item>IO14</item>
+        <item>IO15</item>
+    </string-array>
 
     <string-array name="uarttomqtt_type">
         <item>串口触发mqtt/udp</item>
