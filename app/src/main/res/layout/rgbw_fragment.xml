@@ -36,6 +36,80 @@
                 android:paddingBottom="20dp"
                 android:translationZ="3dp">
 
+                <com.google.android.material.tabs.TabLayout
+                    android:id="@+id/tablayout"
+                    android:layout_width="match_parent"
+                    android:layout_height="50dp"
+                    android:layout_marginStart="10dp"
+                    android:layout_marginEnd="10dp"
+                    android:background="#ff3f3f3f"
+                    android:padding="1.5dp"
+                    android:visibility="visible"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toTopOf="parent"
+                    app:tabIndicatorFullWidth="true"
+                    app:tabMode="fixed"
+                    app:tabTextAppearance="@style/TabLayoutTextStyle" />
+
+                <androidx.cardview.widget.CardView
+                    android:id="@+id/color_set"
+                    android:layout_width="20dp"
+                    android:layout_height="20dp"
+                    app:cardBackgroundColor="#ff0000"
+                    app:cardCornerRadius="10dp"
+                    app:cardElevation="20dp"
+                    app:cardPreventCornerOverlap="true"
+                    android:visibility="invisible"
+                    app:contentPadding="1dp"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toTopOf="parent">
+
+                    <androidx.cardview.widget.CardView
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        app:cardBackgroundColor="#ff0000"
+                        app:cardCornerRadius="9dp" />
+                </androidx.cardview.widget.CardView>
+
+                <LinearLayout
+                    android:id="@+id/ll_favorite"
+                    android:layout_width="0dp"
+                    android:layout_height="0dp"
+                    android:layout_marginStart="10dp"
+                    android:layout_marginEnd="10dp"
+                    android:orientation="vertical"
+                    app:layout_constraintBottom_toBottomOf="@id/img_color"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@id/tablayout" />
+
+                <ImageView
+                    android:id="@+id/img_color"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="10dp"
+                    android:layout_marginEnd="10dp"
+                    android:adjustViewBounds="true"
+                    android:visibility="invisible"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@id/tablayout"
+                    app:srcCompat="@drawable/hsl_h" />
+
+                <ImageView
+                    android:id="@+id/img_white"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="10dp"
+                    android:layout_marginEnd="10dp"
+                    android:adjustViewBounds="true"
+                    android:visibility="invisible"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@id/tablayout"
+                    app:srcCompat="@drawable/brightness_h" />
+
                 <TextView
                     android:id="@+id/textViewR"
                     android:layout_width="0dp"
@@ -49,7 +123,7 @@
                     app:layout_constraintBottom_toTopOf="@id/textViewG"
                     app:layout_constraintEnd_toEndOf="@+id/textViewW"
                     app:layout_constraintStart_toStartOf="@+id/textViewW"
-                    app:layout_constraintTop_toTopOf="parent" />
+                    app:layout_constraintTop_toBottomOf="@+id/chkGradient" />
 
                 <SeekBar
                     android:id="@+id/seekBarR"
@@ -144,7 +218,7 @@
                     app:layout_constraintBottom_toTopOf="@+id/chkGradient"
                     app:layout_constraintEnd_toStartOf="@+id/btn_close"
                     app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toBottomOf="@+id/textViewW" />
+                    app:layout_constraintTop_toBottomOf="@+id/barrier" />
 
                 <Button
                     android:id="@+id/btn_close"
@@ -162,9 +236,28 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="渐变"
-                    app:layout_constraintBottom_toBottomOf="parent"
-                    app:layout_constraintTop_toBottomOf="@+id/btn_open"
-                    app:layout_constraintStart_toStartOf="parent" />
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@+id/btn_open" />
+
+                <androidx.cardview.widget.CardView
+                    android:id="@+id/color_now"
+                    android:layout_width="80dp"
+                    android:layout_height="30dp"
+                    app:cardBackgroundColor="#555555"
+                    app:cardCornerRadius="4dp"
+                    android:layout_marginStart="20dp"
+                    app:cardPreventCornerOverlap="true"
+                    app:layout_constraintBottom_toBottomOf="@+id/chkGradient"
+                    app:layout_constraintStart_toEndOf="@+id/chkGradient"
+                    app:layout_constraintTop_toTopOf="@+id/chkGradient" />
+                <androidx.constraintlayout.widget.Barrier
+                    android:id="@+id/barrier"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    app:barrierDirection="bottom"
+                    app:constraint_referenced_ids="tablayout,img_white,img_color,ll_favorite"
+                    tools:layout_editor_absoluteX="16dp"
+                    tools:layout_editor_absoluteY="630dp" />
 
             </androidx.constraintlayout.widget.ConstraintLayout>
 

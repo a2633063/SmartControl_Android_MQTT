@@ -2,6 +2,9 @@ package com.zyc.zcontrol.deviceItem.rgbw;
 
 
 import android.annotation.SuppressLint;
+import android.graphics.Bitmap;
+import android.graphics.Color;
+import android.graphics.PorterDuff;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
@@ -12,12 +15,17 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.CheckBox;
+import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.SeekBar;
 import android.widget.TextView;
+import android.widget.Toast;
 
+import androidx.cardview.widget.CardView;
 import androidx.fragment.app.Fragment;
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 
+import com.google.android.material.tabs.TabLayout;
 import com.zyc.zcontrol.R;
 import com.zyc.zcontrol.deviceItem.DeviceClass.DeviceFragment;
 import com.zyc.zcontrol.deviceItem.DeviceClass.DeviceRGBW;
@@ -52,7 +60,17 @@ public class RGBWFragment extends DeviceFragment {
     Button btn_close;
     Button btn_open;
     CheckBox chkGradient;
+    CardView color_now;
+    CardView color_set;
 
+
+    LinearLayout ll_favorite;
+    ImageView img_color;
+    ImageView img_white;
+
+    Bitmap[] bitmaps = new Bitmap[2];
+
+    TabLayout tablayout;
     //endregion
 
 
@@ -79,7 +97,7 @@ public class RGBWFragment extends DeviceFragment {
                 case 2:
                     Log.d(Tag, "send color:" + msg.obj);
 
-                    Send("{\"mac\":\"" + device.getMac() + "\",\"rgb\":" + msg.obj + ",\"gradient\":"+(chkGradient.isChecked()?"1":"0")+"}");
+                    Send("{\"mac\":\"" + device.getMac() + "\",\"rgb\":" + msg.obj + ",\"gradient\":" + (chkGradient.isChecked() ? "1" : "0") + "}");
                     break;
             }
         }
@@ -92,9 +110,10 @@ public class RGBWFragment extends DeviceFragment {
         // Inflate the layout for this fragment
         final View view = inflater.inflate(R.layout.rgbw_fragment, container, false);
 
-
         //region 控件初始化
 
+        color_now = view.findViewById(R.id.color_now);
+        color_set = view.findViewById(R.id.color_set);
         textViewR = view.findViewById(R.id.textViewR);
         textViewG = view.findViewById(R.id.textViewG);
         textViewB = view.findViewById(R.id.textViewB);
@@ -152,21 +171,87 @@ public class RGBWFragment extends DeviceFragment {
         seekBarW.setOnSeekBarChangeListener(seekBarSeekBarChangeListener);
         //endregion
         //endregion
-        btn_open=view.findViewById(R.id.btn_open);
+        //region 颜色/白光选择
+        ll_favorite = view.findViewById(R.id.ll_favorite);
+        img_color = view.findViewById(R.id.img_color);
+        img_white = view.findViewById(R.id.img_white);
+        tablayout = view.findViewById(R.id.tablayout);
+        tablayout.addTab(tablayout.newTab().setText("彩色"));
+        tablayout.addTab(tablayout.newTab().setText("白光"));
+        tablayout.addTab(tablayout.newTab().setText("收藏夹"));
+        tablayout.addOnTabSelectedListener(new TabLayout.OnTabSelectedListener() {
+            @Override
+            public void onTabSelected(TabLayout.Tab tab) {
+                color_set.setVisibility(View.INVISIBLE);
+                img_color.setVisibility(View.INVISIBLE);
+                img_white.setVisibility(View.INVISIBLE);
+                ll_favorite.setVisibility(View.INVISIBLE);
+                switch (tab.getPosition()) {
+                    case 0:
+                        img_color.setVisibility(View.VISIBLE);
+                        color_set.setCardBackgroundColor(0xffffffff);
+                        break;
+                    case 1:
+                        img_white.setVisibility(View.VISIBLE);
+                        color_set.setCardBackgroundColor(0xffFF4081);
+                        break;
+                    case 2:
+                        ll_favorite.setVisibility(View.VISIBLE);
+                        break;
+                }
+            }
+
+            @Override
+            public void onTabUnselected(TabLayout.Tab tab) {
+
+            }
+
+            @Override
+            public void onTabReselected(TabLayout.Tab tab) {
+
+            }
+        });
+
+        img_color.post(new Runnable() {
+            @Override
+            public void run() {
+                img_color.setDrawingCacheEnabled(true);
+                bitmaps[0] = Bitmap.createBitmap(img_color.getDrawingCache());
+                img_color.setDrawingCacheEnabled(false);
+            }
+        });
+        img_white.post(new Runnable() {
+            @Override
+            public void run() {
+                img_white.setDrawingCacheEnabled(true);
+                bitmaps[1] = Bitmap.createBitmap(img_white.getDrawingCache());
+                img_white.setDrawingCacheEnabled(false);
+            }
+        });
+        img_color.setTag(0);
+        img_white.setTag(1);
+        img_color.setOnTouchListener(InamgeViewListener);
+        img_white.setOnTouchListener(InamgeViewListener);
+
+
+        //endregion
+        //region 开关按钮
+        btn_open = view.findViewById(R.id.btn_open);
         btn_open.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Send("{\"mac\":\"" + device.getMac() + "\",\"on\":1,\"gradient\":"+(chkGradient.isChecked()?"1":"0")+"}");
+                Send("{\"mac\":\"" + device.getMac() + "\",\"on\":1,\"gradient\":" + (chkGradient.isChecked() ? "1" : "0") + "}");
             }
         });
-        btn_close=view.findViewById(R.id.btn_close);
+        btn_close = view.findViewById(R.id.btn_close);
         btn_close.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Send("{\"mac\":\"" + device.getMac() + "\",\"on\":0,\"gradient\":"+(chkGradient.isChecked()?"1":"0")+"}");
+                Send("{\"mac\":\"" + device.getMac() + "\",\"on\":0,\"gradient\":" + (chkGradient.isChecked() ? "1" : "0") + "}");
             }
         });
-        chkGradient=view.findViewById(R.id.chkGradient);
+        //endregion
+        chkGradient = view.findViewById(R.id.chkGradient);
         //region SwipeLayout更新当前状态
         mSwipeLayout = view.findViewById(R.id.swipeRefreshLayout);
         mSwipeLayout.setColorSchemeResources(R.color.colorAccent, R.color.colorPrimaryDark, R.color.colorAccent, R.color.colorPrimary);
@@ -190,7 +275,73 @@ public class RGBWFragment extends DeviceFragment {
 
 
     //region 按钮事件
+    //ImageView触摸事件
+    private View.OnTouchListener InamgeViewListener = new View.OnTouchListener() {
 
+        @Override
+        public boolean onTouch(View arg0, MotionEvent arg1) {
+            int id = (int) arg0.getTag();
+            ImageView imageView = (ImageView) arg0;
+
+            if (arg1.getAction() == MotionEvent.ACTION_DOWN) {
+                mSwipeLayout.setEnabled(false);
+            } else if (arg1.getAction() == MotionEvent.ACTION_UP
+                    || arg1.getAction() == MotionEvent.ACTION_CANCEL) {
+                mSwipeLayout.setEnabled(true);
+            }
+            if (bitmaps[id] == null) return true;
+
+            imageView.getParent().getParent().getParent().getParent().requestDisallowInterceptTouchEvent(true);
+            imageView.getParent().getParent().getParent().requestDisallowInterceptTouchEvent(true);
+            //imageView.getParent().getParent().requestDisallowInterceptTouchEvent(true);
+            //imageView.getParent().requestDisallowInterceptTouchEvent(true);
+
+            int x = (int) arg1.getX();
+            int y = (int) arg1.getY();
+            if (x < 0 || y < 0 || y > bitmaps[id].getHeight() || x > bitmaps[id].getWidth()) {
+
+                Log.d(Tag, "[" + x + "," + y + "]   " + "[" + bitmaps[id].getWidth() + "," + bitmaps[id].getHeight() + "]");
+                return true;
+            }
+
+            color_set.setX(x + imageView.getX() - color_set.getWidth() / 2);
+            color_set.setY(y + imageView.getY() - color_set.getHeight() / 2);
+            color_set.setVisibility(View.VISIBLE);
+            try {
+                int pixel = bitmaps[id].getPixel(x, y);//获取颜色
+                int redValue = Color.red(pixel);
+                int greenValue = Color.green(pixel);
+                int blueValue = Color.blue(pixel);
+                Log.d(Tag, "[" + x + "," + y + "]" + redValue + "," + greenValue + "," + blueValue);
+                ((CardView) color_set.getChildAt(0)).setCardBackgroundColor(pixel);
+//                if (redValue != 255 && greenValue != 255 && blueValue != 255)
+//                    return true;
+//                if (pixel == 0 || (redValue == 0 && greenValue == 0 && blueValue == 0))
+//                    return true; //仅判断pixel会偶尔无法跳出w
+
+                if (id == 0) {
+                    seekBarR.setProgress(redValue);
+                    seekBarG.setProgress(greenValue);
+                    seekBarB.setProgress(blueValue);
+                    seekBarW.setProgress(0);
+                } else {
+                    seekBarR.setProgress(0);
+                    seekBarG.setProgress(0);
+                    seekBarB.setProgress(0);
+                    seekBarW.setProgress(redValue);
+                }
+
+//                HSL = RGBtoHSL(redValue, greenValue, blueValue);
+                // Sflag = true;//sendRGB();
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+
+            return true;
+
+        }
+
+    };
     //endregion
 
 
@@ -233,6 +384,11 @@ public class RGBWFragment extends DeviceFragment {
                     seekBarG.setProgress(rgb.getInt(1));
                     seekBarB.setProgress(rgb.getInt(2));
                     seekBarW.setProgress(rgb.getInt(3));
+
+                    int color = Color.argb(255, rgb.getInt(0), rgb.getInt(1), rgb.getInt(2));
+                    seekBarR.getThumb().setColorFilter(color, PorterDuff.Mode.SRC_ATOP);
+                    //seekBarR.getProgressDrawable().setColorFilter(color, PorterDuff.Mode.SRC_ATOP);
+                    color_now.setCardBackgroundColor(color);
                 }
 
             }
