@@ -2,9 +2,14 @@ package com.zyc.zcontrol.deviceItem.rgbw;
 
 
 import android.annotation.SuppressLint;
+import android.content.Intent;
 import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
+import android.graphics.Canvas;
 import android.graphics.Color;
+import android.graphics.Paint;
 import android.graphics.PorterDuff;
+import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
@@ -19,7 +24,6 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.SeekBar;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import androidx.cardview.widget.CardView;
 import androidx.fragment.app.Fragment;
@@ -49,6 +53,8 @@ public class RGBWFragment extends DeviceFragment {
     //region 控件
     private SwipeRefreshLayout mSwipeLayout;
 
+    TextView tv_tip;
+    TextView tv_task;
     TextView textViewR;
     TextView textViewG;
     TextView textViewB;
@@ -64,11 +70,11 @@ public class RGBWFragment extends DeviceFragment {
     CardView color_set;
 
 
-    LinearLayout ll_favorite;
+    ImageView img_favorite;
     ImageView img_color;
     ImageView img_white;
 
-    Bitmap[] bitmaps = new Bitmap[2];
+    Bitmap[] bitmaps = new Bitmap[3];
 
     TabLayout tablayout;
     //endregion
@@ -85,6 +91,7 @@ public class RGBWFragment extends DeviceFragment {
         this.device = device;
     }
 
+    Canvas canvas;
     //region Handler
     @SuppressLint("HandlerLeak")
     Handler handler = new Handler() {
@@ -96,8 +103,11 @@ public class RGBWFragment extends DeviceFragment {
                     break;
                 case 2:
                     Log.d(Tag, "send color:" + msg.obj);
-
+                    // handler.removeMessages(2);
                     Send("{\"mac\":\"" + device.getMac() + "\",\"rgb\":" + msg.obj + ",\"gradient\":" + (chkGradient.isChecked() ? "1" : "0") + "}");
+                    break;
+                case 3: //取消显示X时间后自动关闭文本
+                    tv_tip.setText("");
                     break;
             }
         }
@@ -112,6 +122,16 @@ public class RGBWFragment extends DeviceFragment {
 
         //region 控件初始化
 
+        tv_tip = view.findViewById(R.id.tv_tip);
+        tv_task = view.findViewById(R.id.tv_task);
+        tv_task.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(getContext(), RGBWTaskActivity.class);
+                intent.putExtra("mac", device.getMac());
+                startActivity(intent);
+            }
+        });
         color_now = view.findViewById(R.id.color_now);
         color_set = view.findViewById(R.id.color_set);
         textViewR = view.findViewById(R.id.textViewR);
@@ -162,7 +182,7 @@ public class RGBWFragment extends DeviceFragment {
                 msg.obj = "[" + seekBarR.getProgress() + "," + seekBarG.getProgress() + "," +
                         seekBarB.getProgress() + "," + seekBarW.getProgress() + "]";
                 msg.what = 2;
-                handler.sendMessageDelayed(msg, 1);
+                handler.sendMessageDelayed(msg, 10);
             }
         };
         seekBarR.setOnSeekBarChangeListener(seekBarSeekBarChangeListener);
@@ -172,20 +192,24 @@ public class RGBWFragment extends DeviceFragment {
         //endregion
         //endregion
         //region 颜色/白光选择
-        ll_favorite = view.findViewById(R.id.ll_favorite);
+        img_favorite = view.findViewById(R.id.img_favorite);
         img_color = view.findViewById(R.id.img_color);
         img_white = view.findViewById(R.id.img_white);
         tablayout = view.findViewById(R.id.tablayout);
         tablayout.addTab(tablayout.newTab().setText("彩色"));
         tablayout.addTab(tablayout.newTab().setText("白光"));
         tablayout.addTab(tablayout.newTab().setText("收藏夹"));
+        tablayout.setSelected(false);
         tablayout.addOnTabSelectedListener(new TabLayout.OnTabSelectedListener() {
             @Override
             public void onTabSelected(TabLayout.Tab tab) {
-                color_set.setVisibility(View.INVISIBLE);
+                if (color_set.getTag() == null || ((int) color_set.getTag()) != tab.getPosition())
+                    color_set.setVisibility(View.INVISIBLE);
+                else
+                    color_set.setVisibility(View.VISIBLE);
                 img_color.setVisibility(View.INVISIBLE);
                 img_white.setVisibility(View.INVISIBLE);
-                ll_favorite.setVisibility(View.INVISIBLE);
+                img_favorite.setVisibility(View.INVISIBLE);
                 switch (tab.getPosition()) {
                     case 0:
                         img_color.setVisibility(View.VISIBLE);
@@ -196,7 +220,7 @@ public class RGBWFragment extends DeviceFragment {
                         color_set.setCardBackgroundColor(0xffFF4081);
                         break;
                     case 2:
-                        ll_favorite.setVisibility(View.VISIBLE);
+                        img_favorite.setVisibility(View.VISIBLE);
                         break;
                 }
             }
@@ -212,6 +236,9 @@ public class RGBWFragment extends DeviceFragment {
             }
         });
 
+        tablayout.setSelected(true);
+
+        tablayout.getTabAt(1).select();
         img_color.post(new Runnable() {
             @Override
             public void run() {
@@ -228,10 +255,47 @@ public class RGBWFragment extends DeviceFragment {
                 img_white.setDrawingCacheEnabled(false);
             }
         });
+        img_favorite.post(new Runnable() {
+            @Override
+            public void run() {
+                img_favorite.setDrawingCacheEnabled(true);
+                int h = img_favorite.getMeasuredHeight();
+                int w = img_favorite.getMeasuredWidth();
+                bitmaps[2] = Bitmap.createBitmap(w, h, Bitmap.Config.ARGB_8888);
+                canvas = new Canvas(bitmaps[2]);
+                canvas.drawColor(0x00000000);
+                Paint paint = new Paint();
+
+                int i;
+                int[] color_list = {0xffff0000, 0xff00ff00, 0xff0000ff, 0xffff0000, 0xff00ff00, 0xff0000ff, 0xff00ff00, 0xff0000ff, 0xffff0000, 0xff00ff00, 0xffff0000};
+                for (i = 0; i < color_list.length; i++) {
+
+                    paint.setColor(color_list[i]);
+                    int x = i % 6 * h / 2;
+                    int y = i / 6 * h / 2;
+                    canvas.drawRect(x, y, x + (h >> 1), y + (h >> 1), paint);
+                }
+
+                int x = i % 6 * h / 2;
+                int y = i / 6 * h / 2;
+                Drawable add = getResources().getDrawable(R.drawable.ic_baseline_add_24);
+                add.setBounds(x, y, x + (h >> 1), y + (h >> 1));
+                add.draw(canvas);
+
+                //canvas.drawBitmap(b, x + (h - b.getWidth()) / 2, y + (h - b.getHeight()) / 2, paint);
+
+                img_favorite.setImageBitmap(bitmaps[2]);
+
+                img_favorite.setDrawingCacheEnabled(false);
+                img_favorite.invalidate();
+            }
+        });
         img_color.setTag(0);
         img_white.setTag(1);
-        img_color.setOnTouchListener(InamgeViewListener);
-        img_white.setOnTouchListener(InamgeViewListener);
+        img_favorite.setTag(2);
+        img_color.setOnTouchListener(ImageViewListener);
+        img_white.setOnTouchListener(ImageViewListener);
+        img_favorite.setOnTouchListener(ImageViewListener);
 
 
         //endregion
@@ -276,7 +340,7 @@ public class RGBWFragment extends DeviceFragment {
 
     //region 按钮事件
     //ImageView触摸事件
-    private View.OnTouchListener InamgeViewListener = new View.OnTouchListener() {
+    private View.OnTouchListener ImageViewListener = new View.OnTouchListener() {
 
         @Override
         public boolean onTouch(View arg0, MotionEvent arg1) {
@@ -293,8 +357,6 @@ public class RGBWFragment extends DeviceFragment {
 
             imageView.getParent().getParent().getParent().getParent().requestDisallowInterceptTouchEvent(true);
             imageView.getParent().getParent().getParent().requestDisallowInterceptTouchEvent(true);
-            //imageView.getParent().getParent().requestDisallowInterceptTouchEvent(true);
-            //imageView.getParent().requestDisallowInterceptTouchEvent(true);
 
             int x = (int) arg1.getX();
             int y = (int) arg1.getY();
@@ -304,15 +366,20 @@ public class RGBWFragment extends DeviceFragment {
                 return true;
             }
 
-            color_set.setX(x + imageView.getX() - color_set.getWidth() / 2);
-            color_set.setY(y + imageView.getY() - color_set.getHeight() / 2);
-            color_set.setVisibility(View.VISIBLE);
             try {
                 int pixel = bitmaps[id].getPixel(x, y);//获取颜色
                 int redValue = Color.red(pixel);
                 int greenValue = Color.green(pixel);
                 int blueValue = Color.blue(pixel);
-                Log.d(Tag, "[" + x + "," + y + "]" + redValue + "," + greenValue + "," + blueValue);
+                if (Color.alpha(pixel) == 0) return true;
+                Log.d(Tag, "[" + x + "," + y + "]" + Color.alpha(pixel) + "," + redValue + "," + greenValue + "," + blueValue);
+
+
+                color_set.setX(x + imageView.getX() - color_set.getWidth() / 2);
+                color_set.setY(y + imageView.getY() - color_set.getHeight() / 2);
+                color_set.setVisibility(View.VISIBLE);
+                color_set.setTag(id);
+
                 ((CardView) color_set.getChildAt(0)).setCardBackgroundColor(pixel);
 //                if (redValue != 255 && greenValue != 255 && blueValue != 255)
 //                    return true;
@@ -324,12 +391,31 @@ public class RGBWFragment extends DeviceFragment {
                     seekBarG.setProgress(greenValue);
                     seekBarB.setProgress(blueValue);
                     seekBarW.setProgress(0);
-                } else {
+                } else if (id == 1) {
                     seekBarR.setProgress(0);
                     seekBarG.setProgress(0);
                     seekBarB.setProgress(0);
                     seekBarW.setProgress(redValue);
+                } else if (id == 2) {
+                    if (redValue == greenValue && redValue == blueValue) {
+                        seekBarR.setProgress(0);
+                        seekBarG.setProgress(0);
+                        seekBarB.setProgress(0);
+                        seekBarW.setProgress(redValue);
+                    } else {
+                        seekBarR.setProgress(redValue);
+                        seekBarG.setProgress(greenValue);
+                        seekBarB.setProgress(blueValue);
+                        seekBarW.setProgress(0);
+                    }
                 }
+
+                Message msg = new Message();
+                msg.obj = "[" + seekBarR.getProgress() + "," + seekBarG.getProgress() + "," +
+                        seekBarB.getProgress() + "," + seekBarW.getProgress() + "]";
+                msg.what = 2;
+                handler.removeMessages(2);
+                handler.sendMessageDelayed(msg, 100);
 
 //                HSL = RGBtoHSL(redValue, greenValue, blueValue);
                 // Sflag = true;//sendRGB();
@@ -377,6 +463,7 @@ public class RGBWFragment extends DeviceFragment {
             }
             if (jsonObject.has("name")) device.setName(jsonObject.getString("name"));
 
+            //region 获取颜色
             if (jsonObject.has("rgb")) {
                 JSONArray rgb = jsonObject.getJSONArray("rgb");
                 if (rgb.length() == 4) {
@@ -387,11 +474,34 @@ public class RGBWFragment extends DeviceFragment {
 
                     int color = Color.argb(255, rgb.getInt(0), rgb.getInt(1), rgb.getInt(2));
                     seekBarR.getThumb().setColorFilter(color, PorterDuff.Mode.SRC_ATOP);
+                    seekBarG.getThumb().setColorFilter(color, PorterDuff.Mode.SRC_ATOP);
+                    seekBarB.getThumb().setColorFilter(color, PorterDuff.Mode.SRC_ATOP);
+                    seekBarW.getThumb().setColorFilter(Color.rgb(rgb.getInt(3), rgb.getInt(3), rgb.getInt(3)), PorterDuff.Mode.SRC_ATOP);
                     //seekBarR.getProgressDrawable().setColorFilter(color, PorterDuff.Mode.SRC_ATOP);
                     color_now.setCardBackgroundColor(color);
                 }
+            }
+            //endregion
+            //region 获取自动关闭时间
+            if (jsonObject.has("auto_off_time")) {
+                int auto_off_time = jsonObject.optInt("auto_off_time", 0);
+                String str = "";
+                if (auto_off_time > 0) {
+                    if (auto_off_time >= 60) {
+                        str += auto_off_time / 60 + "分";
+                        if (auto_off_time % 60 == 0) str += "钟";
+                    }
+                    if (auto_off_time % 60 != 0)
+                        str += auto_off_time % 60 + "秒";
+                    str += "后自动关灯";
+                }
+                handler.removeMessages(3);
+                handler.sendEmptyMessageDelayed(3, 2500);
+                tv_tip.setText(str);
+
 
             }
+            //endregion
 
         } catch (JSONException e) {
             e.printStackTrace();

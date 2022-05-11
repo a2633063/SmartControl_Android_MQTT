@@ -23,7 +23,7 @@
                                 <PersistentState>
                                   <option name="values">
                                     <map>
-                                      <entry key="url" value="file:/$PROJECT_DIR$/../../../Android/sdk/icons/material/materialicons/add_location/baseline_add_location_24.xml" />
+                                      <entry key="url" value="file:/$PROJECT_DIR$/../../../Android/sdk/icons/material/materialicons/add/baseline_add_24.xml" />
                                     </map>
                                   </option>
                                 </PersistentState>
@@ -34,7 +34,7 @@
                         <option name="values">
                           <map>
                             <entry key="color" value="ffffff" />
-                            <entry key="outputName" value="ic_baseline_location_24" />
+                            <entry key="outputName" value="ic_baseline_add_24" />
                             <entry key="sourceFile" value="C:\Users\Beenle" />
                           </map>
                         </option>

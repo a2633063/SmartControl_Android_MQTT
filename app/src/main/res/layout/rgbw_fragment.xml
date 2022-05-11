@@ -72,18 +72,18 @@
                         app:cardCornerRadius="9dp" />
                 </androidx.cardview.widget.CardView>
 
-                <LinearLayout
-                    android:id="@+id/ll_favorite"
+                <ImageView
+                    android:id="@+id/img_favorite"
                     android:layout_width="0dp"
                     android:layout_height="0dp"
                     android:layout_marginStart="10dp"
                     android:layout_marginEnd="10dp"
-                    android:orientation="vertical"
-                    app:layout_constraintBottom_toBottomOf="@id/img_color"
+                    android:adjustViewBounds="true"
+                    android:visibility="invisible"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toBottomOf="@id/tablayout" />
-
+                    app:layout_constraintTop_toBottomOf="@id/tablayout"
+                    app:layout_constraintBottom_toBottomOf="@+id/img_color"/>
                 <ImageView
                     android:id="@+id/img_color"
                     android:layout_width="match_parent"
@@ -238,7 +238,33 @@
                     android:text="渐变"
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toBottomOf="@+id/btn_open" />
-
+                <TextView
+                    android:id="@+id/tv_tip"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:gravity="center"
+                    android:maxLines="1"
+                    android:singleLine="true"
+                    android:text=""
+                    android:textColor="@android:color/white"
+                    android:paddingStart="5dp"
+                    android:textSize="12dp"
+                    app:layout_constraintStart_toStartOf="@+id/chkGradient"
+                    app:layout_constraintTop_toBottomOf="@id/chkGradient"/>
+                <TextView
+                    android:id="@+id/tv_task"
+                    android:layout_width="wrap_content"
+                    android:layout_height="0dp"
+                    android:gravity="center"
+                    android:drawableRight="@drawable/ic_chevron_right_black_24dp"
+                    android:maxLines="1"
+                    android:singleLine="true"
+                    android:text="定时任务"
+                    android:textColor="@android:color/white"
+                    android:textSize="18dp"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintTop_toTopOf="@id/chkGradient"
+                    app:layout_constraintBottom_toBottomOf="@id/chkGradient"/>
                 <androidx.cardview.widget.CardView
                     android:id="@+id/color_now"
                     android:layout_width="80dp"

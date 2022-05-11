@@ -27,6 +27,7 @@ import com.zyc.zcontrol.R;
 import com.zyc.zcontrol.ServiceActivity;
 import com.zyc.zcontrol.deviceItem.DeviceClass.DeviceRGBW;
 
+import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -38,7 +39,7 @@ import static android.view.ViewGroup.LayoutParams.MATCH_PARENT;
 public class RGBWTaskActivity extends ServiceActivity {
     public final static String Tag = "RGBWPlugActivity";
 
-    
+
     private SwipeRefreshLayout mSwipeLayout;
     ListView lv_task;
     ArrayList<TaskItem> data = new ArrayList<>();
@@ -74,8 +75,8 @@ public class RGBWTaskActivity extends ServiceActivity {
         Intent intent = this.getIntent();
         try {
             device = (DeviceRGBW) ((MainApplication) getApplication()).getDevice(intent.getStringExtra("mac"));
-            if (device == null ) {
-                throw new Exception("获取数据出错:" + intent.getStringExtra("mac") ); // 异常信息
+            if (device == null) {
+                throw new Exception("获取数据出错:" + intent.getStringExtra("mac")); // 异常信息
             }
         } catch (Exception e) {
             e.printStackTrace();
@@ -105,10 +106,10 @@ public class RGBWTaskActivity extends ServiceActivity {
                 TaskItem task = adapter.getItem(position);
                 int hour = task.hour;
                 int minute = task.minute;
-                int action = task.action;
+                int repeat = task.repeat;
                 int on = ((Switch) v).isChecked() ? 1 : 0;
 
-                Send("{\"mac\": \"" + device.getMac() + "\",\"task_" + position + "\":{\"hour\":" + hour + ",\"minute\":" + minute + ",\"brightness\":" + action + ",\"on\":" + on + "}}");
+                Send("{\"mac\": \"" + device.getMac() + "\",\"task_" + position + "\":{\"hour\":" + hour + ",\"minute\":" + minute + ",\"repeat\":" + repeat + ",\"on\":" + on + "}}");
             }
         });
         lv_task.setAdapter(adapter);
@@ -204,7 +205,7 @@ public class RGBWTaskActivity extends ServiceActivity {
         action_picker.setDisplayedValues(action);
         action_picker.setMinValue(0);
         action_picker.setMaxValue(action.length - 1);
-        action_picker.setValue(task.action);
+        //action_picker.setValue(task.action);
         //endregion
         //endregion
 
@@ -313,7 +314,7 @@ public class RGBWTaskActivity extends ServiceActivity {
     //region 数据接收发送处理函数
     void Send(String message) {
         boolean b = getSharedPreferences("Setting_" + device.getMac(), 0).getBoolean("always_UDP", false);
-        super.Send(b ,device.getSendMqttTopic(), message);
+        super.Send(b, device.getSendMqttTopic(), message);
     }
 
     public void Receive(String ip, int port, String topic, String message) {
@@ -333,13 +334,20 @@ public class RGBWTaskActivity extends ServiceActivity {
                 if (!jsonObject.has("task_" + i)) continue;
                 JSONObject jsonPlugTask = jsonObject.getJSONObject("task_" + i);
                 if (!jsonPlugTask.has("hour") || !jsonPlugTask.has("minute") ||
-                        !jsonPlugTask.has("brightness") ||
+                        !jsonPlugTask.has("repeat") ||
+                        !jsonPlugTask.has("rgb") ||
                         !jsonPlugTask.has("on")) continue;
+                JSONArray jsonRGBW = jsonPlugTask.optJSONArray("rgb");
+                if (jsonRGBW == null || jsonRGBW.length() < 4) continue;
 
-                adapter.setTask(i, jsonPlugTask.getInt("hour"),
-                        jsonPlugTask.getInt("minute"),
-                        jsonPlugTask.getInt("brightness"),
-                        jsonPlugTask.getInt("on"));
+
+                int[] rgb = new int[4];
+                for (int j = 0; j < 4; j++) {
+                    rgb[j] = jsonRGBW.optInt(j, 0);
+                }
+                adapter.setTask(i, jsonPlugTask.getInt("on"), jsonPlugTask.getInt("hour"),
+                        jsonPlugTask.getInt("minute"), jsonPlugTask.getInt("repeat"),
+                        rgb, jsonPlugTask.getInt("gradient"));
             }
             //endregion
             //endregion
@@ -350,6 +358,7 @@ public class RGBWTaskActivity extends ServiceActivity {
         }
 
     }
+
     //endregion
     //region 事件监听调用函数,主要为在子类中重写此函数实现在service建立成功/mqtt连接成功/失败时执行功能
     //Service建立成功时调用    此函数需要时在子类中重写

@@ -18,21 +18,52 @@
         android:ems="3"
         android:text="00:00"
         android:textSize="25dp"
+        app:layout_constraintBottom_toTopOf="@id/tv_repeat"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
+    <TextView
+        android:id="@+id/tv_repeat"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:gravity="center_vertical"
+        android:text="每天"
+        android:textSize="12dp"
+        app:layout_constraintStart_toStartOf="@+id/tv_time"
+        app:layout_constraintTop_toBottomOf="@+id/tv_time"
+        app:layout_constraintBottom_toBottomOf="parent"/>
 
     <TextView
         android:id="@+id/tv_action"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:gravity="center_vertical"
-        android:text="4"
+        android:text="关"
         android:textSize="20dp"
-        app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toStartOf="@+id/sw_on"
+        app:layout_constraintHorizontal_bias="0.2"
         app:layout_constraintStart_toEndOf="@+id/tv_time"
-        app:layout_constraintEnd_toStartOf="@+id/sw_on"/>
+        app:layout_constraintTop_toTopOf="parent" />
+    <androidx.cardview.widget.CardView
+        android:layout_width="40dp"
+        android:layout_height="40dp"
+        app:cardBackgroundColor="#ffffffff"
+        app:cardCornerRadius="20dp"
+        app:cardElevation="20dp"
+        app:cardPreventCornerOverlap="true"
+        app:contentPadding="2dp"
+        app:layout_constraintStart_toStartOf="@+id/tv_action"
+        app:layout_constraintEnd_toEndOf="@+id/tv_action"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintBottom_toBottomOf="parent">
 
+        <androidx.cardview.widget.CardView
+            android:id="@+id/color_set"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            app:cardBackgroundColor="#300000"
+            app:cardCornerRadius="20dp" />
+    </androidx.cardview.widget.CardView>
     <Switch
         android:id="@+id/sw_on"
         android:layout_width="wrap_content"
