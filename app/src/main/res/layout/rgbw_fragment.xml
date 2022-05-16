@@ -281,7 +281,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     app:barrierDirection="bottom"
-                    app:constraint_referenced_ids="tablayout,img_white,img_color,ll_favorite"
+                    app:constraint_referenced_ids="tablayout,img_white,img_color,img_favorite"
                     tools:layout_editor_absoluteX="16dp"
                     tools:layout_editor_absoluteY="630dp" />
 

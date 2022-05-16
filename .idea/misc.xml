@@ -4,6 +4,7 @@
     <option name="filePathToZoomLevelMap">
       <map>
         <entry key="..\:/Program/Android-AS/SmartControl_Android_MQTT/app/src/main/res/layout/popupwindow_key51_set_task.xml" value="0.335" />
+        <entry key="..\:/Program/Android-AS/SmartControl_Android_MQTT/app/src/main/res/layout/rgbw_fragment.xml" value="0.13489583333333333" />
         <entry key="..\:/Program/Android-AS/SmartControl_Android_MQTT/app/src/main/res/layout/uarttomqtt_popupwindow_task_auto_mqtt.xml" value="0.1875" />
         <entry key="..\:/Program/Android-AS/SmartControl_Android_MQTT/app/src/main/res/layout/uarttomqtt_popupwindow_task_auto_uart.xml" value="0.1875" />
         <entry key="..\:/Program/Android/SmartControl_Android_MQTT/app/src/main/res/drawable/humidity_icon.xml" value="0.29791666666666666" />
@@ -80,7 +81,7 @@
       </value>
     </option>
   </component>
-  <component name="ProjectRootManager" version="2" languageLevel="JDK_11" default="true" project-jdk-name="11" project-jdk-type="JavaSDK">
+  <component name="ProjectRootManager" version="2" languageLevel="JDK_14" project-jdk-name="11" project-jdk-type="JavaSDK">
     <output url="file://$PROJECT_DIR$/build/classes" />
   </component>
   <component name="ProjectType">
