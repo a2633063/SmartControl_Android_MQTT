@@ -192,6 +192,14 @@
                 app:layout_constraintTop_toTopOf="@+id/chk_udp"
                 app:srcCompat="@drawable/ic_help_outline_black_24dp" />
 
+            <Button
+                android:id="@+id/btn_last_mqtt_message"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="读取"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintTop_toTopOf="@+id/chk_udp"
+                app:layout_constraintBottom_toBottomOf="@+id/chk_udp"/>
             <TextView
                 android:id="@+id/tv_mac"
                 android:layout_width="wrap_content"
@@ -435,7 +443,7 @@
                 android:id="@+id/group_custom"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                app:constraint_referenced_ids="tv_topic,edt_topic,tv_payload,edt_payload,tv_spinner_qos,spinner_qos,chk_retained,chk_udp,img_udp_help"
+                app:constraint_referenced_ids="tv_topic,edt_topic,tv_payload,edt_payload,btn_last_mqtt_message,tv_spinner_qos,spinner_qos,chk_retained,chk_udp,img_udp_help"
                 tools:layout_editor_absoluteX="16dp"
                 tools:layout_editor_absoluteY="16dp" />
 

@@ -198,7 +198,7 @@ public class Key51Fragment extends DeviceFragment {
         //region listview及adapter
         for (int i = 0; i < 10; i++) {
             TaskItem t = new TaskItem();
-            t.setBase("任务"+i,0,0,0);
+            t.setBase("任务" + i, 0, 0, 0);
             //t.setMqtt("");
             data.add(t);
         }
@@ -257,6 +257,7 @@ public class Key51Fragment extends DeviceFragment {
         //region 控件定义
         TextView tv_id = popupView.findViewById(R.id.tv_id);
         tv_id.setText("任务" + task_id);
+        final Button btn_last_mqtt_message = popupView.findViewById(R.id.btn_last_mqtt_message);
         final Button btn_ok = popupView.findViewById(R.id.btn_ok);
         final Button btn_cancel = popupView.findViewById(R.id.btn_cancel);
         final EditText edt_name = popupView.findViewById(R.id.edt_name);
@@ -561,6 +562,20 @@ public class Key51Fragment extends DeviceFragment {
                     edt_port.setText(String.valueOf(task_backup.port));
                 }
                 return true;
+            }
+        });
+        //endregion
+
+        //region 读取mqtt
+        btn_last_mqtt_message.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                String[] last_mqtt_message = Key51Fragment.super.mConnectService.getSendLast();
+                if (last_mqtt_message != null && last_mqtt_message.length > 1 && last_mqtt_message[0] !=
+                        null && last_mqtt_message[1] != null) {
+                    edt_topic.setText(last_mqtt_message[0]);
+                    edt_payload.setText(last_mqtt_message[1]);
+                }
             }
         });
         //endregion
