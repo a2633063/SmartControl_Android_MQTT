@@ -2,6 +2,8 @@ package com.zyc.zcontrol.deviceItem.rgbw;
 
 import android.annotation.SuppressLint;
 import android.content.Intent;
+import android.graphics.Bitmap;
+import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
 import android.os.Handler;
@@ -9,11 +11,15 @@ import android.os.Message;
 
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 
+import android.util.Log;
 import android.view.Gravity;
 import android.view.MenuItem;
+import android.view.MotionEvent;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.Button;
+import android.widget.CompoundButton;
+import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.NumberPicker;
 import android.widget.PopupWindow;
@@ -22,6 +28,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 import android.widget.ToggleButton;
 
+import com.zyc.Function;
 import com.zyc.zcontrol.MainApplication;
 import com.zyc.zcontrol.R;
 import com.zyc.zcontrol.ServiceActivity;
@@ -177,6 +184,26 @@ public class RGBWTaskActivity extends ServiceActivity {
         };
         //endregion
 
+        //region ToggleButton week 初始化
+        ToggleButton.OnCheckedChangeListener checkedChangeListener = new CompoundButton.OnCheckedChangeListener() {
+            @Override
+            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+                int repeat = 0;
+                for (int i = tbtn_week.length; i > 0; i--) {
+                    repeat = repeat << 1;
+                    if (tbtn_week[i - 1].isChecked()) repeat |= 1;
+                }
+                tv_repeat.setText("重复:" + Function.getWeek(repeat));
+
+            }
+        };
+        int temp = task.repeat;
+        for (int i = 0; i < tbtn_week.length; i++) {
+            tbtn_week[i].setOnCheckedChangeListener(checkedChangeListener);
+            if ((temp & 0x01) != 0) tbtn_week[i].setChecked(true);
+            temp = temp >> 1;
+        }
+        //endregion
         //region NumberPicker初始化
         //region 小时
         hour_picker.setMaxValue(23);
@@ -201,13 +228,89 @@ public class RGBWTaskActivity extends ServiceActivity {
         minute_picker.setValue(task.minute);
         //endregion
         //region 开关
-        String[] action = {"关闭", "1", "2", "3", "4"};
+        String[] action = {"关闭", "开启"};
         action_picker.setDisplayedValues(action);
         action_picker.setMinValue(0);
         action_picker.setMaxValue(action.length - 1);
         //action_picker.setValue(task.action);
         //endregion
         //endregion
+
+        //region touch测试代码
+        final ImageView img_get_color = popupView.findViewById(R.id.img_get_color);
+        img_get_color.bringToFront();
+
+        final Bitmap bitmap = ((BitmapDrawable) (img_get_color.getDrawable())).getBitmap();
+
+        action_picker.setOnTouchListener(new View.OnTouchListener() {
+            float image_x, image_y;
+
+            @Override
+            public boolean onTouch(View v, MotionEvent event) {
+
+                switch (event.getAction()) {
+                    case MotionEvent.ACTION_DOWN:
+                        image_x = event.getX() - img_get_color.getWidth() / 2;
+                        image_y = event.getY() - img_get_color.getHeight() / 2;
+                        img_get_color.setVisibility(View.VISIBLE);
+                        img_get_color.setX(v.getX() + image_x);
+                        img_get_color.setY(v.getY() + image_y);
+                        break;
+                    case MotionEvent.ACTION_UP:
+                        img_get_color.setVisibility(View.GONE);
+                        break;
+                    case MotionEvent.ACTION_MOVE:
+                        int x = (int) ((event.getX() - image_x + 0.5f) * bitmap.getWidth() / img_get_color.getWidth());
+                        int y = (int) ((event.getY() - image_y + 0.5f) * bitmap.getHeight() / img_get_color.getHeight());
+                        if (x < 0 || y < 0) break;
+                        try {
+                            int color = bitmap.getPixel(x, y);
+                            if(color < 0xff000000 ||color == 0) break;
+                            Log.d(Tag,"color:"+Integer.toHexString(color));
+                            btn_ok.setTextColor(color);
+                        } catch (Exception e) {
+                            e.printStackTrace();
+                        }
+                        break;
+                    default:
+                        break;
+                }
+                return false;
+            }
+        });
+        //endregion
+        //region 快捷按钮
+        final Button btn_time_now = popupView.findViewById(R.id.btn_time_now);
+        final Button btn_repeat_everyday = popupView.findViewById(R.id.btn_repeat_everyday);
+        btn_time_now.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Calendar calendar = Calendar.getInstance();
+                hour_picker.setValue(calendar.get(Calendar.HOUR_OF_DAY));
+                minute_picker.setValue(calendar.get(Calendar.MINUTE));
+            }
+        });
+
+        btn_repeat_everyday.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+
+                if (tbtn_week[0].isChecked() && tbtn_week[1].isChecked() &&
+                        tbtn_week[2].isChecked() && tbtn_week[3].isChecked() &&
+                        tbtn_week[4].isChecked() && tbtn_week[5].isChecked() &&
+                        tbtn_week[6].isChecked()) {
+                    for (int i = 0; i < tbtn_week.length; i++)
+                        tbtn_week[i].setChecked(false);
+                } else {
+
+                    for (int i = 0; i < tbtn_week.length; i++)
+                        tbtn_week[i].setChecked(true);
+                }
+
+            }
+        });
+        //endregion
+
 
         //region 确认按钮初始化
         btn_ok.setOnClickListener(new View.OnClickListener() {
@@ -217,8 +320,13 @@ public class RGBWTaskActivity extends ServiceActivity {
                 int minute = minute_picker.getValue();
                 int action = action_picker.getValue();
                 int on = 1;
+                int repeat = 0;
+                for (int i = tbtn_week.length; i > 0; i--) {
+                    repeat = repeat << 1;
+                    if (tbtn_week[i - 1].isChecked()) repeat |= 1;
+                }
 
-                Send("{\"mac\": \"" + device.getMac() + "\",\"task_" + task_id + "\":{\"hour\":" + hour + ",\"minute\":" + minute + ",\"brightness\":" + action + ",\"on\":" + on + "}}");
+                Send("{\"mac\": \"" + device.getMac() + "\",\"task_" + task_id + "\":{\"hour\":" + hour + ",\"minute\":" + minute + ",\"repeat\":" + repeat + ",\"action\":" + action + ",\"on\":" + on + "}}");
                 window.dismiss();
             }
         });

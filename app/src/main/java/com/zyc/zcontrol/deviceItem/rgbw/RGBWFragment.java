@@ -196,9 +196,9 @@ public class RGBWFragment extends DeviceFragment {
         img_color = view.findViewById(R.id.img_color);
         img_white = view.findViewById(R.id.img_white);
         tablayout = view.findViewById(R.id.tablayout);
-        tablayout.addTab(tablayout.newTab().setText("彩色"));
+        tablayout.addTab(tablayout.newTab().setText("彩光"));
         tablayout.addTab(tablayout.newTab().setText("白光"));
-        tablayout.addTab(tablayout.newTab().setText("收藏夹"));
+        //tablayout.addTab(tablayout.newTab().setText("收藏夹"));
         tablayout.setSelected(false);
         tablayout.addOnTabSelectedListener(new TabLayout.OnTabSelectedListener() {
             @Override
