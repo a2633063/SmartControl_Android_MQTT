@@ -1,6 +1,7 @@
 package com.zyc.zcontrol.deviceItem.rgbw;
 
 import android.annotation.SuppressLint;
+import android.app.TimePickerDialog;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.drawable.BitmapDrawable;
@@ -25,6 +26,7 @@ import android.widget.NumberPicker;
 import android.widget.PopupWindow;
 import android.widget.Switch;
 import android.widget.TextView;
+import android.widget.TimePicker;
 import android.widget.Toast;
 import android.widget.ToggleButton;
 
@@ -250,11 +252,11 @@ public class RGBWTaskActivity extends ServiceActivity {
 
                 switch (event.getAction()) {
                     case MotionEvent.ACTION_DOWN:
-                        image_x = event.getX() - img_get_color.getWidth() / 2;
-                        image_y = event.getY() - img_get_color.getHeight() / 2;
+                        image_x = -v.getX();//+event.getX() - img_get_color.getWidth() / 2.0f;
+                        image_y = -v.getX()+event.getY() - img_get_color.getHeight() / 2.0f;
                         img_get_color.setVisibility(View.VISIBLE);
                         img_get_color.setX(v.getX() + image_x);
-                        img_get_color.setY(v.getY() + image_y);
+                        //img_get_color.setY(v.getY() + image_y);
                         break;
                     case MotionEvent.ACTION_UP:
                         img_get_color.setVisibility(View.GONE);
@@ -306,7 +308,14 @@ public class RGBWTaskActivity extends ServiceActivity {
                     for (int i = 0; i < tbtn_week.length; i++)
                         tbtn_week[i].setChecked(true);
                 }
+                TimePickerDialog timePickerDialog = new TimePickerDialog(RGBWTaskActivity.this, new TimePickerDialog.OnTimeSetListener() {
+                    @Override
+                    public void onTimeSet(TimePicker timePicker, int i, int i1) {
+                        Log.d(Tag,"time:"+i+":"+i1);
+                    }
+                },12,0,true);
 
+                timePickerDialog.show();
             }
         });
         //endregion

@@ -251,10 +251,14 @@
 
         <ImageView
             android:id="@+id/img_get_color"
-            android:layout_width="50dp"
-            android:layout_height="50dp"
-            app:srcCompat="@drawable/hsl"
-            app:layout_constraintStart_toEndOf="parent"/>
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:adjustViewBounds="true"
+            app:layout_constraintBottom_toTopOf="@+id/btn_time_now"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:srcCompat="@drawable/hslw_h"/>
 
 
     </androidx.constraintlayout.widget.ConstraintLayout>
