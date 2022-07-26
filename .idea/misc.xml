@@ -3,8 +3,14 @@
   <component name="DesignSurface">
     <option name="filePathToZoomLevelMap">
       <map>
+        <entry key="..\:/Program/Android-AS/SmartControl_Android_MQTT/app/src/main/res/layout/a1_activity_led.xml" value="0.26902173913043476" />
+        <entry key="..\:/Program/Android-AS/SmartControl_Android_MQTT/app/src/main/res/layout/key51_popupwindow_set_task.xml" value="0.19895833333333332" />
+        <entry key="..\:/Program/Android-AS/SmartControl_Android_MQTT/app/src/main/res/layout/m1_list_item_task_list.xml" value="0.1328125" />
         <entry key="..\:/Program/Android-AS/SmartControl_Android_MQTT/app/src/main/res/layout/popupwindow_key51_set_task.xml" value="0.335" />
+        <entry key="..\:/Program/Android-AS/SmartControl_Android_MQTT/app/src/main/res/layout/rgbw_activity_plug.xml" value="0.3494791666666667" />
         <entry key="..\:/Program/Android-AS/SmartControl_Android_MQTT/app/src/main/res/layout/rgbw_fragment.xml" value="0.13489583333333333" />
+        <entry key="..\:/Program/Android-AS/SmartControl_Android_MQTT/app/src/main/res/layout/rgbw_popupwindow_set_time.xml" value="0.33" />
+        <entry key="..\:/Program/Android-AS/SmartControl_Android_MQTT/app/src/main/res/layout/tc1_popupwindow_set_time.xml" value="0.1" />
         <entry key="..\:/Program/Android-AS/SmartControl_Android_MQTT/app/src/main/res/layout/uarttomqtt_popupwindow_task_auto_mqtt.xml" value="0.1875" />
         <entry key="..\:/Program/Android-AS/SmartControl_Android_MQTT/app/src/main/res/layout/uarttomqtt_popupwindow_task_auto_uart.xml" value="0.1875" />
         <entry key="..\:/Program/Android/SmartControl_Android_MQTT/app/src/main/res/drawable/humidity_icon.xml" value="0.29791666666666666" />

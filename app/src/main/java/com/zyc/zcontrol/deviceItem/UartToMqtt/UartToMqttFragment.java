@@ -81,7 +81,7 @@ public class UartToMqttFragment extends DeviceFragment {
                 case 1:
                     handler.removeMessages(1);
                     //同时发送时导致超出udp最大传输长度,分开发送
-                    Send("{\"mac\": \"" + device.getMac() + "\"}");
+                    //Send("{\"mac\": \"" + device.getMac() + "\"}");
                     break;
                 //endregion
 
