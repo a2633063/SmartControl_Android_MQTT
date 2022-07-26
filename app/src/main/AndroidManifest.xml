@@ -154,10 +154,6 @@
             android:label="z485toMqtt配网"
             android:screenOrientation="portrait" />
         <activity
-            android:name="com.easylink.EasylinkActivity"
-            android:label="添加设备"
-            android:screenOrientation="portrait" />
-        <activity
             android:name=".deviceItem.SettingActivity"
             android:label="设置"
             android:screenOrientation="portrait" />

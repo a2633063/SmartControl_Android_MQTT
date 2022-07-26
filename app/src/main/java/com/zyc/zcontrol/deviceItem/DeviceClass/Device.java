@@ -5,7 +5,7 @@ import android.preference.PreferenceFragment;
 import androidx.annotation.DrawableRes;
 import androidx.fragment.app.Fragment;
 
-import com.espressif.ESPtouchActivity;
+
 import com.zyc.zcontrol.R;
 import com.zyc.zcontrol.deviceItem.a1.A1LinkActivity;
 import com.zyc.zcontrol.deviceItem.clock.ClockLinkActivity;
@@ -89,7 +89,7 @@ public class Device {
     //设备对应配对页面
     public final static Class LinkActivity[] =
             {
-                    ESPtouchActivity.class,//0
+                    null,//0
                     TC1LinkActivity.class,//1
                     DC1LinkActivity.class,//2
                     A1LinkActivity.class,//3

@@ -14,7 +14,6 @@
             <option value="$PROJECT_DIR$" />
             <option value="$PROJECT_DIR$/LineTable" />
             <option value="$PROJECT_DIR$/app" />
-            <option value="$PROJECT_DIR$/esptouch" />
           </set>
         </option>
         <option name="resolveModulePerSourceSet" value="false" />

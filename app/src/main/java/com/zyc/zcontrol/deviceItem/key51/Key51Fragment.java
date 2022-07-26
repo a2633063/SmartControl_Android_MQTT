@@ -2,6 +2,8 @@ package com.zyc.zcontrol.deviceItem.key51;
 
 
 import android.annotation.SuppressLint;
+import android.app.AlertDialog;
+import android.app.Fragment;
 import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
 import android.os.Handler;
@@ -30,16 +32,16 @@ import com.zyc.zcontrol.deviceItem.DeviceClass.DeviceKey51;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+
 import java.util.ArrayList;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import androidx.appcompat.app.AlertDialog;
 import androidx.constraintlayout.widget.Group;
-import androidx.fragment.app.Fragment;
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 
 import static android.view.ViewGroup.LayoutParams.MATCH_PARENT;
+
 
 /**
  * A simple {@link Fragment} subclass.
@@ -222,7 +224,7 @@ public class Key51Fragment extends DeviceFragment {
         //endregion
 
         //region 更新当前状态
-        mSwipeLayout = (SwipeRefreshLayout) view.findViewById(R.id.swipeRefreshLayout);
+        mSwipeLayout = view.findViewById(R.id.swipeRefreshLayout);
         mSwipeLayout.setColorSchemeResources(R.color.colorAccent, R.color.colorPrimaryDark, R.color.colorAccent, R.color.colorPrimary);
         mSwipeLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
             @Override
