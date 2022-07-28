@@ -236,7 +236,7 @@ public class z863keyTaskActivity extends ServiceActivity {
         Bitmap bitmap = bitmapDrawable.getBitmap();
         Function.ShowColorSelectInit(popupView, cardview_color_0, bitmap);
 
-        View.OnTouchListener colerSelectOnTouchListener= new View.OnTouchListener() {
+        View.OnTouchListener colerSelectOnTouchListener = new View.OnTouchListener() {
             int color_temp;
 
             @Override
@@ -244,12 +244,12 @@ public class z863keyTaskActivity extends ServiceActivity {
                 //Log.d(Tag, "motionEvent:" + motionEvent.toString());
                 if (motionEvent.getAction() == MotionEvent.ACTION_DOWN) {
                     color_temp = 0xffffff & ((CardView) view).getCardBackgroundColor().getDefaultColor();
-                    Log.d(Tag,"color_temp:0x"+Integer.toString(color_temp, 16));
+                    Log.d(Tag, "color_temp:0x" + Integer.toString(color_temp, 16));
                 }
                 int color = Function.ShowColorSelect(view, popupView, function_select_color, motionEvent);
-                Log.d(Tag,"color:0x"+Integer.toString(color, 16));
+                Log.d(Tag, "color:0x" + Integer.toString(color, 16));
                 if (color < 0) color = color_temp;
-                ((CardView) view).setCardBackgroundColor(color|0xff000000);
+                ((CardView) view).setCardBackgroundColor(color | 0xff000000);
                 return true;
             }
         };
@@ -358,7 +358,7 @@ public class z863keyTaskActivity extends ServiceActivity {
                     if (task_last == null) task_last = new TaskItem();
                     task_last.Copy(t);
                     Log.d(Tag, "task json:" + t.getJson().toString());
-                    Send("{\"mac\": \"" + device.getMac() + "\",\"task_" + task_id + "\" : " + t.getJson().toString() + "}");
+                    Send("{\"mac\": \"" + device.getMac() + "\",\"event_" + task_id + "\" : " + t.getJson().toString() + "}");
 
                     window.dismiss();
                 }
@@ -555,11 +555,17 @@ public class z863keyTaskActivity extends ServiceActivity {
                     }
                 }
                 if (jsonTask.has("type")) {
-                    task.type = jsonTask.optInt("type");
+                    String s = jsonTask.optString("type", null);
+                    if (s == null) task.type = jsonTask.optInt("type");
+                    else if (s.equals("relay")) task.type = TaskItem.TASK_TYPE_RELAY;
+                    else if (s.equals("mqtt")) task.type = TaskItem.TASK_TYPE_MQTT;
                 }
 
                 if (jsonTask.has("button_type")) {
-                    task.button_type = jsonTask.optInt("button_type");
+                    String s = jsonTask.optString("button_type", null);
+                    if (s == null) task.button_type = jsonTask.optInt("button_type");
+                    else if (s.equals("button")) task.button_type = TaskItem.TASK_BUTTON_TYPE_BUTTON;
+                    else if (s.equals("toggle")) task.button_type  = TaskItem.TASK_BUTTON_TYPE_TOGGLE;
                 }
                 //endregion
 
@@ -568,7 +574,7 @@ public class z863keyTaskActivity extends ServiceActivity {
                     case TaskItem.TASK_TYPE_MQTT: {
                         JSONObject jsonMqtt = jsonTask.optJSONObject("mqtt");
                         if (jsonMqtt != null) {//非数组
-                            task.setMqtt(0, jsonMqtt.optString("topic"), jsonMqtt.optString("payload"), jsonMqtt.optInt("qos"), jsonTask.optInt("retained"));
+                            task.setMqtt(0, jsonMqtt.optString("topic"), jsonMqtt.optString("payload"), jsonMqtt.optInt("qos"), jsonMqtt.optInt("retained"));
                             break;
                         }
                         //是数组
@@ -577,7 +583,7 @@ public class z863keyTaskActivity extends ServiceActivity {
                         for (int i = 0; i < 2 && i < jsonArrayMqtt.length(); i++) {
                             jsonMqtt = jsonArrayMqtt.optJSONObject(i);
                             if (jsonMqtt == null) break;
-                            task.setMqtt(i, jsonMqtt.optString("topic"), jsonMqtt.optString("payload"), jsonMqtt.optInt("qos"), jsonTask.optInt("retained"));
+                            task.setMqtt(i, jsonMqtt.optString("topic"), jsonMqtt.optString("payload"), jsonMqtt.optInt("qos"), jsonMqtt.optInt("retained"));
                         }
                         break;
                     }

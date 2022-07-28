@@ -514,7 +514,31 @@ public class MainActivity extends AppCompatActivity {
             String ip = intent.getExtras().getString("ip");
             String mac = intent.getExtras().getString("mac");
             Log.e(Tag, "get device result:" + ip + "," + mac + "," + type);
-            popupwindowLanUdpScan(ip);
+            //popupwindowLanUdpScan(ip);
+
+
+            if (mainDeviceLanUdpScanListAdapter == null || mac == null) {
+                return;
+            }
+
+            if (mainDeviceListAdapter.contains(mac) > -1) { //设备之前就已添加
+                Log.d(Tag, "已添加的重复设备:" + mac);
+                return;
+            }
+            if (mainDeviceLanUdpScanListAdapter.contains(mac) > -1) {//设备已经在列表中
+                Log.d(Tag, "已扫描的重复设备:" + mac);
+                return;
+            }
+
+            Device device_temp = returnDeviceClass("", mac, type);
+            if (device_temp != null) {
+                mainDeviceLanUdpScanListAdapter.add(returnDeviceClass("name", mac, type));
+                mainDeviceLanUdpScanListAdapter.notifyDataSetChanged();
+                Toast.makeText(MainActivity.this, "若udp通信失败,请先用web配置mqtt后使用mqtt通信!", Toast.LENGTH_LONG).show();
+
+            }
+
+
 //            if (ip != null && ip.equals("255.255.255.255")) {
 //                popupwindowLanUdpScan();
 //            } else {
