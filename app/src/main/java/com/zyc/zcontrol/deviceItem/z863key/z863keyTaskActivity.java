@@ -232,7 +232,7 @@ public class z863keyTaskActivity extends ServiceActivity {
 
         final View function_select_color = popupView.findViewById(R.id.function_select_color);
 
-        BitmapDrawable bitmapDrawable = (BitmapDrawable) getApplication().getResources().getDrawable(R.drawable.hslw_h);
+        BitmapDrawable bitmapDrawable = (BitmapDrawable) getApplication().getResources().getDrawable(R.drawable.color_select);
         Bitmap bitmap = bitmapDrawable.getBitmap();
         Function.ShowColorSelectInit(popupView, cardview_color_0, bitmap);
 
