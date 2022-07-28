@@ -22,7 +22,7 @@ public class ServiceActivity extends AppCompatActivity {
     private MsgReceiver msgReceiver;
     //endregion
 
-    ConnectService mConnectService;
+    protected ConnectService mConnectService;
     String device_mac;
 
     @Override

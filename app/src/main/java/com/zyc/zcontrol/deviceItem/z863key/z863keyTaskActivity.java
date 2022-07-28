@@ -216,6 +216,12 @@ public class z863keyTaskActivity extends ServiceActivity {
                         {popupView.findViewById(R.id.layout_mqtt_0),
                                 popupView.findViewById(R.id.layout_mqtt_1),}
                 };
+        final EditText[] edt_mqtt_topic = {layout_event[1][0].findViewById(R.id.edt_mqtt_topic), layout_event[1][1].findViewById(R.id.edt_mqtt_topic)};
+        final EditText[] edt_mqtt_payload = {layout_event[1][0].findViewById(R.id.edt_mqtt_payload), layout_event[1][1].findViewById(R.id.edt_mqtt_payload)};
+        final Spinner[] spinner_mqtt_qos = {layout_event[1][0].findViewById(R.id.spinner_mqtt_qos), layout_event[1][1].findViewById(R.id.spinner_mqtt_qos)};
+        final CheckBox[] chk_mqtt_retained = {layout_event[1][0].findViewById(R.id.chk_mqtt_retained), layout_event[1][1].findViewById(R.id.chk_mqtt_retained)};
+
+        final TextView[] tv_last_mqtt = {layout_event[1][0].findViewById(R.id.tv_last_mqtt), layout_event[1][1].findViewById(R.id.tv_last_mqtt)};
         //endregion
 
         //region 根据任务类型切换显示页面
@@ -282,6 +288,25 @@ public class z863keyTaskActivity extends ServiceActivity {
             }
         });
         //endregion
+        View.OnClickListener lastMqttClickListener = new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                int index = (int) view.getTag();
+
+                String[] mqtt_last = mConnectService.getSendLast();
+                if (mqtt_last == null || mqtt_last.length < 2 || (mqtt_last[0] == null && mqtt_last[1] == null)) {
+                    Toast.makeText(z863keyTaskActivity.this, "无法获取上次的命令,请操作控制后再尝试获取", Toast.LENGTH_SHORT).show();
+                } else {
+                    if (mqtt_last[0] != null) edt_mqtt_topic[index].setText(mqtt_last[0]);
+                    if (mqtt_last[1] != null) edt_mqtt_payload[index].setText(mqtt_last[1]);
+                }
+            }
+        };
+
+        tv_last_mqtt[0].setTag(0);
+        tv_last_mqtt[1].setTag(1);
+        tv_last_mqtt[0].setOnClickListener(lastMqttClickListener);
+        tv_last_mqtt[1].setOnClickListener(lastMqttClickListener);
 
         tv_id.setText("任务" + (task_id + 1));
         edt_name.setText(task.name);
@@ -298,9 +323,7 @@ public class z863keyTaskActivity extends ServiceActivity {
                     if (task_last == null) task_last = new TaskItem();
                     task_last.Copy(t);
                     Log.d(Tag, "task json:" + t.getJson().toString());
-                    String s = t.getJson().toString();
-                    s = s.replace("%%d", "%d").replace("%d", "%%d");
-                    Send("{\"mac\": \"" + device.getMac() + "\",\"task_" + task_id + "\" : " + s + "}");
+                    Send("{\"mac\": \"" + device.getMac() + "\",\"task_" + task_id + "\" : " + t.getJson().toString() + "}");
 
                     window.dismiss();
                 }
@@ -346,7 +369,6 @@ public class z863keyTaskActivity extends ServiceActivity {
         final EditText[] edt_mqtt_payload = {layout_event[1][0].findViewById(R.id.edt_mqtt_payload), layout_event[1][1].findViewById(R.id.edt_mqtt_payload)};
         final Spinner[] spinner_mqtt_qos = {layout_event[1][0].findViewById(R.id.spinner_mqtt_qos), layout_event[1][1].findViewById(R.id.spinner_mqtt_qos)};
         final CheckBox[] chk_mqtt_retained = {layout_event[1][0].findViewById(R.id.chk_mqtt_retained), layout_event[1][1].findViewById(R.id.chk_mqtt_retained)};
-
         //endregion
 
         //region 自动化relay部分
@@ -378,7 +400,7 @@ public class z863keyTaskActivity extends ServiceActivity {
             case TaskItem.TASK_TYPE_RELAY:
                 for (int i = 0; i < 2; i++) {
                     spinner_relay[i].setSelection(task.data[i].relay.index);
-                    spinner_relay_onoff[i].setSelection(task.data[i].relay.on +1);
+                    spinner_relay_onoff[i].setSelection(task.data[i].relay.on + 1);
                 }
                 break;
         }
@@ -423,8 +445,8 @@ public class z863keyTaskActivity extends ServiceActivity {
         //endregion
         task.name = edt_name.getText().toString();
 
-        task.color[0] = 0xffffff&cardview_color_0.getCardBackgroundColor().getDefaultColor();
-        task.color[1] = 0xffffff&cardview_color_1.getCardBackgroundColor().getDefaultColor();
+        task.color[0] = 0xffffff & cardview_color_0.getCardBackgroundColor().getDefaultColor();
+        task.color[1] = 0xffffff & cardview_color_1.getCardBackgroundColor().getDefaultColor();
         task.type = spinner_type.getSelectedItemPosition();
         task.button_type = spinner_button_type.getSelectedItemPosition();
         //region 更新显示布局
@@ -443,7 +465,7 @@ public class z863keyTaskActivity extends ServiceActivity {
             case TaskItem.TASK_TYPE_RELAY: {
                 for (int i = 0; i < 2; i++) {
                     task.data[i].relay.index = spinner_relay[i].getSelectedItemPosition();
-                    task.data[i].relay.on = spinner_relay_onoff[i].getSelectedItemPosition()-1;
+                    task.data[i].relay.on = spinner_relay_onoff[i].getSelectedItemPosition() - 1;
                 }
                 break;
             }

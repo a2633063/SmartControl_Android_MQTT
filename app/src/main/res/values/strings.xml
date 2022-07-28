@@ -9,6 +9,7 @@
     <string name="app_ota_message"><Data><![CDATA[<big><big>%1$s</big></big>\n%2$s\n<small><small>更新时间:%3$s</small>\n</small><small><font color="#ff0000">请务必仔细阅读升级文档后再升级</font></small>]]></Data></string>
     <string name="m1_num_string"><Data><![CDATA[<big>%1$s</big><small>.%2$s℃</small>]]></Data></string>
 
+    <string name="get_last_mqtt_message"><u>获取上次控制命令</u></string>
     <string name="edittext_digits">!"#$%/&#038;'()*+,-.&#047;0123456789:\\;&#060;&#061;>?@ABCDEFGHIJKLMNOPQRSTUVWXYZ[\]^_`abcdefghijklmnopqrstuvwxyz{|}~\"&#032;&#160;</string>
     <string-array name="zone">
         <item>UTC-12:00</item>
