@@ -9,6 +9,8 @@ import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
 import android.content.pm.ShortcutInfo;
 import android.content.pm.ShortcutManager;
+import android.graphics.Bitmap;
+import android.graphics.Color;
 import android.graphics.drawable.Icon;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
@@ -16,8 +18,12 @@ import android.net.wifi.WifiInfo;
 import android.net.wifi.WifiManager;
 import android.os.Build;
 import android.util.Log;
+import android.view.MotionEvent;
+import android.view.View;
+import android.widget.ImageView;
 
 import androidx.annotation.DrawableRes;
+import androidx.cardview.widget.CardView;
 
 import com.zyc.zcontrol.MainActivity;
 import com.zyc.zcontrol.R;
@@ -96,7 +102,7 @@ public class Function {
 
     }
 
-    public static void createShortCut(Context context, String mac, String name,@DrawableRes int resId) {
+    public static void createShortCut(Context context, String mac, String name, @DrawableRes int resId) {
         //创建Intent对象
 
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
@@ -107,7 +113,7 @@ public class Function {
                 //intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK);
                 intent.putExtra("mac", mac);
                 ShortcutInfo info = new ShortcutInfo.Builder(context, mac)
-                        .setIcon(Icon.createWithResource(context,resId))
+                        .setIcon(Icon.createWithResource(context, resId))
                         .setShortLabel(name)
                         .setIntent(intent)
                         .build();
@@ -142,7 +148,6 @@ public class Function {
             Log.i("test", "onReceive: 固定快捷方式的回调");
         }
     }
-
 
     public static Device returnDeviceClass(String name, String mac, int type) {
         switch (type) {
@@ -186,5 +191,61 @@ public class Function {
                 + Integer.toHexString(mac[3]) + ":"
                 + Integer.toHexString(mac[4]) + ":"
                 + Integer.toHexString(mac[5]);
+    }
+
+    public static void ShowColorSelectInit(View parent, View view, Bitmap bitmap) {
+        if (parent == null) return;
+        if (view == null) return;
+        if (bitmap == null) return;
+        ImageView imageView = parent.findViewById(R.id.imageView);
+        CardView color_set = parent.findViewById(R.id.color_set);
+        color_set.setVisibility(View.GONE);
+        imageView.setImageBitmap(bitmap);
+        imageView.setTag(bitmap);
+    }
+
+    public static int ShowColorSelect(View obj,View parent, View view, MotionEvent motionEvent) {
+        if (parent == null) return -1;
+        ImageView imageView = parent.findViewById(R.id.imageView);
+        CardView color_set = parent.findViewById(R.id.color_set);
+
+        if (imageView == null) return -1;
+        if (color_set == null) return -1;
+        Bitmap bitmap = (Bitmap) imageView.getTag();
+        if (bitmap == null) return -1;
+
+        if (motionEvent.getAction() == MotionEvent.ACTION_DOWN) {
+            view.setVisibility(View.VISIBLE);
+        } else if (motionEvent.getAction() == MotionEvent.ACTION_UP
+                || motionEvent.getAction() == MotionEvent.ACTION_CANCEL) {
+            view.setVisibility(View.GONE);
+        }
+
+        //imageView.getParent().getParent().getParent().getParent().requestDisallowInterceptTouchEvent(true);
+        //imageView.getParent().getParent().getParent().requestDisallowInterceptTouchEvent(true);
+        int[] location_obj = new int[2] ;
+        int[] location_image = new int[2] ;
+        obj.getLocationInWindow(location_obj);
+        imageView.getLocationInWindow(location_image);
+        int x = (int) motionEvent.getX()+location_obj[0]-location_image[0];
+        int y = (int) motionEvent.getY()+location_obj[1]-location_image[1];
+
+        if (x < 0 || y < 0 || y > imageView.getHeight() || x > imageView.getWidth()) {
+            return -1;
+        }
+        try {
+            color_set.setX(x + imageView.getX() - color_set.getWidth() / 2);
+            color_set.setY(y + imageView.getY() - color_set.getHeight() / 2);
+            color_set.setVisibility(View.VISIBLE);
+
+            int pixel = bitmap.getPixel(x*bitmap.getWidth()/imageView.getWidth(), y*bitmap.getHeight()/imageView.getHeight());//获取颜色
+            ((CardView) color_set.getChildAt(0)).setCardBackgroundColor(pixel);
+            return pixel&0xffffff;
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        //Log.d("function",(x + imageView.getX() - color_set.getWidth() / 2)+","+(y + imageView.getY() - color_set.getHeight() / 2));
+
+        return -1;
     }
 }

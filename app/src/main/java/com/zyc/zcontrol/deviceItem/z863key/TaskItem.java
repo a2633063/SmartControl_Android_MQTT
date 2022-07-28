@@ -157,6 +157,7 @@ public class TaskItem {
     public TaskItem clone() {
         TaskItem newTask = new TaskItem();
         newTask.setBase(this.name, this.button_type, this.type);
+        newTask.setColor(this.color[0], this.color[1]);
         newTask.setMqtt(0,this.data[0].mqtt.topic, this.data[0].mqtt.payload, this.data[0].mqtt.qos, this.data[0].mqtt.retained);
         newTask.setMqtt(1,this.data[1].mqtt.topic, this.data[1].mqtt.payload, this.data[1].mqtt.qos, this.data[1].mqtt.retained);
         newTask.setRelay(0,this.data[0].relay.index, this.data[0].relay.on);
@@ -166,7 +167,8 @@ public class TaskItem {
 
     public void Copy(TaskItem oldTask) {
         if (oldTask == null) return;
-        this.setBase(oldTask.name, this.button_type, oldTask.type);
+        this.setBase(oldTask.name, oldTask.button_type, oldTask.type);
+        this.setColor(oldTask.color[0], oldTask.color[1]);
         this.setMqtt(0,oldTask.data[0].mqtt.topic, oldTask.data[0].mqtt.payload, oldTask.data[0].mqtt.qos, oldTask.data[0].mqtt.retained);
         this.setMqtt(1,oldTask.data[1].mqtt.topic, oldTask.data[1].mqtt.payload, oldTask.data[1].mqtt.qos, oldTask.data[1].mqtt.retained);
         this.setRelay(0,oldTask.data[0].relay.index, oldTask.data[0].relay.on);

@@ -5,13 +5,17 @@ import static android.view.ViewGroup.LayoutParams.MATCH_PARENT;
 import android.annotation.SuppressLint;
 import android.app.TimePickerDialog;
 import android.content.Intent;
+import android.graphics.Bitmap;
+import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.ColorDrawable;
+import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
 import android.util.Log;
 import android.view.Gravity;
 import android.view.MenuItem;
+import android.view.MotionEvent;
 import android.view.View;
 import android.widget.AbsListView;
 import android.widget.AdapterView;
@@ -199,6 +203,9 @@ public class z863keyTaskActivity extends ServiceActivity {
 
         //region 控件初始化
         //region 获取各控件
+        final CardView cardview_color_0 = popupView.findViewById(R.id.cardview_color_0);
+        final CardView cardview_color_1 = popupView.findViewById(R.id.cardview_color_1);
+
         final TextView tv_task_import = popupView.findViewById(R.id.tv_task_import);
         final TextView tv_id = popupView.findViewById(R.id.tv_id);
         final EditText edt_name = popupView.findViewById(R.id.edt_name);
@@ -222,6 +229,32 @@ public class z863keyTaskActivity extends ServiceActivity {
         final CheckBox[] chk_mqtt_retained = {layout_event[1][0].findViewById(R.id.chk_mqtt_retained), layout_event[1][1].findViewById(R.id.chk_mqtt_retained)};
 
         final TextView[] tv_last_mqtt = {layout_event[1][0].findViewById(R.id.tv_last_mqtt), layout_event[1][1].findViewById(R.id.tv_last_mqtt)};
+
+        final View function_select_color = popupView.findViewById(R.id.function_select_color);
+
+        BitmapDrawable bitmapDrawable = (BitmapDrawable) getApplication().getResources().getDrawable(R.drawable.hslw_h);
+        Bitmap bitmap = bitmapDrawable.getBitmap();
+        Function.ShowColorSelectInit(popupView, cardview_color_0, bitmap);
+
+        View.OnTouchListener colerSelectOnTouchListener= new View.OnTouchListener() {
+            int color_temp;
+
+            @Override
+            public boolean onTouch(View view, MotionEvent motionEvent) {
+                //Log.d(Tag, "motionEvent:" + motionEvent.toString());
+                if (motionEvent.getAction() == MotionEvent.ACTION_DOWN) {
+                    color_temp = 0xffffff & ((CardView) view).getCardBackgroundColor().getDefaultColor();
+                    Log.d(Tag,"color_temp:0x"+Integer.toString(color_temp, 16));
+                }
+                int color = Function.ShowColorSelect(view, popupView, function_select_color, motionEvent);
+                Log.d(Tag,"color:0x"+Integer.toString(color, 16));
+                if (color < 0) color = color_temp;
+                ((CardView) view).setCardBackgroundColor(color|0xff000000);
+                return true;
+            }
+        };
+        cardview_color_0.setOnTouchListener(colerSelectOnTouchListener);
+        cardview_color_1.setOnTouchListener(colerSelectOnTouchListener);
         //endregion
 
         //region 根据任务类型切换显示页面
@@ -288,6 +321,7 @@ public class z863keyTaskActivity extends ServiceActivity {
             }
         });
         //endregion
+        //region 获取上次mqtt发送的数据
         View.OnClickListener lastMqttClickListener = new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -302,6 +336,7 @@ public class z863keyTaskActivity extends ServiceActivity {
                 }
             }
         };
+        //endregion
 
         tv_last_mqtt[0].setTag(0);
         tv_last_mqtt[1].setTag(1);
