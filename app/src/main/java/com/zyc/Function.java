@@ -35,6 +35,7 @@ import com.zyc.zcontrol.deviceItem.DeviceClass.DeviceRGBW;
 import com.zyc.zcontrol.deviceItem.DeviceClass.DeviceS7;
 import com.zyc.zcontrol.deviceItem.DeviceClass.DeviceTC1;
 import com.zyc.zcontrol.deviceItem.DeviceClass.DeviceUartToMqtt;
+import com.zyc.zcontrol.deviceItem.DeviceClass.Devicez863key;
 
 public class Function {
 
@@ -171,6 +172,8 @@ public class Function {
                 return new DeviceC1(name, mac);
             case Device.TYPE_UARTTOMQTT:
                 return new DeviceUartToMqtt(name, mac);
+            case Device.TYPE_Z863KEY:
+                return new Devicez863key(name, mac);
         }
         return null;
     }

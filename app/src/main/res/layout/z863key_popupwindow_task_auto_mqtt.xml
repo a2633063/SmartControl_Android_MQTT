@@ -1,0 +1,119 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    android:layout_gravity="center"
+    android:background="#ff3f3f3f"
+    android:gravity="center">
+
+    <TextView
+        android:id="@+id/tv_mqtt"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:gravity="center"
+        android:text="触发mqtt/udp发送:"
+        android:textSize="15dp"
+        app:layout_constraintBottom_toTopOf="@+id/edt_mqtt_topic"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <TextView
+        android:id="@+id/tv_mqtt_topic"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:gravity="center"
+        android:text="topic: "
+        android:textSize="15dp"
+        app:layout_constraintBaseline_toBaselineOf="@+id/edt_mqtt_topic"
+        app:layout_constraintStart_toStartOf="parent" />
+
+    <EditText
+        android:id="@+id/edt_mqtt_topic"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:hint="mqtt topic"
+        android:minEms="10"
+        android:text=""
+        app:layout_constraintBottom_toTopOf="@+id/edt_mqtt_payload"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toEndOf="@+id/barrier"
+        app:layout_constraintTop_toBottomOf="@+id/tv_mqtt" />
+
+    <TextView
+        android:id="@+id/tv_mqtt_payload"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:gravity="center"
+        android:text="payload: "
+        android:textSize="13dp"
+        app:layout_constraintBaseline_toBaselineOf="@+id/edt_mqtt_payload"
+        app:layout_constraintStart_toStartOf="parent" />
+
+    <EditText
+        android:id="@+id/edt_mqtt_payload"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:hint="mqtt payload"
+        android:text=""
+        android:minEms="10"
+        app:layout_constraintBottom_toTopOf="@+id/tv_mqtt_spinner_qos"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toEndOf="@+id/barrier"
+        app:layout_constraintTop_toBottomOf="@+id/edt_mqtt_topic" />
+
+
+    <TextView
+        android:id="@+id/tv_mqtt_spinner_qos"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:gravity="center"
+        android:text="qos: "
+        android:textSize="15dp"
+        app:layout_constraintBaseline_toBaselineOf="@+id/spinner_mqtt_qos"
+        app:layout_constraintStart_toStartOf="parent" />
+
+    <Spinner
+        android:id="@+id/spinner_mqtt_qos"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:entries="@array/mqtt_qos"
+        android:gravity="center"
+        app:layout_constraintBottom_toTopOf="@+id/chk_mqtt_retained"
+        app:layout_constraintStart_toEndOf="@+id/barrier"
+        app:layout_constraintTop_toBottomOf="@+id/edt_mqtt_payload" />
+
+    <CheckBox
+        android:id="@+id/chk_mqtt_retained"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Retained"
+        app:layout_constraintBaseline_toBaselineOf="@+id/spinner_mqtt_qos"
+        app:layout_constraintEnd_toEndOf="parent" />
+
+
+
+
+
+
+
+    <androidx.constraintlayout.widget.Barrier
+        android:id="@+id/barrier"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        app:barrierDirection="end"
+        app:constraint_referenced_ids="tv_mqtt_spinner_qos,tv_mqtt_payload,tv_mqtt_topic,tv_mqtt_udp_ip"
+        tools:layout_editor_absoluteX="73dp"
+        tools:layout_editor_absoluteY="12dp" />
+
+    <androidx.constraintlayout.widget.Group
+        android:id="@+id/group_mqtt_advanced"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        app:constraint_referenced_ids="edt_mqtt_udp_port,img_mqtt_udp_help,tv_mqtt_spinner_qos,tv_mqtt_reserved_1,tv_mqtt_udp_ip,tv_mqtt_reserved_2,edt_mqtt_udp_ip,chk_mqtt_retained,tv_mqtt_udp_port,edit_mqtt_reserved,spinner_mqtt_qos,chk_mqtt_udp"
+        tools:layout_editor_absoluteX="12dp"
+        tools:layout_editor_absoluteY="12dp" />
+
+</androidx.constraintlayout.widget.ConstraintLayout>
+

@@ -33,4 +33,22 @@
         <item>定时触发mqtt/udp</item>
         <item>定时触发串口</item>
     </string-array>
+    <string-array name="z863key_button_type">
+        <item>触发模式</item>
+        <item>切换状态</item>
+    </string-array>
+    <string-array name="z863key_type">
+        <item>控制继电器</item>
+        <item>发送mqtt</item>
+    </string-array>
+    <string-array name="z863key_relay">
+        <item>继电器1</item>
+        <item>继电器2</item>
+        <item>继电器3</item>
+    </string-array>
+    <string-array name="z863key_relay_onoff">
+        <item>切换</item>
+        <item>关</item>
+        <item>开</item>
+    </string-array>
 </resources>
