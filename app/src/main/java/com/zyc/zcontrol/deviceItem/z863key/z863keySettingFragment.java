@@ -100,7 +100,7 @@ public class z863keySettingFragment extends SettingFragment {
                         public void run() {
                             Message msg = new Message();
                             msg.what = 2;
-                            String res = WebService.WebConnect("https://gitee.com/api/v5/repos/a2633063/Release/releases/tags/z485toMqtt");
+                            String res = WebService.WebConnect("https://gitee.com/api/v5/repos/a2633063/Release/releases/tags/z86_3key");
                             msg.obj = res;
                             handler.sendMessageDelayed(msg, 0);// 执行耗时的方法之后发送消给handler
                         }
@@ -118,7 +118,7 @@ public class z863keySettingFragment extends SettingFragment {
 
                         obj = new JSONObject(JsonStr);
 
-                        if (obj.getString("name").equals("z485toMqtt发布地址_" + otaInfo.tag_name)) {
+                        if (obj.getString("name").equals("z86_3key发布地址_" + otaInfo.tag_name)) {
                             String otauriAll = obj.getString("body");
                             otaInfo.ota = otauriAll.split("\r\n");
 
@@ -239,7 +239,7 @@ public class z863keySettingFragment extends SettingFragment {
                         otaInfo = new z863keyOTAInfo();
                         Message msg = new Message();
                         msg.what = 0;
-                        String res = WebService.WebConnect("https://gitee.com/api/v5/repos/a2633063/z485toMqtt/releases/latest");
+                        String res = WebService.WebConnect("https://gitee.com/api/v5/repos/a2633063/z86_3key/releases/latest");
                         msg.obj = res;
                         handler.sendMessageDelayed(msg, 0);// 执行耗时的方法之后发送消给handler
                     }

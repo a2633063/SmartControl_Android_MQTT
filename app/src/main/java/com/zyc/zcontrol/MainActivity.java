@@ -511,10 +511,11 @@ public class MainActivity extends AppCompatActivity {
         //region 新增设备返回
         if (requestCode == 1) {
             int type = intent.getIntExtra("type", Device.TYPE_UNKNOWN);
+            String name = intent.getExtras().getString("name");
             String ip = intent.getExtras().getString("ip");
             String mac = intent.getExtras().getString("mac");
-            Log.e(Tag, "get device result:" + ip + "," + mac + "," + type);
-            //popupwindowLanUdpScan(ip);
+            Log.e(Tag, "get device result:" + name + "," + ip + "," + mac + "," + type);
+            popupwindowLanUdpScan(ip);
 
 
             if (mainDeviceLanUdpScanListAdapter == null || mac == null) {
@@ -530,9 +531,9 @@ public class MainActivity extends AppCompatActivity {
                 return;
             }
 
-            Device device_temp = returnDeviceClass("", mac, type);
+            Device device_temp = returnDeviceClass(name, mac, type);
             if (device_temp != null) {
-                mainDeviceLanUdpScanListAdapter.add(returnDeviceClass("name", mac, type));
+                mainDeviceLanUdpScanListAdapter.add(device_temp);
                 mainDeviceLanUdpScanListAdapter.notifyDataSetChanged();
                 Toast.makeText(MainActivity.this, "若udp通信失败,请先用web配置mqtt后使用mqtt通信!", Toast.LENGTH_LONG).show();
 
@@ -1043,7 +1044,7 @@ public class MainActivity extends AppCompatActivity {
 
                     Device device_temp = returnDeviceClass(name, mac, type);
                     if (device_temp != null) {
-                        mainDeviceLanUdpScanListAdapter.add(returnDeviceClass(name, mac, type));
+                        mainDeviceLanUdpScanListAdapter.add(device_temp);
                         mainDeviceLanUdpScanListAdapter.notifyDataSetChanged();
                     }
                 }

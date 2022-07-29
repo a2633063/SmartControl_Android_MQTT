@@ -6,6 +6,7 @@ import android.annotation.SuppressLint;
 import android.app.TimePickerDialog;
 import android.content.Intent;
 import android.graphics.Bitmap;
+import android.graphics.Color;
 import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.ColorDrawable;
 import android.graphics.drawable.Drawable;
@@ -205,7 +206,10 @@ public class z863keyTaskActivity extends ServiceActivity {
         //region 获取各控件
         final CardView cardview_color_0 = popupView.findViewById(R.id.cardview_color_0);
         final CardView cardview_color_1 = popupView.findViewById(R.id.cardview_color_1);
-
+        final TextView tv_color_0 = popupView.findViewById(R.id.tv_color_0);
+        final TextView tv_color_1 = popupView.findViewById(R.id.tv_color_1);
+        cardview_color_0.setTag(tv_color_0);
+        cardview_color_1.setTag(tv_color_1);
         final TextView tv_task_import = popupView.findViewById(R.id.tv_task_import);
         final TextView tv_id = popupView.findViewById(R.id.tv_id);
         final EditText edt_name = popupView.findViewById(R.id.edt_name);
@@ -250,6 +254,8 @@ public class z863keyTaskActivity extends ServiceActivity {
                 Log.d(Tag, "color:0x" + Integer.toString(color, 16));
                 if (color < 0) color = color_temp;
                 ((CardView) view).setCardBackgroundColor(color | 0xff000000);
+                TextView t=(TextView)view.getTag();
+                if(t!=null) t.setText(String.format("%06x", color));
                 return true;
             }
         };
@@ -390,7 +396,10 @@ public class z863keyTaskActivity extends ServiceActivity {
         //region 获取各控件
         final CardView cardview_color_0 = popupView.findViewById(R.id.cardview_color_0);
         final CardView cardview_color_1 = popupView.findViewById(R.id.cardview_color_1);
-
+        final TextView tv_color_0 = popupView.findViewById(R.id.tv_color_0);
+        final TextView tv_color_1 = popupView.findViewById(R.id.tv_color_1);
+        cardview_color_0.setTag(tv_color_0);
+        cardview_color_1.setTag(tv_color_1);
         final Spinner spinner_button_type = popupView.findViewById(R.id.spinner_button_type);
         final Spinner spinner_type = popupView.findViewById(R.id.spinner_type);
 
@@ -414,6 +423,9 @@ public class z863keyTaskActivity extends ServiceActivity {
         //endregion
         cardview_color_0.setCardBackgroundColor(task.color[0] | 0xff000000);
         cardview_color_1.setCardBackgroundColor(task.color[1] | 0xff000000);
+
+        tv_color_0.setText(String.format("%06x", task.color[0]));
+        tv_color_1.setText(String.format("%06x", task.color[1]));
         spinner_type.setSelection(-1);
         spinner_button_type.setSelection(-1);
         if (task.type < spinner_type.getCount())
@@ -455,6 +467,8 @@ public class z863keyTaskActivity extends ServiceActivity {
 
         final CardView cardview_color_0 = popupView.findViewById(R.id.cardview_color_0);
         final CardView cardview_color_1 = popupView.findViewById(R.id.cardview_color_1);
+        final TextView tv_color_0 = popupView.findViewById(R.id.tv_color_0);
+        final TextView tv_color_1 = popupView.findViewById(R.id.tv_color_1);
 
         final Spinner spinner_button_type = popupView.findViewById(R.id.spinner_button_type);
         final Spinner spinner_type = popupView.findViewById(R.id.spinner_type);
