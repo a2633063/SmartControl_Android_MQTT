@@ -112,17 +112,11 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         app:barrierDirection="end"
-        app:constraint_referenced_ids="tv_mqtt_spinner_qos,tv_mqtt_payload,tv_mqtt_topic,tv_mqtt_udp_ip"
+        app:constraint_referenced_ids="tv_mqtt_spinner_qos,tv_mqtt_payload,tv_mqtt_topic"
         tools:layout_editor_absoluteX="73dp"
         tools:layout_editor_absoluteY="12dp" />
 
-    <androidx.constraintlayout.widget.Group
-        android:id="@+id/group_mqtt_advanced"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        app:constraint_referenced_ids="edt_mqtt_udp_port,img_mqtt_udp_help,tv_mqtt_spinner_qos,tv_mqtt_reserved_1,tv_mqtt_udp_ip,tv_mqtt_reserved_2,edt_mqtt_udp_ip,chk_mqtt_retained,tv_mqtt_udp_port,edit_mqtt_reserved,spinner_mqtt_qos,chk_mqtt_udp"
-        tools:layout_editor_absoluteX="12dp"
-        tools:layout_editor_absoluteY="12dp" />
+
 
 </androidx.constraintlayout.widget.ConstraintLayout>
 
