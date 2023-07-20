@@ -50,7 +50,7 @@ public class DeviceFragment extends Fragment implements View.OnLongClickListener
     //region 使用本地广播与service通信
     LocalBroadcastManager localBroadcastManager;
     private MsgReceiver msgReceiver;
-    ConnectService mConnectService;
+    protected ConnectService mConnectService;
     //endregion
 
     TextView log = null;

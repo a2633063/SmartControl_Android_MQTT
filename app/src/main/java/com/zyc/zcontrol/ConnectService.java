@@ -378,6 +378,16 @@ public class ConnectService extends Service {
         }
     }
 
+    String topicLast=null;
+    String messageLast=null;
+    public String[] getSendLast()
+    {
+        String[] r=new String[2];
+        r[0]=topicLast;
+        r[1]=messageLast;
+        return r;
+    }
+
     //region UDP发送
     public void UDPsend(String message) {
         UDPsend("255.255.255.255", DEVICE_UDP_PORT, message);
@@ -432,8 +442,15 @@ public class ConnectService extends Service {
     }
 
     public void MQTTSend(String topic, String str, int qos) {
+        //记录发送的数据
+        //message中不包含null时表示设置,则记录
+        //包含null时表示查询,则不记录
+        if(!str.contains("null"))
+        {
+            topicLast=topic;
+            messageLast=str;
+        }
         //region 发送
-
         try {
             MqttMessage message = new MqttMessage(str.getBytes());
             message.setQos(qos);

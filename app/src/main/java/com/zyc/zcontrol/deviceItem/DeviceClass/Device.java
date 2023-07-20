@@ -5,7 +5,7 @@ import android.preference.PreferenceFragment;
 import androidx.annotation.DrawableRes;
 import androidx.fragment.app.Fragment;
 
-import com.espressif.ESPtouchActivity;
+
 import com.zyc.zcontrol.R;
 import com.zyc.zcontrol.deviceItem.a1.A1LinkActivity;
 import com.zyc.zcontrol.deviceItem.clock.ClockLinkActivity;
@@ -34,7 +34,8 @@ public class Device {
     public final static int TYPE_KEY51 = 10;
     public final static int TYPE_C1 = 11;
     public final static int TYPE_UARTTOMQTT = 12;
-    public final static int TYPE_COUNT = 13;
+    public final static int TYPE_Z863KEY = 13;
+    public final static int TYPE_COUNT = 14;
 
     //设备名称
     public final static String[] TypeName = new String[]{
@@ -51,6 +52,7 @@ public class Device {
             "zKey51按键",   //10
             "zC1门窗传感器",   //11
             "z485toMqtt",   //12
+            "z86_3Key墙壁开关",   //13
     };
     //设备链接地址
     public final static String[] TypeUri = new String[]{
@@ -67,6 +69,7 @@ public class Device {
             "https://github.com/a2633063/zKey51",   //10
             "https://github.com/a2633063/zC1",   //11
             "https://github.com/a2633063/z485toMqtt",   //12
+            "https://github.com/a2633063/z86_3key",   //13
     };
     //设备图标
     public final static @DrawableRes
@@ -84,12 +87,13 @@ public class Device {
             R.drawable.device_icon_diy,//10
             R.drawable.device_icon_diy,//11
             R.drawable.device_icon_diy,//12
+            R.drawable.device_icon_diy,//13
     };
 
     //设备对应配对页面
     public final static Class LinkActivity[] =
             {
-                    ESPtouchActivity.class,//0
+                    null,//0
                     TC1LinkActivity.class,//1
                     DC1LinkActivity.class,//2
                     A1LinkActivity.class,//3
@@ -102,6 +106,7 @@ public class Device {
                     null,//10
                     null,//11
                     null,//12
+                    null,//13
             };
 //endregion
 

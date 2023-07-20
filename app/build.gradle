@@ -7,7 +7,7 @@ android {
         minSdkVersion 21
         targetSdkVersion 28
         versionCode 53
-        versionName "v1.11.3"
+        versionName "v1.12.0"
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
     }
     buildTypes {
@@ -28,18 +28,18 @@ android {
 
 dependencies {
     implementation fileTree(dir: 'libs', include: ['*.jar'])
-    implementation 'androidx.appcompat:appcompat:1.0.2'
-    implementation 'com.google.android.material:material:1.0.0'
+    implementation 'androidx.appcompat:appcompat:1.3.0'
+    implementation 'com.google.android.material:material:1.2.0'
     implementation 'androidx.constraintlayout:constraintlayout:1.1.3'
-
-//    implementation 'org.eclipse.paho:org.eclipse.paho.android.service:1.1.1'
-    implementation 'org.eclipse.paho:org.eclipse.paho.client.mqttv3:+'
+    implementation "androidx.swiperefreshlayout:swiperefreshlayout:1.1.0"
+    //implementation 'org.eclipse.paho:org.eclipse.paho.android.service:1.1.1'
+    implementation 'org.eclipse.paho:org.eclipse.paho.client.mqttv3:1.2.5'
     implementation 'androidx.legacy:legacy-support-v4:1.0.0'
 
-    implementation project(':esptouch')
+    //implementation project(':esptouch')
 
     //EasyLink  广播组播同时发的版本
-    implementation 'io.fogcloud.sdk:easylinkv3:+'
+    //implementation 'io.fogcloud.sdk:easylinkv3:'
 
 
     implementation project(':LineTable')//分享

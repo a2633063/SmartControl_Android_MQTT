@@ -137,7 +137,9 @@ public class SettingFragment extends PreferenceFragment {
                 String str = null;
                 ClipboardManager manager = (ClipboardManager) getView().getContext().getSystemService(Context.CLIPBOARD_SERVICE);
                 if (manager != null && manager.hasPrimaryClip() && manager.getPrimaryClip().getItemCount() > 0) {
-                    str = manager.getPrimaryClip().getItemAt(0).getText().toString();
+                    ClipData clip=manager.getPrimaryClip();
+                    ClipData.Item item=clip.getItemAt(0);
+                    str = item.getText().toString();
                     deviceImport(str);
                     //Toast.makeText(getActivity(), "剪贴板:" + str, Toast.LENGTH_SHORT).show();
                 }

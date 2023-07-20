@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    android:layout_gravity="center"
+    android:background="#ff3f3f3f"
+    android:gravity="center">
+
+    <TextView
+        android:id="@+id/tv_relay"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:gravity="center"
+        android:text="控制继电器:"
+        android:textSize="15dp"
+        app:layout_constraintBottom_toTopOf="@+id/spinner_relay"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <Spinner
+        android:id="@+id/spinner_relay"
+        android:layout_width="wrap_content"
+        android:layout_height="0dp"
+        android:entries="@array/z863key_relay"
+        app:layout_constraintEnd_toStartOf="@+id/spinner_relay_onoff"
+        app:layout_constraintBottom_toBottomOf="@+id/spinner_relay_onoff"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="@+id/spinner_relay_onoff" />
+
+
+    <Spinner
+        android:id="@+id/spinner_relay_onoff"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:paddingBottom="20dp"
+        android:paddingTop="20dp"
+        android:entries="@array/z863key_relay_onoff"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toEndOf="@+id/spinner_relay"
+        app:layout_constraintTop_toBottomOf="@+id/tv_relay" />
+</androidx.constraintlayout.widget.ConstraintLayout>

@@ -2,6 +2,8 @@ package com.zyc.zcontrol.deviceItem.key51;
 
 
 import android.annotation.SuppressLint;
+import android.app.AlertDialog;
+import android.app.Fragment;
 import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
 import android.os.Handler;
@@ -30,16 +32,16 @@ import com.zyc.zcontrol.deviceItem.DeviceClass.DeviceKey51;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+
 import java.util.ArrayList;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import androidx.appcompat.app.AlertDialog;
 import androidx.constraintlayout.widget.Group;
-import androidx.fragment.app.Fragment;
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 
 import static android.view.ViewGroup.LayoutParams.MATCH_PARENT;
+
 
 /**
  * A simple {@link Fragment} subclass.
@@ -198,7 +200,7 @@ public class Key51Fragment extends DeviceFragment {
         //region listview及adapter
         for (int i = 0; i < 10; i++) {
             TaskItem t = new TaskItem();
-            t.setBase("任务"+i,0,0,0);
+            t.setBase("任务" + i, 0, 0, 0);
             //t.setMqtt("");
             data.add(t);
         }
@@ -222,7 +224,7 @@ public class Key51Fragment extends DeviceFragment {
         //endregion
 
         //region 更新当前状态
-        mSwipeLayout = (SwipeRefreshLayout) view.findViewById(R.id.swipeRefreshLayout);
+        mSwipeLayout = view.findViewById(R.id.swipeRefreshLayout);
         mSwipeLayout.setColorSchemeResources(R.color.colorAccent, R.color.colorPrimaryDark, R.color.colorAccent, R.color.colorPrimary);
         mSwipeLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
             @Override
@@ -257,6 +259,7 @@ public class Key51Fragment extends DeviceFragment {
         //region 控件定义
         TextView tv_id = popupView.findViewById(R.id.tv_id);
         tv_id.setText("任务" + task_id);
+        final Button btn_last_mqtt_message = popupView.findViewById(R.id.btn_last_mqtt_message);
         final Button btn_ok = popupView.findViewById(R.id.btn_ok);
         final Button btn_cancel = popupView.findViewById(R.id.btn_cancel);
         final EditText edt_name = popupView.findViewById(R.id.edt_name);
@@ -561,6 +564,20 @@ public class Key51Fragment extends DeviceFragment {
                     edt_port.setText(String.valueOf(task_backup.port));
                 }
                 return true;
+            }
+        });
+        //endregion
+
+        //region 读取mqtt
+        btn_last_mqtt_message.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                String[] last_mqtt_message = Key51Fragment.super.mConnectService.getSendLast();
+                if (last_mqtt_message != null && last_mqtt_message.length > 1 && last_mqtt_message[0] !=
+                        null && last_mqtt_message[1] != null) {
+                    edt_topic.setText(last_mqtt_message[0]);
+                    edt_payload.setText(last_mqtt_message[1]);
+                }
             }
         });
         //endregion

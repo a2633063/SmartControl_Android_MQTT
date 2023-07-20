@@ -173,7 +173,7 @@ public class DeviceAddChoiceActivity extends AppCompatActivity {
             public void onItemClick(View view, int position, Device device) {
                 Toast.makeText(DeviceAddChoiceActivity.this, device.getName() + "," + device.getMac(), Toast.LENGTH_SHORT).show();
                 Log.d(Tag, "ip:" + device.getIp() + "mac:" + device.getMac() + "type:" + device.getType());
-                returnActivityDevice(device.getIp(), device.getMac(), device.getType());
+                returnActivityDevice(device.getName(),device.getIp(), device.getMac(), device.getType());
             }
         });
         //endregion
@@ -268,7 +268,7 @@ public class DeviceAddChoiceActivity extends AppCompatActivity {
                         }
                         if (arg0.getAttributes().containsKey("mac")) {
                             mac = new String(arg0.getAttributes().get("mac"));
-                            mac=mac.toLowerCase().replaceAll("[^0123456789abcdef]","");
+                            mac = mac.toLowerCase().replaceAll("[^0123456789abcdef]", "");
                         }
 
                         if (type > TYPE_UNKNOWN && type < TYPE_COUNT && mac != null) {
@@ -309,17 +309,19 @@ public class DeviceAddChoiceActivity extends AppCompatActivity {
     }
     //endregion
 
-
     void returnActivityDevice(String ip, String mac, int type) {
+        returnActivityDevice("", ip, mac, type);
+    }
+
+    void returnActivityDevice(String name, String ip, String mac, int type) {
         //返回数据
         Intent intent = new Intent();
+        intent.putExtra("name", name);
         intent.putExtra("type", type);
         intent.putExtra("ip", ip);
         intent.putExtra("mac", mac);
         setResult(RESULT_OK, intent);
-
         finish();
-
     }
 
     class DeviceChoiceListAdapter extends BaseAdapter {
