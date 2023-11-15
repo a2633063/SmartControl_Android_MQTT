@@ -48,3 +48,10 @@
 右上角,云图标为与设备同步mqtt服务器配置.由于可以自定义mqtt服务器,所以除了需要将手机连入mqtt服务器外,还需要将被控设备连入mqtt服务器.点击云图标按钮即可将mqtt的服务器信息同步给设备,让设备也连入mqtt服务器
 
 右上角,笔形图标为设备设置页面,每个设备的设置都为独立配置.
+
+
+
+## Stargazers over time
+
+[![Stargazers over time](https://starchart.cc/a2633063/SmartControl_Android_MQTT.svg)](https://starchart.cc/a2633063/SmartControl_Android_MQTT)
+
