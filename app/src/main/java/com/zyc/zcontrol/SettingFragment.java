@@ -9,6 +9,7 @@ import android.annotation.SuppressLint;
 import android.content.ClipData;
 import android.content.ClipboardManager;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
@@ -138,6 +139,11 @@ public class SettingFragment extends PreferenceFragment {
                 ClipboardManager manager = (ClipboardManager) getView().getContext().getSystemService(Context.CLIPBOARD_SERVICE);
                 if (manager != null && manager.hasPrimaryClip() && manager.getPrimaryClip().getItemCount() > 0) {
                     ClipData clip=manager.getPrimaryClip();
+                    if(clip==null)
+                    {
+                        Toast.makeText(getActivity(), "获取剪切板错误,请重试!", Toast.LENGTH_SHORT).show();
+                        return false;
+                    }
                     ClipData.Item item=clip.getItemAt(0);
                     str = item.getText().toString();
                     deviceImport(str);
@@ -235,7 +241,12 @@ public class SettingFragment extends PreferenceFragment {
         new AlertDialog.Builder(getActivity())
                 .setTitle(title)
                 .setMessage(message)
-                .setPositiveButton("确定", null)
+                .setPositiveButton("确定", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialogInterface, int i) {
+                        dialogInterface.dismiss();
+                    }
+                })
                 .create()
                 .show();
     }

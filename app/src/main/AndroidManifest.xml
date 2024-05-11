@@ -65,7 +65,7 @@
         android:supportsRtl="true"
         android:screenOrientation="portrait"
         android:theme="@style/AppTheme">
-        <activity android:name=".deviceItem.a1.A1LedActivity"></activity>
+        <activity android:name=".deviceItem.a1.A1LedActivity"/>
         <activity android:name=".deviceItem.m1.M1LinkA1Activity" />
         <activity
             android:name=".deviceItem.m1.M1LinkActivity"
@@ -117,10 +117,7 @@
             android:name=".deviceAdd.DeviceAddChoiceActivity"
             android:label="添加设备"
             android:screenOrientation="portrait" />
-        <activity
-            android:name="com.espressif.ESPtouchActivity"
-            android:label="添加设备"
-            android:screenOrientation="portrait" />
+
         <activity
             android:name=".deviceItem.tc1.TC1LinkActivity"
             android:label="zTC1配网"

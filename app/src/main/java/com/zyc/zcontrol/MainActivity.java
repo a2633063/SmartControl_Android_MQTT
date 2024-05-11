@@ -15,6 +15,7 @@ import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.ServiceConnection;
 import android.content.SharedPreferences;
+import android.content.res.AssetManager;
 import android.database.Cursor;
 import android.graphics.Paint;
 import android.graphics.drawable.ColorDrawable;
@@ -66,6 +67,10 @@ import com.zyc.zcontrol.mainActivity.MainDeviceListAdapter;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.net.URISyntaxException;
 import java.util.ArrayList;
 import java.util.List;
@@ -75,6 +80,7 @@ import java.util.regex.Pattern;
 
 public class MainActivity extends AppCompatActivity {
     public final static String Tag = "MainActivity";
+    final static int PRIVACYPOLICY_INT=1;   //隐私协议标识,更新隐私协议需要更新此值
 
     private SharedPreferences mSharedPreferences;
     private SharedPreferences.Editor mEditor;
@@ -120,7 +126,7 @@ public class MainActivity extends AppCompatActivity {
                         String mqtt_password = mSharedPreferences.getString("mqtt_password", null);
 
                         Log.d(Tag, "mqtt connect: " + mqtt_uri + ",user:" + mqtt_user + "," + mqtt_password);
-                        if (mqtt_id == null || mqtt_id.length() < 1)
+                        if (mqtt_id == null || mqtt_id.isEmpty())
                             mqtt_id = "Android_" + new Random().nextInt(10000);
 
                         Log.d(Tag, "mqtt_id:" + mqtt_id);
@@ -502,6 +508,18 @@ public class MainActivity extends AppCompatActivity {
             }
         }).start();
         //endregion
+
+        toolbar.post(new Runnable() {
+            @Override
+            public void run() {
+
+                int privacypolicy = mSharedPreferences.getInt("PrivacyPolicy", 0);
+                if(privacypolicy!=PRIVACYPOLICY_INT)
+                {
+                    popupwindowPrivacy();
+                }
+            }
+        });
     }
 
     @Override
@@ -799,7 +817,14 @@ public class MainActivity extends AppCompatActivity {
 
         TextView tv_version = popupView.findViewById(R.id.tv_version);
         tv_version.setText("APP当前版本:" + getLocalVersionName(this));
-
+        TextView tv_privacypolicy = popupView.findViewById(R.id.tv_privacypolicy);
+        tv_privacypolicy.getPaint().setFlags(Paint.UNDERLINE_TEXT_FLAG);
+        tv_privacypolicy.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                popupwindowPrivacy();
+            }
+        });
         //region 支付宝跳转
         ImageView imageView = popupView.findViewById(R.id.alipay);
         imageView.setOnClickListener(new View.OnClickListener() {
@@ -876,6 +901,77 @@ public class MainActivity extends AppCompatActivity {
             public boolean onTouch(View v, MotionEvent event) {
                 window.dismiss();
                 return true;
+            }
+        });
+        //endregion
+        //endregion
+        window.update();
+        window.showAtLocation(popupView, Gravity.CENTER, 0, 0);
+
+    }
+    private void popupwindowPrivacy() {
+
+        final View popupView = getLayoutInflater().inflate(R.layout.app_popupwindow_main_privacy, null);
+        final PopupWindow window = new PopupWindow(popupView, MATCH_PARENT, MATCH_PARENT, true);//wrap_content,wrap_content
+        //region 控件初始化
+
+
+        TextView tv_privacypolicy = popupView.findViewById(R.id.tv_privacypolicy);
+        try {
+            // 获取AssetsManager对象
+            AssetManager assetManager = getAssets();
+            // 打开文件
+            InputStream inputStream = assetManager.open("PrivacyPolicy.txt");
+            // 读取文件内容
+            StringBuilder stringBuilder = new StringBuilder();
+            BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(inputStream));
+            String line;
+            while ((line = bufferedReader.readLine()) != null) {
+                stringBuilder.append(line).append("\n");
+            }
+            String fileContent = stringBuilder.toString();
+            tv_privacypolicy.setText(fileContent);
+            // 关闭文件
+            inputStream.close();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
+        //region app页面跳转
+        popupView.findViewById(R.id.btn_ok).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                mEditor = mSharedPreferences.edit();
+                mEditor.putInt("PrivacyPolicy", PRIVACYPOLICY_INT);
+                mEditor.commit();
+                window.dismiss();
+            }
+        });
+        popupView.findViewById(R.id.btn_exit).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                mEditor = mSharedPreferences.edit();
+                mEditor.remove("PrivacyPolicy");
+                mEditor.commit();
+                Log.i(Tag,"未同意隐私协议,退出app");
+                finish();
+            }
+        });
+        //endregion
+
+        //region window初始化
+        window.setBackgroundDrawable(new ColorDrawable(android.graphics.Color.alpha(0xffff0000)));
+        window.setOutsideTouchable(false);
+        window.setOnDismissListener(new PopupWindow.OnDismissListener() {
+            @Override
+            public void onDismiss() {
+
+                int privacypolicy = mSharedPreferences.getInt("PrivacyPolicy", 0);
+                if(privacypolicy!=PRIVACYPOLICY_INT)
+                {
+                    Log.i(Tag,"未同意隐私协议,退出app");
+                    finish();
+                }
             }
         });
         //endregion

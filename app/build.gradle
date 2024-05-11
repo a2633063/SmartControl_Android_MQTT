@@ -7,7 +7,7 @@ android {
         minSdkVersion 21
         targetSdkVersion 28
         versionCode 53
-        versionName "v1.12.0"
+        versionName "v1.12.1"
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
     }
     buildTypes {
@@ -46,5 +46,5 @@ dependencies {
     //implementation 'io.fogcloud.sdk:easylinkv3:'
 
 
-    implementation project(':LineTable')//分享
+    implementation project(':LineTable')
 }

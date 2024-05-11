@@ -56,7 +56,14 @@
                     android:text="作者:Zip_zhang"
                     android:textSize="15dp" />
             </LinearLayout>
-
+            <TextView
+                android:id="@+id/tv_privacypolicy"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="4dp"
+                android:layout_marginTop="4dp"
+                android:text="查看用户隐私协议 >"
+                android:textSize="20dp" />
             <TextView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
