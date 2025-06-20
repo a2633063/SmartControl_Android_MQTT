@@ -62,24 +62,47 @@ public class DeviceFragment extends Fragment implements View.OnLongClickListener
 
     @SuppressLint("ValidFragment")
     public DeviceFragment(String name, String mac) {
+        Log.d(Tag,"DeviceFragment");
         this.device_mac = mac;
         this.device_name = name;
+        if (localBroadcastManager!=null && msgReceiver == null) {
+            msgReceiver = new MsgReceiver();
+            IntentFilter intentFilter = new IntentFilter();
+//        intentFilter.addAction(ConnectService.ACTION_UDP_DATA_AVAILABLE);
+            intentFilter.addAction(ConnectService.ACTION_MQTT_CONNECTED);
+            intentFilter.addAction(ConnectService.ACTION_MQTT_DISCONNECTED);
+//        intentFilter.addAction(ConnectService.ACTION_DATA_AVAILABLE);
+            intentFilter.addAction(device_mac);
+//        intentFilter.addAction(device_mac+"UI");
+            localBroadcastManager.registerReceiver(msgReceiver, intentFilter);
+        }
     }
 
 
     @Override
+    public void onCreate(Bundle savedInstanceState) {
+        Log.d(Tag,"onCreate");
+        super.onCreate(savedInstanceState);
+        // Fragment创建时的处理
+    }
+    @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
+        Log.d(Tag,"onCreateView");
         //region 动态注册广播接收器,
+
         localBroadcastManager = LocalBroadcastManager.getInstance(getContext());
-        msgReceiver = new MsgReceiver();
-        IntentFilter intentFilter = new IntentFilter();
+        if (device_mac != null) {
+            msgReceiver = new MsgReceiver();
+            IntentFilter intentFilter = new IntentFilter();
 //        intentFilter.addAction(ConnectService.ACTION_UDP_DATA_AVAILABLE);
-        intentFilter.addAction(ConnectService.ACTION_MQTT_CONNECTED);
-        intentFilter.addAction(ConnectService.ACTION_MQTT_DISCONNECTED);
+            intentFilter.addAction(ConnectService.ACTION_MQTT_CONNECTED);
+            intentFilter.addAction(ConnectService.ACTION_MQTT_DISCONNECTED);
 //        intentFilter.addAction(ConnectService.ACTION_DATA_AVAILABLE);
-        intentFilter.addAction(device_mac);
+            intentFilter.addAction(device_mac);
 //        intentFilter.addAction(device_mac+"UI");
-        localBroadcastManager.registerReceiver(msgReceiver, intentFilter);
+            localBroadcastManager.registerReceiver(msgReceiver, intentFilter);
+        }
+
         //endregion
         //region 启动MQTT 服务以及启动,无需再启动
         Intent intent = new Intent(getContext(), ConnectService.class);
@@ -91,8 +114,11 @@ public class DeviceFragment extends Fragment implements View.OnLongClickListener
 
     @Override
     public void onDestroy() {
-        //注销广播
-        localBroadcastManager.unregisterReceiver(msgReceiver);
+        Log.d(Tag,"onDestroy");
+        if(msgReceiver!=null) {
+            //注销广播
+            localBroadcastManager.unregisterReceiver(msgReceiver);
+        }
         //停止服务
         getActivity().unbindService(mMQTTServiceConnection);
         super.onDestroy();

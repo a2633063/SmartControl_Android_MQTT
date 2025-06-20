@@ -15,9 +15,11 @@ import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.ServiceConnection;
 import android.content.SharedPreferences;
+import android.content.pm.ActivityInfo;
 import android.content.res.AssetManager;
 import android.database.Cursor;
 import android.graphics.Paint;
+import android.graphics.Rect;
 import android.graphics.drawable.ColorDrawable;
 import android.net.Uri;
 import android.net.wifi.WifiManager;
@@ -80,7 +82,7 @@ import java.util.regex.Pattern;
 
 public class MainActivity extends AppCompatActivity {
     public final static String Tag = "MainActivity";
-    final static int PRIVACYPOLICY_INT=1;   //隐私协议标识,更新隐私协议需要更新此值
+    final static int PRIVACYPOLICY_INT = 1;   //隐私协议标识,更新隐私协议需要更新此值
 
     private SharedPreferences mSharedPreferences;
     private SharedPreferences.Editor mEditor;
@@ -177,7 +179,8 @@ public class MainActivity extends AppCompatActivity {
                         if (!obj.has("tag_name")
                                 || !obj.has("name")
                                 || !obj.has("body")
-                                || !obj.has("created_at")) throw new JSONException("获取最新版本信息失败");
+                                || !obj.has("created_at"))
+                            throw new JSONException("获取最新版本信息失败");
 
                         final String body = obj.getString("body");
                         final String name = obj.getString("name");
@@ -242,6 +245,8 @@ public class MainActivity extends AppCompatActivity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+        Log.d(Tag,"onCreate");
+        setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
         super.onCreate(savedInstanceState);
         setContentView(R.layout.app_activity_main);
         toolbar = findViewById(R.id.toolbar);
@@ -279,10 +284,12 @@ public class MainActivity extends AppCompatActivity {
 
         //region 侧边栏 初始化
         drawerLayout = (DrawerLayout) findViewById(R.id.drawer_layout);
-        ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(
-                this, drawerLayout, toolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close);
-        drawerLayout.addDrawerListener(toggle);
-        toggle.syncState();
+        if (drawerLayout != null) {
+            ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(
+                    this, drawerLayout, toolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close);
+            drawerLayout.addDrawerListener(toggle);
+            toggle.syncState();
+        }
 
 
         NavigationView navigationView = findViewById(R.id.nav_view);
@@ -320,7 +327,7 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 startActivityForResult(new Intent(MainActivity.this, DeviceAddChoiceActivity.class), 1);
-                drawerLayout.closeDrawer(GravityCompat.START);//关闭侧边栏
+                if (drawerLayout != null) drawerLayout.closeDrawer(GravityCompat.START);//关闭侧边栏
 
             }
         });
@@ -331,7 +338,7 @@ public class MainActivity extends AppCompatActivity {
         lv_device.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                drawerLayout.closeDrawer(GravityCompat.START);//关闭侧边栏
+                if (drawerLayout != null) drawerLayout.closeDrawer(GravityCompat.START);//关闭侧边栏
                 mainDeviceListAdapter.setChoice(position);
                 viewPager.setCurrentItem(position);
             }
@@ -384,7 +391,7 @@ public class MainActivity extends AppCompatActivity {
                 if (position == 0 && positionOffset == 0 && positionOffsetPixels == 0) {
                     onPageScrolled++;
                     if (onPageScrolled > 3) {
-                        drawerLayout.openDrawer(GravityCompat.START);
+                        if (drawerLayout != null) drawerLayout.openDrawer(GravityCompat.START);
                     }
                 } else {
                     mEditor = getSharedPreferences("Setting", 0).edit();
@@ -415,7 +422,7 @@ public class MainActivity extends AppCompatActivity {
                 .setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
-                        drawerLayout.closeDrawer(GravityCompat.START);//关闭侧边栏
+                        if (drawerLayout != null) drawerLayout.closeDrawer(GravityCompat.START);//关闭侧边栏
                         popupwindowInfo();
                     }
                 });
@@ -438,7 +445,7 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 startActivity(new Intent(MainActivity.this, SettingActivity.class));
-                drawerLayout.closeDrawer(GravityCompat.START);//关闭侧边栏
+                if (drawerLayout != null) drawerLayout.closeDrawer(GravityCompat.START);//关闭侧边栏
 
             }
         });
@@ -455,7 +462,7 @@ public class MainActivity extends AppCompatActivity {
         findViewById(R.id.tv_info).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                drawerLayout.closeDrawer(GravityCompat.START);//关闭侧边栏
+                if (drawerLayout != null) drawerLayout.closeDrawer(GravityCompat.START);//关闭侧边栏
                 popupwindowInfo();
             }
         });
@@ -514,8 +521,7 @@ public class MainActivity extends AppCompatActivity {
             public void run() {
 
                 int privacypolicy = mSharedPreferences.getInt("PrivacyPolicy", 0);
-                if(privacypolicy!=PRIVACYPOLICY_INT)
-                {
+                if (privacypolicy != PRIVACYPOLICY_INT) {
                     popupwindowPrivacy();
                 }
             }
@@ -525,6 +531,7 @@ public class MainActivity extends AppCompatActivity {
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent intent) {
 
+        Log.d(Tag,"onActivityResult");
         if (resultCode != RESULT_OK) return;
         //region 新增设备返回
         if (requestCode == 1) {
@@ -569,6 +576,7 @@ public class MainActivity extends AppCompatActivity {
     }
 
     protected void onNewIntent(Intent intent) {
+        Log.d(Tag,"onNewIntent");
         super.onNewIntent(intent);
         if (intent.hasExtra("mac") && intent.getStringExtra("mac") != null)
             setIntent(intent);// must store the new intent unless getIntent() will return the old one
@@ -616,8 +624,9 @@ public class MainActivity extends AppCompatActivity {
 
     @Override
     public void onBackPressed() {
+        Log.d(Tag,"onBackPressed");
         DrawerLayout drawer = findViewById(R.id.drawer_layout);
-        if (drawer.isDrawerOpen(GravityCompat.START)) {
+        if (drawer!=null &&drawer.isDrawerOpen(GravityCompat.START)) {
             drawer.closeDrawer(GravityCompat.START);
         } else {
             super.onBackPressed();
@@ -626,7 +635,7 @@ public class MainActivity extends AppCompatActivity {
 
     @Override
     protected void onPause() {
-        Log.d(Tag, "onDestroy");
+        Log.d(Tag, "onPause");
         //region 需要时更新数据库
         if (updateSqlFlag) {
             //删除数据库所有内容,根据排序重新写入
@@ -699,6 +708,7 @@ public class MainActivity extends AppCompatActivity {
             //region 设备设置页面
             if (deviceData.size() > 0) {
                 Intent intent = new Intent(MainActivity.this, SettingActivity.class);
+                //intent.setFlags(Intent.FLAG_ACTIVITY_LAUNCH_ADJACENT | Intent.FLAG_ACTIVITY_NEW_TASK);
                 intent.putExtra("index", mainDeviceListAdapter.getChoice());
                 startActivity(intent);
             }
@@ -953,7 +963,7 @@ public class MainActivity extends AppCompatActivity {
                 mEditor = mSharedPreferences.edit();
                 mEditor.remove("PrivacyPolicy");
                 mEditor.commit();
-                Log.i(Tag,"未同意隐私协议,退出app");
+                Log.i(Tag, "未同意隐私协议,退出app");
                 finish();
             }
         });
@@ -967,9 +977,8 @@ public class MainActivity extends AppCompatActivity {
             public void onDismiss() {
 
                 int privacypolicy = mSharedPreferences.getInt("PrivacyPolicy", 0);
-                if(privacypolicy!=PRIVACYPOLICY_INT)
-                {
-                    Log.i(Tag,"未同意隐私协议,退出app");
+                if (privacypolicy != PRIVACYPOLICY_INT) {
+                    Log.i(Tag, "未同意隐私协议,退出app");
                     finish();
                 }
             }

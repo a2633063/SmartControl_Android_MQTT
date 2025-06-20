@@ -63,7 +63,6 @@
         android:label="@string/app_name"
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
-        android:screenOrientation="portrait"
         android:theme="@style/AppTheme">
         <activity android:name=".deviceItem.a1.A1LedActivity"/>
         <activity android:name=".deviceItem.m1.M1LinkA1Activity" />
@@ -99,6 +98,7 @@
             android:exported="true"
             android:label="@string/app_name"
             android:launchMode="singleTask"
+            android:configChanges="orientation|keyboardHidden|screenSize"
             android:screenOrientation="portrait"
             android:theme="@style/AppTheme.NoActionBar">
             <intent-filter>
